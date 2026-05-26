@@ -31,7 +31,7 @@ maps (the dual of holomorphic-form pullback in basis coordinates).
 
 namespace JacobianChallenge.TraceDegree
 
-open scoped ContDiff Manifold
+open scoped ContDiff Manifold Topology
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.AbelJacobi
 open JacobianChallenge.ComplexTorus
@@ -793,6 +793,56 @@ theorem isRegularValue_idBranchedCoverData (y : X) :
     isRegularValue (idBranchedCoverData (X := X)) y := by
   intro x _; rfl
 
+/-- The chart-local order of the identity map at any point is `1`. -/
+theorem mapAnalyticOrderAt_id_eq_one (x : X) :
+    mapAnalyticOrderAt (id : X → X) x = 1 := by
+  classical
+  -- Chart-local form of `id` at `x` is `chartAt ℂ x ∘ (chartAt ℂ x).symm`,
+  -- which eventually equals the identity function on a neighbourhood of `chartAt ℂ x x`.
+  set e := chartAt ℂ x with he
+  have hloc :
+      (fun t : ℂ => chartLocalAt (id : X → X) x t) =ᶠ[𝓝 (e x)] (fun t : ℂ => t) := by
+    have htgt : e.target ∈ 𝓝 (e x) :=
+      e.open_target.mem_nhds (e.map_source (mem_chart_source ℂ x))
+    refine Filter.eventually_of_mem htgt (fun t ht => ?_)
+    show chartAt ℂ ((id : X → X) x) ((id : X → X) ((chartAt ℂ x).symm t)) = t
+    have : (chartAt ℂ x) ((chartAt ℂ x).symm t) = t := e.right_inv ht
+    simpa [id] using this
+  -- The constant value at the basepoint.
+  have hval : chartLocalAt (id : X → X) x (e x) = e x := by
+    show chartAt ℂ ((id : X → X) x) ((id : X → X) ((chartAt ℂ x).symm (e x))) = e x
+    have h1 : (chartAt ℂ x).symm (e x) = x := e.left_inv (mem_chart_source ℂ x)
+    rw [id, id, h1, ← he]
+  -- Hence so does the shifted function.
+  have hloc_sub :
+      (fun t : ℂ => chartLocalAt (id : X → X) x t -
+          chartLocalAt (id : X → X) x (e x)) =ᶠ[𝓝 (e x)]
+        (fun t : ℂ => t - e x) := by
+    filter_upwards [hloc] with t ht
+    simp [ht, hval]
+  -- analyticOrderAt is preserved under EventuallyEq, and the order of `t ↦ t - e x` at `e x` is 1.
+  have hord_id :
+      analyticOrderAt (fun t : ℂ => t - e x) (e x) = 1 := by
+    have hf : AnalyticAt ℂ (fun t : ℂ => t) (e x) := analyticAt_id
+    have hf' : deriv (fun t : ℂ => t) (e x) ≠ 0 := by simp
+    simpa using hf.analyticOrderAt_sub_eq_one_of_deriv_ne_zero hf'
+  have hord :
+      analyticOrderAt
+        (fun t : ℂ => chartLocalAt (id : X → X) x t -
+          chartLocalAt (id : X → X) x (e x)) (e x) = 1 := by
+    rw [analyticOrderAt_congr hloc_sub]; exact hord_id
+  -- Lift to `analyticOrderNatAt` and then `mapAnalyticOrderAt`.
+  unfold mapAnalyticOrderAt analyticOrderNatAt
+  rw [hord]; rfl
+
+/-- The identity branched-cover datum is compatible with `mapAnalyticOrderAt`. -/
+theorem idBranchedCoverData_compatible :
+    (idBranchedCoverData (X := X)).RamificationIndexCompatible := by
+  intro x _hfx
+  -- ramificationIndex is constantly 1; mapAnalyticOrderAt id x = 1.
+  show 1 = mapAnalyticOrderAt (id : X → X) x
+  exact (mapAnalyticOrderAt_id_eq_one x).symm
+
 /--
 The cotangent pushforward along the identity is the identity on
 cotangent vectors.
@@ -893,7 +943,7 @@ theorem traceFormsBundled_id (η : HolomorphicOneForm ℂ X) :
   -- regular_spec at our idBranchedCoverData gives the trace = fibre sum identity.
   have h_reg := (traceFormsConstructionData_provider
     (id : X → X) contMDiff_id η).regular_spec
-    (idBranchedCoverData (X := X)) y hy
+    (idBranchedCoverData (X := X)) idBranchedCoverData_compatible y hy
   -- Unfold traceFormsBundled and apply h_reg.
   change (traceFormsConstructionData_provider (id : X → X) contMDiff_id η).traceForm.toFun y =
     η.toFun y
@@ -1156,7 +1206,7 @@ theorem regularValue_comp_traceAtRegularValue
         traceAtRegularValue hbc_f (fun x => η.toFun x) y (hz_g_inv_regular y hy) := by
     intro y hy
     exact (JacobianChallenge.HolomorphicForms.traceFormsConstructionData_provider
-      f hf η).regular_spec hbc_f y (hz_g_inv_regular y hy)
+      f hf η).regular_spec hbc_f hcompat_f y (hz_g_inv_regular y hy)
   -- Unfold both sides.
   unfold traceAtRegularValue
   -- LHS = ∑_{x ∈ ((g∘f)⁻¹{z}).toFinset.attach} cotangentPushforward (g∘f) x.1 (η.toFun x.1)
@@ -1390,25 +1440,6 @@ theorem traceFormsBundled_comp_of_nonconstant
     have hSc_compl_dense : Dense ((Sᶜ : Set Z)ᶜ) :=
       dense_compl_of_finite_of_perfect hSc_finite
     simpa [compl_compl] using hSc_compl_dense
-  -- Identity principle on S.
-  apply holomorphicOneForm_ext_on hS_dense
-  rintro z ⟨hz_gf, hz_g, hz_g_inv⟩
-  -- LHS: trace at z via hbc_gf.
-  have hLHS_reg :=
-    (traceFormsConstructionData_provider (g ∘ f) (hg.comp hf) η).regular_spec
-      hbc_gf z hz_gf
-  -- RHS: trace at z via hbc_g, applied to (traceFormsBundled f hf η).
-  have hRHS_reg :=
-    (traceFormsConstructionData_provider g hg
-      (traceFormsBundled f hf η)).regular_spec hbc_g z hz_g
-  -- Translate to traceFormsBundled.
-  change (traceFormsBundled (g ∘ f) (hg.comp hf) η).toFun z =
-    (traceFormsBundled g hg (traceFormsBundled f hf η)).toFun z
-  -- Unfold using the provider's traceForm.
-  show (traceFormsConstructionData_provider (g ∘ f) (hg.comp hf) η).traceForm.toFun z =
-    (traceFormsConstructionData_provider g hg
-      (traceFormsBundled f hf η)).traceForm.toFun z
-  rw [hLHS_reg, hRHS_reg]
   -- Compatibility witnesses for each of the three canonical BCDs.
   have hcompat_f : hbc_f.RamificationIndexCompatible :=
     JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
@@ -1419,6 +1450,25 @@ theorem traceFormsBundled_comp_of_nonconstant
   have hcompat_gf : hbc_gf.RamificationIndexCompatible :=
     JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
       hHol_gf hw_gf hgf_nonconst
+  -- Identity principle on S.
+  apply holomorphicOneForm_ext_on hS_dense
+  rintro z ⟨hz_gf, hz_g, hz_g_inv⟩
+  -- LHS: trace at z via hbc_gf.
+  have hLHS_reg :=
+    (traceFormsConstructionData_provider (g ∘ f) (hg.comp hf) η).regular_spec
+      hbc_gf hcompat_gf z hz_gf
+  -- RHS: trace at z via hbc_g, applied to (traceFormsBundled f hf η).
+  have hRHS_reg :=
+    (traceFormsConstructionData_provider g hg
+      (traceFormsBundled f hf η)).regular_spec hbc_g hcompat_g z hz_g
+  -- Translate to traceFormsBundled.
+  change (traceFormsBundled (g ∘ f) (hg.comp hf) η).toFun z =
+    (traceFormsBundled g hg (traceFormsBundled f hf η)).toFun z
+  -- Unfold using the provider's traceForm.
+  show (traceFormsConstructionData_provider (g ∘ f) (hg.comp hf) η).traceForm.toFun z =
+    (traceFormsConstructionData_provider g hg
+      (traceFormsBundled f hf η)).traceForm.toFun z
+  rw [hLHS_reg, hRHS_reg]
   exact regularValue_comp_traceAtRegularValue f hf g hg η
     hbc_f hcompat_f hbc_g hcompat_g hbc_gf hcompat_gf hHol_f hHol_g hHol_gf
     z hz_gf hz_g hz_g_inv

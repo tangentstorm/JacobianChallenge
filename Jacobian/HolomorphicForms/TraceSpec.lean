@@ -63,7 +63,8 @@ At every regular value of any compatible branched-cover datum on
   `f`, the global form agrees with the finite local fiber sum.
 -/
   regular_spec :
-    ∀ (hbc : BranchedCoverData X Y f) (y : Y) (hy : isRegularValue hbc y),
+    ∀ (hbc : BranchedCoverData X Y f) (_hcompat : hbc.RamificationIndexCompatible)
+      (y : Y) (hy : isRegularValue hbc y),
       traceForm.toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy
   /-- The zero input form maps to the zero global form. -/
   map_zero_spec : η = 0 → traceForm = 0
@@ -115,7 +116,7 @@ private noncomputable def traceFormsConstructionData_zero
     TraceFormsConstructionData f hf (0 : HolomorphicOneForm ℂ X) where
   traceForm := 0
   regular_spec := by
-    intro hbc y hy
+    intro hbc _hcompat y hy
     -- LHS is (0 : HolomorphicOneForm ℂ Y).toFun y = 0
     -- RHS is traceAtRegularValue over (fun x => (0 : HolomorphicOneForm ℂ X).toFun x)
     have hzero_toFun : ∀ x : X, (0 : HolomorphicOneForm ℂ X).toFun x = 0 := by
@@ -159,7 +160,7 @@ private noncomputable def traceFormsConstructionData_constant
   traceForm := 0
   regular_spec := by
     classical
-    intro hbc y hy
+    intro hbc _hcompat y hy
     obtain ⟨y₀, hfy₀⟩ := hconst
     have hLHS : (0 : HolomorphicOneForm ℂ Y).toFun y = 0 := by
       change ((0 : HolomorphicOneForm ℂ Y) : ∀ y, _) y = 0
@@ -525,6 +526,8 @@ private theorem traceForm_extension_per_BCD
         else (0 : CotangentModelFiber ℂ)) = _
   rw [dif_pos hy]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
 /--
 **Auxiliary (analytic continuation across canonical-BCD branch
 values).** If `τ : HolomorphicOneForm ℂ Y` matches the canonical
@@ -540,16 +543,34 @@ regular locus around `y`, they coincide pointwise via Provider (4),
 so they coincide at `y` by continuity.
 -/
 theorem traceForm_extension_at_branch_of_canonical_BCD
-    (f : X → Y) (_hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
     (hbc0 hbc : BranchedCoverData X Y f)
-    (y : Y) (_hy0_branch : ¬ isRegularValue hbc0 y)
+    (hcompat0 : hbc0.RamificationIndexCompatible)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (y : Y) (hy0_branch : ¬ isRegularValue hbc0 y)
     (hy_reg : isRegularValue hbc y)
     (τ : HolomorphicOneForm ℂ Y)
     (_hτ : ∀ (y' : Y) (hy' : isRegularValue hbc0 y'),
         τ.toFun y' = traceAtRegularValue hbc0 (fun x => η.toFun x) y' hy') :
     τ.toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy_reg := by
-  sorry
+  -- The hypotheses are contradictory: any branch point of hbc0 must be a branch
+  -- point of every compatible BCD (both equal mapAnalyticOrderAt f).
+  exfalso
+  -- Unfold ¬ isRegularValue to extract a ramified preimage.
+  unfold isRegularValue at hy0_branch
+  push_neg at hy0_branch
+  obtain ⟨x, hx_mem, hx_ram⟩ := hy0_branch
+  -- IsHolomorphicAt at x, from contMDiff f.
+  have hfx : IsHolomorphicAt f x :=
+    (isHolomorphicBasic_of_contMDiff hf).holomorphicAt x
+  -- Compatibility on both BCDs identifies ramificationIndex with mapAnalyticOrderAt.
+  have h0 : hbc0.ramificationIndex x = mapAnalyticOrderAt f x := hcompat0 x hfx
+  have h1 : hbc.ramificationIndex x = mapAnalyticOrderAt f x := hcompat x hfx
+  -- hy_reg says hbc.ramificationIndex x = 1.
+  have hreg : hbc.ramificationIndex x = 1 := hy_reg x hx_mem
+  -- Combine: hbc0.ramificationIndex x = 1 but also ≠ 1. Contradiction.
+  exact hx_ram (h0.trans (h1.symm.trans hreg))
 
 /--
 **Narrow classical leaf: trace-form holomorphic extension.** For a
@@ -570,7 +591,8 @@ theorem traceForm_global_extension
     (η : HolomorphicOneForm ℂ X) (_hη : η ≠ 0)
     (hnonconst : ¬ ∃ y₀, ∀ x, f x = y₀) :
     ∃ τ : HolomorphicOneForm ℂ Y,
-      ∀ (hbc : BranchedCoverData X Y f) (y : Y) (hy : isRegularValue hbc y),
+      ∀ (hbc : BranchedCoverData X Y f) (_hcompat : hbc.RamificationIndexCompatible)
+        (y : Y) (hy : isRegularValue hbc y),
         τ.toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy := by
   classical
   set hkfold := hasLocalKfoldRamification_of_contMDiff hf
@@ -584,11 +606,12 @@ theorem traceForm_global_extension
   -- For one fixed BCD `hbc0`, the per-BCD provider gives τ.
   obtain ⟨τ, hτ0⟩ := traceForm_extension_per_BCD f hf η hbc0 hcompat0
   refine ⟨τ, ?_⟩
-  intro hbc y hy
+  intro hbc hcompat y hy
   by_cases hy0 : isRegularValue hbc0 y
   · rw [hτ0 y hy0]
     exact (traceAtRegularValue_BCD_invariance η hbc0 hbc y hy0 hy).symm
-  · exact traceForm_extension_at_branch_of_canonical_BCD f hf η hbc0 hbc y hy0 hy τ hτ0
+  · exact traceForm_extension_at_branch_of_canonical_BCD f hf η hbc0 hbc
+      hcompat0 hcompat y hy0 hy τ hτ0
 
 /--
 **Narrow trace construction provider (nonconstant nonzero case).**
@@ -681,7 +704,8 @@ structure TraceFormsRegularSpec
   map_zero : traceFormsBundled f hf 0 = 0
   /-- At regular values, trace agrees with the finite local fiber sum. -/
   apply_fun_regular :
-    ∀ (hbc : BranchedCoverData X Y f) (η : HolomorphicOneForm ℂ X)
+    ∀ (hbc : BranchedCoverData X Y f) (_hcompat : hbc.RamificationIndexCompatible)
+      (η : HolomorphicOneForm ℂ X)
       (y : Y) (hy : isRegularValue hbc y),
       (traceFormsBundled f hf η).toFun y =
         traceAtRegularValue hbc (fun x => η.toFun x) y hy
@@ -738,11 +762,14 @@ noncomputable def traceFormsBundledLM
       set hHol := isHolomorphic_of_contMDiff hf hkfold
       set hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
         hHol hw hconst
+      have hcompat :=
+        JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
+          hHol hw hconst
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
       intro y hy
-      have hη_reg := (traceFormsConstructionData_provider f hf η).regular_spec hbc y hy
-      have hζ_reg := (traceFormsConstructionData_provider f hf ζ).regular_spec hbc y hy
-      have hηζ_reg := (traceFormsConstructionData_provider f hf (η + ζ)).regular_spec hbc y hy
+      have hη_reg := (traceFormsConstructionData_provider f hf η).regular_spec hbc hcompat y hy
+      have hζ_reg := (traceFormsConstructionData_provider f hf ζ).regular_spec hbc hcompat y hy
+      have hηζ_reg := (traceFormsConstructionData_provider f hf (η + ζ)).regular_spec hbc hcompat y hy
       change (traceFormsConstructionData_provider f hf (η + ζ)).traceForm.toFun y =
         ((traceFormsConstructionData_provider f hf η).traceForm +
           (traceFormsConstructionData_provider f hf ζ).traceForm).toFun y
@@ -777,11 +804,14 @@ noncomputable def traceFormsBundledLM
       set hHol := isHolomorphic_of_contMDiff hf hkfold
       set hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
         hHol hw hconst
+      have hcompat :=
+        JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
+          hHol hw hconst
       show traceFormsBundled f hf (k • η) = k • traceFormsBundled f hf η
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
       intro y hy
-      have hη_reg := (traceFormsConstructionData_provider f hf η).regular_spec hbc y hy
-      have hkη_reg := (traceFormsConstructionData_provider f hf (k • η)).regular_spec hbc y hy
+      have hη_reg := (traceFormsConstructionData_provider f hf η).regular_spec hbc hcompat y hy
+      have hkη_reg := (traceFormsConstructionData_provider f hf (k • η)).regular_spec hbc hcompat y hy
       change (traceFormsConstructionData_provider f hf (k • η)).traceForm.toFun y =
         (k • (traceFormsConstructionData_provider f hf η).traceForm).toFun y
       rw [hkη_reg]
