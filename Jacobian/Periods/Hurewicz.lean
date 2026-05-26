@@ -3067,14 +3067,31 @@ theorem edgeArcIdx_injective
   omega
 
 /--
+The quotient midpoint of a canonical boundary-edge representative
+separates the edge-basis arc index.
+-/
+theorem edgeArcIdx_eq_of_boundary_midpoint_mk_eq
+    (g : ℕ) {i j : Fin (2 * (g + 1))}
+    (_h :
+      Polygon4g.mk (g + 1)
+          (boundaryParam (g + 1) (edgeArcIdx g i) (1 / 2 : ℝ)) =
+        Polygon4g.mk (g + 1)
+          (boundaryParam (g + 1) (edgeArcIdx g j) (1 / 2 : ℝ))) :
+    edgeArcIdx g i = edgeArcIdx g j := by
+  sorry
+
+/--
 Equality of concrete edge interval maps determines the boundary arc
 index used by the parametrization.
 -/
 theorem edgeArcIdx_eq_of_edgeContMap_eq
     (g : ℕ) {i j : Fin (2 * (g + 1))}
-    (_h : edgeContMap g i = edgeContMap g j) :
+    (h : edgeContMap g i = edgeContMap g j) :
     edgeArcIdx g i = edgeArcIdx g j := by
-  sorry
+  apply edgeArcIdx_eq_of_boundary_midpoint_mk_eq g
+  let mid : unitInterval := ⟨(1 / 2 : ℝ), by norm_num⟩
+  have happ := congrFun (congrArg DFunLike.coe h) mid
+  simpa [edgeContMap, mid] using happ
 
 /--
 Concrete edge interval maps are distinct for distinct edge indices.
