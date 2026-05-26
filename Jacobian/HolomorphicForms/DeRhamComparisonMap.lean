@@ -809,6 +809,40 @@ theorem deRhamComparisonMap1_comparison_kernel_zero_period_frontier
   simpa [LinearMap.mem_ker] using hω_kernel
 
 /--
+**Primitive existence for the direct primitive exactness split.** This is
+the remaining comparison input behind exactness in this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  -- Direct primitive exactness primitive frontier for zero comparison periods.
+  sorry
+
+/--
+**Direct primitive exactness from primitive existence.** `ExactForm 0 X` is
+the range of `exteriorDerivative 0 X`, so a primitive package is exactly
+membership in the exact submodule.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
 **Exactness for the direct primitive vanishing split.** This is the
 remaining comparison input needed before current-substrate exact-form
 vanishing can apply.
@@ -821,8 +855,8 @@ theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_frontier
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
-  -- Direct primitive vanishing exactness frontier for zero comparison periods.
-  sorry
+  exact deRhamComparisonMap1_zero_period_exact_for_direct_primitive_of_primitive_frontier
+    X ω (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_frontier X ω hω)
 
 /--
 **Exact-form vanishing for the direct primitive branch.** Exact 1-forms
