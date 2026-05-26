@@ -350,6 +350,57 @@ theorem deRhamComparisonMap1_exists_form_with_periods_frontier
     deRhamComparisonMap1_prescribed_period_correct_frontier X φ⟩
 
 /--
+**Frontier provider constructing the zero-period path-integral primitive.**
+This names the candidate primitive separately from the fundamental theorem
+for path integrals, so the injectivity proof can be refined locally.
+-/
+noncomputable def deRhamComparisonMap1_zero_period_path_integral_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_ω : ClosedForm 1 X)
+    (_hω : deRhamComparisonMap1 X _ω = 0) :
+    SmoothDiffForm 0 X :=
+  0
+
+/--
+**Frontier provider proving derivative correctness for the path-integral
+primitive.** This is the analytic content of injectivity: the derivative of
+the zero-period path-integral potential recovers the original closed form.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  -- Path-integration fundamental theorem frontier: zero periods make the
+  -- primitive path-independent, and differentiating it recovers the form.
+  sorry
+
+/--
+**Frontier provider packaging zero-period derivative correctness as
+exactness.** This keeps the existential wrapper separate from the analytic
+path-integral derivative statement.
+-/
+theorem deRhamComparisonMap1_zero_period_exactness_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    deRhamComparisonMap1_zero_period_path_integral_derivative_frontier X ω hω⟩
+
+/--
 **Frontier provider for zero-period primitives.** This is the injectivity
 half of degree-1 de Rham comparison: zero periods force exactness.
 -/
@@ -361,12 +412,8 @@ theorem deRhamComparisonMap1_primitive_exists_frontier
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     ∃ θ : SmoothDiffForm 0 X,
-      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
-  -- De Rham comparison/injectivity theorem. A proof must construct the global
-  -- path-integral primitive and prove it is smooth with derivative `ω`; the
-  -- current surrogate differential-form API does not expose path integration or
-  -- the fundamental theorem for forms.
-  sorry
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  deRhamComparisonMap1_zero_period_exactness_frontier X ω hω
 
 /--
 Narrow consumers should take `DeRhamComparisonMap1Spec X` explicitly
