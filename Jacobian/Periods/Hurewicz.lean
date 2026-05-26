@@ -3056,10 +3056,25 @@ noncomputable def edgeSimplexTargetCoefficient
 /--
 Concrete edge singular simplices are distinct for distinct edge indices.
 -/
+theorem edgeContMap_injective
+    (g : ℕ) :
+    Function.Injective (edgeContMap g) := by
+  sorry
+
+/--
+Concrete edge singular simplices are distinct for distinct edge indices.
+-/
 theorem edgeSimplex_injective
     (g : ℕ) :
     Function.Injective (edgeSimplex g) := by
-  sorry
+  intro i j h
+  apply edgeContMap_injective g
+  ext t
+  let s : stdSimplex ℝ (Fin 2) := stdSimplexHomeomorphUnitInterval.symm t
+  have hs : stdSimplexToUnitInterval s = t := by
+    exact stdSimplexHomeomorphUnitInterval.apply_symm_apply t
+  have happ := congrFun (congrArg DFunLike.coe h) s
+  simpa [edgeSimplex, s, hs] using happ
 
 /--
 Reading the coefficient of the target concrete edge simplex in a chain
