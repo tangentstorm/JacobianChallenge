@@ -107,6 +107,26 @@ structure PrescribedPeriodCechData
         (AddCommGrpCat.of ℂ))
 
 /--
+Local representative data extracted from the prescribed-period Čech package.
+This names the intermediate analytic object between the comparison cocycle
+and the final assembled global closed form.
+-/
+structure PrescribedPeriodLocalRepresentativeData
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ) where
+  ι : Type
+  U : ι → TopologicalSpace.Opens (TopCat.of X)
+  C : CochainComplex AddCommGrpCat.{0} ℕ
+  C_eq :
+    C = RSCechComplex X U
+      ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+        (AddCommGrpCat.of ℂ))
+
+/--
 **Frontier provider for prescribed-period Čech data.** This isolates the
 singular-to-Čech comparison data attached to the requested periods.
 -/
@@ -124,6 +144,39 @@ noncomputable def deRhamComparisonMap1_prescribed_period_cech_data_frontier
         (AddCommGrpCat.of ℂ)), rfl⟩
 
 /--
+**Frontier provider extracting local representatives.** This converts the
+prescribed-period Čech package into the local representative data that the
+global assembly step consumes.
+-/
+noncomputable def deRhamComparisonMap1_prescribed_period_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ) :
+    PrescribedPeriodLocalRepresentativeData X φ data :=
+  ⟨data.ι, data.U, data.C, data.C_eq⟩
+
+/--
+**Frontier provider assembling local representatives.** This is the analytic
+realization step: local representatives subordinate to the Čech data assemble
+to a global closed 1-form with the prescribed periods.
+-/
+noncomputable def deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (_localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    ClosedForm 1 X := by
+  -- De Rham comparison theorem. A proof must assemble the local representatives
+  -- into a global closed representative with the prescribed periods.
+  sorry
+
+/--
 **Frontier provider realizing prescribed-period Čech data.** Given the
 Čech comparison package associated to the requested periods, construct
 the global closed 1-form representative.
@@ -134,11 +187,10 @@ noncomputable def deRhamComparisonMap1_closed_form_from_prescribed_period_cech_f
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
-    (_data : PrescribedPeriodCechData X φ) :
-    ClosedForm 1 X := by
-  -- De Rham comparison theorem. A proof must realize the Čech comparison data
-  -- as a global closed representative with the prescribed periods.
-  sorry
+    (data : PrescribedPeriodCechData X φ) :
+    ClosedForm 1 X :=
+  deRhamComparisonMap1_closed_form_from_local_representatives_frontier X φ data
+    (deRhamComparisonMap1_prescribed_period_local_representatives_frontier X φ data)
 
 /--
 **Frontier provider for prescribed periods.** This is the surjectivity
