@@ -3057,6 +3057,26 @@ structure EdgeBoundaryCoefficientScalarData
       coeffSimplexZ (edgeSimplex g e) = if e = target then 1 else 0
 
 /--
+Scalar chain-level coefficient functional for one edge coordinate.
+
+This is the chain-functional form of the scalar cocycle provider:
+it is a linear functional on singular one-chains, kills singular
+two-boundaries, and reads the concrete edge chains by Kronecker delta.
+-/
+structure EdgeBoundaryCoefficientScalarFunctionalData
+    (g : ℕ) (target : Fin (2 * (g + 1))) where
+  coeffC1Z :
+    (singularChainComplexZ (Polygon4g (g + 1))).X 1 ⟶
+      ModuleCat.of ℤ ℤ
+  coeffC1Z_boundary_zero :
+    ∀ B : (singularChainComplexZ (Polygon4g (g + 1))).X 2,
+      coeffC1Z.hom
+        (((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom B) = 0
+  coeffC1Z_edge :
+    ∀ e : Fin (2 * (g + 1)),
+      coeffC1Z.hom (edgeChain g e) = if e = target then 1 else 0
+
+/--
 Normalized scalar edge-coordinate cochain data, before imposing the
 cocycle condition.
 -/
@@ -3079,6 +3099,38 @@ def EdgeBoundaryCoefficientRawScalarCochainBoundaryZero
   ∀ σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)),
     (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) *
       raw.coeffSimplexZ (singularSimplexFace σ i)) = 0
+
+/-- The raw scalar cochain obtained by evaluating a scalar chain functional on generators. -/
+noncomputable def edgeBoundaryCoefficientRawScalarCochainData_of_functional
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (data : EdgeBoundaryCoefficientScalarFunctionalData g target) :
+    EdgeBoundaryCoefficientRawScalarCochainData g target where
+  coeffSimplexZ := fun σ => data.coeffC1Z.hom (singularChainElement σ)
+
+/--
+The generator-level cochain induced by a scalar chain functional is
+edge-normalized and kills every singular two-simplex boundary.
+-/
+theorem edgeBoundaryCoefficientRawScalarCochainData_of_functional_properties
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (data : EdgeBoundaryCoefficientScalarFunctionalData g target) :
+    EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized g target
+        (edgeBoundaryCoefficientRawScalarCochainData_of_functional g target data) ∧
+      EdgeBoundaryCoefficientRawScalarCochainBoundaryZero g target
+        (edgeBoundaryCoefficientRawScalarCochainData_of_functional g target data) := by
+  refine ⟨?_, ?_⟩
+  · intro e
+    exact data.coeffC1Z_edge e
+  · intro σ
+    have hzero :
+        data.coeffC1Z.hom
+          (((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom
+            (singularChainElement σ)) = 0 :=
+      data.coeffC1Z_boundary_zero (singularChainElement σ)
+    rw [singularChainElement_boundary_decomposition
+      (Polygon4g (g + 1)) 1 σ] at hzero
+    simp only [map_sum, map_zsmul] at hzero
+    simpa [edgeBoundaryCoefficientRawScalarCochainData_of_functional] using hzero
 
 structure EdgeBoundaryCoefficientScalarCochainData
     (g : ℕ) (target : Fin (2 * (g + 1))) where
@@ -3315,12 +3367,21 @@ This is the remaining scalar-coordinate geometric input: construct an
 integer singular one-cocycle whose values on the concrete edge loops
 are the Kronecker delta for `target`.
 -/
+theorem edgeBoundaryCoefficientScalarFunctionalData
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    : Nonempty (EdgeBoundaryCoefficientScalarFunctionalData g target) := by
+  sorry
+
+/-- Local provider for raw normalized scalar edge-coordinate cocycles. -/
 theorem edgeBoundaryCoefficientRawScalarCochainData_normalized_boundary_zero
     (g : ℕ) (target : Fin (2 * (g + 1)))
     : ∃ raw : EdgeBoundaryCoefficientRawScalarCochainData g target,
       EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized g target raw ∧
         EdgeBoundaryCoefficientRawScalarCochainBoundaryZero g target raw := by
-  sorry
+  obtain ⟨data⟩ := edgeBoundaryCoefficientScalarFunctionalData g target
+  exact ⟨edgeBoundaryCoefficientRawScalarCochainData_of_functional g target data,
+    edgeBoundaryCoefficientRawScalarCochainData_of_functional_properties
+      g target data⟩
 
 /-- Local provider for normalized scalar edge-coordinate cochains. -/
 theorem edgeBoundaryCoefficientScalarCochainData
