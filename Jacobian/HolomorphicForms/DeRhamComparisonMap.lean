@@ -600,6 +600,54 @@ theorem deRhamComparisonMap1_zero_period_mem_kernel_frontier
   simpa [LinearMap.mem_ker] using hω
 
 /--
+**Comparison-kernel exactness frontier.** This isolates the comparison
+input that kernel elements are exact closed forms.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_mem_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  -- Comparison exactness frontier: the degree-1 comparison kernel consists
+  -- of exact 1-forms.
+  sorry
+
+/--
+**Exact forms vanish in the current zero-differential substrate.** Since
+`exteriorDerivative` is currently the zero map, being exact as a 1-form
+means being equal to zero.
+-/
+theorem deRhamComparisonMap1_exact_form_vanishes_in_current_substrate_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (η : SmoothDiffForm 1 X)
+    (hη_exact : η ∈ ExactForm 0 X) :
+    η = 0 := by
+  rcases hη_exact with ⟨θ, hθ⟩
+  simpa [ExactForm, exteriorDerivative] using hθ.symm
+
+/--
+**Comparison-kernel vanishing from exactness.** Once a comparison-kernel
+element has been identified as exact, current-substrate exact-form
+vanishing gives the desired equality.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_vanishes_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_in_current_substrate_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
 **Comparison-kernel triviality frontier.** This isolates the hard
 injectivity input: the degree-1 comparison map has trivial kernel on the
 current closed-form substrate.
@@ -612,9 +660,9 @@ theorem deRhamComparisonMap1_comparison_kernel_vanishes_frontier
     (ω : ClosedForm 1 X)
     (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
     (ω : SmoothDiffForm 1 X) = 0 := by
-  -- Kernel-triviality frontier: zero comparison class forces the current
-  -- closed-form representative to vanish in the form substrate.
-  sorry
+  exact deRhamComparisonMap1_comparison_kernel_vanishes_of_exact_frontier
+    X ω
+    (deRhamComparisonMap1_comparison_kernel_mem_exact_frontier X ω hω_kernel)
 
 /--
 **Zero-period vanishing from kernel data.** Once zero periods have been
