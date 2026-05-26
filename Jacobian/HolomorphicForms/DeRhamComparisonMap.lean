@@ -298,6 +298,55 @@ theorem deRhamComparisonMap1_local_representatives_cycle_cocycle_frontier
   rfl
 
 /--
+**Single-cycle induced period frontier.** This is the pointwise analytic
+period computation for one integral cycle before extensionality upgrades it
+to an equality of cycle functionals.
+-/
+theorem deRhamComparisonMap1_local_representatives_period_to_induced_cycle_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z := by
+  -- Single-cycle analytic period computation frontier: integrate the
+  -- assembled local representative over `z` and identify the induced value.
+  sorry
+
+/--
+**Extensionality from single-cycle induced periods.** Pointwise equality on
+integral cycles determines the induced period functional.
+-/
+theorem deRhamComparisonMap1_local_representatives_period_to_induced_ext_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (hcycle : ∀ z : IntegralOneCycle X,
+      deRhamComparisonMap1 X
+          (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+            X φ data localData) z =
+        deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+          X φ data localData z) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData := by
+  ext z
+  exact hcycle z
+
+/--
 **Induced-functional period frontier for local representatives.** This is
 the analytic computation identifying the assembled closed form's period
 functional with the cycle functional induced by the chosen local
@@ -316,9 +365,10 @@ theorem deRhamComparisonMap1_local_representatives_period_to_induced_frontier
           X φ data localData) =
       deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
         X φ data localData := by
-  -- Analytic period computation frontier: integrate the assembled local
-  -- representative and identify its induced integral-cycle functional.
-  sorry
+  exact deRhamComparisonMap1_local_representatives_period_to_induced_ext_frontier
+    X φ data localData
+    (deRhamComparisonMap1_local_representatives_period_to_induced_cycle_frontier
+      X φ data localData)
 
 /--
 **Transport from induced-functional periods to the public closed-form
