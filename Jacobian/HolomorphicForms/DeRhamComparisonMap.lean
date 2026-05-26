@@ -809,6 +809,52 @@ theorem deRhamComparisonMap1_comparison_kernel_zero_period_frontier
   simpa [LinearMap.mem_ker] using hω_kernel
 
 /--
+**Exactness for the direct primitive vanishing split.** This is the
+remaining comparison input needed before current-substrate exact-form
+vanishing can apply.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  -- Direct primitive vanishing exactness frontier for zero comparison periods.
+  sorry
+
+/--
+**Exact-form vanishing for the direct primitive branch.** Exact 1-forms
+vanish in the current zero-differential substrate.
+-/
+theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (η : SmoothDiffForm 1 X)
+    (hη_exact : η ∈ ExactForm 0 X) :
+    η = 0 := by
+  rcases hη_exact with ⟨θ, hθ⟩
+  simpa [ExactForm, exteriorDerivative] using hθ.symm
+
+/--
+**Direct primitive vanishing from exactness.** Once the zero-period form is
+known exact, exact-form vanishing gives the closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
 **Closed-form vanishing for the direct primitive derivative split.** This is
 the remaining comparison input needed by the zero-differential derivative
 calculation.
@@ -821,8 +867,8 @@ theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primiti
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) = 0 := by
-  -- Direct primitive derivative vanishing frontier for zero comparison periods.
-  sorry
+  exact deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_of_exact_frontier
+    X ω (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_frontier X ω hω)
 
 /--
 **Direct primitive derivative from vanishing.** The path-integral primitive
