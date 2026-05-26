@@ -411,29 +411,129 @@ theorem traceAtRegularValue_BCD_invariance
   congr 1
 
 /--
-**Substrate axiom: local-vs-global trace germ comparison on the regular
-locus.** Near a regular value `y`, the fixed-fibre local trace expression
-and the moving-fibre `dite`-extended global trace agree as germs.
+**Local-inverse preimage of any nhd is a nhd.** The single
+continuity-like consequence we need: for any open `W ∋ x`, the preimage
+`(h.localInverseAt x hx) ⁻¹' W` is a `𝓝 (f x)`-set.
 
-Discharging this requires compact-source properness to exclude extra nearby
-preimages plus `BranchedCoverData.localInverse_is_inverse` to identify the
-nearby branch values with the fixed inverse branches.
+Proof sketch: the BCD's `localInverseAt` agrees on a neighborhood of `f x`
+with an analytic local inverse `analyticInv` (constructed from the
+analytic-inverse-function theorem applied to `chartLocalAt f x` whose
+derivative at `chartAt ℂ x x` is nonzero because the ramification index
+is 1). The analytic local inverse is genuinely continuous at `f x`
+because it is the composition `(chartAt x).symm ∘ r ∘ chartAt(f x)`,
+where `r` is analytic on a neighborhood of `chartAt(f x)(f x)`. By
+combining the Tendsto from analytic continuity with the eventually-equality,
+the preimage of any open `W ∋ x` is a neighborhood of `f x`.
 -/
-theorem localTraceAtRegularValue_eq_traceAtRegularValue_germ
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
-    (η : HolomorphicOneForm ℂ X)
-    (hbc : BranchedCoverData X Y f)
-    (hcompat : hbc.RamificationIndexCompatible)
-    (y : Y) (hy : isRegularValue hbc y) :
-    localTraceAtRegularValue hbc
-        (isHolomorphic_of_contMDiff hf
-          (hasLocalKfoldRamification_of_contMDiff hf)) η y hy =ᶠ[𝓝 y]
-      fun y' : Y =>
-        open Classical in
-        if hy' : isRegularValue hbc y' then
-          traceAtRegularValue hbc (fun x => η.toFun x) y' hy'
-        else (0 : CotangentModelFiber ℂ) := by
-  sorry
+private theorem localInverseAt_preimage_mem_nhds
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (hcompat : h.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    (x : X) (hx : h.ramificationIndex x = 1)
+    {W : Set X} (hW_open : IsOpen W) (hxW : x ∈ W) :
+    h.localInverseAt x hx ⁻¹' W ∈ 𝓝 (f x) := by
+  classical
+  obtain ⟨U, V, hUopen, hVopen, hxU, hfxV, hbij, _hright_branch, hleft_branch⟩ :=
+    h.localInverse_is_inverse hx
+  -- Derive deriv ≠ 0 from compatibility.
+  have hramAt : mapAnalyticOrderAt f x = 1 := by
+    rw [← h.ramificationIndex_eq_mapAnalyticOrderAt hcompat (hHol.holomorphicAt x)]
+    exact hx
+  have hderiv : deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 := by
+    have h_order : analyticOrderAt
+        (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
+        (chartAt ℂ x x) = 1 := by
+      convert hramAt using 1
+      unfold mapAnalyticOrderAt
+      simp +decide [analyticOrderNatAt]
+    have h_deriv_an : AnalyticAt ℂ
+        (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
+        (chartAt ℂ x x) :=
+      (hHol.holomorphicAt x).sub analyticAt_const
+    have h_deriv_order : analyticOrderAt
+        (deriv (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x)))
+        (chartAt ℂ x x) = 0 := by
+      have := AnalyticAt.analyticOrderAt_deriv_add_one h_deriv_an
+      aesop
+    rw [analyticOrderAt_eq_zero] at h_deriv_order
+    rcases h_deriv_order with hzero | hnezero
+    · exfalso; exact hzero (AnalyticAt.deriv h_deriv_an)
+    · simpa [deriv_sub_const] using hnezero
+  -- Construct the analytic local inverse and prove Tendsto.
+  let analyticInv : Y → X := (hHol.holomorphicAt x).localInverse hderiv
+  let F : ℂ → ℂ := chartLocalAt f x
+  let z₀ : ℂ := chartAt ℂ x x
+  let w₀ : ℂ := chartAt ℂ (f x) (f x)
+  let r : ℂ → ℂ :=
+    (hHol.holomorphicAt x).hasStrictDerivAt.localInverse F
+      (deriv F z₀) z₀ hderiv
+  have hFz₀ : F z₀ = w₀ := by simp [F, z₀, w₀]
+  have hr_z₀ : r w₀ = z₀ := by
+    dsimp [r]
+    rw [← hFz₀]
+    exact (HasStrictDerivAt.eventually_left_inverse
+      (f := F) (f' := deriv F z₀) (a := z₀)
+      (hf := (hHol.holomorphicAt x).hasStrictDerivAt) (hf' := hderiv)).self_of_nhds
+  have hlocalInv_tendsto : Filter.Tendsto analyticInv (𝓝 (f x)) (𝓝 x) := by
+    have hr_an : AnalyticAt ℂ r w₀ := by
+      dsimp [r, F, z₀, w₀]
+      simpa [F, z₀, w₀, hFz₀] using
+        (hHol.holomorphicAt x).analyticAt_localInverse hderiv
+    have hr_tendsto : Filter.Tendsto r (𝓝 w₀) (𝓝 z₀) := by
+      simpa [ContinuousAt, hr_z₀] using hr_an.continuousAt
+    have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
+        (𝓝 (f x)) (𝓝 w₀) := by
+      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+    have hsymm_tendsto : Filter.Tendsto (fun z => (chartAt ℂ x).symm z)
+        (𝓝 z₀) (𝓝 x) := by
+      have hcont := (chartAt ℂ x).continuousAt_symm
+        ((chartAt ℂ x).map_source (mem_chart_source ℂ x))
+      change Filter.Tendsto (fun z => (chartAt ℂ x).symm z) (𝓝 z₀)
+        (𝓝 ((chartAt ℂ x).symm z₀)) at hcont
+      simpa [z₀, (chartAt ℂ x).left_inv (mem_chart_source ℂ x)] using hcont
+    have hcomp := hsymm_tendsto.comp (hr_tendsto.comp hchart_tendsto)
+    simpa [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀, w₀] using hcomp
+  -- Show analyticInv = localInverseAt x hx eventually near f x.
+  have hanalyticInv_mem_U : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ U :=
+    hlocalInv_tendsto.eventually (hUopen.mem_nhds hxU)
+  have hanalyticInv_right : ∀ᶠ y in 𝓝 (f x), f (analyticInv y) = y := by
+    have hright_z : ∀ᶠ z in 𝓝 w₀, F (r z) = z := by
+      dsimp [r]
+      simpa [F, z₀, w₀, hFz₀] using
+        (HasStrictDerivAt.eventually_right_inverse
+          (f := F) (f' := deriv F z₀) (a := z₀)
+          (hf := (hHol.holomorphicAt x).hasStrictDerivAt) (hf' := hderiv))
+    have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
+        (𝓝 (f x)) (𝓝 w₀) := by
+      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+    have hright_y : ∀ᶠ y in 𝓝 (f x), F (r (chartAt ℂ (f x) y)) =
+        chartAt ℂ (f x) y :=
+      hchart_tendsto.eventually hright_z
+    have hy_source : ∀ᶠ y in 𝓝 (f x), y ∈ (chartAt ℂ (f x)).source :=
+      (chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x))
+    have hf_analyticInv_source : ∀ᶠ y in 𝓝 (f x),
+        f (analyticInv y) ∈ (chartAt ℂ (f x)).source := by
+      have htendsto : Filter.Tendsto (fun y => f (analyticInv y)) (𝓝 (f x)) (𝓝 (f x)) :=
+        Filter.Tendsto.comp hHol.continuous.continuousAt hlocalInv_tendsto
+      exact htendsto.eventually
+        ((chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x)))
+    filter_upwards [hright_y, hy_source, hf_analyticInv_source] with y hy_eq hy_src hfy_src
+    have hchart : chartAt ℂ (f x) (f (analyticInv y)) = chartAt ℂ (f x) y := by
+      simpa [analyticInv, IsHolomorphicAt.localInverse, F, r, z₀, w₀] using hy_eq
+    exact (chartAt ℂ (f x)).injOn hfy_src hy_src hchart
+  -- analyticInv y = h.localInverseAt x hx y eventually.
+  have heq : ∀ᶠ y in 𝓝 (f x), analyticInv y = h.localInverseAt x hx y := by
+    filter_upwards [hanalyticInv_mem_U, hanalyticInv_right] with y hy_an_U hy_an_right
+    have hleft := hleft_branch (analyticInv y) hy_an_U
+    rw [hy_an_right] at hleft
+    exact hleft.symm
+  -- Use Tendsto + eventually-eq to get preimage of W is a nhd.
+  have hW_nhd : W ∈ 𝓝 x := hW_open.mem_nhds hxW
+  have hanalyticInv_in_W : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ W :=
+    hlocalInv_tendsto.eventually hW_nhd
+  filter_upwards [hanalyticInv_in_W, heq] with y hy_an_W hy_eq
+  show h.localInverseAt x hx y ∈ W
+  rw [← hy_eq]; exact hy_an_W
 
 /--
 **Trace-locus pointwise holomorphic auxiliary for Provider (3).**
@@ -445,10 +545,10 @@ two is the chart-local identification of `localTraceAtRegularValue`
 with the global pointwise `traceAtRegularValue`.
 -/
 theorem regularLocus_dite_trace_holomorphicAt
-    (f : X → Y) (_hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
     (hbc : BranchedCoverData X Y f)
-    (_hcompat : hbc.RamificationIndexCompatible) :
+    (hcompat : hbc.RamificationIndexCompatible) :
     ∀ y ∈ regularLocus hbc,
       IsHolomorphicAt (fun y' : Y =>
         open Classical in
@@ -456,14 +556,188 @@ theorem regularLocus_dite_trace_holomorphicAt
           traceAtRegularValue hbc (fun x => η.toFun x) y' hy'
         else (0 : CotangentModelFiber ℂ)) y := by
   classical
-  intro y hyReg
-  have hy : isRegularValue hbc y := by
-    simpa [regularLocus] using hyReg
-  exact
-    (traceAtRegularValue_locally_holomorphic_on_regular_locus
-      f _hf η hbc _hcompat y hy).congr_of_eventuallyEq
-      (localTraceAtRegularValue_eq_traceAtRegularValue_germ
-        f _hf η hbc _hcompat y hy)
+  intro y hy_reg
+  have hy : isRegularValue hbc y := hy_reg
+  have hHol : IsHolomorphic f :=
+    isHolomorphic_of_contMDiff hf (hasLocalKfoldRamification_of_contMDiff hf)
+  have hloc_holo : IsHolomorphicAt
+      (localTraceAtRegularValue hbc hHol η y hy) y :=
+    localTraceAtRegularValue_holomorphic hbc hcompat hHol η y hy
+  refine hloc_holo.congr_of_eventuallyEq ?_
+  have hRegOpen : IsOpen (regularLocus hbc) := by
+    have hfin : ({y : Y | ¬ isRegularValue hbc y}).Finite :=
+      branchLocus_finite hbc
+    have hC : IsClosed ({y : Y | ¬ isRegularValue hbc y}) := hfin.isClosed
+    have hco : IsOpen ({y : Y | ¬ isRegularValue hbc y}ᶜ) := hC.isOpen_compl
+    convert hco using 1
+    ext z; simp [regularLocus]
+  have hReg_mem : regularLocus hbc ∈ 𝓝 y := hRegOpen.mem_nhds hy_reg
+  set S : Finset X := (hbc.finite_fiber y).toFinset with hS_def
+  have hfiber_eq : ∀ {x : X}, x ∈ S ↔ x ∈ f ⁻¹' {y} := by
+    intro x; rw [hS_def, Set.Finite.mem_toFinset]
+  -- T2 separation gives raw pairwise disjoint nhds W₀ x.
+  have hS_fin : (S : Set X).Finite := S.finite_toSet
+  obtain ⟨W₀, hW₀_local, hW₀_disj⟩ := hS_fin.exists_pairwiseDisjoint_open_nhds
+  -- For each x ∈ S, ramification index = 1, so the BCD provides U₀ x, V₀ x
+  -- with f bijective from U₀ x to V₀ x and inverse identities. Build
+  -- `W x := W₀ x ∩ U₀ x`: open, contains x (since x ∈ U₀ x and x ∈ W₀ x),
+  -- pairwise disjoint (W₀'s are), and inside U₀ x so `hleft` applies for any
+  -- x' ∈ W x giving `localInverseAt x hx_ram (f x') = x'`.
+  -- Then use continuity of localInverseAt x at f x = y to find a Y-nhd V₁ x
+  -- such that localInverseAt x hx_ram(V₁ x) ⊆ W x.
+  have hper_x : ∀ x : X, x ∈ S → ∃ (Wx : Set X) (V₁ : Set Y),
+        IsOpen Wx ∧ IsOpen V₁ ∧ x ∈ Wx ∧ y ∈ V₁ ∧
+        (∀ x₁ ∈ S, ∀ x₂ ∈ S, x₁ ≠ x₂ → x = x₁ ∨ x = x₂ → True) ∧
+        (∀ hx_ram : hbc.ramificationIndex x = 1,
+          (∀ z ∈ V₁, f (hbc.localInverseAt x hx_ram z) = z ∧
+                      hbc.localInverseAt x hx_ram z ∈ Wx) ∧
+          (∀ x' ∈ Wx, hbc.localInverseAt x hx_ram (f x') = x')) ∧
+        Wx ⊆ W₀ x := by
+    intro x hxS
+    have hx_fiber : x ∈ f ⁻¹' {y} := hfiber_eq.mp hxS
+    have hx_ram : hbc.ramificationIndex x = 1 := hy x hx_fiber
+    obtain ⟨U₀, V₀, hU₀_open, hV₀_open, hxU₀, hfxV₀, _hbij, hright, hleft⟩ :=
+      hbc.localInverse_is_inverse hx_ram
+    have hfx_eq : f x = y := hx_fiber
+    -- Wx := W₀ x ∩ U₀: open, x ∈ Wx, Wx ⊆ U₀, Wx ⊆ W₀ x.
+    let Wx : Set X := W₀ x ∩ U₀
+    have hWx_open : IsOpen Wx := (hW₀_local x hxS).1.inter hU₀_open
+    have hxWx : x ∈ Wx := ⟨(hW₀_local x hxS).2, hxU₀⟩
+    have hWx_sub_U₀ : Wx ⊆ U₀ := fun _ h => h.2
+    have hWx_sub_W₀ : Wx ⊆ W₀ x := fun _ h => h.1
+    have hWx_pre : hbc.localInverseAt x hx_ram ⁻¹' Wx ∈ 𝓝 (f x) :=
+      localInverseAt_preimage_mem_nhds hbc hcompat hHol x hx_ram hWx_open hxWx
+    -- Get an open V₁'' ⊆ preimage of Wx, containing f x.
+    obtain ⟨V₁'', hV₁''_sub, hV₁''_open, hyV₁''⟩ := mem_nhds_iff.mp hWx_pre
+    refine ⟨Wx, V₀ ∩ V₁'', hWx_open, hV₀_open.inter hV₁''_open, hxWx, ?_, ?_, ?_, hWx_sub_W₀⟩
+    · -- y ∈ V₀ ∩ V₁''
+      refine ⟨?_, ?_⟩
+      · rw [← hfx_eq]; exact hfxV₀
+      · rw [← hfx_eq]; exact hyV₁''
+    · intros; trivial
+    · intro hx_ram'
+      refine ⟨?_, ?_⟩
+      · intro z ⟨hz_V₀, hz_V₁''⟩
+        have h_eq_ram : hx_ram' = hx_ram := rfl
+        refine ⟨?_, ?_⟩
+        · rw [h_eq_ram]; exact hright z hz_V₀
+        · rw [h_eq_ram]; exact hV₁''_sub hz_V₁''
+      · intro x' hx'Wx
+        have h_eq_ram : hx_ram' = hx_ram := rfl
+        rw [h_eq_ram]
+        exact hleft x' (hWx_sub_U₀ hx'Wx)
+  -- Choose Wx, V₁ etc.
+  choose! Wx V₁ hWx_open hV₁_open hxWx hyV₁ _hdisj_trivial hWx_inv hWx_sub_W₀
+    using hper_x
+  -- Pairwise disjointness of Wx (using hWx_sub_W₀).
+  have hWx_disj : ∀ x₁ ∈ S, ∀ x₂ ∈ S, x₁ ≠ x₂ → Disjoint (Wx x₁) (Wx x₂) := by
+    intro x₁ hx₁ x₂ hx₂ hne
+    exact (hW₀_disj hx₁ hx₂ hne).mono (hWx_sub_W₀ x₁ hx₁) (hWx_sub_W₀ x₂ hx₂)
+  -- V := ⋂ x ∈ S, V₁ x. Open nhd of y.
+  have hV_int_nhds : (⋂ x ∈ (S : Set X), V₁ x) ∈ 𝓝 y := by
+    refine (Filter.biInter_finset_mem S).mpr ?_
+    intro x hxS
+    exact (hV₁_open x hxS).mem_nhds (hyV₁ x hxS)
+  -- Ω := ⋃ x ∈ S, Wx x. Open set in X containing fiber(y).
+  let Ω : Set X := ⋃ x ∈ (S : Set X), Wx x
+  have hΩ_open : IsOpen Ω :=
+    isOpen_biUnion (fun x hxS => hWx_open x hxS)
+  have hFiber_sub_Ω : f ⁻¹' {y} ⊆ Ω := by
+    intro x hx_fib
+    have hxS : x ∈ S := hfiber_eq.mpr hx_fib
+    exact Set.mem_biUnion (Finset.mem_coe.mpr hxS) (hxWx x hxS)
+  have hFiber_eventually : ∀ᶠ y' in 𝓝 y, f ⁻¹' {y'} ⊆ Ω :=
+    eventually_fiber_subset_of_compact_T2 hHol.continuous hΩ_open hFiber_sub_Ω
+  filter_upwards [hFiber_eventually, hV_int_nhds, hReg_mem] with
+    y' hy'_fib hy'_V hy'_regset
+  have hy'_reg : isRegularValue hbc y' := hy'_regset
+  show localTraceAtRegularValue hbc hHol η y hy y' = _
+  rw [dif_pos hy'_reg]
+  have hx_ram_of_S : ∀ x ∈ S, hbc.ramificationIndex x = 1 := by
+    intro x hxS; exact hy x (hfiber_eq.mp hxS)
+  -- The local-inverse bijection φ.
+  let φ : ∀ x : X, x ∈ S → X := fun x hxS =>
+    hbc.localInverseAt x (hx_ram_of_S x hxS) y'
+  have hy'_in_V₁ : ∀ x ∈ S, y' ∈ V₁ x := by
+    intro x hxS
+    exact (Set.mem_iInter₂.mp hy'_V) x (Finset.mem_coe.mpr hxS)
+  have hφ_f : ∀ x : X, ∀ hxS : x ∈ S, f (φ x hxS) = y' := by
+    intro x hxS
+    have := ((hWx_inv x hxS) (hx_ram_of_S x hxS)).1 y' (hy'_in_V₁ x hxS)
+    exact this.1
+  have hφ_in_Wx : ∀ x : X, ∀ hxS : x ∈ S, φ x hxS ∈ Wx x := by
+    intro x hxS
+    have := ((hWx_inv x hxS) (hx_ram_of_S x hxS)).1 y' (hy'_in_V₁ x hxS)
+    exact this.2
+  have hφ_toFinset : ∀ x : X, ∀ hxS : x ∈ S,
+      φ x hxS ∈ (hbc.finite_fiber y').toFinset := by
+    intro x hxS
+    rw [Set.Finite.mem_toFinset]
+    exact hφ_f x hxS
+  have hφ_inj : ∀ x₁ : X, ∀ hx₁ : x₁ ∈ S, ∀ x₂ : X, ∀ hx₂ : x₂ ∈ S,
+      φ x₁ hx₁ = φ x₂ hx₂ → x₁ = x₂ := by
+    intro x₁ hx₁ x₂ hx₂ heq
+    by_contra hne
+    have hdisj : Disjoint (Wx x₁) (Wx x₂) := hWx_disj x₁ hx₁ x₂ hx₂ hne
+    have h1 : φ x₁ hx₁ ∈ Wx x₁ := hφ_in_Wx x₁ hx₁
+    have h2 : φ x₂ hx₂ ∈ Wx x₂ := hφ_in_Wx x₂ hx₂
+    rw [heq] at h1
+    exact (Set.disjoint_iff.mp hdisj) ⟨h1, h2⟩
+  have hφ_surj : ∀ x' ∈ (hbc.finite_fiber y').toFinset,
+      ∃ (x : X) (hxS : x ∈ S), φ x hxS = x' := by
+    intro x' hx'
+    have hx'_fib : x' ∈ f ⁻¹' {y'} :=
+      (Set.Finite.mem_toFinset _).mp hx'
+    have hx'_in_Ω : x' ∈ Ω := hy'_fib hx'_fib
+    rcases Set.mem_iUnion₂.mp hx'_in_Ω with ⟨x, hxS_coe, hx'_in_Wx⟩
+    have hxS : x ∈ S := Finset.mem_coe.mp hxS_coe
+    refine ⟨x, hxS, ?_⟩
+    -- φ x hxS = localInverseAt x (hx_ram_of_S x hxS) y'.
+    -- We need this = x'.  Since x' ∈ Wx x and f x' = y', and (Wx x, V₁ x) is
+    -- a "section" pair with the left-inverse identity on Wx x:
+    --   localInverseAt x hx_ram (f x') = x'  (from hWx_inv x hxS hx_ram .2).
+    -- And f x' = y', so localInverseAt x hx_ram y' = x', as needed.
+    have hfx' : f x' = y' := hx'_fib
+    have hLI := ((hWx_inv x hxS) (hx_ram_of_S x hxS)).2 x' hx'_in_Wx
+    -- hLI : hbc.localInverseAt x (hx_ram_of_S x hxS) (f x') = x'.
+    show hbc.localInverseAt x (hx_ram_of_S x hxS) y' = x'
+    rw [← hfx']; exact hLI
+  -- Use Finset.sum_nbij' with i, j inverses.
+  unfold localTraceAtRegularValue traceAtRegularValue
+  -- choose: hφ_surj_choice extracts the unique x ∈ S from a fiber-point x'.
+  -- For each x' ∈ fiber(y'), pick (xOfFib x', hxOfFib_mem) such that φ xOfFib x' (...) = x'.
+  let xOfFib : ∀ x' : X, x' ∈ (hbc.finite_fiber y').toFinset → X :=
+    fun x' hx' => (hφ_surj x' hx').choose
+  let xOfFib_mem : ∀ x' : X, ∀ hx' : x' ∈ (hbc.finite_fiber y').toFinset,
+      xOfFib x' hx' ∈ S := fun x' hx' => (hφ_surj x' hx').choose_spec.choose
+  have xOfFib_eq : ∀ x' : X, ∀ hx' : x' ∈ (hbc.finite_fiber y').toFinset,
+      φ (xOfFib x' hx') (xOfFib_mem x' hx') = x' :=
+    fun x' hx' => (hφ_surj x' hx').choose_spec.choose_spec
+  refine Finset.sum_bij'
+    (i := fun (z : { x // x ∈ S }) (_ : z ∈ S.attach) =>
+      (⟨φ z.1 z.2, hφ_toFinset z.1 z.2⟩ :
+        { x // x ∈ (hbc.finite_fiber y').toFinset }))
+    (j := fun (z' : { x // x ∈ (hbc.finite_fiber y').toFinset })
+        (_ : z' ∈ (hbc.finite_fiber y').toFinset.attach) =>
+      (⟨xOfFib z'.1 z'.2, xOfFib_mem z'.1 z'.2⟩ : { x // x ∈ S }))
+    ?_ ?_ ?_ ?_ ?_
+  · intro z _; exact Finset.mem_attach _ _
+  · intro z' _; exact Finset.mem_attach _ _
+  · intro z _
+    apply Subtype.ext
+    show xOfFib (φ z.1 z.2) (hφ_toFinset z.1 z.2) = z.1
+    have hee := xOfFib_eq (φ z.1 z.2) (hφ_toFinset z.1 z.2)
+    have hxof_S := xOfFib_mem (φ z.1 z.2) (hφ_toFinset z.1 z.2)
+    exact hφ_inj _ hxof_S _ z.2 hee
+  · intro z' _
+    apply Subtype.ext
+    show φ (xOfFib z'.1 z'.2) (xOfFib_mem z'.1 z'.2) = z'.1
+    exact xOfFib_eq z'.1 z'.2
+  · intro z _
+    show localPullbackAt hbc hHol η z.1 (hy z.1 ((Set.Finite.mem_toFinset _).mp z.2)) y' =
+      cotangentPushforward f (φ z.1 z.2) (η.toFun (φ z.1 z.2))
+    unfold localPullbackAt
+    rfl
 
 
 private theorem traceForm_extension_per_BCD
