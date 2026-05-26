@@ -88,6 +88,43 @@ structure DeRhamComparisonMap1Spec
         exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)
 
 /--
+**Frontier provider for prescribed periods.** This is the surjectivity
+half of degree-1 de Rham comparison: every integral-cycle functional is
+represented by integrating a global closed 1-form.
+-/
+theorem deRhamComparisonMap1_exists_form_with_periods_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
+  -- De Rham comparison theorem. Since `deRhamComparisonMap1` is opaque, a proof
+  -- needs the actual integration map, a good-cover/Cech or singular-cochain
+  -- construction of a closed representative, and the period comparison equation
+  -- for every integral cycle.
+  sorry
+
+/--
+**Frontier provider for zero-period primitives.** This is the injectivity
+half of degree-1 de Rham comparison: zero periods force exactness.
+-/
+theorem deRhamComparisonMap1_primitive_exists_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  -- De Rham comparison/injectivity theorem. A proof must construct the global
+  -- path-integral primitive and prove it is smooth with derivative `ω`; the
+  -- current surrogate differential-form API does not expose path integration or
+  -- the fundamental theorem for forms.
+  sorry
+
+/--
 Narrow consumers should take `DeRhamComparisonMap1Spec X` explicitly
 instead of calling this provider internally.
 -/
@@ -97,18 +134,8 @@ def deRhamComparisonMap1Spec_frontier
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     DeRhamComparisonMap1Spec X := {
-  exists_form_with_periods := fun φ => by
-    -- comparison theorem.  Since `deRhamComparisonMap1` is opaque, a proof needs
-    -- the actual integration map, a good-cover/Cech or singular-cochain
-    -- construction of a closed representative, and the period comparison
-    -- equation for every integral cycle.
-    sorry
-  primitive_exists := fun ω hω => by
-    -- comparison/injectivity theorem.  A proof must construct the global
-    -- path-integral primitive and prove it is smooth with derivative `ω`;
-    -- the current surrogate differential-form API does not expose path
-    -- integration or the fundamental theorem for forms.
-    sorry
+  exists_form_with_periods := deRhamComparisonMap1_exists_form_with_periods_frontier X
+  primitive_exists := deRhamComparisonMap1_primitive_exists_frontier X
 }
 
 /--
