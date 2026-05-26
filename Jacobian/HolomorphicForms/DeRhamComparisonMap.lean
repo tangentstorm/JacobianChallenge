@@ -824,6 +824,45 @@ theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_
   simpa [ExactForm, exteriorDerivative] using hθ.symm
 
 /--
+**Derivative correctness for the direct primitive exactness primitive split.**
+This isolates the remaining comparison input for the named path-integral
+primitive candidate.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  -- Direct primitive exactness primitive derivative frontier for zero periods.
+  sorry
+
+/--
+**Direct primitive exactness primitive from derivative correctness.** Once
+the named path-integral primitive has the required derivative, primitive
+existence is just the corresponding existential package.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
 **Primitive existence for the direct primitive exactness membership split.**
 This is the remaining comparison input behind exactness in this branch.
 -/
@@ -833,11 +872,14 @@ theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactnes
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (_hω : deRhamComparisonMap1 X ω = 0) :
+    (hω : deRhamComparisonMap1 X ω = 0) :
     ∃ θ : SmoothDiffForm 0 X,
       exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
-  -- Direct primitive exactness primitive frontier for zero comparison periods.
-  sorry
+  exact
+    deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_of_derivative_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_frontier
+        X ω hω)
 
 /--
 **Direct primitive exactness membership from primitive existence.** Since
