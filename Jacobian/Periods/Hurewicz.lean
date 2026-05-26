@@ -3360,82 +3360,21 @@ theorem polygon4g_single_sum_coefficients
   simp [Pi.single_apply]
 
 /--
-A raw scalar edge-coordinate cocycle together with its
-edge-normalization proof.
+Pointwise coefficient form of edge-chain boundary independence.
 
-This is the remaining scalar-coordinate geometric input: construct an
-integer singular one-cocycle whose values on the concrete edge loops
-are the Kronecker delta for `target`.
+This is the remaining scalar-coordinate geometric input needed for
+edge independence: if a singular two-boundary is a finite sum of
+concrete edge chains, then the coefficient of each target edge is zero.
 -/
-theorem edgeBoundaryCoefficientScalarFunctionalData
+theorem edgeChain_sum_boundary_scalar_coefficient_zero
     (g : ℕ) (target : Fin (2 * (g + 1)))
-    : Nonempty (EdgeBoundaryCoefficientScalarFunctionalData g target) := by
+    (v : Polygon4gAbelianization g)
+    (B : ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).X₁)
+    (hB :
+      ModuleCat.Hom.hom (((singularChainComplexZ (Polygon4g (g + 1))).sc 1).f) B =
+        ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) :
+    v target = 0 := by
   sorry
-
-/-- Local provider for raw normalized scalar edge-coordinate cocycles. -/
-theorem edgeBoundaryCoefficientRawScalarCochainData_normalized_boundary_zero
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    : ∃ raw : EdgeBoundaryCoefficientRawScalarCochainData g target,
-      EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized g target raw ∧
-        EdgeBoundaryCoefficientRawScalarCochainBoundaryZero g target raw := by
-  obtain ⟨data⟩ := edgeBoundaryCoefficientScalarFunctionalData g target
-  exact ⟨edgeBoundaryCoefficientRawScalarCochainData_of_functional g target data,
-    edgeBoundaryCoefficientRawScalarCochainData_of_functional_properties
-      g target data⟩
-
-/-- Local provider for normalized scalar edge-coordinate cochains. -/
-theorem edgeBoundaryCoefficientScalarCochainData
-    (g : ℕ) (target : Fin (2 * (g + 1))) :
-    Nonempty (EdgeBoundaryCoefficientScalarCochainData g target) := by
-  obtain ⟨raw, hedge, _hboundary⟩ :=
-    edgeBoundaryCoefficientRawScalarCochainData_normalized_boundary_zero
-      g target
-  exact ⟨edgeBoundaryCoefficientScalarCochainData_of_raw g target raw hedge⟩
-
-/--
-Local provider for a normalized scalar edge-coordinate cocycle.
-
-The statement is existential: it asks for one normalized scalar cochain
-with the cocycle condition, not for every edge-normalized cochain to
-kill singular two-boundaries.
--/
-theorem edgeBoundaryCoefficientScalarCochainData_boundary_zero
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    : ∃ cochain : EdgeBoundaryCoefficientScalarCochainData g target,
-      EdgeBoundaryCoefficientScalarCochainBoundaryZero g target cochain := by
-  obtain ⟨raw, hedge, hboundary⟩ :=
-    edgeBoundaryCoefficientRawScalarCochainData_normalized_boundary_zero
-      g target
-  exact ⟨edgeBoundaryCoefficientScalarCochainData_of_raw g target raw hedge,
-    hboundary⟩
-
-/-- Local provider for scalar edge-coordinate singular cocycles. -/
-theorem edgeBoundaryCoefficientScalarData
-    (g : ℕ) (target : Fin (2 * (g + 1))) :
-    Nonempty (EdgeBoundaryCoefficientScalarData g target) := by
-  obtain ⟨cochain, hboundary⟩ :=
-    edgeBoundaryCoefficientScalarCochainData_boundary_zero g target
-  exact ⟨edgeBoundaryCoefficientScalarData_of_cochain g target cochain
-    hboundary⟩
-
-/-- Local provider for the chain-level edge coefficient functional. -/
-theorem edgeBoundaryCoefficientSimplexData (g : ℕ) :
-    Nonempty (EdgeBoundaryCoefficientSimplexData g) := by
-  classical
-  have hscalar :
-      ∀ target : Fin (2 * (g + 1)),
-        ∃ data : EdgeBoundaryCoefficientScalarData g target, True := by
-    intro target
-    obtain ⟨data⟩ := edgeBoundaryCoefficientScalarData g target
-    exact ⟨data, trivial⟩
-  choose scalarData _ using hscalar
-  exact ⟨edgeBoundaryCoefficientSimplexData_of_scalarData g scalarData⟩
-
-/-- Local provider for the chain-level edge coefficient functional. -/
-theorem edgeBoundaryCoefficientFunctionalData (g : ℕ) :
-    Nonempty (EdgeBoundaryCoefficientFunctionalData g) := by
-  obtain ⟨data⟩ := edgeBoundaryCoefficientSimplexData g
-  exact ⟨edgeBoundaryCoefficientFunctionalData_of_simplexData g data⟩
 
 /--
 Kernel-zero form of edge independence.
@@ -3451,33 +3390,8 @@ theorem edgeChain_sum_boundary_coefficients_zero
       ModuleCat.Hom.hom (((singularChainComplexZ (Polygon4g (g + 1))).sc 1).f) B =
         ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) :
     v = 0 := by
-  obtain ⟨data⟩ := edgeBoundaryCoefficientFunctionalData g
-  let K := singularChainComplexZ (Polygon4g (g + 1))
-  have hleft : data.coeffC1.hom (ModuleCat.Hom.hom ((K.sc 1).f) B) = 0 := by
-    change ModuleCat.Hom.hom (((K.sc 1).f ≫ data.coeffC1)) B = 0
-    rw [data.coeffC1_boundary_zero]
-    rfl
-  have hright :
-      data.coeffC1.hom
-        (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) = v := by
-    rw [map_sum]
-    calc
-      ∑ e : Fin (2 * (g + 1)), data.coeffC1.hom (v e • edgeChain g e)
-          =
-        ∑ e : Fin (2 * (g + 1)), v e • data.coeffC1.hom (edgeChain g e) := by
-          refine Finset.sum_congr rfl ?_
-          intro e _he
-          rw [map_zsmul]
-      _ = ∑ e : Fin (2 * (g + 1)), v e • (Pi.single e 1 :
-            Polygon4gAbelianization g) := by
-          refine Finset.sum_congr rfl ?_
-          intro e _he
-          rw [data.coeffC1_edge e]
-      _ = v := polygon4g_single_sum_coefficients g v
-  have hv : 0 = v := by
-    rw [← hright, ← hB]
-    exact hleft.symm
-  exact hv.symm
+  funext target
+  exact edgeChain_sum_boundary_scalar_coefficient_zero g target v B hB
 
 /--
 Homology-kernel form of edge independence, reduced to the concrete
