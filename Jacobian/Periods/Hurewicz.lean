@@ -3149,6 +3149,44 @@ lemma IsCanonicalEdgeArcResidue.to_edgeArcIdx
     omega
 
 /--
+No direct side-pairing generator relates two midpoint arcs that both lie
+in the canonical residue range.
+-/
+theorem boundary_midpoint_sideGen_residue_absurd
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_h :
+      Polygon4g.SideGen (g + 1)
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    False := by
+  sorry
+
+/--
+Midpoint `EqvGen` separation for canonical-residue arcs, assuming the
+direct side-generator obstruction for canonical-residue endpoints.
+-/
+theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_and_sideGen_absurd
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_hstep :
+      ∀ {a b : ℕ},
+        IsCanonicalEdgeArcResidue g a →
+        IsCanonicalEdgeArcResidue g b →
+        Polygon4g.SideGen (g + 1)
+          (boundaryParam (g + 1) a (1 / 2 : ℝ))
+          (boundaryParam (g + 1) b (1 / 2 : ℝ)) →
+        False)
+    (_h :
+      Relation.EqvGen (Polygon4g.SideGen (g + 1))
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    a = b := by
+  sorry
+
+/--
 Midpoint `SideRel` between two boundary-arc indices in the canonical
 residue range forces the raw arc indices to agree.
 -/
@@ -3161,7 +3199,11 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen
         (boundaryParam (g + 1) a (1 / 2 : ℝ))
         (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
     a = b := by
-  sorry
+  exact boundary_midpoint_sideRel_residue_eq_of_eqvGen_and_sideGen_absurd
+    g a b _ha _hb
+    (fun ha hb hstep =>
+      boundary_midpoint_sideGen_residue_absurd g _ _ ha hb hstep)
+    _h
 
 /--
 Midpoint `SideRel` between two boundary-arc indices in the canonical
