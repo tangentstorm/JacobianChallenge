@@ -3,6 +3,7 @@ import Jacobian.Periods.Polygon4gEdgeChain
 import Mathlib.Algebra.Category.ModuleCat.Products
 import Mathlib.Algebra.DirectSum.Finsupp
 import Mathlib.Algebra.Homology.ConcreteCategory
+import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 import Mathlib.LinearAlgebra.Pi
 import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 import Mathlib.LinearAlgebra.Matrix.SemiringInverse
@@ -2011,6 +2012,100 @@ theorem singularChainCoproduct_sum_support_decomposition
     simp
 
 /--
+A finite-support presentation of a singular `n`-chain as an integral
+sum of singular `n`-simplices.
+-/
+structure SingularChainSupportDecomposition
+    (X : Type) [TopologicalSpace X] (n : ℕ)
+    (z : SingularChainCoproduct X n) where
+  Simplex : Type
+  simplexFintype : Fintype Simplex
+  coeff : Simplex → ℤ
+  simplex : Simplex → C(stdSimplex ℝ (Fin (n + 1)), X)
+  chain_eq :
+    z = ∑ s : Simplex, coeff s • singularChainElement (simplex s)
+
+/--
+Atomic finite-support algebra leaf in arbitrary degree: every
+coproduct singular chain has a finite presentation by basis singular
+simplices.
+-/
+theorem singularChainCoproduct_sum_support_decomposition_degree
+    (X : Type) [TopologicalSpace X] (n : ℕ)
+    (z : SingularChainCoproduct X n) :
+    Nonempty (SingularChainSupportDecomposition X n z) := by
+  classical
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋n⦌)
+  let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
+  let iso := ModuleCat.coprodIsoDirectSum Z
+  let dz : DirectSum I (fun i => (Z i : Type)) := iso.hom.hom z
+  let f : I →₀ ℤ := (finsuppLEquivDirectSum ℤ ℤ I).symm dz
+  let Simplex := {i : I // i ∈ f.support}
+  refine ⟨{
+    Simplex := Simplex
+    simplexFintype := inferInstance
+    coeff := fun s => f s.1
+    simplex := fun s => (singularChainSimplexIndex X n).symm s.1
+    chain_eq := ?_
+  }⟩
+  change z =
+    ∑ s : Simplex,
+      f s.1 • singularChainElement ((singularChainSimplexIndex X n).symm s.1)
+  have hinj : Function.Injective iso.hom.hom := by
+    intro a b h
+    have h2 := congrArg iso.inv.hom h
+    simpa [iso, Z] using h2
+  apply hinj
+  rw [map_sum]
+  simp only [map_zsmul]
+  have hdz : dz = (finsuppLEquivDirectSum ℤ ℤ I) f := by
+    simp [f, dz]
+  change dz =
+    ∑ x : Simplex,
+      f x.1 • iso.hom.hom
+        (singularChainElement ((singularChainSimplexIndex X n).symm x.1))
+  rw [hdz]
+  have hι (i : I) :
+      iso.hom.hom ((Sigma.ι Z i).hom (1 : ℤ)) =
+        DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ) := by
+    have hm := ModuleCat.ι_coprodIsoDirectSum_hom Z i
+    have hh := congrArg ModuleCat.Hom.hom hm
+    exact congrArg (fun f => f (1 : ℤ)) hh
+  have hsum :
+      (∑ x : Simplex,
+          f x.1 • iso.hom.hom
+            (singularChainElement ((singularChainSimplexIndex X n).symm x.1))) =
+        ∑ i ∈ f.support, f i • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ) := by
+    change
+      (∑ x ∈ f.support.attach,
+          f x.1 • iso.hom.hom
+            (singularChainElement ((singularChainSimplexIndex X n).symm x.1))) =
+        ∑ i ∈ f.support, f i • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ)
+    simpa [singularChainElement, I, Z, iso, hι] using
+      (Finset.sum_attach f.support
+        (fun i => f i • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ)))
+  rw [hsum]
+  rw [← Finsupp.sum_of_support_subset f
+    (show f.support ⊆ f.support from fun _ h => h)
+    (fun i c => c • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ))]
+  · calc
+      (finsuppLEquivDirectSum ℤ ℤ I) f
+          = (finsuppLEquivDirectSum ℤ ℤ I)
+              (f.sum fun i c => Finsupp.single i c) := by
+              rw [Finsupp.sum_single]
+      _ = f.sum
+            (fun i c => (finsuppLEquivDirectSum ℤ ℤ I) (Finsupp.single i c)) := by
+              simp [Finsupp.sum, map_sum]
+      _ = f.sum
+            (fun i c => c • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ)) := by
+              apply Finsupp.sum_congr
+              intro i _hi
+              simpa [finsuppLEquivDirectSum_single] using
+                ((DirectSum.lof ℤ I (fun _ : I => ℤ) i).map_smul (f i) (1 : ℤ))
+  · intro i _hi
+    simp
+
+/--
 Lift data summed over a finite-support presentation of a polygon
 singular one-chain.  This is still before endpoint repair: it only says
 each support simplex has a subdivision/lift package and records the
@@ -2841,6 +2936,585 @@ theorem polygon4g_project_repaired_disk_cycle_to_edgeBasis
   simp
 
 /--
+Zero homology class means an explicit singular two-boundary.
+
+This is the concrete `ModuleCat` quotient form of first singular
+homology specialized to one-cycles.
+-/
+theorem singularH1ClassOfCycle_eq_zero_boundary
+    (X : Type) [TopologicalSpace X]
+    (z : SingularChainCoproduct X 1)
+    (hz : (singularChainComplexZ X).d 1 0 z = 0)
+    (h : singularH1ClassOfCycle X z hz = 0) :
+    ∃ B : ((singularChainComplexZ X).sc 1).X₁,
+      ModuleCat.Hom.hom (((singularChainComplexZ X).sc 1).f) B = z := by
+  let K := singularChainComplexZ X
+  let S := K.sc 1
+  let c : K.cycles 1 :=
+    K.cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz
+  have hπ :
+      ModuleCat.Hom.hom (K.homologyπ 1) c = 0 := by
+    change singularH1ClassOfCycle X z hz = 0 at h
+    simpa [K, c, singularH1ClassOfCycle] using h
+  have hπS :
+      ModuleCat.Hom.hom S.homologyπ c = 0 := by
+    simpa [S, K] using hπ
+  have hq :
+      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.π
+          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) = 0 := by
+    have hπiso :
+        ModuleCat.Hom.hom (S.homologyπ ≫ S.moduleCatHomologyIso.hom) c = 0 := by
+      rw [ModuleCat.comp_apply, hπS, map_zero]
+    rwa [S.π_moduleCatCyclesIso_hom] at hπiso
+  have hmem :
+      ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c ∈
+        LinearMap.range S.moduleCatLeftHomologyData.f'.hom := by
+    simpa [ShortComplex.moduleCatLeftHomologyData_π_hom] using
+      (Submodule.Quotient.mk_eq_zero
+        (LinearMap.range S.moduleCatLeftHomologyData.f'.hom)).1 hq
+  rcases hmem with ⟨B, hB⟩
+  refine ⟨B, ?_⟩
+  have hBsub :
+      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatLeftHomologyData.f' B) =
+        ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) := by
+    rw [hB]
+  have hcycleSub :
+      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) =
+        ModuleCat.Hom.hom S.iCycles c := by
+    change
+      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) =
+        ModuleCat.Hom.hom S.iCycles c
+    rw [← ModuleCat.comp_apply, S.moduleCatCyclesIso_hom_i]
+  calc
+    ModuleCat.Hom.hom (((singularChainComplexZ X).sc 1).f) B =
+        ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatLeftHomologyData.f' B) := by
+          change ModuleCat.Hom.hom S.f B =
+            ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+              (ModuleCat.Hom.hom S.moduleCatLeftHomologyData.f' B)
+          rw [← ModuleCat.comp_apply, S.moduleCatLeftHomologyData.f'_i]
+    _ = ModuleCat.Hom.hom S.iCycles c := by
+      rw [hBsub, hcycleSub]
+    _ = z := by
+      exact K.i_cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz
+
+/--
+Chain-level edge coefficient functional data.
+
+This is the primitive chain statement behind edge independence: a
+linear coefficient reader on singular one-chains which kills singular
+two-boundaries and evaluates the concrete polygon edge chains as the
+standard coordinate basis.
+-/
+structure EdgeBoundaryCoefficientFunctionalData (g : ℕ) where
+  coeffC1 :
+    (singularChainComplexZ (Polygon4g (g + 1))).X 1 ⟶
+      ModuleCat.of ℤ (Polygon4gAbelianization g)
+  coeffC1_boundary_zero :
+    ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).f ≫ coeffC1 = 0
+  coeffC1_edge :
+    ∀ e : Fin (2 * (g + 1)), coeffC1.hom (edgeChain g e) = Pi.single e 1
+
+/--
+Simplex-level edge coefficient data.
+
+This is the geometric core of edge independence: assign an
+abelianized edge count to each singular one-simplex, in a way that
+vanishes on the alternating boundary of every singular two-simplex and
+reads the concrete polygon edge loops as the standard basis.
+-/
+structure EdgeBoundaryCoefficientSimplexData (g : ℕ) where
+  coeffSimplex :
+    C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) → Polygon4gAbelianization g
+  coeffSimplex_boundary_zero :
+    ∀ σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)),
+      (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
+        coeffSimplex (singularSimplexFace σ i)) = 0
+  coeffSimplex_edge :
+    ∀ e : Fin (2 * (g + 1)), coeffSimplex (edgeSimplex g e) = Pi.single e 1
+
+/--
+Scalar edge-coordinate singular cocycle data.
+
+For a fixed edge coordinate `target`, this records an integer-valued
+singular one-cochain which vanishes on every singular two-simplex
+boundary and reads the concrete edge loops by the Kronecker delta.
+-/
+structure EdgeBoundaryCoefficientScalarData
+    (g : ℕ) (target : Fin (2 * (g + 1))) where
+  coeffSimplexZ :
+    C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) → ℤ
+  coeffSimplexZ_boundary_zero :
+    ∀ σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)),
+      (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) *
+        coeffSimplexZ (singularSimplexFace σ i)) = 0
+  coeffSimplexZ_edge :
+    ∀ e : Fin (2 * (g + 1)),
+      coeffSimplexZ (edgeSimplex g e) = if e = target then 1 else 0
+
+/--
+Normalized scalar edge-coordinate cochain data, before imposing the
+cocycle condition.
+-/
+structure EdgeBoundaryCoefficientRawScalarCochainData
+    (g : ℕ) (target : Fin (2 * (g + 1))) where
+  coeffSimplexZ :
+    C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) → ℤ
+
+/-- Edge normalization for a raw scalar edge-coordinate cochain. -/
+def EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (raw : EdgeBoundaryCoefficientRawScalarCochainData g target) : Prop :=
+  ∀ e : Fin (2 * (g + 1)),
+    raw.coeffSimplexZ (edgeSimplex g e) = if e = target then 1 else 0
+
+structure EdgeBoundaryCoefficientScalarCochainData
+    (g : ℕ) (target : Fin (2 * (g + 1))) where
+  coeffSimplexZ :
+    C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) → ℤ
+  coeffSimplexZ_edge :
+    ∀ e : Fin (2 * (g + 1)),
+      coeffSimplexZ (edgeSimplex g e) = if e = target then 1 else 0
+
+/-- Assemble normalized scalar cochain data from raw data and edge normalization. -/
+def edgeBoundaryCoefficientScalarCochainData_of_raw
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (raw : EdgeBoundaryCoefficientRawScalarCochainData g target)
+    (hedge :
+      EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized g target raw) :
+    EdgeBoundaryCoefficientScalarCochainData g target where
+  coeffSimplexZ := raw.coeffSimplexZ
+  coeffSimplexZ_edge := hedge
+
+/-- Cocycle condition for a normalized scalar edge-coordinate cochain. -/
+def EdgeBoundaryCoefficientScalarCochainBoundaryZero
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (cochain : EdgeBoundaryCoefficientScalarCochainData g target) : Prop :=
+  ∀ σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)),
+    (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) *
+      cochain.coeffSimplexZ (singularSimplexFace σ i)) = 0
+
+/-- Assemble scalar cocycle data from a normalized cochain and its cocycle proof. -/
+def edgeBoundaryCoefficientScalarData_of_cochain
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (cochain : EdgeBoundaryCoefficientScalarCochainData g target)
+    (hboundary :
+      EdgeBoundaryCoefficientScalarCochainBoundaryZero g target cochain) :
+    EdgeBoundaryCoefficientScalarData g target where
+  coeffSimplexZ := cochain.coeffSimplexZ
+  coeffSimplexZ_boundary_zero := hboundary
+  coeffSimplexZ_edge := cochain.coeffSimplexZ_edge
+
+/-- Assemble vector-valued simplex coefficients from scalar coordinate cocycles. -/
+noncomputable def edgeBoundaryCoefficientSimplexData_of_scalarData
+    (g : ℕ)
+    (scalarData : ∀ target : Fin (2 * (g + 1)),
+      EdgeBoundaryCoefficientScalarData g target) :
+    EdgeBoundaryCoefficientSimplexData g := by
+  classical
+  refine
+    { coeffSimplex := fun σ target => (scalarData target).coeffSimplexZ σ
+      coeffSimplex_boundary_zero := ?_
+      coeffSimplex_edge := ?_ }
+  · intro σ
+    funext target
+    calc
+      (∑ i : Fin 3, (((-1 : ℤ) ^ (i : ℕ)) •
+          (fun target => (scalarData target).coeffSimplexZ
+            (singularSimplexFace σ i) :
+            Polygon4gAbelianization g)) target)
+          =
+        ∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) *
+          (scalarData target).coeffSimplexZ (singularSimplexFace σ i) := by
+          refine Finset.sum_congr rfl ?_
+          intro i _hi
+          simp
+      _ = 0 := (scalarData target).coeffSimplexZ_boundary_zero σ
+  · intro e
+    funext target
+    simp only [Pi.single_apply]
+    rw [(scalarData target).coeffSimplexZ_edge e]
+    by_cases h : target = e
+    · subst h
+      simp
+    · have h' : e ≠ target := by exact fun he => h he.symm
+      simp [h, h']
+
+/-- The linear extension of simplex-level edge coefficients to one-chains. -/
+noncomputable def edgeBoundaryCoefficientSimplexMap
+    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g) :
+    (singularChainComplexZ (Polygon4g (g + 1))).X 1 ⟶
+      ModuleCat.of ℤ (Polygon4gAbelianization g) := by
+  classical
+  let X := Polygon4g (g + 1)
+  let I1 := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋1⦌)
+  exact
+    Sigma.desc (fun s : I1 =>
+      ModuleCat.ofHom
+        (LinearMap.toSpanSingleton ℤ (Polygon4gAbelianization g)
+          (data.coeffSimplex ((singularChainSimplexIndex X 1).symm s))))
+
+/-- The extended simplex coefficient map evaluates generators as prescribed. -/
+theorem edgeBoundaryCoefficientSimplexMap_apply_singularChainElement
+    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g)
+    (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) :
+    (edgeBoundaryCoefficientSimplexMap g data).hom (singularChainElement σ) =
+      data.coeffSimplex σ := by
+  classical
+  let X := Polygon4g (g + 1)
+  let I1 := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋1⦌)
+  let Z1 : I1 → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
+  change
+    ModuleCat.Hom.hom
+      (Sigma.ι Z1 (singularChainSimplexIndex X 1 σ) ≫
+        edgeBoundaryCoefficientSimplexMap g data) (1 : ℤ) =
+      data.coeffSimplex σ
+  rw [edgeBoundaryCoefficientSimplexMap, Sigma.ι_desc]
+  simp [X, I1, Z1]
+
+/--
+The extended simplex coefficient map kills the boundary of each
+singular two-simplex.
+-/
+theorem edgeBoundaryCoefficientSimplexMap_boundary_singularChainElement
+    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g)
+    (σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1))) :
+    (edgeBoundaryCoefficientSimplexMap g data).hom
+        ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1
+          (singularChainElement σ)) = 0 := by
+  rw [singularChainElement_boundary_decomposition (Polygon4g (g + 1)) 1 σ]
+  rw [map_sum]
+  calc
+    ∑ i : Fin 3,
+        (edgeBoundaryCoefficientSimplexMap g data).hom
+          (((-1 : ℤ) ^ (i : ℕ)) •
+            (singularChainElement (singularSimplexFace σ i) :
+              SingularChainCoproduct (Polygon4g (g + 1)) 1))
+        =
+      ∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
+        (edgeBoundaryCoefficientSimplexMap g data).hom
+          (singularChainElement (singularSimplexFace σ i)) := by
+        refine Finset.sum_congr rfl ?_
+        intro i _hi
+        rw [map_zsmul]
+    _ =
+      ∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
+        data.coeffSimplex (singularSimplexFace σ i) := by
+        refine Finset.sum_congr rfl ?_
+        intro i _hi
+        rw [edgeBoundaryCoefficientSimplexMap_apply_singularChainElement]
+    _ = 0 := data.coeffSimplex_boundary_zero σ
+
+/--
+Bridge from the short-complex boundary object in degree one to the
+displayed degree-two singular-chain object.
+-/
+theorem hurewicz_singularBoundary_eq_sc_f
+    (X : Type) [TopologicalSpace X] :
+    let K := singularChainComplexZ X
+    let S := K.sc 1
+    ∀ (s : S.X₁), ∃ s' : (singularChainComplexZ X).X 2,
+      S.f.hom s = ((singularChainComplexZ X).d 2 1).hom s' := by
+  unfold singularChainComplexZ Polygon4gSingularC1.singularChainComplexZ
+  simp +decide [AlgebraicTopology.singularChainComplexFunctor]
+  unfold AlgebraicTopology.SSet.singularChainComplexFunctor
+  simp +decide
+  unfold AlgebraicTopology.alternatingFaceMapComplex
+  unfold AlgebraicTopology.AlternatingFaceMapComplex.obj
+  simp +decide [ComplexShape.down]
+  unfold ChainComplex.of
+  simp +decide [ComplexShape.down']
+  split_ifs <;> simp_all +decide [ComplexShape.prev]
+  exact fun s => ⟨_, rfl⟩
+
+/-- The extended simplex coefficient map kills every singular two-boundary. -/
+theorem edgeBoundaryCoefficientSimplexMap_boundary_zero
+    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g) :
+    ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).f ≫
+      edgeBoundaryCoefficientSimplexMap g data = 0 := by
+  classical
+  let X := Polygon4g (g + 1)
+  apply ModuleCat.hom_ext
+  ext B
+  obtain ⟨B', hB'⟩ := hurewicz_singularBoundary_eq_sc_f X B
+  rw [ModuleCat.hom_comp, LinearMap.comp_apply, hB']
+  obtain ⟨decomp⟩ :=
+    singularChainCoproduct_sum_support_decomposition_degree X 2 B'
+  letI := decomp.simplexFintype
+  rw [decomp.chain_eq]
+  rw [map_sum]
+  simp only [map_zsmul]
+  rw [map_sum]
+  simp only [map_zsmul]
+  refine Finset.sum_eq_zero (s := (Finset.univ : Finset decomp.Simplex)) ?_
+  intro s _hs
+  have hs :=
+    edgeBoundaryCoefficientSimplexMap_boundary_singularChainElement g data
+      (decomp.simplex s)
+  have hsX :
+      (edgeBoundaryCoefficientSimplexMap g data).hom
+        (((singularChainComplexZ X).d 2 1).hom
+          (singularChainElement (decomp.simplex s))) = 0 := by
+    simpa [X] using hs
+  simp [hsX]
+
+/--
+Extend simplex-level edge coefficient data linearly to singular
+one-chains, and use the two-simplex boundary identity to show it
+kills singular two-boundaries.
+-/
+noncomputable def edgeBoundaryCoefficientFunctionalData_of_simplexData
+    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g) :
+    EdgeBoundaryCoefficientFunctionalData g := by
+  classical
+  let X := Polygon4g (g + 1)
+  let I1 := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋1⦌)
+  let Z1 : I1 → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
+  let coeffC1 :
+      (singularChainComplexZ X).X 1 ⟶ ModuleCat.of ℤ (Polygon4gAbelianization g) :=
+    edgeBoundaryCoefficientSimplexMap g data
+  refine
+    { coeffC1 := coeffC1
+      coeffC1_boundary_zero := ?_
+      coeffC1_edge := ?_ }
+  · simpa [coeffC1, X] using
+      edgeBoundaryCoefficientSimplexMap_boundary_zero g data
+  · intro e
+    change
+      (edgeBoundaryCoefficientSimplexMap g data).hom
+        (singularChainElement (edgeSimplex g e)) =
+        Pi.single e 1
+    rw [edgeBoundaryCoefficientSimplexMap_apply_singularChainElement,
+      data.coeffSimplex_edge e]
+
+/-- Finite sums of coordinate singletons recover their coefficient vector. -/
+theorem polygon4g_single_sum_coefficients
+    (g : ℕ) (v : Polygon4gAbelianization g) :
+    (∑ e : Fin (2 * (g + 1)), v e • (Pi.single e 1 :
+      Polygon4gAbelianization g)) = v := by
+  ext i
+  simp [Pi.single_apply]
+
+/--
+The midpoint points of the chosen edge representatives are indexed
+without collisions in the polygon quotient.
+
+This isolates the quotient-geometric separation fact for interiors of
+the chosen representative arcs.
+-/
+theorem polygon4g_edge_midpoint_injective (g : ℕ) :
+    Function.Injective (fun i : Fin (2 * (g + 1)) =>
+      Polygon4g.mk (g + 1)
+        (boundaryParam (g + 1) (edgeArcIdx g i) (1 / 2 : ℝ))) := by
+  sorry
+
+/-- The arithmetic boundary-arc index attached to each edge is injective. -/
+theorem edgeArcIdx_injective (g : ℕ) :
+    Function.Injective (edgeArcIdx g) := by
+  intro i j h
+  apply Fin.ext
+  unfold edgeArcIdx at h
+  have hmod : i.val % 2 = j.val % 2 := by omega
+  have hdiv : i.val / 2 = j.val / 2 := by omega
+  omega
+
+/--
+The concrete edge singular simplices are indexed without collisions.
+
+Evaluating equal singular simplices at the midpoint of the standard
+one-simplex reduces the statement to midpoint separation of the
+representative boundary arcs.
+-/
+theorem edgeSimplex_injective (g : ℕ) :
+    Function.Injective (edgeSimplex g) := by
+  intro i j h
+  apply polygon4g_edge_midpoint_injective g
+  let t : unitInterval := ⟨(1 / 2 : ℝ), by norm_num⟩
+  have hs := congrFun (congrArg ContinuousMap.toFun h)
+    (stdSimplexHomeomorphUnitInterval.symm t)
+  simpa [edgeSimplex_apply, t] using hs
+
+/--
+A raw scalar edge-coordinate cochain together with its
+edge-normalization proof.
+
+The cochain is the indicator of the concrete target edge simplex.  The
+only geometric input needed here is that the chosen edge simplex
+representatives are distinct.
+-/
+theorem edgeBoundaryCoefficientRawScalarCochainData_normalized
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    : ∃ raw : EdgeBoundaryCoefficientRawScalarCochainData g target,
+      EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized g target raw := by
+  classical
+  refine ⟨{
+    coeffSimplexZ := fun σ => if σ = edgeSimplex g target then 1 else 0
+  }, ?_⟩
+  intro e
+  change (if edgeSimplex g e = edgeSimplex g target then 1 else 0) =
+    if e = target then 1 else 0
+  by_cases h : e = target
+  · subst h
+    simp
+  · have hne : edgeSimplex g e ≠ edgeSimplex g target := by
+      intro hs
+      exact h (edgeSimplex_injective g hs)
+    simp [hne, h]
+
+/-- Local provider for normalized scalar edge-coordinate cochains. -/
+theorem edgeBoundaryCoefficientScalarCochainData
+    (g : ℕ) (target : Fin (2 * (g + 1))) :
+    Nonempty (EdgeBoundaryCoefficientScalarCochainData g target) := by
+  obtain ⟨raw, hedge⟩ :=
+    edgeBoundaryCoefficientRawScalarCochainData_normalized g target
+  exact ⟨edgeBoundaryCoefficientScalarCochainData_of_raw g target raw hedge⟩
+
+/-- Local provider for the scalar edge-coordinate cocycle condition. -/
+theorem edgeBoundaryCoefficientScalarCochain_boundary_zero
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (cochain : EdgeBoundaryCoefficientScalarCochainData g target) :
+    EdgeBoundaryCoefficientScalarCochainBoundaryZero g target cochain := by
+  sorry
+
+/-- Local provider for scalar edge-coordinate singular cocycles. -/
+theorem edgeBoundaryCoefficientScalarData
+    (g : ℕ) (target : Fin (2 * (g + 1))) :
+    Nonempty (EdgeBoundaryCoefficientScalarData g target) := by
+  obtain ⟨cochain⟩ := edgeBoundaryCoefficientScalarCochainData g target
+  exact ⟨edgeBoundaryCoefficientScalarData_of_cochain g target cochain
+    (edgeBoundaryCoefficientScalarCochain_boundary_zero g target cochain)⟩
+
+/-- Local provider for the chain-level edge coefficient functional. -/
+theorem edgeBoundaryCoefficientSimplexData (g : ℕ) :
+    Nonempty (EdgeBoundaryCoefficientSimplexData g) := by
+  classical
+  have hscalar :
+      ∀ target : Fin (2 * (g + 1)),
+        ∃ data : EdgeBoundaryCoefficientScalarData g target, True := by
+    intro target
+    obtain ⟨data⟩ := edgeBoundaryCoefficientScalarData g target
+    exact ⟨data, trivial⟩
+  choose scalarData _ using hscalar
+  exact ⟨edgeBoundaryCoefficientSimplexData_of_scalarData g scalarData⟩
+
+/-- Local provider for the chain-level edge coefficient functional. -/
+theorem edgeBoundaryCoefficientFunctionalData (g : ℕ) :
+    Nonempty (EdgeBoundaryCoefficientFunctionalData g) := by
+  obtain ⟨data⟩ := edgeBoundaryCoefficientSimplexData g
+  exact ⟨edgeBoundaryCoefficientFunctionalData_of_simplexData g data⟩
+
+/--
+Kernel-zero form of edge independence.
+
+This is the primitive edge-chain theorem still needed for injectivity:
+an integral combination of polygon edge cycles with zero singular
+homology class has all coefficients zero.
+-/
+theorem edgeChain_sum_boundary_coefficients_zero
+    (g : ℕ) (v : Polygon4gAbelianization g)
+    (B : ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).X₁)
+    (hB :
+      ModuleCat.Hom.hom (((singularChainComplexZ (Polygon4g (g + 1))).sc 1).f) B =
+        ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) :
+    v = 0 := by
+  obtain ⟨data⟩ := edgeBoundaryCoefficientFunctionalData g
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  have hleft : data.coeffC1.hom (ModuleCat.Hom.hom ((K.sc 1).f) B) = 0 := by
+    change ModuleCat.Hom.hom (((K.sc 1).f ≫ data.coeffC1)) B = 0
+    rw [data.coeffC1_boundary_zero]
+    rfl
+  have hright :
+      data.coeffC1.hom
+        (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) = v := by
+    rw [map_sum]
+    calc
+      ∑ e : Fin (2 * (g + 1)), data.coeffC1.hom (v e • edgeChain g e)
+          =
+        ∑ e : Fin (2 * (g + 1)), v e • data.coeffC1.hom (edgeChain g e) := by
+          refine Finset.sum_congr rfl ?_
+          intro e _he
+          rw [map_zsmul]
+      _ = ∑ e : Fin (2 * (g + 1)), v e • (Pi.single e 1 :
+            Polygon4gAbelianization g) := by
+          refine Finset.sum_congr rfl ?_
+          intro e _he
+          rw [data.coeffC1_edge e]
+      _ = v := polygon4g_single_sum_coefficients g v
+  have hv : 0 = v := by
+    rw [← hright, ← hB]
+    exact hleft.symm
+  exact hv.symm
+
+/--
+Homology-kernel form of edge independence, reduced to the concrete
+boundary statement `edgeChain_sum_boundary_coefficients_zero`.
+-/
+theorem edgeChain_sum_homologyClass_eq_zero_coefficients_zero
+    (g : ℕ) (v : Polygon4gAbelianization g)
+    (h :
+      singularH1ClassOfCycle (Polygon4g (g + 1))
+        (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e)
+        (edgeChain_sum_isCycle g v) = 0) :
+    v = 0 := by
+  obtain ⟨B, hB⟩ :=
+    singularH1ClassOfCycle_eq_zero_boundary (Polygon4g (g + 1))
+      (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e)
+      (edgeChain_sum_isCycle g v) h
+  exact edgeChain_sum_boundary_coefficients_zero g v B hB
+
+/--
+Kernel-zero form of edge independence for the linear edge-basis map.
+
+The actual geometric input is
+`edgeChain_sum_homologyClass_eq_zero_coefficients_zero`; this theorem
+is now just the rewrite between the linear map and the homology class
+of the corresponding finite edge-chain sum.
+-/
+theorem edgeBasisMap_eq_zero_coefficients_zero
+    (g : ℕ) (v : Polygon4gAbelianization g)
+    (h : edgeBasisMap g v = 0) :
+    v = 0 := by
+  apply edgeChain_sum_homologyClass_eq_zero_coefficients_zero g v
+  rw [edgeBasisMap_eq_homologyClass_edgeChain_sum
+    g v (edgeChain_sum_isCycle g v)]
+  exact h
+
+/--
+Uniqueness of the edge coefficients produced by the repaired disk-cycle
+package.
+
+This is the remaining local independence theorem for the explicit
+polygon repair construction: a repaired representative whose projected
+class is also represented by another edge-basis coefficient vector must
+have exactly that coefficient vector.
+-/
+theorem polygon4g_repaired_edgeCoeffs_unique
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (data : Polygon4gRepairedDiskCycleData g z hz)
+    (v : Polygon4gAbelianization g)
+    (h :
+      singularH1ClassOfCycle (Polygon4g (g + 1)) z hz =
+        edgeBasisMap g v) :
+    data.edgeCoeffs = v := by
+  have hdata :
+      singularH1ClassOfCycle (Polygon4g (g + 1)) z hz =
+        edgeBasisMap g data.edgeCoeffs := by
+    rw [data.projected_relation,
+      diskC_singular_one_cycle_homologyClass_eq_zero data.diskCycle data.diskCycle_isCycle]
+    simp
+  have heq : edgeBasisMap g data.edgeCoeffs = edgeBasisMap g v := by
+    rw [← hdata, h]
+  have hzero : edgeBasisMap g (data.edgeCoeffs - v) = 0 := by
+    rw [map_sub, heq, sub_self]
+  exact sub_eq_zero.mp (edgeBasisMap_eq_zero_coefficients_zero g
+    (data.edgeCoeffs - v) hzero)
+
+/--
 Polygon cellular approximation in degree one: every singular
 one-cycle on `Polygon4g (g+1)` is homologous to a concrete integral
 combination of the polygon edge loops.
@@ -2871,13 +3545,778 @@ theorem edgeBasisMap_surjective (g : ℕ) :
   rw [← hy]
   exact hv.symm
 
+/-- Edge-chain finite sums are additive in their coefficient vector. -/
+theorem edgeChain_sum_add
+    (g : ℕ) (v w : Polygon4gAbelianization g) :
+    (∑ e : Fin (2 * (g + 1)), (v + w) e • edgeChain g e) =
+      (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) +
+        ∑ e : Fin (2 * (g + 1)), w e • edgeChain g e := by
+  calc
+    ∑ e : Fin (2 * (g + 1)), (v + w) e • edgeChain g e
+        =
+      ∑ e : Fin (2 * (g + 1)),
+        (v e • edgeChain g e + w e • edgeChain g e) := by
+        refine Finset.sum_congr rfl ?_
+        intro e _he
+        rw [Pi.add_apply, add_zsmul]
+    _ = (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) +
+        ∑ e : Fin (2 * (g + 1)), w e • edgeChain g e := by
+        rw [Finset.sum_add_distrib]
+
+/-- Edge-chain finite sums are compatible with integer scaling. -/
+theorem edgeChain_sum_zsmul
+    (g : ℕ) (n : ℤ) (v : Polygon4gAbelianization g) :
+    (∑ e : Fin (2 * (g + 1)), (n • v) e • edgeChain g e) =
+      n • ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e := by
+  calc
+    ∑ e : Fin (2 * (g + 1)), (n • v) e • edgeChain g e
+        =
+      ∑ e : Fin (2 * (g + 1)), n • (v e • edgeChain g e) := by
+        refine Finset.sum_congr rfl ?_
+        intro e _he
+        change (n * v e) • edgeChain g e = n • (v e • edgeChain g e)
+        rw [mul_zsmul]
+    _ = n • ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e := by
+        exact Finset.sum_zsmul
+          (fun e : Fin (2 * (g + 1)) => v e • edgeChain g e)
+          Finset.univ n
+
+/-- The zero coefficient vector realizes the zero edge-chain sum. -/
+theorem edgeChain_sum_zero (g : ℕ) :
+    (∑ e : Fin (2 * (g + 1)),
+        (0 : Polygon4gAbelianization g) e • edgeChain g e) = 0 := by
+  change (∑ e : Fin (2 * (g + 1)), (0 : ℤ) • edgeChain g e) = 0
+  exact Finset.sum_eq_zero (fun e _ => zero_smul ℤ (edgeChain g e))
+
+/-- Edge-chain finite sums are compatible with negation. -/
+theorem edgeChain_sum_neg
+    (g : ℕ) (v : Polygon4gAbelianization g) :
+    (∑ e : Fin (2 * (g + 1)), (-v) e • edgeChain g e) =
+      -∑ e : Fin (2 * (g + 1)), v e • edgeChain g e := by
+  calc
+    ∑ e : Fin (2 * (g + 1)), (-v) e • edgeChain g e
+        =
+      ∑ e : Fin (2 * (g + 1)), -(v e • edgeChain g e) := by
+        refine Finset.sum_congr rfl ?_
+        intro e _he
+        rw [Pi.neg_apply, neg_zsmul]
+    _ = -∑ e : Fin (2 * (g + 1)), v e • edgeChain g e := by
+        rw [Finset.sum_neg_distrib]
+
+/-- Edge-chain finite sums are compatible with subtraction. -/
+theorem edgeChain_sum_sub
+    (g : ℕ) (v w : Polygon4gAbelianization g) :
+    (∑ e : Fin (2 * (g + 1)), (v - w) e • edgeChain g e) =
+      (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) -
+        ∑ e : Fin (2 * (g + 1)), w e • edgeChain g e := by
+  calc
+    ∑ e : Fin (2 * (g + 1)), (v - w) e • edgeChain g e
+        =
+      ∑ e : Fin (2 * (g + 1)), (v + -w) e • edgeChain g e := by
+        rfl
+    _ = (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) +
+        ∑ e : Fin (2 * (g + 1)), (-w) e • edgeChain g e := by
+        exact edgeChain_sum_add g v (-w)
+    _ = (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) -
+        ∑ e : Fin (2 * (g + 1)), w e • edgeChain g e := by
+        rw [edgeChain_sum_neg, sub_eq_add_neg]
+
+/-- Edge-chain cycles are additive in their coefficient vector. -/
+theorem edgeChain_cyclesMk_add
+    (g : ℕ) (v w : Polygon4gAbelianization g) :
+    (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+        (∑ e : Fin (2 * (g + 1)), (v + w) e • edgeChain g e) 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+        (edgeChain_sum_isCycle g (v + w)) =
+      (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v) +
+        (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), w e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g w) := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+  change
+    ((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), (v + w) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g (v + w))) =
+      ((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1))
+        (K.cyclesMk
+            (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+            (edgeChain_sum_isCycle g v) +
+          K.cyclesMk
+            (∑ e : Fin (2 * (g + 1)), w e • edgeChain g e) 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+            (edgeChain_sum_isCycle g w))
+  rw [K.i_cyclesMk, map_add, K.i_cyclesMk, K.i_cyclesMk]
+  exact edgeChain_sum_add g v w
+
+/-- Edge-chain cycles are compatible with integer scaling. -/
+theorem edgeChain_cyclesMk_zsmul
+    (g : ℕ) (n : ℤ) (v : Polygon4gAbelianization g) :
+    (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+        (∑ e : Fin (2 * (g + 1)), (n • v) e • edgeChain g e) 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+        (edgeChain_sum_isCycle g (n • v)) =
+      n • (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v) := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+  change
+    (ConcreteCategory.hom (K.iCycles 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), (n • v) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g (n • v))) =
+      (ConcreteCategory.hom (K.iCycles 1))
+        (n • K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v))
+  rw [show
+      (ConcreteCategory.hom (K.iCycles 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), (n • v) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g (n • v))) =
+        ∑ e : Fin (2 * (g + 1)), (n • v) e • edgeChain g e by
+        exact K.i_cyclesMk
+          (∑ e : Fin (2 * (g + 1)), (n • v) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g (n • v))]
+  rw [show
+      (ConcreteCategory.hom (K.iCycles 1))
+        (n • K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v)) =
+        n • (ConcreteCategory.hom (K.iCycles 1))
+          (K.cyclesMk
+            (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+            (edgeChain_sum_isCycle g v)) by
+        exact map_zsmul (ConcreteCategory.hom (K.iCycles 1)) n
+          (K.cyclesMk
+            (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+            (edgeChain_sum_isCycle g v))]
+  rw [show
+      (ConcreteCategory.hom (K.iCycles 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v)) =
+        ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e by
+        exact K.i_cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v)]
+  exact edgeChain_sum_zsmul g n v
+
+/-- The zero coefficient vector realizes the zero edge-chain cycle. -/
+theorem edgeChain_cyclesMk_zero (g : ℕ) :
+    (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+        (∑ e : Fin (2 * (g + 1)),
+          (0 : Polygon4gAbelianization g) e • edgeChain g e) 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+        (edgeChain_sum_isCycle g 0) = 0 := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+  change
+    (ConcreteCategory.hom (K.iCycles 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)),
+            (0 : Polygon4gAbelianization g) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g 0)) =
+      (ConcreteCategory.hom (K.iCycles 1)) 0
+  rw [show
+      (ConcreteCategory.hom (K.iCycles 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)),
+            (0 : Polygon4gAbelianization g) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g 0)) =
+        ∑ e : Fin (2 * (g + 1)),
+          (0 : Polygon4gAbelianization g) e • edgeChain g e by
+        exact K.i_cyclesMk
+          (∑ e : Fin (2 * (g + 1)),
+            (0 : Polygon4gAbelianization g) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g 0)]
+  rw [map_zero]
+  exact edgeChain_sum_zero g
+
+/-- Edge-chain cycles are compatible with negation. -/
+theorem edgeChain_cyclesMk_neg
+    (g : ℕ) (v : Polygon4gAbelianization g) :
+    (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+        (∑ e : Fin (2 * (g + 1)), (-v) e • edgeChain g e) 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+        (edgeChain_sum_isCycle g (-v)) =
+      - (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v) := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+  change
+    (ConcreteCategory.hom (K.iCycles 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), (-v) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g (-v))) =
+      (ConcreteCategory.hom (K.iCycles 1))
+        (-K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v))
+  rw [show
+      (ConcreteCategory.hom (K.iCycles 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), (-v) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g (-v))) =
+        ∑ e : Fin (2 * (g + 1)), (-v) e • edgeChain g e by
+        exact K.i_cyclesMk
+          (∑ e : Fin (2 * (g + 1)), (-v) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g (-v))]
+  rw [show
+      (ConcreteCategory.hom (K.iCycles 1))
+        (-K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v)) =
+        - (ConcreteCategory.hom (K.iCycles 1))
+          (K.cyclesMk
+            (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+            (edgeChain_sum_isCycle g v)) by
+        exact map_neg (ConcreteCategory.hom (K.iCycles 1))
+          (K.cyclesMk
+            (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+            (edgeChain_sum_isCycle g v))]
+  rw [show
+      (ConcreteCategory.hom (K.iCycles 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v)) =
+        ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e by
+        exact K.i_cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v)]
+  exact edgeChain_sum_neg g v
+
+/-- Edge-chain cycles are compatible with subtraction. -/
+theorem edgeChain_cyclesMk_sub
+    (g : ℕ) (v w : Polygon4gAbelianization g) :
+    (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+        (∑ e : Fin (2 * (g + 1)), (v - w) e • edgeChain g e) 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+        (edgeChain_sum_isCycle g (v - w)) =
+      (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v) -
+        (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), w e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g w) := by
+  calc
+    (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+        (∑ e : Fin (2 * (g + 1)), (v - w) e • edgeChain g e) 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+        (edgeChain_sum_isCycle g (v - w))
+        =
+      (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+        (∑ e : Fin (2 * (g + 1)), (v + -w) e • edgeChain g e) 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+        (edgeChain_sum_isCycle g (v + -w)) := by
+        rfl
+    _ =
+      (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v) +
+        (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), (-w) e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g (-w)) := by
+        exact edgeChain_cyclesMk_add g v (-w)
+    _ =
+      (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v) -
+        (singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), w e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g w) := by
+        rw [edgeChain_cyclesMk_neg, sub_eq_add_neg]
+
+/--
+Cycle-level coefficient extractor for the edge basis.
+
+This is the non-circular input needed for edge independence: define
+edge coefficients on actual singular one-cycles, prove all singular
+two-boundaries have coefficient zero, and prove the extractor reads a
+finite edge-chain combination as its original coefficient vector.
+-/
+structure EdgeCoefficientCycleFunctionalData (g : ℕ) where
+  coeffCycles :
+    (singularChainComplexZ (Polygon4g (g + 1))).cycles 1 ⟶
+      ModuleCat.of ℤ (Polygon4gAbelianization g)
+  coeffCycles_boundary_zero :
+    ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).toCycles ≫
+      coeffCycles = 0
+  coeffCycles_edge_sum :
+    ∀ v : Polygon4gAbelianization g,
+      coeffCycles.hom
+        ((singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v)) = v
+
+/--
+Chosen edge-coefficient value of a singular one-cycle.
+
+This is the pointwise coefficient extraction coming from the explicit
+lift/repair package; linearity and boundary-invariance are separated
+below as named proof obligations.
+-/
+noncomputable def edgeCoefficientCycleValue
+    (g : ℕ)
+    (c : (singularChainComplexZ (Polygon4g (g + 1))).cycles 1) :
+    Polygon4gAbelianization g := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  let z : SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
+    (ConcreteCategory.hom (K.iCycles 1)) c
+  have hz : K.d 1 0 z = 0 := by
+    change ((forget₂ (ModuleCat ℤ) Ab).map (K.d 1 0))
+        (((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1)) c) = 0
+    rw [← ConcreteCategory.forget₂_comp_apply, K.iCycles_d]
+    simp
+  exact (Classical.choice (polygon4g_cycle_lift_repair_data g z hz)).edgeCoeffs
+
+/--
+The chosen edge-coefficient value represents the same singular homology
+class as the input cycle.
+
+This is the sorry-free consequence of the lift/repair package.  The
+remaining pointwise coefficient facts are precisely the uniqueness
+statements needed to read this representative equality back as equality
+of coefficient vectors.
+-/
+theorem edgeCoefficientCycleValue_homologyClass
+    (g : ℕ)
+    (c : (singularChainComplexZ (Polygon4g (g + 1))).cycles 1) :
+    ((forget₂ (ModuleCat ℤ) Ab).map
+        ((singularChainComplexZ (Polygon4g (g + 1))).homologyπ 1)) c =
+      edgeBasisMap g (edgeCoefficientCycleValue g c) := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  let z : SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
+    (ConcreteCategory.hom (K.iCycles 1)) c
+  have hz : K.d 1 0 z = 0 := by
+    change ((forget₂ (ModuleCat ℤ) Ab).map (K.d 1 0))
+        (((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1)) c) = 0
+    rw [← ConcreteCategory.forget₂_comp_apply, K.iCycles_d]
+    simp
+  let data := Classical.choice (polygon4g_cycle_lift_repair_data g z hz)
+  have hcycles :
+      K.cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz =
+        c := by
+    apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+    simpa [K, z] using
+      (K.i_cyclesMk z 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz)
+  have hclass :
+      ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1))
+          (K.cyclesMk z 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz) =
+        edgeBasisMap g data.edgeCoeffs := by
+    change singularH1ClassOfCycle (Polygon4g (g + 1)) z hz =
+      edgeBasisMap g data.edgeCoeffs
+    rw [data.projected_relation,
+      diskC_singular_one_cycle_homologyClass_eq_zero data.diskCycle data.diskCycle_isCycle]
+    simp
+  simpa [K, edgeCoefficientCycleValue, z, hz, data, hcycles] using hclass
+
+/--
+For a singular two-boundary, the chosen edge coefficients map to zero
+in homology under `edgeBasisMap`.
+-/
+theorem edgeCoefficientCycleValue_boundary_edgeBasis_zero
+    (g : ℕ)
+    (x : ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).X₁) :
+    edgeBasisMap g
+      (edgeCoefficientCycleValue g
+        (((singularChainComplexZ (Polygon4g (g + 1))).sc 1).toCycles.hom x)) = 0 := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  let c : K.cycles 1 := ((K.sc 1).toCycles).hom x
+  have hclass := edgeCoefficientCycleValue_homologyClass g c
+  have hzero :
+      ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) c = 0 := by
+    change ((forget₂ (ModuleCat ℤ) Ab).map
+        ((K.sc 1).toCycles ≫ K.homologyπ 1)) x = 0
+    rw [show (K.sc 1).toCycles ≫ K.homologyπ 1 = 0 by
+      set_option linter.unnecessarySimpa false in
+      simpa [HomologicalComplex.homologyπ] using
+        (K.sc 1).toCycles_comp_homologyπ]
+    simp
+  rw [← hclass]
+  simpa [K, c] using hzero
+
+/--
+For a finite edge-chain cycle, the chosen edge coefficients represent
+the same edge-basis homology class as the input coefficient vector.
+-/
+theorem edgeCoefficientCycleValue_edge_sum_edgeBasis
+    (g : ℕ) (v : Polygon4gAbelianization g) :
+    edgeBasisMap g
+      (edgeCoefficientCycleValue g
+        ((singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v))) =
+      edgeBasisMap g v := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  let c : K.cycles 1 :=
+    K.cyclesMk
+      (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+      (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+      (edgeChain_sum_isCycle g v)
+  have hclass := edgeCoefficientCycleValue_homologyClass g c
+  have hedge :
+      ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) c =
+        edgeBasisMap g v := by
+    change singularH1ClassOfCycle (Polygon4g (g + 1))
+      (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e)
+      (edgeChain_sum_isCycle g v) = edgeBasisMap g v
+    exact edgeBasisMap_eq_homologyClass_edgeChain_sum g v
+      (edgeChain_sum_isCycle g v)
+  rw [← hclass]
+  exact hedge
+
+/--
+The chosen coefficient value is additive after applying `edgeBasisMap`.
+Thus the remaining pointwise additivity leaf is exactly a coefficient
+uniqueness statement, not additional homology plumbing.
+-/
+theorem edgeCoefficientCycleValue_add_edgeBasis
+    (g : ℕ)
+    (x y : (singularChainComplexZ (Polygon4g (g + 1))).cycles 1) :
+    edgeBasisMap g (edgeCoefficientCycleValue g (x + y)) =
+      edgeBasisMap g (edgeCoefficientCycleValue g x +
+        edgeCoefficientCycleValue g y) := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  have hxy := edgeCoefficientCycleValue_homologyClass g (x + y)
+  have hx := edgeCoefficientCycleValue_homologyClass g x
+  have hy := edgeCoefficientCycleValue_homologyClass g y
+  calc
+    edgeBasisMap g (edgeCoefficientCycleValue g (x + y))
+        = ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) (x + y) := by
+          exact hxy.symm
+    _ = ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) x +
+        ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) y := by
+          rw [map_add]
+    _ = edgeBasisMap g (edgeCoefficientCycleValue g x) +
+        edgeBasisMap g (edgeCoefficientCycleValue g y) := by
+          rw [hx, hy]
+    _ = edgeBasisMap g (edgeCoefficientCycleValue g x +
+        edgeCoefficientCycleValue g y) := by
+          rw [map_add]
+
+/--
+Uniqueness of the chosen repair coefficient vector among edge-basis
+representatives of the same homology class.
+
+This is the remaining non-circular coefficient theorem needed by the
+cycle-level extractor: once proved from the explicit polygon repair
+construction, the additivity, boundary-vanishing, and edge-sum
+normalization leaves below become formal consequences.
+-/
+theorem edgeCoefficientCycleValue_unique
+    (g : ℕ)
+    (c : (singularChainComplexZ (Polygon4g (g + 1))).cycles 1)
+    (v : Polygon4gAbelianization g)
+    (h :
+      ((forget₂ (ModuleCat ℤ) Ab).map
+          ((singularChainComplexZ (Polygon4g (g + 1))).homologyπ 1)) c =
+        edgeBasisMap g v) :
+    edgeCoefficientCycleValue g c = v := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  let z : SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
+    (ConcreteCategory.hom (K.iCycles 1)) c
+  have hz : K.d 1 0 z = 0 := by
+    change ((forget₂ (ModuleCat ℤ) Ab).map (K.d 1 0))
+        (((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1)) c) = 0
+    rw [← ConcreteCategory.forget₂_comp_apply, K.iCycles_d]
+    simp
+  let data := Classical.choice (polygon4g_cycle_lift_repair_data g z hz)
+  have hcycles :
+      K.cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz =
+        c := by
+    apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+    simpa [K, z] using
+      (K.i_cyclesMk z 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz)
+  have hclass :
+      singularH1ClassOfCycle (Polygon4g (g + 1)) z hz =
+        edgeBasisMap g v := by
+    unfold singularH1ClassOfCycle
+    change ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1))
+      (K.cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz) =
+        edgeBasisMap g v
+    rw [hcycles]
+    exact h
+  have hcoeff :
+      data.edgeCoeffs = v :=
+    polygon4g_repaired_edgeCoeffs_unique g z hz data v hclass
+  simpa [K, edgeCoefficientCycleValue, z, hz, data] using hcoeff
+
+/--
+The chosen cycle coefficient value is additive.  This is the explicit
+linearity statement for the lift/repair construction: finite supports,
+lifts, endpoint-pair repairs, and their accumulated edge coefficients
+must commute with addition of cycles.
+-/
+theorem edgeCoefficientCycleValue_add
+    (g : ℕ)
+    (x y : (singularChainComplexZ (Polygon4g (g + 1))).cycles 1) :
+    edgeCoefficientCycleValue g (x + y) =
+      edgeCoefficientCycleValue g x + edgeCoefficientCycleValue g y := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  apply edgeCoefficientCycleValue_unique g (x + y)
+  calc
+    ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) (x + y)
+        = ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) x +
+          ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) y := by
+          rw [map_add]
+    _ = edgeBasisMap g (edgeCoefficientCycleValue g x) +
+        edgeBasisMap g (edgeCoefficientCycleValue g y) := by
+          rw [edgeCoefficientCycleValue_homologyClass,
+            edgeCoefficientCycleValue_homologyClass]
+    _ = edgeBasisMap g (edgeCoefficientCycleValue g x +
+        edgeCoefficientCycleValue g y) := by
+          rw [map_add]
+
+/--
+The cycle-level edge-coefficient map before descent to homology.
+
+Bottom-up route: for a cycle object element, use `K.iCycles` to view it
+as an actual singular one-cycle, apply the finite support
+decomposition/lift/repair package, and return the resulting repaired
+edge coefficient vector.  Since the scalars are `ℤ`, additivity gives
+linearity via `AddMonoidHom.toIntLinearMap`; the remaining work is the
+additivity of the explicit repair-coefficient construction, then descent
+and normalization on edge generators.
+-/
+noncomputable def edgeCoefficientCyclesMap (g : ℕ) :
+    (singularChainComplexZ (Polygon4g (g + 1))).cycles 1 ⟶
+      ModuleCat.of ℤ (Polygon4gAbelianization g) :=
+  let coeffAdd :
+      ((singularChainComplexZ (Polygon4g (g + 1))).cycles 1) →+
+        Polygon4gAbelianization g :=
+    {
+      toFun := edgeCoefficientCycleValue g
+      map_zero' := by
+        have h := edgeCoefficientCycleValue_add g 0 0
+        have h' :
+            edgeCoefficientCycleValue g 0 + edgeCoefficientCycleValue g 0 =
+              edgeCoefficientCycleValue g 0 + 0 := by
+          simpa [zero_add, add_zero] using h.symm
+        exact add_left_cancel h'
+      map_add' := edgeCoefficientCycleValue_add g
+    }
+  ModuleCat.ofHom {
+    toFun := edgeCoefficientCycleValue g
+    map_add' := coeffAdd.map_add
+    map_smul' := by
+      intro n x
+      change
+        coeffAdd ((inferInstance :
+          Module ℤ ((singularChainComplexZ (Polygon4g (g + 1))).cycles 1)).smul n x) =
+          (inferInstance : Module ℤ (Polygon4gAbelianization g)).smul n (coeffAdd x)
+      rw [int_smul_eq_zsmul
+          (inferInstance :
+            Module ℤ ((singularChainComplexZ (Polygon4g (g + 1))).cycles 1)),
+        int_smul_eq_zsmul
+          (inferInstance : Module ℤ (Polygon4gAbelianization g))]
+      exact coeffAdd.map_zsmul x n
+  }
+
+/--
+Pointwise boundary-vanishing for the chosen edge-coefficient value.
+This is the chain-level independence statement before rewriting it as
+a categorical composition.
+-/
+theorem edgeCoefficientCycleValue_boundary_zero
+    (g : ℕ)
+    (x : ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).X₁) :
+    edgeCoefficientCycleValue g
+      (((singularChainComplexZ (Polygon4g (g + 1))).sc 1).toCycles.hom x) = 0 := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  let c : K.cycles 1 := ((K.sc 1).toCycles).hom x
+  apply edgeCoefficientCycleValue_unique g c 0
+  have hzero :
+      ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) c = 0 := by
+    change ((forget₂ (ModuleCat ℤ) Ab).map
+        ((K.sc 1).toCycles ≫ K.homologyπ 1)) x = 0
+    rw [show (K.sc 1).toCycles ≫ K.homologyπ 1 = 0 by
+      set_option linter.unnecessarySimpa false in
+      simpa [HomologicalComplex.homologyπ] using
+        (K.sc 1).toCycles_comp_homologyπ]
+    simp
+  simpa [K, c] using hzero
+
+/--
+Pointwise normalization of the chosen edge-coefficient value on finite
+edge-chain cycles.
+-/
+theorem edgeCoefficientCycleValue_edge_sum
+    (g : ℕ) (v : Polygon4gAbelianization g) :
+    edgeCoefficientCycleValue g
+      ((singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+        (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+        (edgeChain_sum_isCycle g v)) = v := by
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  let c : K.cycles 1 :=
+    K.cyclesMk
+      (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+      (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+      (edgeChain_sum_isCycle g v)
+  apply edgeCoefficientCycleValue_unique g c v
+  change singularH1ClassOfCycle (Polygon4g (g + 1))
+    (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e)
+    (edgeChain_sum_isCycle g v) = edgeBasisMap g v
+  exact edgeBasisMap_eq_homologyClass_edgeChain_sum g v
+    (edgeChain_sum_isCycle g v)
+
+/--
+The cycle-level edge-coefficient map kills singular two-boundaries.
+
+This is the exact chain-level independence statement: if a singular
+one-cycle is a boundary, cutting it to the polygon and summing endpoint
+repairs yields total edge coefficient zero.
+-/
+theorem edgeCoefficientCyclesMap_boundary_zero (g : ℕ) :
+    ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).toCycles ≫
+      edgeCoefficientCyclesMap g = 0 := by
+  apply ModuleCat.hom_ext
+  ext x
+  exact edgeCoefficientCycleValue_boundary_zero g x
+
+/--
+The cycle-level edge-coefficient map reads finite edge-chain
+combinations as their original coefficient vectors.
+-/
+theorem edgeCoefficientCyclesMap_edge_sum
+    (g : ℕ) (v : Polygon4gAbelianization g) :
+    (edgeCoefficientCyclesMap g).hom
+      ((singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+        (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+        (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+        (edgeChain_sum_isCycle g v)) = v := by
+  exact edgeCoefficientCycleValue_edge_sum g v
+
+/--
+Concrete coefficient-extractor provider.  Bottom-up route: construct
+`coeffCycles` by cutting the representative cycle to the `4g`-gon,
+summing endpoint repairs as in `polygon4g_cycle_lift_repair_data`, and
+then prove independence from singular two-boundaries by the explicit
+boundary-word/commutator cancellation.
+
+This provider is strictly cycle-level: homology descent is handled
+below by `descHomology`.
+-/
+theorem edgeCoefficientCycleFunctionalData (g : ℕ) :
+    Nonempty (EdgeCoefficientCycleFunctionalData g) := by
+  exact ⟨{
+    coeffCycles := edgeCoefficientCyclesMap g
+    coeffCycles_boundary_zero := edgeCoefficientCyclesMap_boundary_zero g
+    coeffCycles_edge_sum := edgeCoefficientCyclesMap_edge_sum g
+  }⟩
+
+/--
+Edge-loop classes are independent in Mathlib singular `H₁` of the
+polygon quotient.
+
+Bottom-up route: construct this map by sending a singular homology
+class to the vector of edge coefficients obtained from the explicit
+polygon cellular approximation, and prove that the construction is
+independent of the chosen singular cycle representative.  Equivalently,
+show that the coefficient functional vanishes on singular two-boundaries
+after cutting to the `4g`-gon.
+-/
+theorem edgeBasisMap_leftInverse (g : ℕ) :
+    ∃ coeffMap :
+      singularH1 (Polygon4g (g + 1)) →ₗ[ℤ] Polygon4gAbelianization g,
+        coeffMap.comp (edgeBasisMap g) = LinearMap.id := by
+  obtain ⟨data⟩ := edgeCoefficientCycleFunctionalData g
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  let coeffHom :
+      K.homology 1 ⟶ ModuleCat.of ℤ (Polygon4gAbelianization g) :=
+    (K.sc 1).descHomology data.coeffCycles data.coeffCycles_boundary_zero
+  refine ⟨coeffHom.hom, ?_⟩
+  ext v
+  rw [LinearMap.comp_apply, LinearMap.id_apply]
+  rw [← edgeBasisMap_eq_homologyClass_edgeChain_sum
+    g v (edgeChain_sum_isCycle g v)]
+  unfold singularH1ClassOfCycle
+  change coeffHom.hom
+      (((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1))
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v))) = v
+  change coeffHom.hom
+      ((K.homologyπ 1).hom
+        (K.cyclesMk
+          (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+          (edgeChain_sum_isCycle g v))) = v
+  rw [← ModuleCat.comp_apply]
+  have hπ :
+      K.homologyπ 1 ≫ coeffHom = data.coeffCycles := by
+    exact
+      (ShortComplex.π_descHomology (S := K.sc 1)
+        data.coeffCycles data.coeffCycles_boundary_zero)
+  rw [hπ]
+  exact data.coeffCycles_edge_sum v
+
 /--
 Edge-loop classes are independent in Mathlib singular `H₁` of the
 polygon quotient.
 -/
 theorem edgeBasisMap_injective_aux (g : ℕ) :
     Function.Injective (edgeBasisMap g) := by
-  sorry
+  obtain ⟨coeffMap, hcoeffMap⟩ := edgeBasisMap_leftInverse g
+  intro x y hxy
+  calc
+    x = coeffMap (edgeBasisMap g x) := by
+      simpa using
+        (congrArg
+          (fun F : Polygon4gAbelianization g →ₗ[ℤ] Polygon4gAbelianization g =>
+            F x) hcoeffMap).symm
+    _ = coeffMap (edgeBasisMap g y) := by
+      rw [hxy]
+    _ = y := by
+      simpa using
+        (congrArg
+          (fun F : Polygon4gAbelianization g →ₗ[ℤ] Polygon4gAbelianization g =>
+            F y) hcoeffMap)
 
 /--
 In positive genus, the project-side singular-C1 map is exactly the
@@ -3808,4 +5247,3 @@ theorem edgeBasisMap_injective (g : ℕ) :
   exact h_inj hcomp
 
 end JacobianChallenge.Periods
-
