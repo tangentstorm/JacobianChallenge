@@ -88,6 +88,59 @@ structure DeRhamComparisonMap1Spec
         exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)
 
 /--
+Čech-side data extracted from a prescribed period functional.  This is
+kept as a small named package so the analytic realization step can be
+tracked independently from the singular-to-Čech comparison step.
+-/
+structure PrescribedPeriodCechData
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_φ : IntegralOneCycle X →ₗ[ℤ] ℂ) where
+  ι : Type
+  U : ι → TopologicalSpace.Opens (TopCat.of X)
+  C : CochainComplex AddCommGrpCat.{0} ℕ
+  C_eq :
+    C = RSCechComplex X U
+      ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+        (AddCommGrpCat.of ℂ))
+
+/--
+**Frontier provider for prescribed-period Čech data.** This isolates the
+singular-to-Čech comparison data attached to the requested periods.
+-/
+noncomputable def deRhamComparisonMap1_prescribed_period_cech_data_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    PrescribedPeriodCechData X φ := by
+  let U : PUnit → TopologicalSpace.Opens (TopCat.of X) := fun _ => ⊤
+  refine ⟨PUnit, U,
+    RSCechComplex X U
+      ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+        (AddCommGrpCat.of ℂ)), rfl⟩
+
+/--
+**Frontier provider realizing prescribed-period Čech data.** Given the
+Čech comparison package associated to the requested periods, construct
+the global closed 1-form representative.
+-/
+noncomputable def deRhamComparisonMap1_closed_form_from_prescribed_period_cech_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (_data : PrescribedPeriodCechData X φ) :
+    ClosedForm 1 X := by
+  -- De Rham comparison theorem. A proof must realize the Čech comparison data
+  -- as a global closed representative with the prescribed periods.
+  sorry
+
+/--
 **Frontier provider for prescribed periods.** This is the surjectivity
 half of degree-1 de Rham comparison: construct the closed-form candidate
 whose periods should represent the prescribed integral-cycle functional.
@@ -97,12 +150,10 @@ noncomputable def deRhamComparisonMap1_prescribed_period_closed_form_frontier
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ClosedForm 1 X := by
-  -- De Rham comparison theorem. Since `deRhamComparisonMap1` is opaque, a proof
-  -- needs the actual integration map and a good-cover/Cech or singular-cochain
-  -- construction of a closed representative.
-  sorry
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ClosedForm 1 X :=
+  deRhamComparisonMap1_closed_form_from_prescribed_period_cech_frontier X φ
+    (deRhamComparisonMap1_prescribed_period_cech_data_frontier X φ)
 
 /--
 **Frontier provider for prescribed-period correctness.** The closed
