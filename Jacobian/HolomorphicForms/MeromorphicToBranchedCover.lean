@@ -173,10 +173,10 @@ omit [CompactSpace X] [ConnectedSpace X]
 simple pole.**
 
 Given `f : MeromorphicMapToSphere X` whose pole divisor is exactly
-`Divisor.point P`, equipped with `AnalyticData` (which supplies the
-chart-local meromorphicity of the canonical finite lift), the
-chart-local meromorphic order of the finite lift `(f.toMap ·).getD 0`
-is non-negative at every point `p ≠ P`.
+`Divisor.point P`, together with a hypothesis `hmer` supplying
+chart-local meromorphicity of the canonical finite lift at every
+point, the chart-local meromorphic order of the finite lift
+`(f.toMap ·).getD 0` is non-negative at every point `p ≠ P`.
 
 Proof strategy: at any `p ≠ P`, the pole divisor at `p` is zero, so
 `f.toMap p ≠ ∞`. By `continuousOn_ne_infty`, `f.toMap` is continuous
@@ -190,14 +190,18 @@ translates this back to `orderAt p` in the project's vanishing-order
 API.
 
 This is the structural-field bridge for the `noPoleOff_P` field of
-`PointRiemannRochSection`. Once `meromorphic_getD` is promoted to a
-structural field of `MeromorphicMapToSphere`, the `(han : f.AnalyticData)`
-hypothesis can be dropped at call sites that have only structural
-`MeromorphicMapToSphere` data in hand.
+`PointRiemannRochSection`. The granular `hmer` hypothesis (rather than
+a full `AnalyticData`) lets call sites pass only the precise content
+the proof needs — typically derived from `f.AnalyticData.meromorphic_getD`
+or, once promoted, from a structural `meromorphic_getD` field on
+`MeromorphicMapToSphere`.
 -/
 theorem MeromorphicMapToSphere.noPoleOff_P_of_poleDivisor_point
-    (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
-    (hpole : f.poles = Divisor.point P) :
+    (f : MeromorphicMapToSphere X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p)
+    (P : X) (hpole : f.poles = Divisor.point P) :
     ∀ p : X, p ≠ P →
       (0 : WithTop ℤ) ≤
         JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p
@@ -211,7 +215,7 @@ theorem MeromorphicMapToSphere.noPoleOff_P_of_poleDivisor_point
   set F : X → ℂ := fun q => (f.toMap q).getD 0 with hF_def
   -- Chart-pulled meromorphicity of `F` at `x₀`.
   have hFmer : MeromorphicAt (F ∘ e.symm) x₀ := by
-    have h := han.meromorphic_getD p
+    have h := hmer p
     -- `MeromorphicAtX F p := MeromorphicAt (F ∘ (extChartAt 𝓘(ℂ) p).symm) (extChartAt 𝓘(ℂ) p p)`
     unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at h
     rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
@@ -331,16 +335,19 @@ omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
 /--
 **`order_ge_neg_one_at_P` provider (reverse of `8418d4ec`).**
 
-Given `f : MeromorphicMapToSphere X` with `f.poles = Divisor.point P`
-and `f.AnalyticData`, the chart-local meromorphic order of the
-canonical finite lift `(f.toMap ·).getD 0` at the simple pole `P`
-equals `-1`.
+Given `f : MeromorphicMapToSphere X` with `f.poles = Divisor.point P`,
+a hypothesis `hmer` supplying chart-local meromorphicity of the
+canonical finite lift at every point, and a hypothesis `hord1`
+supplying `mapAnalyticOrderAt f.toMap P = 1` (the analytic
+"simple pole" content for the extension), the chart-local meromorphic
+order of the canonical finite lift `(f.toMap ·).getD 0` at the
+simple pole `P` equals `-1`.
 
 This is the reverse direction of commit `8418d4ec`'s
 `mapAnalyticOrderAt_onePointExtend_of_order_neg_one`: that lemma went
 from finite-lift order `-1` to extension order `1`; this lemma goes
-from extension order `1` (supplied by `han.simple_pole_order_one P
-hpole`) to finite-lift order `-1`.
+from extension order `1` (supplied by the `hord1` hypothesis) to
+finite-lift order `-1`.
 
 The proof uses the inversion-chart reciprocal-Laurent computation:
 on a punctured neighborhood of `P`, the chart-pulled extension
@@ -351,11 +358,20 @@ finite lift, via `meromorphicOrderAt_inv`.
 
 The structural-field bridge for the `order_ge_neg_one_at_P` field of
 `PointRiemannRochSection`; downstream consumers may weaken the
-equality to `≤ -1` via `Eq.le` (or its symmetric variants).
+equality to `≤ -1` via `Eq.le` (or its symmetric variants). The
+granular `hmer` / `hord1` hypotheses (rather than a full
+`AnalyticData`) let call sites pass only the precise content the
+proof needs — typically derived from `f.AnalyticData.meromorphic_getD`
++ `f.AnalyticData.simple_pole_order_one P hpole`, or from analogous
+structural-field projections once promoted.
 -/
-theorem MeromorphicMapToSphere.orderAt_getD_eq_neg_one_of_analyticData_simple_pole
-    (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
-    (hpole : f.poles = Divisor.point P) :
+theorem MeromorphicMapToSphere.orderAt_getD_eq_neg_one_of_simple_pole
+    (f : MeromorphicMapToSphere X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p)
+    (P : X) (hpole : f.poles = Divisor.point P)
+    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1) :
     JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
       (fun q => (f.toMap q).getD 0) = ((-1 : ℤ) : WithTop ℤ) := by
   classical
@@ -370,7 +386,7 @@ theorem MeromorphicMapToSphere.orderAt_getD_eq_neg_one_of_analyticData_simple_po
   set Fc : ℂ → ℂ := F ∘ e.symm with hFc_def
   -- Chart-pulled meromorphicity of `F` at `x₀`.
   have hFc_mer : MeromorphicAt Fc x₀ := by
-    have h := han.meromorphic_getD P
+    have h := hmer P
     unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at h
     rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
         JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt] at h
@@ -438,11 +454,11 @@ theorem MeromorphicMapToSphere.orderAt_getD_eq_neg_one_of_analyticData_simple_po
   -- `h_ext` is meromorphic at `x₀` (via the punctured agreement and `Fc⁻¹` meromorphic).
   have hh_ext_mer : MeromorphicAt h_ext x₀ :=
     hFc_mer.inv.congr hh_punctured.symm
-  -- From `han.simple_pole_order_one`, get `mapAnalyticOrderAt f.toMap P = 1`,
+  -- From the `hord1` hypothesis, get `mapAnalyticOrderAt f.toMap P = 1`,
   -- i.e. `analyticOrderNatAt (fun t => h_ext t - h_ext x₀) x₀ = 1`.
   have hmAOA_eq_1 :
       JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 :=
-    han.simple_pole_order_one P hpole
+    hord1
   -- Unfold `mapAnalyticOrderAt` and simplify using `hh_at_x₀ = 0`.
   have hnat_ord_h_ext :
       analyticOrderNatAt h_ext x₀ = 1 := by
