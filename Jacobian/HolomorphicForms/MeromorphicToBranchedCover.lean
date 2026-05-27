@@ -326,6 +326,193 @@ theorem MeromorphicMapToSphere.noPoleOff_P_of_poleDivisor_point
     hF_at.tendsto.comp hsymm_cont
   exact hFsymm.mono_left nhdsWithin_le_nhds
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**`order_ge_neg_one_at_P` provider (reverse of `8418d4ec`).**
+
+Given `f : MeromorphicMapToSphere X` with `f.poles = Divisor.point P`
+and `f.AnalyticData`, the chart-local meromorphic order of the
+canonical finite lift `(f.toMap ·).getD 0` at the simple pole `P`
+equals `-1`.
+
+This is the reverse direction of commit `8418d4ec`'s
+`mapAnalyticOrderAt_onePointExtend_of_order_neg_one`: that lemma went
+from finite-lift order `-1` to extension order `1`; this lemma goes
+from extension order `1` (supplied by `han.simple_pole_order_one P
+hpole`) to finite-lift order `-1`.
+
+The proof uses the inversion-chart reciprocal-Laurent computation:
+on a punctured neighborhood of `P`, the chart-pulled extension
+`chartLocalAt f.toMap P` equals `(F ∘ chart.symm)⁻¹` where `F` is
+the finite lift, so chart-local analytic order `1` for the extension
+corresponds to chart-local meromorphic order `-1 = -(1)` for the
+finite lift, via `meromorphicOrderAt_inv`.
+
+The structural-field bridge for the `order_ge_neg_one_at_P` field of
+`PointRiemannRochSection`; downstream consumers may weaken the
+equality to `≤ -1` via `Eq.le` (or its symmetric variants).
+-/
+theorem MeromorphicMapToSphere.orderAt_getD_eq_neg_one_of_analyticData_simple_pole
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
+      (fun q => (f.toMap q).getD 0) = ((-1 : ℤ) : WithTop ℤ) := by
+  classical
+  -- Setup the canonical chart at `P` and its image.
+  set e := chartAt ℂ P with he_def
+  set x₀ : ℂ := e P with hx₀_def
+  have hP_src : P ∈ e.source := mem_chart_source ℂ P
+  have hsymm_eP : e.symm x₀ = P := e.left_inv hP_src
+  -- The finite lift, abbreviated.
+  set F : X → ℂ := fun q => (f.toMap q).getD 0 with hF_def
+  -- Chart-pulled finite lift.
+  set Fc : ℂ → ℂ := F ∘ e.symm with hFc_def
+  -- Chart-pulled meromorphicity of `F` at `x₀`.
+  have hFc_mer : MeromorphicAt Fc x₀ := by
+    have h := han.meromorphic_getD P
+    unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at h
+    rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt] at h
+    exact h
+  -- The extension's chart-local function (same `h_ext` as in `8418d4ec`).
+  set h_ext : ℂ → ℂ :=
+    JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P with hh_ext_def
+  -- `f.toMap P = ∞` (from the pole at `P`).
+  have hfP_infty : f.toMap P = (OnePoint.infty : OnePoint ℂ) := by
+    refine f.toMap_eq_infty_of_poleDivisor_pos P ?_
+    have h1 : f.poleDivisor P = (Divisor.point P : Divisor X) P := by
+      change f.poles P = _
+      rw [hpole]
+    rw [h1, Divisor.point_apply_self]
+    decide
+  -- `h_ext x₀ = 0` (same as `hh_at_x₀` in `8418d4ec`).
+  have hh_at_x₀ : h_ext x₀ = 0 := by
+    show JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P x₀ = 0
+    unfold JacobianChallenge.HolomorphicForms.chartLocalAt
+    show chartAt ℂ (f.toMap P) (f.toMap (e.symm x₀)) = 0
+    rw [hsymm_eP, hfP_infty]
+    show invFwd (OnePoint.infty : OnePoint ℂ) = 0
+    exact invFwd_infty
+  -- The punctured agreement: `h_ext =ᶠ[𝓝[≠] x₀] Fc⁻¹`. Same shape as `8418d4ec`.
+  have hh_punctured : h_ext =ᶠ[𝓝[≠] x₀] Fc⁻¹ := by
+    have htgt_nhds : e.target ∈ 𝓝 x₀ :=
+      e.open_target.mem_nhds (e.map_source hP_src)
+    have htgt_nhdsW : e.target ∈ 𝓝[≠] x₀ := mem_nhdsWithin_of_mem_nhds htgt_nhds
+    have hself : {x₀}ᶜ ∈ 𝓝[≠] x₀ := self_mem_nhdsWithin
+    filter_upwards [htgt_nhdsW, hself] with z hz_tgt hz_ne
+    have hesymm_src : e.symm z ∈ e.source := e.map_target hz_tgt
+    have he_round : e (e.symm z) = z := e.right_inv hz_tgt
+    have hsymm_ne_P : e.symm z ≠ P := by
+      intro hcontra
+      apply hz_ne
+      have := congrArg (fun y : X => e y) hcontra
+      simp only at this
+      rw [he_round] at this
+      exact this
+    -- `f.toMap (e.symm z) ≠ ∞` (since `e.symm z ≠ P`).
+    have hP_zero_symm : f.poleDivisor (e.symm z) = 0 := by
+      change f.poles (e.symm z) = 0
+      rw [hpole]
+      exact Divisor.point_apply_ne hsymm_ne_P
+    have hne_infty : f.toMap (e.symm z) ≠ (OnePoint.infty : OnePoint ℂ) :=
+      f.toMap_ne_infty_of_poleDivisor_zero (e.symm z) hP_zero_symm
+    -- Now evaluate `h_ext z` step by step.
+    show JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P z = Fc⁻¹ z
+    unfold JacobianChallenge.HolomorphicForms.chartLocalAt
+    show chartAt ℂ (f.toMap P) (f.toMap (e.symm z)) = (Fc z)⁻¹
+    rw [hfP_infty]
+    -- Now LHS is `invFwd (f.toMap (e.symm z))`.
+    -- `f.toMap (e.symm z) = ↑((f.toMap (e.symm z)).getD 0) = ↑(Fc z)`.
+    -- (Case-split on `f.toMap (e.symm z)`.)
+    cases h_case : f.toMap (e.symm z) with
+    | infty => exact absurd h_case hne_infty
+    | coe y =>
+      -- `f.toMap (e.symm z) = ↑y`, so `(f.toMap (e.symm z)).getD 0 = y`, hence `Fc z = y`.
+      have hFc_z : Fc z = y := by
+        show (f.toMap (e.symm z)).getD 0 = y
+        rw [h_case]; rfl
+      show invFwd ((y : ℂ) : OnePoint ℂ) = (Fc z)⁻¹
+      rw [hFc_z]
+      exact invFwd_coe _
+  -- `h_ext` is meromorphic at `x₀` (via the punctured agreement and `Fc⁻¹` meromorphic).
+  have hh_ext_mer : MeromorphicAt h_ext x₀ :=
+    hFc_mer.inv.congr hh_punctured.symm
+  -- From `han.simple_pole_order_one`, get `mapAnalyticOrderAt f.toMap P = 1`,
+  -- i.e. `analyticOrderNatAt (fun t => h_ext t - h_ext x₀) x₀ = 1`.
+  have hmAOA_eq_1 :
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 :=
+    han.simple_pole_order_one P hpole
+  -- Unfold `mapAnalyticOrderAt` and simplify using `hh_at_x₀ = 0`.
+  have hnat_ord_h_ext :
+      analyticOrderNatAt h_ext x₀ = 1 := by
+    have hraw : analyticOrderNatAt
+        (fun t => JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P t -
+          JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P (e P)) (e P) = 1 := by
+      have := hmAOA_eq_1
+      unfold JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt at this
+      exact this
+    -- Rewrite via `h_ext` and `x₀` definitions, then via `h_ext x₀ = 0`.
+    have hsub : (fun t => JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P t -
+        JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P (e P)) = h_ext := by
+      funext t
+      change h_ext t - h_ext x₀ = h_ext t
+      rw [hh_at_x₀, sub_zero]
+    rw [hsub] at hraw
+    -- `hraw : analyticOrderNatAt h_ext (e P) = 1`. Note `e P = x₀`.
+    exact hraw
+  -- `analyticOrderNatAt h_ext x₀ = 1` implies `analyticOrderAt h_ext x₀ = (1 : ℕ∞)`
+  -- (since `.toNat = 1` is only possible when the underlying value is exactly `(1 : ℕ)`).
+  have h_an_h_ext : AnalyticAt ℂ h_ext x₀ := by
+    -- If `h_ext` weren't `AnalyticAt`, `analyticOrderAt = 0` (junk), so `analyticOrderNatAt = 0`,
+    -- contradicting `= 1`.
+    by_contra hcontra
+    have : analyticOrderAt h_ext x₀ = 0 := analyticOrderAt_of_not_analyticAt hcontra
+    have h0 : analyticOrderNatAt h_ext x₀ = 0 := by
+      unfold analyticOrderNatAt; rw [this]; rfl
+    rw [hnat_ord_h_ext] at h0
+    exact one_ne_zero h0
+  have h_an_ord_h_ext_ne_top : analyticOrderAt h_ext x₀ ≠ ⊤ := by
+    intro hcontra
+    have h0 : analyticOrderNatAt h_ext x₀ = 0 := by
+      unfold analyticOrderNatAt; rw [hcontra]; rfl
+    rw [hnat_ord_h_ext] at h0
+    exact one_ne_zero h0
+  have h_an_ord_h_ext : analyticOrderAt h_ext x₀ = (1 : ℕ∞) := by
+    have hcoe := Nat.cast_analyticOrderNatAt h_an_ord_h_ext_ne_top
+    rw [hnat_ord_h_ext] at hcoe
+    exact hcoe.symm
+  -- Convert `analyticOrderAt h_ext x₀ = 1` into `meromorphicOrderAt h_ext x₀ = (1 : ℤ)`.
+  have h_mero_ord_h_ext :
+      meromorphicOrderAt h_ext x₀ = ((1 : ℤ) : WithTop ℤ) := by
+    have hmap : meromorphicOrderAt h_ext x₀ = (analyticOrderAt h_ext x₀).map (↑) :=
+      h_an_h_ext.meromorphicOrderAt_eq
+    rw [hmap, h_an_ord_h_ext]
+    rfl
+  -- Apply `meromorphicOrderAt_inv` via the punctured agreement.
+  -- `meromorphicOrderAt h_ext x₀ = meromorphicOrderAt (Fc⁻¹) x₀ = -meromorphicOrderAt Fc x₀`.
+  have h_mero_ord_Fc :
+      meromorphicOrderAt Fc x₀ = ((-1 : ℤ) : WithTop ℤ) := by
+    have step1 :
+        meromorphicOrderAt h_ext x₀ = meromorphicOrderAt (Fc⁻¹) x₀ :=
+      meromorphicOrderAt_congr hh_punctured
+    have step2 :
+        meromorphicOrderAt (Fc⁻¹) x₀ = -meromorphicOrderAt Fc x₀ :=
+      meromorphicOrderAt_inv
+    rw [step1, step2] at h_mero_ord_h_ext
+    -- `h_mero_ord_h_ext : -meromorphicOrderAt Fc x₀ = (1 : ℤ)` (coerced)
+    have := h_mero_ord_h_ext
+    -- Negate both sides.
+    have hneg : meromorphicOrderAt Fc x₀ = -((1 : ℤ) : WithTop ℤ) := by
+      have := congrArg Neg.neg this
+      simp only [neg_neg] at this
+      exact this
+    rw [hneg]
+    rfl
+  -- Translate back via `orderAt_eq_chartAt`.
+  rw [JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt]
+  exact h_mero_ord_Fc
+
 /--
 Given a `MeromorphicMapToSphere f` on a compact connected complex
 1-manifold which is nonconstant, has a simple pole at `P`, and carries
