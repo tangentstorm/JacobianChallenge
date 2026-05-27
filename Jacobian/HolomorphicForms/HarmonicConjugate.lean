@@ -72,6 +72,20 @@ theorem IsHarmonicConjugateAtReal.re_im_at (x : ℂ) :
   rw [hfun]
   exact (ContinuousLinearMap.id ℂ ℂ).hasFDerivAt
 
+/-- First honest existence theorem for `IsHarmonicConjugateAtReal`.
+On `X = ℂ` at any point `x`, `Complex.re` admits a genuine
+harmonic conjugate — namely `Complex.im`, witnessed by `re_im_at`.
+
+Specialized to `u = Complex.re` because that is currently the only
+case our witness library covers; a general-`u` version on `X = ℂ`
+would need either a constructive Poincaré-style integration or a
+richer witness toolbox. Companion to the still-cheating generic
+`harmonic_conjugate_exists_locally`; analogous in role to the
+dipole's `existence_of_dipole_harmonic_on_complex`. -/
+theorem existence_of_harmonic_conjugate_for_re_on_complex (x : ℂ) :
+    ∃ v : ℂ → ℝ, IsHarmonicConjugateAtReal ℂ Complex.re v x :=
+  ⟨Complex.im, IsHarmonicConjugateAtReal.re_im_at x⟩
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
