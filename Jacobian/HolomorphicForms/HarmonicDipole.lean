@@ -145,6 +145,42 @@ theorem HasLogarithmicSingularityAtReal.neg_log_abs_at (Q : ℂ) :
   rw [hfun]
   exact tendsto_const_nhds
 
+/-- Closure under adding a function with a limit at the chart image of `P`.
+If `u` has a logarithmic singularity at `P` with sign `s` and limit `c`,
+and `g`'s chart-pullback tends to `d` at `(chartAt ℂ P) P`, then `u + g`
+has a logarithmic singularity at `P` with the same sign and limit `c + d`.
+
+Key building block for combining the single-point witnesses into the
+two-point dipole `log ‖· - P‖ - log ‖· - Q‖` needed to retire the
+`fun _ => 0` cheat in `existence_of_dipole_harmonic`. -/
+lemma HasLogarithmicSingularityAtReal.add_tendsto
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {P : X} {u g : X → ℝ} {sign : ℝ}
+    (hu : HasLogarithmicSingularityAtReal X P u sign)
+    {d : ℝ}
+    (hg : Filter.Tendsto (fun z : ℂ => g ((chartAt ℂ P).symm z))
+            (nhds ((chartAt ℂ P) P)) (nhds d)) :
+    HasLogarithmicSingularityAtReal X P (u + g) sign := by
+  obtain ⟨c, hu'⟩ := hu
+  refine ⟨c + d, ?_⟩
+  have hsum :
+      (fun z : ℂ =>
+          (u + g) ((chartAt ℂ P).symm z)
+            - sign * Real.log ‖z - (chartAt ℂ P) P‖)
+        = (fun z : ℂ =>
+            (u ((chartAt ℂ P).symm z)
+              - sign * Real.log ‖z - (chartAt ℂ P) P‖)
+            + g ((chartAt ℂ P).symm z)) := by
+    funext z
+    show (u + g) ((chartAt ℂ P).symm z)
+          - sign * Real.log ‖z - (chartAt ℂ P) P‖
+        = (u ((chartAt ℂ P).symm z)
+            - sign * Real.log ‖z - (chartAt ℂ P) P‖)
+          + g ((chartAt ℂ P).symm z)
+    simp [Pi.add_apply]; ring
+  rw [hsum]
+  exact hu'.add hg
+
 /-- A harmonic function on X \ {P, Q} satisfying Laplace's equation. -/
 def IsHarmonicOff
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
