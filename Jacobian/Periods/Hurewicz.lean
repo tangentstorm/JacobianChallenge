@@ -3220,6 +3220,34 @@ theorem boundary_midpoint_aPair_target_residue_absurd
   omega
 
 /--
+At a canonical midpoint, equality with the source side of a `bᵢ`
+pairing recovers the concrete source arc index.
+-/
+theorem boundary_midpoint_bPair_source_arc_index
+    (g : ℕ) (a : ℕ) (i : Fin (g + 1)) (t : ℝ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_ht : t ∈ Set.Icc (0 : ℝ) 1)
+    (_ha_eq :
+      boundaryParam (g + 1) a (1 / 2 : ℝ) =
+        boundaryParam (g + 1) (4 * i.val + 1) t) :
+    a = 4 * i.val + 1 := by
+  sorry
+
+/--
+At a canonical midpoint, equality with the reversed target side of a
+`bᵢ` pairing recovers the concrete target arc index.
+-/
+theorem boundary_midpoint_bPair_target_arc_index
+    (g : ℕ) (b : ℕ) (i : Fin (g + 1)) (t : ℝ)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_ht : t ∈ Set.Icc (0 : ℝ) 1)
+    (_hb_eq :
+      boundaryParam (g + 1) b (1 / 2 : ℝ) =
+        boundaryParam (g + 1) (4 * i.val + 3) (1 - t)) :
+    b = 4 * i.val + 3 := by
+  sorry
+
+/--
 At a canonical midpoint, a `bᵢ` side-pairing source/target equality
 recovers the concrete source and reversed target arc indices.
 -/
@@ -3235,7 +3263,9 @@ theorem boundary_midpoint_bPair_arc_indices
       boundaryParam (g + 1) b (1 / 2 : ℝ) =
         boundaryParam (g + 1) (4 * i.val + 3) (1 - t)) :
     a = 4 * i.val + 1 ∧ b = 4 * i.val + 3 := by
-  sorry
+  exact ⟨
+    boundary_midpoint_bPair_source_arc_index g a i t _ha _ht _ha_eq,
+    boundary_midpoint_bPair_target_arc_index g b i t _hb _ht _hb_eq⟩
 
 /--
 The midpoint of a canonical-residue arc cannot be the reversed endpoint
