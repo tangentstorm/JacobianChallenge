@@ -3466,6 +3466,54 @@ theorem boundary_midpoint_sideGen_residue_absurd
         g a b i t _ha _hb ht hx hy
 
 /--
+The direct `EqvGen.rel` case cannot identify distinct canonical-residue
+midpoint arcs once direct side-generator steps have been ruled out.
+-/
+theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_rel_absurd
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_hstep :
+      ∀ {a b : ℕ},
+        IsCanonicalEdgeArcResidue g a →
+        IsCanonicalEdgeArcResidue g b →
+        Polygon4g.SideGen (g + 1)
+          (boundaryParam (g + 1) a (1 / 2 : ℝ))
+          (boundaryParam (g + 1) b (1 / 2 : ℝ)) →
+        False)
+    (_h :
+      Polygon4g.SideGen (g + 1)
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    a = b := by
+  exfalso
+  exact _hstep _ha _hb _h
+
+/--
+The remaining transitive-closure content for midpoint `EqvGen` separation,
+assuming the one-step canonical-residue midpoint case has already been
+handled.
+-/
+theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_closure
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_hrel :
+      ∀ {a b : ℕ},
+        IsCanonicalEdgeArcResidue g a →
+        IsCanonicalEdgeArcResidue g b →
+        Polygon4g.SideGen (g + 1)
+          (boundaryParam (g + 1) a (1 / 2 : ℝ))
+          (boundaryParam (g + 1) b (1 / 2 : ℝ)) →
+        a = b)
+    (_h :
+      Relation.EqvGen (Polygon4g.SideGen (g + 1))
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    a = b := by
+  sorry
+
+/--
 Midpoint `EqvGen` separation for canonical-residue arcs, assuming the
 direct side-generator obstruction for canonical-residue endpoints.
 -/
@@ -3486,7 +3534,11 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_and_sideGen_absurd
         (boundaryParam (g + 1) a (1 / 2 : ℝ))
         (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
     a = b := by
-  sorry
+  exact boundary_midpoint_sideRel_residue_eq_of_eqvGen_closure g a b _ha _hb
+    (fun ha hb hrel =>
+      boundary_midpoint_sideRel_residue_eq_of_eqvGen_rel_absurd
+        g _ _ ha hb _hstep hrel)
+    _h
 
 /--
 Midpoint `SideRel` between two boundary-arc indices in the canonical
