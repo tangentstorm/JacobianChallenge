@@ -272,6 +272,27 @@ theorem HasLogarithmicSingularityAtReal.dipole_at_neg
   rw [hfun] at hsum
   exact hsum
 
+/-- Honest dipole existence on `X = ℂ`. For any two distinct
+points `P Q : ℂ`, the canonical real dipole
+`u(z) := log ‖z - P‖ - log ‖z - Q‖` satisfies the contentful
+`HasLogarithmicSingularityAtReal` predicate at both `P` (sign `+1`)
+and `Q` (sign `-1`).
+
+First *honest* dipole-existence theorem in the project — does not
+rely on the `True`-stub side or on `fun _ => 0`. Companion to the
+still-cheating general-`X` `existence_of_dipole_harmonic`; the
+general statement requires partition-of-unity / chart-pullback
+machinery to lift this ℂ-specific construction, which is a
+multi-commit follow-up. -/
+theorem existence_of_dipole_harmonic_on_complex
+    {P Q : ℂ} (hPQ : P ≠ Q) :
+    ∃ u : ℂ → ℝ,
+      HasLogarithmicSingularityAtReal ℂ P u 1 ∧
+      HasLogarithmicSingularityAtReal ℂ Q u (-1) :=
+  ⟨fun z : ℂ => Real.log ‖z - P‖ - Real.log ‖z - Q‖,
+    HasLogarithmicSingularityAtReal.dipole_at_pos hPQ,
+    HasLogarithmicSingularityAtReal.dipole_at_neg hPQ⟩
+
 /-- A harmonic function on X \ {P, Q} satisfying Laplace's equation. -/
 def IsHarmonicOff
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
