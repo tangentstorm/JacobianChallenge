@@ -513,6 +513,114 @@ theorem MeromorphicMapToSphere.orderAt_getD_eq_neg_one_of_analyticData_simple_po
   rw [JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt]
   exact h_mero_ord_Fc
 
+omit [CompactSpace X] [ConnectedSpace X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**`continuous_finiteLift_off` provider for a `MeromorphicMapToSphere`
+with a single simple pole.**
+
+Given `f : MeromorphicMapToSphere X` with `f.poles = Divisor.point P`,
+the canonical finite lift `(f.toMap ·).getD 0` is continuous on the
+punctured space `({P}ᶜ : Set X)`.
+
+Proof strategy: on `{P}ᶜ`, `f.toMap x ≠ ∞` (since
+`preimage_infty_eq_singleton_of_poleDivisor_point` identifies the
+pole locus with `{P}`), so `f.toMap` is continuous on this open set
+via the structural `continuousOn_ne_infty` field. At each `p ∈ {P}ᶜ`,
+`{P}ᶜ` is a neighborhood of `p` (open), giving `ContinuousAt f.toMap p`.
+Composition with the `OnePoint`-coercion inverse via
+`OnePoint.isOpenEmbedding_coe` + `IsOpenEmbedding.tendsto_nhds_iff`
+yields `ContinuousAt ((f.toMap ·).getD 0) p`. Pointwise `ContinuousAt`
+on the open `{P}ᶜ` gives `ContinuousOn`.
+
+The structural-field bridge for the `continuous_finiteLift_off` field
+of `PointRiemannRochSection`. Unlike the `order` and `meromorphic`
+bridges, this bridge requires no `AnalyticData` hypothesis — it is
+derivable purely from the structural fields of `MeromorphicMapToSphere`,
+so it is maximally consumable.
+-/
+theorem MeromorphicMapToSphere.continuousOn_getD_off_pole_of_poleDivisor_point
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    ContinuousOn (fun q => (f.toMap q).getD 0) (({P}ᶜ : Set X)) := by
+  classical
+  -- Establish the open set `{P}ᶜ` is exactly the non-pole locus.
+  have hpoleSet :
+      {x : X | f.toMap x = (OnePoint.infty : OnePoint ℂ)} = ({P} : Set X) := by
+    ext x
+    constructor
+    · intro hx
+      have : x ∈ f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} := hx
+      rw [f.preimage_infty_eq_singleton_of_poleDivisor_point P hpole] at this
+      exact this
+    · intro hx
+      have hx' : x ∈ ({P} : Set X) := hx
+      have : x ∈ f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} := by
+        rw [f.preimage_infty_eq_singleton_of_poleDivisor_point P hpole]
+        exact hx'
+      exact this
+  have h_loci_eq :
+      {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} = ({P} : Set X)ᶜ := by
+    ext x
+    constructor
+    · intro hx
+      have : x ∉ {y : X | f.toMap y = (OnePoint.infty : OnePoint ℂ)} := hx
+      rw [hpoleSet] at this
+      exact this
+    · intro hx
+      have : x ∉ ({P} : Set X) := hx
+      rw [← hpoleSet] at this
+      exact this
+  have hopen_compl : IsOpen (({P}ᶜ : Set X)) := isOpen_compl_singleton
+  -- Pointwise continuity on `{P}ᶜ`.
+  intro p hp_mem
+  -- `hp_mem : p ∈ ({P}ᶜ : Set X)`, i.e. `p ≠ P`.
+  have hp_ne_P : p ≠ P := hp_mem
+  -- `f.toMap p ≠ ∞`.
+  have hP_zero : f.poleDivisor p = 0 := by
+    change f.poles p = 0
+    rw [hpole]
+    exact Divisor.point_apply_ne hp_ne_P
+  have hp_ne_infty : f.toMap p ≠ (OnePoint.infty : OnePoint ℂ) :=
+    f.toMap_ne_infty_of_poleDivisor_zero p hP_zero
+  -- `{P}ᶜ` is a neighborhood of `p`.
+  have h_nbhd : ({P}ᶜ : Set X) ∈ 𝓝 p := hopen_compl.mem_nhds hp_mem
+  -- And so is the non-pole locus (they're equal).
+  have h_nbhd' :
+      {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} ∈ 𝓝 p := by
+    rw [h_loci_eq]; exact h_nbhd
+  -- `ContinuousAt f.toMap p` from `continuousOn_ne_infty`.
+  have hfcont : ContinuousAt f.toMap p :=
+    f.continuousOn_ne_infty.continuousAt h_nbhd'
+  -- The finite lift abbreviated.
+  set F : X → ℂ := fun q => (f.toMap q).getD 0 with hF_def
+  -- On `{P}ᶜ ∈ 𝓝 p`, `f.toMap x = ↑(F x)`.
+  have h_eventually : ∀ᶠ x in 𝓝 p, f.toMap x = ((F x : ℂ) : OnePoint ℂ) := by
+    filter_upwards [h_nbhd'] with x hx
+    cases h_case : f.toMap x with
+    | infty => exact absurd h_case hx
+    | coe y =>
+      have hFx_eq : F x = y := by
+        show (f.toMap x).getD 0 = y
+        rw [h_case]; rfl
+      rw [hFx_eq]
+  have h_eq_pt : f.toMap p = ((F p : ℂ) : OnePoint ℂ) := h_eventually.self_of_nhds
+  -- Tendsto of `f.toMap` at `p` is `↑(F p)`.
+  have hT : Filter.Tendsto f.toMap (𝓝 p) (𝓝 (((F p : ℂ) : OnePoint ℂ))) := by
+    have h := hfcont.tendsto
+    rwa [h_eq_pt] at h
+  have hT' : Filter.Tendsto (fun x => ((F x : ℂ) : OnePoint ℂ)) (𝓝 p)
+      (𝓝 (((F p : ℂ) : OnePoint ℂ))) :=
+    hT.congr' h_eventually
+  -- Lift through the open embedding `(↑) : ℂ → OnePoint ℂ`.
+  have h_open_embed :
+      Topology.IsOpenEmbedding ((↑) : ℂ → OnePoint ℂ) :=
+    OnePoint.isOpenEmbedding_coe
+  have hF_at : ContinuousAt F p :=
+    (h_open_embed.tendsto_nhds_iff (f := F) (l := 𝓝 p)).mpr hT'
+  -- Restrict `ContinuousAt` to `ContinuousWithinAt {P}ᶜ`.
+  exact hF_at.continuousWithinAt
+
 /--
 Given a `MeromorphicMapToSphere f` on a compact connected complex
 1-manifold which is nonconstant, has a simple pole at `P`, and carries
