@@ -3501,7 +3501,69 @@ theorem boundary_midpoint_residue_eq_of_param_eq
       boundaryParam (g + 1) a (1 / 2 : ℝ) =
         boundaryParam (g + 1) b (1 / 2 : ℝ)) :
     a = b := by
-  sorry
+  have hval :
+      boundaryParamC' (4 * (g + 1)) a (1 / 2 : ℝ) =
+        boundaryParamC' (4 * (g + 1)) b (1 / 2 : ℝ) := by
+    exact congrArg Subtype.val _h
+  have hperiod :=
+    Complex.exp_eq_exp_iff_exists_int.mp (by
+      simpa [boundaryParamC', boundaryParam', boundaryParam] using hval)
+  obtain ⟨n, hn⟩ := hperiod
+  have hangle :
+      boundaryAngle' (4 * (g + 1)) a (1 / 2 : ℝ) =
+        boundaryAngle' (4 * (g + 1)) b (1 / 2 : ℝ) +
+          (n : ℝ) * (2 * Real.pi) := by
+    have hmul :
+        (boundaryAngle' (4 * (g + 1)) a (1 / 2 : ℝ) : ℂ) * Complex.I =
+          ((boundaryAngle' (4 * (g + 1)) b (1 / 2 : ℝ) : ℂ) +
+              (n : ℂ) * (2 * Real.pi : ℂ)) * Complex.I := by
+      simpa [mul_assoc, add_mul] using hn
+    have hcancel :=
+      mul_right_cancel₀ (show (Complex.I : ℂ) ≠ 0 from Complex.I_ne_zero) hmul
+    exact_mod_cast hcancel
+  have hGpos : (0 : ℝ) < 4 * ((g : ℝ) + 1) := by
+    positivity
+  have hcoord :
+      ((a : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) =
+        ((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) + (n : ℝ) := by
+    have hmul :
+        (2 * Real.pi) *
+            (((a : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ)) =
+          (2 * Real.pi) *
+            ((((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ)) + (n : ℝ)) := by
+      simpa [boundaryAngle', div_eq_mul_inv, mul_add, add_mul, mul_assoc,
+        mul_comm, mul_left_comm] using hangle
+    exact mul_left_cancel₀
+      (mul_ne_zero (by norm_num : (2 : ℝ) ≠ 0) Real.pi_ne_zero) hmul
+  have ha_nonneg : (0 : ℝ) ≤ ((a : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) := by
+    positivity
+  have ha_lt_one : ((a : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) < 1 := by
+    have ha_succ_le : (a : ℝ) + 1 ≤ 4 * ((g : ℝ) + 1) := by
+      exact_mod_cast (Nat.succ_le_of_lt _ha.1)
+    rw [div_lt_iff₀ hGpos]
+    linarith
+  have hb_nonneg : (0 : ℝ) ≤ ((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) := by
+    positivity
+  have hb_lt_one : ((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) < 1 := by
+    have hb_succ_le : (b : ℝ) + 1 ≤ 4 * ((g : ℝ) + 1) := by
+      exact_mod_cast (Nat.succ_le_of_lt _hb.1)
+    rw [div_lt_iff₀ hGpos]
+    linarith
+  have hn_zero : n = 0 := by
+    have hn_lt_one : (n : ℝ) < 1 := by linarith
+    have hn_gt_neg_one : (-1 : ℝ) < (n : ℝ) := by linarith
+    have hn_int_lt : n < 1 := by exact_mod_cast hn_lt_one
+    have hn_int_gt : (-1 : ℤ) < n := by exact_mod_cast hn_gt_neg_one
+    omega
+  have hcoord0 :
+      ((a : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) =
+        ((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) := by
+    simpa [hn_zero] using hcoord
+  have hab_real : (a : ℝ) = b := by
+    have hmul := congrArg (fun x : ℝ => x * (4 * (g + 1) : ℝ)) hcoord0
+    field_simp [hGpos.ne'] at hmul
+    linarith
+  exact_mod_cast hab_real
 
 /--
 The reflexive constructor case for canonical-residue midpoint `EqvGen`
