@@ -2827,6 +2827,51 @@ noncomputable def toRiemannRochSectionAtPoint
     tendsto_norm_atTop_of_order_neg_one
       s.finiteLift P s.meromorphic_everywhere s.orderAt_P_eq_neg_one
 
+/--
+**Assembly helper: build a `PointRiemannRochSection X P` from
+`MeromorphicMapToSphere + AnalyticData + (poles = Divisor.point P)`
+data.**
+
+Given any `MeromorphicMapToSphere X` `f` with pole divisor exactly
+`Divisor.point P` and an `AnalyticData` record `han` (which supplies
+the meromorphicity of the finite lift and the simple-pole order
+condition), this assembly produces a `PointRiemannRochSection X P`
+by consuming the existing field bridges:
+
+* `finiteLift := (f.toMap ·).getD 0`.
+* `meromorphic_everywhere := han.meromorphic_getD`.
+* `order_ge_neg_one_at_P` — from
+  `orderAt_getD_eq_neg_one_of_simple_pole` (equality `-1` weakened
+  to `≤ -1` via `Eq.le`).
+* `noPoleOff_P` — from `noPoleOff_P_of_poleDivisor_point`.
+* `outside_constants` — from `outside_constants_of_poleDivisor_point`
+  (structural-only).
+* `continuous_finiteLift_off` — from
+  `continuousOn_getD_off_pole_of_poleDivisor_point` (structural-only).
+
+This assembly is **independent of the `genusZero_pointRRSection_outside_constants_exists`
+sorry**: it consumes only sorry-free bridges and the explicit input
+hypotheses. Future consumers with `AnalyticData` in hand can call
+this to obtain a `PointRiemannRochSection X P` directly.
+-/
+noncomputable def of_meromorphicMap_analyticData_simple_pole
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    PointRiemannRochSection X P where
+  finiteLift := fun q => (f.toMap q).getD 0
+  meromorphic_everywhere := han.meromorphic_getD
+  order_ge_neg_one_at_P := by
+    have h_eq : JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
+        (fun q => (f.toMap q).getD 0) = ((-1 : ℤ) : WithTop ℤ) :=
+      f.orderAt_getD_eq_neg_one_of_simple_pole
+        han.meromorphic_getD P hpole (han.simple_pole_order_one P hpole)
+    rw [h_eq]
+  noPoleOff_P :=
+    f.noPoleOff_P_of_poleDivisor_point han.meromorphic_getD P hpole
+  outside_constants := f.outside_constants_of_poleDivisor_point P hpole
+  continuous_finiteLift_off :=
+    f.continuousOn_getD_off_pole_of_poleDivisor_point P hpole
+
 end PointRiemannRochSection
 
 
