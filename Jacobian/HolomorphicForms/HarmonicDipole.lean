@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 namespace JacobianChallenge.HolomorphicForms
 
@@ -11,6 +12,31 @@ def HasLogarithmicSingularityAt
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (_P : X) (_u : X → ℝ) (_sign : ℝ) : Prop :=
   True
+
+/-- Genuine local-coordinate logarithmic-singularity condition for `u` at `P`
+with prescribed sign. Pulling `u` back through `chartAt ℂ P` (the standard
+chart sending `P` to a neighborhood of `0 ∈ ℂ`), the function
+`z ↦ u (chart⁻¹ z) - sign * log ‖z‖` converges to some constant `c` as
+`z → 0`. Sibling to the `True`-stub `HasLogarithmicSingularityAt`;
+intended to be the contentful predicate eventually consumed in place of
+the stub. -/
+def HasLogarithmicSingularityAtReal
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (P : X) (u : X → ℝ) (sign : ℝ) : Prop :=
+  ∃ c : ℝ,
+    Filter.Tendsto
+      (fun z : ℂ => u ((chartAt ℂ P).symm z) - sign * Real.log ‖z‖)
+      (nhds 0) (nhds c)
+
+/-- Bridge from the genuine log-singularity predicate to the `True`-stub.
+Allows the contentful predicate to be substituted in callers without
+breaking the stub-based proof of `existence_of_dipole_harmonic`. -/
+lemma HasLogarithmicSingularityAtReal.toStub
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {P : X} {u : X → ℝ} {sign : ℝ}
+    (_h : HasLogarithmicSingularityAtReal X P u sign) :
+    HasLogarithmicSingularityAt X P u sign :=
+  trivial
 
 /-- A harmonic function on X \ {P, Q} satisfying Laplace's equation. -/
 def IsHarmonicOff
