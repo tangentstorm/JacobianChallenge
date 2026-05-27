@@ -166,7 +166,165 @@ theorem MeromorphicMapToSphere.preimage_infty_eq_singleton_of_poleDivisor_point
     rw [h, hx, Divisor.point_apply_self]
     decide
 
-/-! ### Branched-cover-data assembly from `AnalyticData` -/
+omit [CompactSpace X] [ConnectedSpace X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**`noPoleOff_P` provider for a `MeromorphicMapToSphere` with a single
+simple pole.**
+
+Given `f : MeromorphicMapToSphere X` whose pole divisor is exactly
+`Divisor.point P`, equipped with `AnalyticData` (which supplies the
+chart-local meromorphicity of the canonical finite lift), the
+chart-local meromorphic order of the finite lift `(f.toMap ·).getD 0`
+is non-negative at every point `p ≠ P`.
+
+Proof strategy: at any `p ≠ P`, the pole divisor at `p` is zero, so
+`f.toMap p ≠ ∞`. By `continuousOn_ne_infty`, `f.toMap` is continuous
+at `p`, hence `(f.toMap ·).getD 0` is continuous at `p` (composing
+the continuous `f.toMap` with the continuous `getD 0 : OnePoint ℂ → ℂ`
+on the non-∞ image). Continuity at `p` gives a limit in `𝓝[≠] p`,
+which pulls back through the chart to a limit in `𝓝[≠] (chartAt ℂ p p)`.
+By Mathlib's `tendsto_nhds_iff_meromorphicOrderAt_nonneg`, the
+chart-pulled meromorphic order is non-negative; `orderAt_eq_chartAt`
+translates this back to `orderAt p` in the project's vanishing-order
+API.
+
+This is the structural-field bridge for the `noPoleOff_P` field of
+`PointRiemannRochSection`. Once `meromorphic_getD` is promoted to a
+structural field of `MeromorphicMapToSphere`, the `(han : f.AnalyticData)`
+hypothesis can be dropped at call sites that have only structural
+`MeromorphicMapToSphere` data in hand.
+-/
+theorem MeromorphicMapToSphere.noPoleOff_P_of_poleDivisor_point
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    ∀ p : X, p ≠ P →
+      (0 : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p
+          (fun q => (f.toMap q).getD 0) := by
+  classical
+  intro p hpne
+  -- Set up the canonical chart at `p`.
+  set e := chartAt ℂ p with he_def
+  set x₀ : ℂ := e p with hx₀_def
+  -- The finite lift, abbreviated.
+  set F : X → ℂ := fun q => (f.toMap q).getD 0 with hF_def
+  -- Chart-pulled meromorphicity of `F` at `x₀`.
+  have hFmer : MeromorphicAt (F ∘ e.symm) x₀ := by
+    have h := han.meromorphic_getD p
+    -- `MeromorphicAtX F p := MeromorphicAt (F ∘ (extChartAt 𝓘(ℂ) p).symm) (extChartAt 𝓘(ℂ) p p)`
+    unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at h
+    rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt] at h
+    exact h
+  -- It suffices to show the chart-pulled `meromorphicOrderAt` is non-negative.
+  rw [JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt]
+  -- Apply Mathlib's iff via the converging-limit witness.
+  rw [← tendsto_nhds_iff_meromorphicOrderAt_nonneg hFmer]
+  -- Witness: the value of `F` at `p`, i.e. `(f.toMap p).getD 0`.
+  refine ⟨F p, ?_⟩
+  -- We need: `Tendsto (F ∘ e.symm) (𝓝[≠] x₀) (𝓝 (F p))`.
+  -- Step A: `f.toMap p ≠ ∞` (since pole divisor at `p` is `0`).
+  have hP_zero : f.poleDivisor p = 0 := by
+    change f.poles p = 0
+    rw [hpole]
+    exact Divisor.point_apply_ne hpne
+  have hp_ne_infty : f.toMap p ≠ (OnePoint.infty : OnePoint ℂ) :=
+    f.toMap_ne_infty_of_poleDivisor_zero p hP_zero
+  -- Step B: `f.toMap` is continuous at `p` (via `continuousOn_ne_infty` and the
+  -- fact that `{x | f.toMap x ≠ ∞}` is open — it's the complement of a closed
+  -- set, since `{∞}` is closed in `OnePoint ℂ` and `f.toMap` is continuous on
+  -- its complement open).
+  -- Note: `continuousOn_ne_infty` only gives continuity on the set; we need
+  -- continuity at the point `p`, using that the set is a neighborhood of `p`.
+  have hopenSet : IsOpen {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} := by
+    -- The complement is the preimage of `{∞}` under a function that is continuous
+    -- on the set itself; this requires a bit more work. Use that the pole set
+    -- is closed via `preimage_infty_eq_singleton_of_poleDivisor_point` and
+    -- singleton-closedness in `T2Space X`.
+    have hpoleSet :
+        {x : X | f.toMap x = (OnePoint.infty : OnePoint ℂ)} = ({P} : Set X) := by
+      ext x
+      constructor
+      · intro hx
+        have : x ∈ f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} := hx
+        rw [f.preimage_infty_eq_singleton_of_poleDivisor_point P hpole] at this
+        exact this
+      · intro hx
+        have hx' : x ∈ ({P} : Set X) := hx
+        have : x ∈ f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} := by
+          rw [f.preimage_infty_eq_singleton_of_poleDivisor_point P hpole]
+          exact hx'
+        exact this
+    -- The complement of `{x | f.toMap x = ∞} = {P}` is open.
+    have h_compl :
+        {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} =
+          ({P} : Set X)ᶜ := by
+      ext x
+      constructor
+      · intro hx
+        have : x ∉ {y : X | f.toMap y = (OnePoint.infty : OnePoint ℂ)} := hx
+        rw [hpoleSet] at this
+        exact this
+      · intro hx
+        have : x ∉ ({P} : Set X) := hx
+        rw [← hpoleSet] at this
+        exact this
+    rw [h_compl]
+    exact isOpen_compl_singleton
+  have h_nbhd : {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} ∈ 𝓝 p :=
+    hopenSet.mem_nhds hp_ne_infty
+  have hfcont : ContinuousAt f.toMap p :=
+    f.continuousOn_ne_infty.continuousAt h_nbhd
+  -- Step C: `(F ·) = (fun q => (f.toMap q).getD 0)` is continuous at `p`.
+  -- Eventually in `𝓝 p`, `f.toMap x ≠ ∞`, so `(f.toMap x).getD 0` equals the
+  -- unique `y ∈ ℂ` with `f.toMap x = ↑y`. We use the open embedding
+  -- `(↑ : ℂ → OnePoint ℂ)`'s `nhds_eq` to lift continuity of `f.toMap` at `p`
+  -- to continuity of `F` at `p`.
+  have h_open_embed :
+      Topology.IsOpenEmbedding ((↑) : ℂ → OnePoint ℂ) :=
+    OnePoint.isOpenEmbedding_coe
+  -- On the nbhd `{x | f.toMap x ≠ ∞}` of `p`, `f.toMap x = ↑(F x)`.
+  have h_eventually : ∀ᶠ x in 𝓝 p, f.toMap x = ((F x : ℂ) : OnePoint ℂ) := by
+    filter_upwards [h_nbhd] with x hx
+    cases h_case : f.toMap x with
+    | infty => exact absurd h_case hx
+    | coe y =>
+      -- Both LHS and RHS contain `f.toMap x`-derived data; identify `F x = y`.
+      -- After `cases h_case`, the goal already substitutes `f.toMap x` with `↑y`.
+      have hFx_eq : F x = y := by
+        show (f.toMap x).getD 0 = y
+        rw [h_case]; rfl
+      -- Goal is `↑y = ↑(F x)`. Use hFx_eq to bridge.
+      rw [hFx_eq]
+  have h_eq_pt : f.toMap p = ((F p : ℂ) : OnePoint ℂ) :=
+    h_eventually.self_of_nhds
+  -- Tendsto of `f.toMap` at `p`: `f.toMap → ↑(F p)`.
+  have hT : Filter.Tendsto f.toMap (𝓝 p) (𝓝 (((F p : ℂ) : OnePoint ℂ))) := by
+    have h := hfcont.tendsto
+    rwa [h_eq_pt] at h
+  -- Use `h_eventually` to replace `f.toMap` by `((↑) ∘ F)` eventually.
+  have hT' : Filter.Tendsto (fun x => ((F x : ℂ) : OnePoint ℂ)) (𝓝 p)
+      (𝓝 (((F p : ℂ) : OnePoint ℂ))) :=
+    hT.congr' h_eventually
+  -- `(↑ : ℂ → OnePoint ℂ)` is an open embedding; lift continuity of
+  -- `(↑) ∘ F` at `p` to continuity of `F` at `p` via
+  -- `IsOpenEmbedding.tendsto_nhds_iff`.
+  have hF_at : ContinuousAt F p :=
+    (h_open_embed.tendsto_nhds_iff (f := F) (l := 𝓝 p)).mpr hT'
+  -- Step D: pull back through `e.symm`.
+  -- `e.symm` is continuous at `x₀ = e p` and sends `x₀ ↦ p`, so
+  -- `Tendsto (F ∘ e.symm) (𝓝 x₀) (𝓝 (F p))`. Restrict to `𝓝[≠] x₀`.
+  have hp_src : p ∈ e.source := mem_chart_source ℂ p
+  have hsymm_x₀ : e.symm x₀ = p := e.left_inv hp_src
+  have hsymm_cont : Filter.Tendsto e.symm (𝓝 x₀) (𝓝 p) := by
+    have h : ContinuousAt e.symm (e p) := e.continuousAt_symm (e.map_source hp_src)
+    have h' : Filter.Tendsto e.symm (𝓝 (e p)) (𝓝 (e.symm (e p))) := h.tendsto
+    rw [e.left_inv hp_src] at h'
+    exact h'
+  have hFsymm : Filter.Tendsto (F ∘ e.symm) (𝓝 x₀) (𝓝 (F p)) :=
+    hF_at.tendsto.comp hsymm_cont
+  exact hFsymm.mono_left nhdsWithin_le_nhds
 
 /--
 Given a `MeromorphicMapToSphere f` on a compact connected complex
