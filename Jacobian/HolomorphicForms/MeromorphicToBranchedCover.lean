@@ -2872,6 +2872,47 @@ noncomputable def of_meromorphicMap_analyticData_simple_pole
   continuous_finiteLift_off :=
     f.continuousOn_getD_off_pole_of_poleDivisor_point P hpole
 
+/--
+**Granular variant of the assembly helper (pattern-symmetric with
+commit `2a4618ae`).**
+
+Like `of_meromorphicMap_analyticData_simple_pole` (commit `1a8f8102`)
+but taking only the granular projections `hmer` and `hord1` instead
+of the full `AnalyticData` record. This avoids requiring callers to
+construct a full `AnalyticData` shim when only the two specific
+projections are needed.
+
+The two `AnalyticData`-dependent bridges
+(`orderAt_getD_eq_neg_one_of_simple_pole` and
+`noPoleOff_P_of_poleDivisor_point`) were refactored in `2a4618ae` to
+take exactly these granular hypotheses; this helper completes the
+symmetry at the assembly level.
+
+The two structural-only fields (`outside_constants`,
+`continuous_finiteLift_off`) come directly from the corresponding
+bridges, which require no `AnalyticData` content. The trivial
+`meromorphic_everywhere` field is supplied directly by `hmer`.
+-/
+noncomputable def of_meromorphicMap_meromorphic_getD_simple_pole
+    (f : MeromorphicMapToSphere X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p)
+    (P : X) (hpole : f.poles = Divisor.point P)
+    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1) :
+    PointRiemannRochSection X P where
+  finiteLift := fun q => (f.toMap q).getD 0
+  meromorphic_everywhere := hmer
+  order_ge_neg_one_at_P := by
+    have h_eq : JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
+        (fun q => (f.toMap q).getD 0) = ((-1 : ℤ) : WithTop ℤ) :=
+      f.orderAt_getD_eq_neg_one_of_simple_pole hmer P hpole hord1
+    rw [h_eq]
+  noPoleOff_P := f.noPoleOff_P_of_poleDivisor_point hmer P hpole
+  outside_constants := f.outside_constants_of_poleDivisor_point P hpole
+  continuous_finiteLift_off :=
+    f.continuousOn_getD_off_pole_of_poleDivisor_point P hpole
+
 end PointRiemannRochSection
 
 
