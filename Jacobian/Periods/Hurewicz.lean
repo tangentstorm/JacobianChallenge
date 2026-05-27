@@ -3490,6 +3490,20 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_rel_absurd
   exact _hstep _ha _hb _h
 
 /--
+Equality of two canonical-residue midpoint boundary parameters recovers
+the raw boundary arc index.
+-/
+theorem boundary_midpoint_residue_eq_of_param_eq
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_h :
+      boundaryParam (g + 1) a (1 / 2 : ℝ) =
+        boundaryParam (g + 1) b (1 / 2 : ℝ)) :
+    a = b := by
+  sorry
+
+/--
 The reflexive constructor case for canonical-residue midpoint `EqvGen`
 separation.
 -/
@@ -3501,7 +3515,7 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_refl
       boundaryParam (g + 1) a (1 / 2 : ℝ) =
         boundaryParam (g + 1) b (1 / 2 : ℝ)) :
     a = b := by
-  sorry
+  exact boundary_midpoint_residue_eq_of_param_eq g a b _ha _hb _hpt
 
 /--
 The symmetric constructor case for canonical-residue midpoint `EqvGen`
