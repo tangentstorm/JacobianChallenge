@@ -237,6 +237,41 @@ theorem HasLogarithmicSingularityAtReal.dipole_at_pos
   rw [hfun] at hsum
   exact hsum
 
+/-- Canonical two-point dipole witness at `Q` (sign `-1`).
+For `P ≠ Q` in ℂ, `u(z) := log ‖z - P‖ - log ‖z - Q‖` has a
+logarithmic singularity at `Q` with sign `-1`: near `Q` the
+`-log ‖z - Q‖` part contributes the singularity (witnessed by
+`neg_log_abs_at Q`) and `log ‖z - P‖` is continuous (witnessed
+by `tendsto_log_norm_sub_of_ne hPQ.symm`), so by `add_tendsto`
+the predicate is preserved. Companion to `dipole_at_pos`. -/
+theorem HasLogarithmicSingularityAtReal.dipole_at_neg
+    {P Q : ℂ} (hPQ : P ≠ Q) :
+    HasLogarithmicSingularityAtReal ℂ Q
+      (fun z : ℂ => Real.log ‖z - P‖ - Real.log ‖z - Q‖) (-1) := by
+  have hQ : HasLogarithmicSingularityAtReal ℂ Q
+      (fun z : ℂ => -Real.log ‖z - Q‖) (-1) :=
+    HasLogarithmicSingularityAtReal.neg_log_abs_at Q
+  -- Named g so add_tendsto can unify against its g binder (lambdas don't unify).
+  set g : ℂ → ℝ := fun w => Real.log ‖w - P‖ with hg_def
+  have hg : Filter.Tendsto (fun z : ℂ => g ((chartAt ℂ Q).symm z))
+      (nhds ((chartAt ℂ Q) Q)) (nhds (Real.log ‖Q - P‖)) := by
+    have hchart : (chartAt ℂ Q) Q = Q := rfl
+    rw [hchart]
+    exact tendsto_log_norm_sub_of_ne hPQ.symm
+  have hsum :=
+    HasLogarithmicSingularityAtReal.add_tendsto hQ hg
+  -- Rewrite (fun z => -log ‖z - Q‖) + g into log ‖· - P‖ - log ‖· - Q‖.
+  have hfun :
+      (fun z : ℂ => -Real.log ‖z - Q‖) + g
+        = fun z : ℂ => Real.log ‖z - P‖ - Real.log ‖z - Q‖ := by
+    funext z
+    show -Real.log ‖z - Q‖ + g z
+        = Real.log ‖z - P‖ - Real.log ‖z - Q‖
+    simp [hg_def]
+    ring
+  rw [hfun] at hsum
+  exact hsum
+
 /-- A harmonic function on X \ {P, Q} satisfying Laplace's equation. -/
 def IsHarmonicOff
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
