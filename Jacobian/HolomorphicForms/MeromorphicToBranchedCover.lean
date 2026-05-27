@@ -3029,6 +3029,40 @@ theorem genusZero_pointRRSection_outside_constants_exists
   genusZero_pointRRSection_outside_constants_of_analyticData X P h
     (genusZero_singlePoleMeromorphicAnalyticData_nonempty X P h)
 
+/--
+**Explicit-input form of `genusZero_pointRRSection_outside_constants_exists`.**
+
+Given a `MeromorphicMapToSphere X` `f` together with explicit
+`AnalyticData` and the pole-divisor equation `f.poles = Divisor.point P`,
+the `PointRiemannRochSection X P` carrier is inhabited — discharged
+sorry-free by the assembly helper
+`PointRiemannRochSection.of_meromorphicMap_analyticData_simple_pole`
+(commit `1a8f8102`).
+
+Pattern-aligned with the established `*_with_meromorphicData` /
+`*_with_analyticData` variants throughout the codebase
+(see e.g. `ofCurve_inj_with_meromorphicData` in `Solution.lean` and
+`nonconstant_single_pole_implies_genus_zero_with_meromorphicData`
+in `AnalyticOfCurveBasis.lean`).
+
+The bare form `genusZero_pointRRSection_outside_constants_exists`
+(above) remains as `sorry` until the upstream genus-zero RR chain is
+dependency-broken to produce `MeromorphicMapToSphere + AnalyticData`
+honestly. Future consumers with explicit analytic data in hand
+should prefer this form.
+-/
+theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (_h : analyticGenus ℂ X = 0)
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData)
+    (hpole : f.poles = Divisor.point P) :
+    Nonempty (PointRiemannRochSection X P) :=
+  ⟨PointRiemannRochSection.of_meromorphicMap_analyticData_simple_pole f han P hpole⟩
+
 
 theorem genusZero_fixedPole_rrSection_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
