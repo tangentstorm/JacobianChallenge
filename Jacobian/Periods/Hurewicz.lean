@@ -3518,6 +3518,20 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_refl
   exact boundary_midpoint_residue_eq_of_param_eq g a b _ha _hb _hpt
 
 /--
+The remaining reversed-closure content for the symmetric constructor case.
+-/
+theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_symm_core
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_h :
+      Relation.EqvGen (Polygon4g.SideGen (g + 1))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))) :
+    a = b := by
+  sorry
+
+/--
 The symmetric constructor case for canonical-residue midpoint `EqvGen`
 separation.
 -/
@@ -3530,7 +3544,8 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_symm
         (boundaryParam (g + 1) b (1 / 2 : ℝ))
         (boundaryParam (g + 1) a (1 / 2 : ℝ))) :
     a = b := by
-  sorry
+  exact boundary_midpoint_sideRel_residue_eq_of_eqvGen_symm_core
+    g a b _ha _hb _h
 
 /--
 The transitive constructor case for canonical-residue midpoint `EqvGen`
