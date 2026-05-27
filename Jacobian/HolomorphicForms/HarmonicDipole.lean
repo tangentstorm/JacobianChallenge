@@ -94,6 +94,31 @@ theorem HasLogarithmicSingularityAtReal.neg_log_abs_at_zero :
   rw [hfun]
   exact tendsto_const_nhds
 
+/-- Translated witness: on `X = ℂ`, the function `z ↦ log ‖z - P‖`
+has a logarithmic singularity at any point `P : ℂ` with sign `+1`.
+The chart at `P` in the self-charted-space structure is the identity,
+so `(chartAt ℂ P) P = P` and the integrand
+`log ‖z - P‖ - 1 * log ‖z - P‖` reduces to `0`. Generalizes
+`log_abs_at_zero` from `P = 0` to arbitrary `P`; the `+1` half of the
+eventual two-point dipole witness on ℂ. -/
+theorem HasLogarithmicSingularityAtReal.log_abs_at (P : ℂ) :
+    HasLogarithmicSingularityAtReal ℂ P (fun z : ℂ => Real.log ‖z - P‖) 1 := by
+  refine ⟨0, ?_⟩
+  show Filter.Tendsto
+      (fun z : ℂ =>
+        Real.log ‖z - P‖ - 1 * Real.log ‖z - (chartAt ℂ P) P‖)
+      (nhds ((chartAt ℂ P) P)) (nhds 0)
+  have hchart : (chartAt ℂ P) P = P := rfl
+  rw [hchart]
+  have hfun :
+      (fun z : ℂ => Real.log ‖z - P‖ - 1 * Real.log ‖z - P‖)
+        = fun _ : ℂ => 0 := by
+    funext z
+    show Real.log ‖z - P‖ - 1 * Real.log ‖z - P‖ = 0
+    ring
+  rw [hfun]
+  exact tendsto_const_nhds
+
 /-- A harmonic function on X \ {P, Q} satisfying Laplace's equation. -/
 def IsHarmonicOff
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
