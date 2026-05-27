@@ -3190,6 +3190,24 @@ theorem boundary_midpoint_aPair_target_residue_absurd
   omega
 
 /--
+At a canonical midpoint, a `bᵢ` side-pairing source/target equality
+recovers the concrete source and reversed target arc indices.
+-/
+theorem boundary_midpoint_bPair_arc_indices
+    (g : ℕ) (a b : ℕ) (i : Fin (g + 1)) (t : ℝ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_ht : t ∈ Set.Icc (0 : ℝ) 1)
+    (_ha_eq :
+      boundaryParam (g + 1) a (1 / 2 : ℝ) =
+        boundaryParam (g + 1) (4 * i.val + 1) t)
+    (_hb_eq :
+      boundaryParam (g + 1) b (1 / 2 : ℝ) =
+        boundaryParam (g + 1) (4 * i.val + 3) (1 - t)) :
+    a = 4 * i.val + 1 ∧ b = 4 * i.val + 3 := by
+  sorry
+
+/--
 The midpoint of a canonical-residue arc cannot be the reversed endpoint
 of a `bᵢ` side-pairing generator.
 -/
@@ -3205,7 +3223,12 @@ theorem boundary_midpoint_bPair_target_residue_absurd
       boundaryParam (g + 1) b (1 / 2 : ℝ) =
         boundaryParam (g + 1) (4 * i.val + 3) (1 - t)) :
     False := by
-  sorry
+  obtain ⟨_ha_idx, hb_idx⟩ :=
+    boundary_midpoint_bPair_arc_indices
+      g a b i t _ha _hb _ht _ha_eq _hb_eq
+  have hb_mod : (4 * i.val + 3) % 4 < 2 := by
+    simpa [hb_idx] using _hb.2
+  omega
 
 /--
 No direct side-pairing generator relates two midpoint arcs that both lie
