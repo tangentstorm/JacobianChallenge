@@ -181,6 +181,25 @@ lemma HasLogarithmicSingularityAtReal.add_tendsto
   rw [hsum]
   exact hu'.add hg
 
+/-- Continuity of `z ↦ log ‖z - Q‖` at any point `P ≠ Q` in ℂ.
+`‖P - Q‖ ≠ 0` follows from `P ≠ Q`, and `Real.log` is continuous away
+from `0`; the composition with the continuous map `z ↦ ‖z - Q‖` gives
+the result. Feeds `HasLogarithmicSingularityAtReal.add_tendsto` when
+combining the `+1` witness at `P` with `-log ‖· - Q‖` (which is
+finite-valued and continuous near `P` since `P ≠ Q`). -/
+lemma tendsto_log_norm_sub_of_ne {P Q : ℂ} (hPQ : P ≠ Q) :
+    Filter.Tendsto (fun z : ℂ => Real.log ‖z - Q‖)
+      (nhds P) (nhds (Real.log ‖P - Q‖)) := by
+  have hnorm_ne : ‖P - Q‖ ≠ 0 := by
+    rw [norm_ne_zero_iff]
+    exact sub_ne_zero.mpr hPQ
+  have hcont_sub : Filter.Tendsto (fun z : ℂ => z - Q) (nhds P) (nhds (P - Q)) :=
+    (continuous_sub_right Q).tendsto P
+  have hcont_norm : Filter.Tendsto (fun z : ℂ => ‖z - Q‖)
+      (nhds P) (nhds ‖P - Q‖) :=
+    (continuous_norm.tendsto (P - Q)).comp hcont_sub
+  exact (Real.continuousAt_log hnorm_ne).tendsto.comp hcont_norm
+
 /-- A harmonic function on X \ {P, Q} satisfying Laplace's equation. -/
 def IsHarmonicOff
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
