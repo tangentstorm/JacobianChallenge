@@ -47,6 +47,31 @@ lemma harmonic_conjugate_exists_locally_real_bridge
   obtain ⟨v, _⟩ := h
   exact ⟨v, trivial⟩
 
+/-- Canonical witness on `X = ℂ`: the imaginary part `Complex.im`
+is a harmonic conjugate of the real part `Complex.re` at every
+point `x : ℂ`. The function `f(z) := (z.re : ℂ) + I * (z.im : ℂ)`
+equals `z` by `Complex.re_add_im` (plus `mul_comm`), and the
+identity function is trivially ℂ-Fréchet-differentiable at any
+point with derivative `ContinuousLinearMap.id`. Demonstrates that
+`IsHarmonicConjugateAtReal` is non-vacuous and is the intended
+target predicate for the eventual harmonic-conjugate construction. -/
+theorem IsHarmonicConjugateAtReal.re_im_at (x : ℂ) :
+    IsHarmonicConjugateAtReal ℂ Complex.re Complex.im x := by
+  refine ⟨ContinuousLinearMap.id ℂ ℂ, ?_⟩
+  -- chartAt ℂ x is the identity self-chart, so (chart).symm z = z.
+  -- Rewrite the integrand to the identity function, then apply hasFDerivAt_id.
+  have hfun :
+      (fun z : ℂ =>
+          (Complex.re ((chartAt ℂ x).symm z) : ℂ)
+            + Complex.I * (Complex.im ((chartAt ℂ x).symm z) : ℂ))
+        = fun z : ℂ => z := by
+    funext z
+    show (Complex.re z : ℂ) + Complex.I * (Complex.im z : ℂ) = z
+    rw [mul_comm]
+    exact Complex.re_add_im z
+  rw [hfun]
+  exact (ContinuousLinearMap.id ℂ ℂ).hasFDerivAt
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
