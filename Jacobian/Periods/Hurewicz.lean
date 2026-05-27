@@ -3149,6 +3149,42 @@ lemma IsCanonicalEdgeArcResidue.to_edgeArcIdx
     omega
 
 /--
+The midpoint of a canonical-residue arc cannot be the reversed endpoint
+of an `aᵢ` side-pairing generator.
+-/
+theorem boundary_midpoint_aPair_target_residue_absurd
+    (g : ℕ) (a b : ℕ) (i : Fin (g + 1)) (t : ℝ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_ht : t ∈ Set.Icc (0 : ℝ) 1)
+    (_ha_eq :
+      boundaryParam (g + 1) a (1 / 2 : ℝ) =
+        boundaryParam (g + 1) (4 * i.val) t)
+    (_hb_eq :
+      boundaryParam (g + 1) b (1 / 2 : ℝ) =
+        boundaryParam (g + 1) (4 * i.val + 2) (1 - t)) :
+    False := by
+  sorry
+
+/--
+The midpoint of a canonical-residue arc cannot be the reversed endpoint
+of a `bᵢ` side-pairing generator.
+-/
+theorem boundary_midpoint_bPair_target_residue_absurd
+    (g : ℕ) (a b : ℕ) (i : Fin (g + 1)) (t : ℝ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_ht : t ∈ Set.Icc (0 : ℝ) 1)
+    (_ha_eq :
+      boundaryParam (g + 1) a (1 / 2 : ℝ) =
+        boundaryParam (g + 1) (4 * i.val + 1) t)
+    (_hb_eq :
+      boundaryParam (g + 1) b (1 / 2 : ℝ) =
+        boundaryParam (g + 1) (4 * i.val + 3) (1 - t)) :
+    False := by
+  sorry
+
+/--
 No direct side-pairing generator relates two midpoint arcs that both lie
 in the canonical residue range.
 -/
@@ -3161,7 +3197,17 @@ theorem boundary_midpoint_sideGen_residue_absurd
         (boundaryParam (g + 1) a (1 / 2 : ℝ))
         (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
     False := by
-  sorry
+  generalize hx :
+      boundaryParam (g + 1) a (1 / 2 : ℝ) = x at _h
+  generalize hy :
+      boundaryParam (g + 1) b (1 / 2 : ℝ) = y at _h
+  cases _h with
+  | a_pair i t ht =>
+      exact boundary_midpoint_aPair_target_residue_absurd
+        g a b i t _ha _hb ht hx hy
+  | b_pair i t ht =>
+      exact boundary_midpoint_bPair_target_residue_absurd
+        g a b i t _ha _hb ht hx hy
 
 /--
 Midpoint `EqvGen` separation for canonical-residue arcs, assuming the
