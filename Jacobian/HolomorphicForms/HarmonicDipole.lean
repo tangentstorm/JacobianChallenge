@@ -58,6 +58,25 @@ theorem HasLogarithmicSingularityAtReal.log_abs_at_zero :
   rw [hfun]
   exact tendsto_const_nhds
 
+/-- Symmetric witness for the negative-sign case: on `X = ℂ`, the
+function `z ↦ -log ‖z‖` has a logarithmic singularity at `0` with
+sign `-1`. The chart pullback collapses (identity chart on ℂ) and the
+integrand `-log ‖z‖ - (-1) * log ‖z‖` reduces to `0`. Together with
+`log_abs_at_zero`, this gives both poles needed for the eventual
+dipole construction in `existence_of_dipole_harmonic`. -/
+theorem HasLogarithmicSingularityAtReal.neg_log_abs_at_zero :
+    HasLogarithmicSingularityAtReal ℂ (0 : ℂ)
+      (fun z : ℂ => -Real.log ‖z‖) (-1) := by
+  refine ⟨0, ?_⟩
+  have hfun :
+      (fun z : ℂ => (fun w : ℂ => -Real.log ‖w‖) ((chartAt ℂ (0 : ℂ)).symm z)
+        - (-1 : ℝ) * Real.log ‖z‖) = fun _ : ℂ => 0 := by
+    funext z
+    show -Real.log ‖z‖ - (-1 : ℝ) * Real.log ‖z‖ = 0
+    ring
+  rw [hfun]
+  exact tendsto_const_nhds
+
 /-- A harmonic function on X \ {P, Q} satisfying Laplace's equation. -/
 def IsHarmonicOff
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
