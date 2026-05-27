@@ -462,6 +462,79 @@ theorem singlePoleMeromorphicMap_nonconstant (Q : X) [Nontrivial X] :
   · exact OnePoint.coe_ne_infty _ h2
   · exact OnePoint.coe_ne_infty _ h2
 
+omit [IsManifold (𝓘(ℂ, ℂ)) ⊤ X] [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**`twoPointMeromorphicMap`'s `toMap` is provably discontinuous.**
+
+The two-point indicator `fun x => if x = Q1 ∨ x = Q2 then ∞ else ↑0`
+is not continuous: in any complex-charted space, the punctured
+neighborhood `𝓝[≠] Q1` is non-trivial, and eventually within that
+filter we have `x ≠ Q2` (by T2-separation of `Q1, Q2`), so the
+function eventually equals `↑0`. Combined with the value `∞ = toMap Q1`
+at the point itself, continuity would force `↑0 = ∞`, contradicting
+`OnePoint.coe_ne_infty`.
+
+Used internally to vacuously discharge the scaffold's
+`hasBranchedCoverDataOfPoleDegree` field (whose hypothesis
+`Continuous toMap` is unsatisfiable for this scaffold).
+-/
+private theorem twoPointMeromorphicMap_not_continuous
+    (Q1 Q2 : X) (hne : Q1 ≠ Q2) :
+    ¬ Continuous
+      (fun x : X => if x = Q1 ∨ x = Q2 then (OnePoint.infty : OnePoint ℂ)
+                                       else ((0 : ℂ) : OnePoint ℂ)) := by
+  intro hcont
+  classical
+  -- Set up the function.
+  set f : X → OnePoint ℂ :=
+    fun x => if x = Q1 ∨ x = Q2 then OnePoint.infty else ((0 : ℂ) : OnePoint ℂ) with hf_def
+  -- `f Q1 = ∞`.
+  have hfQ1 : f Q1 = OnePoint.infty := by
+    show f Q1 = OnePoint.infty
+    rw [hf_def]; simp
+  -- Punctured neighborhood of `Q1` is non-trivial in a complex-charted space.
+  haveI : Filter.NeBot (𝓝[≠] Q1) :=
+    JacobianChallenge.HolomorphicForms.punctured_nhds_neBot_of_chartedSpaceComplex Q1
+  -- Eventually in `𝓝[≠] Q1`, `x ≠ Q2` (by T2 separation).
+  have hne_Q2_ev : ∀ᶠ x in 𝓝[≠] Q1, x ≠ Q2 := by
+    have h_open : IsOpen ({Q2}ᶜ : Set X) := isOpen_compl_singleton
+    have hQ1_mem : Q1 ∈ ({Q2}ᶜ : Set X) := hne
+    have h_nbhd : ({Q2}ᶜ : Set X) ∈ 𝓝 Q1 := h_open.mem_nhds hQ1_mem
+    have h_nbhdW : ({Q2}ᶜ : Set X) ∈ 𝓝[≠] Q1 := mem_nhdsWithin_of_mem_nhds h_nbhd
+    filter_upwards [h_nbhdW] with x hx
+    exact hx
+  -- Combined with `x ≠ Q1` (from `𝓝[≠]`), eventually `f x = ↑0`.
+  have hf_eq_zero_ev : ∀ᶠ x in 𝓝[≠] Q1, f x = ((0 : ℂ) : OnePoint ℂ) := by
+    filter_upwards [self_mem_nhdsWithin, hne_Q2_ev] with x hx_ne_Q1 hx_ne_Q2
+    show f x = ((0 : ℂ) : OnePoint ℂ)
+    rw [hf_def]
+    have hx_neither : ¬ (x = Q1 ∨ x = Q2) := by
+      rintro (hQ1 | hQ2)
+      · exact hx_ne_Q1 hQ1
+      · exact hx_ne_Q2 hQ2
+    simp [hx_neither]
+  -- Continuity at `Q1` would force `f` to tend to `f Q1 = ∞` along `𝓝[≠] Q1`.
+  have hT_infty : Filter.Tendsto f (𝓝[≠] Q1) (𝓝 (OnePoint.infty : OnePoint ℂ)) := by
+    have htotal : Filter.Tendsto f (𝓝 Q1) (𝓝 (f Q1)) := hcont.tendsto Q1
+    rw [hfQ1] at htotal
+    exact htotal.mono_left nhdsWithin_le_nhds
+  -- But it also tends to `↑0` (eventually equal).
+  have hT_zero : Filter.Tendsto f (𝓝[≠] Q1) (𝓝 (((0 : ℂ) : OnePoint ℂ))) := by
+    have h_const :
+        Filter.Tendsto (fun _ : X => ((0 : ℂ) : OnePoint ℂ)) (𝓝[≠] Q1)
+          (𝓝 (((0 : ℂ) : OnePoint ℂ))) := tendsto_const_nhds
+    -- We need `Tendsto f (𝓝[≠] Q1) (𝓝 ↑0)`; `f` agrees eventually with the
+    -- constant `↑0`-valued function. Use `Tendsto.congr'`.
+    refine h_const.congr' ?_
+    -- Goal: `(fun _ : X => ↑0) =ᶠ[𝓝[≠] Q1] f`. Reverse-direction of `hf_eq_zero_ev`.
+    filter_upwards [hf_eq_zero_ev] with x hx
+    exact hx.symm
+  -- `tendsto_nhds_unique` (with `NeBot (𝓝[≠] Q1)`) gives `↑0 = ∞`.
+  have h_eq : ((0 : ℂ) : OnePoint ℂ) = (OnePoint.infty : OnePoint ℂ) :=
+    tendsto_nhds_unique hT_zero hT_infty
+  -- Contradiction.
+  exact OnePoint.coe_ne_infty 0 h_eq
+
 /--
 Scaffold constructor for the displayed two-point indicator map.
 
@@ -541,14 +614,20 @@ noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (_hne : Q1 ≠ Q2) :
     -- Structural strengthening (2026-05-25): scaffold constructor.
     -- The two-point indicator scaffold provably FAILS `PoleModulusData`
     -- (see `twoPointMeromorphicMap_not_poleModulusData` below). The
-    -- new structural fields are therefore unfillable for this map and
-    -- are recorded as `sorry`. Per goal.md, these internal scaffold
-    -- sorries are acceptable.
+    -- `exists_modulus_atTop_at_pole` field is therefore unfillable for
+    -- this map and is recorded as `sorry`. Per goal.md, this internal
+    -- scaffold sorry is acceptable.
     exists_modulus_atTop_at_pole := sorry
-    hasBranchedCoverDataOfPoleDegree := sorry
+    -- The `hasBranchedCoverDataOfPoleDegree` field is filled vacuously:
+    -- the scaffold's `toMap` is provably discontinuous (see
+    -- `twoPointMeromorphicMap_not_continuous` above), so the hypothesis
+    -- `Continuous toMap` is unsatisfiable and the implication holds
+    -- vacuously via `absurd`.
+    hasBranchedCoverDataOfPoleDegree := fun hcont =>
+      absurd hcont (twoPointMeromorphicMap_not_continuous Q1 Q2 _hne)
   }
 
-omit [T2Space X] [JacobianChallenge.Periods.StableChartAt ℂ X] in
+omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- A two-pole map is non-constant. -/
 theorem twoPointMeromorphicMap_nonconstant [Nonempty X] (Q1 Q2 : X) (hne : Q1 ≠ Q2) :
     (twoPointMeromorphicMap Q1 Q2 hne).Nonconstant := by
@@ -562,7 +641,7 @@ theorem twoPointMeromorphicMap_nonconstant [Nonempty X] (Q1 Q2 : X) (hne : Q1 �
   subst h1
   simp [hr1, hr2] at hr
 
-omit [Periods.StableChartAt ℂ X] in
+omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /--
 The two-point indicator scaffold genuinely fails `PoleModulusData`.
 
