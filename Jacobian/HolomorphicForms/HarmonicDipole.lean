@@ -15,18 +15,21 @@ def HasLogarithmicSingularityAt
 
 /-- Genuine local-coordinate logarithmic-singularity condition for `u` at `P`
 with prescribed sign. Pulling `u` back through `chartAt ℂ P` (the standard
-chart sending `P` to a neighborhood of `0 ∈ ℂ`), the function
-`z ↦ u (chart⁻¹ z) - sign * log ‖z‖` converges to some constant `c` as
-`z → 0`. Sibling to the `True`-stub `HasLogarithmicSingularityAt`;
-intended to be the contentful predicate eventually consumed in place of
-the stub. -/
+chart sending `P` to its image `p₀ := (chartAt ℂ P) P ∈ ℂ`), the function
+`z ↦ u (chart⁻¹ z) - sign * log ‖z - p₀‖` converges to some constant `c`
+as `z → p₀`. The singularity is centered at the chart image of `P`, not
+at `0 : ℂ`, so the predicate behaves correctly under the self-chart on
+`ℂ` (where `chartAt ℂ P = id` and `p₀ = P`). Sibling to the `True`-stub
+`HasLogarithmicSingularityAt`; intended to be the contentful predicate
+eventually consumed in place of the stub. -/
 def HasLogarithmicSingularityAtReal
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (P : X) (u : X → ℝ) (sign : ℝ) : Prop :=
   ∃ c : ℝ,
     Filter.Tendsto
-      (fun z : ℂ => u ((chartAt ℂ P).symm z) - sign * Real.log ‖z‖)
-      (nhds 0) (nhds c)
+      (fun z : ℂ =>
+        u ((chartAt ℂ P).symm z) - sign * Real.log ‖z - (chartAt ℂ P) P‖)
+      (nhds ((chartAt ℂ P) P)) (nhds c)
 
 /-- Bridge from the genuine log-singularity predicate to the `True`-stub.
 Allows the contentful predicate to be substituted in callers without
@@ -49,11 +52,18 @@ target predicate for the eventual real construction in
 theorem HasLogarithmicSingularityAtReal.log_abs_at_zero :
     HasLogarithmicSingularityAtReal ℂ (0 : ℂ) (fun z : ℂ => Real.log ‖z‖) 1 := by
   refine ⟨0, ?_⟩
+  show Filter.Tendsto
+      (fun z : ℂ =>
+        Real.log ‖z‖ - 1 * Real.log ‖z - (chartAt ℂ (0 : ℂ)) 0‖)
+      (nhds ((chartAt ℂ (0 : ℂ)) 0)) (nhds 0)
+  have hchart : (chartAt ℂ (0 : ℂ)) 0 = 0 := rfl
+  rw [hchart]
   have hfun :
-      (fun z : ℂ => (fun w : ℂ => Real.log ‖w‖) ((chartAt ℂ (0 : ℂ)).symm z)
-        - 1 * Real.log ‖z‖) = fun _ : ℂ => 0 := by
+      (fun z : ℂ => Real.log ‖z‖ - 1 * Real.log ‖z - (0 : ℂ)‖)
+        = fun _ : ℂ => 0 := by
     funext z
-    show Real.log ‖z‖ - 1 * Real.log ‖z‖ = 0
+    show Real.log ‖z‖ - 1 * Real.log ‖z - (0 : ℂ)‖ = 0
+    rw [sub_zero]
     ring
   rw [hfun]
   exact tendsto_const_nhds
@@ -68,11 +78,18 @@ theorem HasLogarithmicSingularityAtReal.neg_log_abs_at_zero :
     HasLogarithmicSingularityAtReal ℂ (0 : ℂ)
       (fun z : ℂ => -Real.log ‖z‖) (-1) := by
   refine ⟨0, ?_⟩
+  show Filter.Tendsto
+      (fun z : ℂ =>
+        -Real.log ‖z‖ - (-1 : ℝ) * Real.log ‖z - (chartAt ℂ (0 : ℂ)) 0‖)
+      (nhds ((chartAt ℂ (0 : ℂ)) 0)) (nhds 0)
+  have hchart : (chartAt ℂ (0 : ℂ)) 0 = 0 := rfl
+  rw [hchart]
   have hfun :
-      (fun z : ℂ => (fun w : ℂ => -Real.log ‖w‖) ((chartAt ℂ (0 : ℂ)).symm z)
-        - (-1 : ℝ) * Real.log ‖z‖) = fun _ : ℂ => 0 := by
+      (fun z : ℂ => -Real.log ‖z‖ - (-1 : ℝ) * Real.log ‖z - (0 : ℂ)‖)
+        = fun _ : ℂ => 0 := by
     funext z
-    show -Real.log ‖z‖ - (-1 : ℝ) * Real.log ‖z‖ = 0
+    show -Real.log ‖z‖ - (-1 : ℝ) * Real.log ‖z - (0 : ℂ)‖ = 0
+    rw [sub_zero]
     ring
   rw [hfun]
   exact tendsto_const_nhds
