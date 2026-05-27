@@ -621,6 +621,82 @@ theorem MeromorphicMapToSphere.continuousOn_getD_off_pole_of_poleDivisor_point
   -- Restrict `ContinuousAt` to `ContinuousWithinAt {P}ᶜ`.
   exact hF_at.continuousWithinAt
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**`outside_constants` provider for a `MeromorphicMapToSphere` with a
+single simple pole.**
+
+Given `f : MeromorphicMapToSphere X` with `f.poles = Divisor.point P`,
+the canonical finite lift `(f.toMap ·).getD 0` is not eventually
+constant on a punctured neighborhood of `P`.
+
+Proof strategy: the structural field `exists_modulus_atTop_at_pole`
+yields a local representative `g : X → ℂ` with off-pole agreement
+`f.toMap x = ↑(g x)` (for `x` with `f.poleDivisor x = 0`) and
+`‖g x‖ → ∞` along `𝓝[≠] P`. Since `f.poles = Divisor.point P`, the
+off-pole agreement holds for every `x ≠ P`, hence
+`(f.toMap x).getD 0 = g x` eventually in `𝓝[≠] P`. If the finite lift
+were eventually equal to a constant `c`, then `g` would be eventually
+equal to `c`, hence `‖g x‖ = ‖c‖` eventually — contradicting the
+modulus-divergence content of `exists_modulus_atTop_at_pole`. The
+contradiction extracts a single witness via the project's
+`punctured_nhds_neBot_of_chartedSpaceComplex` (which gives
+`(𝓝[≠] P).NeBot` for any complex-charted space).
+
+The structural-field bridge for the `outside_constants` field of
+`PointRiemannRochSection`. Like the field-6 bridge in commit
+`d9670683`, this bridge requires no `AnalyticData` hypothesis.
+-/
+theorem MeromorphicMapToSphere.outside_constants_of_poleDivisor_point
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    ¬ ∃ c : ℂ, ∀ᶠ z in 𝓝[≠] P, (f.toMap z).getD 0 = c := by
+  classical
+  -- Pole divisor at `P` is positive: equal to 1 in fact.
+  have hposP : 0 < f.poleDivisor P := by
+    have h : f.poleDivisor P = (Divisor.point P : Divisor X) P := by
+      change f.poles P = _
+      rw [hpole]
+    rw [h, Divisor.point_apply_self]; decide
+  -- Extract the modulus-divergence witness.
+  obtain ⟨g, hg_eq, hg_div⟩ := f.exists_modulus_atTop_at_pole P hposP
+  -- Off-pole agreement gives `(f.toMap z).getD 0 = g z` eventually in `𝓝[≠] P`.
+  have hF_eq_g : ∀ᶠ z in 𝓝[≠] P, (f.toMap z).getD 0 = g z := by
+    filter_upwards [self_mem_nhdsWithin] with z hz_ne
+    -- `hz_ne : z ∈ {P}ᶜ`, i.e. `z ≠ P`.
+    have hz_neP : z ≠ P := hz_ne
+    have hP_zero : f.poleDivisor z = 0 := by
+      change f.poles z = 0
+      rw [hpole]
+      exact Divisor.point_apply_ne hz_neP
+    have hagree : f.toMap z = ((g z : ℂ) : OnePoint ℂ) := hg_eq z hP_zero
+    rw [hagree]; rfl
+  -- Punctured neighborhood NeBot via complex charts.
+  haveI : Filter.NeBot (𝓝[≠] P) :=
+    JacobianChallenge.HolomorphicForms.punctured_nhds_neBot_of_chartedSpaceComplex P
+  intro ⟨c, hc⟩
+  -- Combine: `g z = c` eventually in `𝓝[≠] P`.
+  have hg_eq_c : ∀ᶠ z in 𝓝[≠] P, g z = c := by
+    filter_upwards [hF_eq_g, hc] with z hz1 hz2
+    -- `hz1 : (f.toMap z).getD 0 = g z`, `hz2 : (f.toMap z).getD 0 = c`.
+    -- So `g z = c`.
+    rw [← hz1]; exact hz2
+  -- Hence `‖g z‖ = ‖c‖` eventually.
+  have hnorm_eq : ∀ᶠ z in 𝓝[≠] P, ‖g z‖ = ‖c‖ := by
+    filter_upwards [hg_eq_c] with z hz
+    rw [hz]
+  -- But `Tendsto ‖g·‖ (𝓝[≠] P) atTop` means `‖g z‖ > ‖c‖ + 1` eventually,
+  -- contradicting `‖g z‖ = ‖c‖`.
+  have hlarge : ∀ᶠ z in 𝓝[≠] P, ‖c‖ + 1 < ‖g z‖ :=
+    hg_div (Filter.eventually_gt_atTop (‖c‖ + 1))
+  -- Combine `hnorm_eq` and `hlarge` to derive `False`.
+  have hcontra : ∀ᶠ z in 𝓝[≠] P, False := by
+    filter_upwards [hnorm_eq, hlarge] with z h_eq h_lt
+    rw [h_eq] at h_lt
+    linarith
+  exact hcontra.exists.elim (fun _ hf => hf)
+
 /--
 Given a `MeromorphicMapToSphere f` on a compact connected complex
 1-manifold which is nonconstant, has a simple pole at `P`, and carries
