@@ -3149,6 +3149,20 @@ lemma IsCanonicalEdgeArcResidue.to_edgeArcIdx
     omega
 
 /--
+The source-side boundary equality for an `aᵢ` pairing at a canonical
+midpoint yields equality of the unwrapped boundary coordinates.
+-/
+theorem boundary_midpoint_aPair_source_angle_eq
+    (g : ℕ) (a : ℕ) (i : Fin (g + 1)) (t : ℝ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_ht : t ∈ Set.Icc (0 : ℝ) 1)
+    (_ha_eq :
+      boundaryParam (g + 1) a (1 / 2 : ℝ) =
+        boundaryParam (g + 1) (4 * i.val) t) :
+    (a : ℝ) + 1 / 2 = (4 * i.val : ℝ) + t := by
+  sorry
+
+/--
 At a canonical midpoint, equality with the source side of an `aᵢ`
 pairing recovers the concrete source arc index.
 -/
@@ -3160,7 +3174,29 @@ theorem boundary_midpoint_aPair_source_arc_index
       boundaryParam (g + 1) a (1 / 2 : ℝ) =
         boundaryParam (g + 1) (4 * i.val) t) :
     a = 4 * i.val := by
-  sorry
+  have hangle :=
+    boundary_midpoint_aPair_source_angle_eq g a i t _ha _ht _ha_eq
+  have ht0 : 0 ≤ t := _ht.1
+  have ht1 : t ≤ 1 := _ht.2
+  have ha_lt_succ : (a : ℝ) < (4 * i.val : ℝ) + 1 := by
+    linarith
+  have hi_lt_succ : (4 * i.val : ℝ) < (a : ℝ) + 1 := by
+    linarith
+  have ha_le : a ≤ 4 * i.val := by
+    by_contra hle
+    have hlt : 4 * i.val < a := Nat.lt_of_not_ge hle
+    have hsucc : 4 * i.val + 1 ≤ a := Nat.succ_le_of_lt hlt
+    have hsuccR : (4 * i.val : ℝ) + 1 ≤ (a : ℝ) := by
+      exact_mod_cast hsucc
+    linarith
+  have hi_le : 4 * i.val ≤ a := by
+    by_contra hle
+    have hlt : a < 4 * i.val := Nat.lt_of_not_ge hle
+    have hsucc : a + 1 ≤ 4 * i.val := Nat.succ_le_of_lt hlt
+    have hsuccR : (a : ℝ) + 1 ≤ (4 * i.val : ℝ) := by
+      exact_mod_cast hsucc
+    linarith
+  omega
 
 /--
 At a canonical midpoint, equality with the reversed target side of an
