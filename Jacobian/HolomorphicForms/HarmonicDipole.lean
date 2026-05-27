@@ -38,6 +38,26 @@ lemma HasLogarithmicSingularityAtReal.toStub
     HasLogarithmicSingularityAt X P u sign :=
   trivial
 
+/-- Canonical witness: on `X = ℂ`, the function `z ↦ log ‖z‖` has a
+genuine logarithmic singularity at `0` with sign `+1`. The chart at
+`(0 : ℂ)` in the self-charted-space structure is the identity, so the
+chart pullback collapses and the integrand
+`log ‖z‖ - 1 * log ‖z‖` is identically zero. Demonstrates that
+`HasLogarithmicSingularityAtReal` is non-vacuous and is the intended
+target predicate for the eventual real construction in
+`existence_of_dipole_harmonic`. -/
+theorem HasLogarithmicSingularityAtReal.log_abs_at_zero :
+    HasLogarithmicSingularityAtReal ℂ (0 : ℂ) (fun z : ℂ => Real.log ‖z‖) 1 := by
+  refine ⟨0, ?_⟩
+  have hfun :
+      (fun z : ℂ => (fun w : ℂ => Real.log ‖w‖) ((chartAt ℂ (0 : ℂ)).symm z)
+        - 1 * Real.log ‖z‖) = fun _ : ℂ => 0 := by
+    funext z
+    show Real.log ‖z‖ - 1 * Real.log ‖z‖ = 0
+    ring
+  rw [hfun]
+  exact tendsto_const_nhds
+
 /-- A harmonic function on X \ {P, Q} satisfying Laplace's equation. -/
 def IsHarmonicOff
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
