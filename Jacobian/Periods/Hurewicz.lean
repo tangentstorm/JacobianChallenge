@@ -3490,6 +3490,53 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_rel_absurd
   exact _hstep _ha _hb _h
 
 /--
+The reflexive constructor case for canonical-residue midpoint `EqvGen`
+separation.
+-/
+theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_refl
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_hpt :
+      boundaryParam (g + 1) a (1 / 2 : ℝ) =
+        boundaryParam (g + 1) b (1 / 2 : ℝ)) :
+    a = b := by
+  sorry
+
+/--
+The symmetric constructor case for canonical-residue midpoint `EqvGen`
+separation.
+-/
+theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_symm
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (_h :
+      Relation.EqvGen (Polygon4g.SideGen (g + 1))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))) :
+    a = b := by
+  sorry
+
+/--
+The transitive constructor case for canonical-residue midpoint `EqvGen`
+separation.
+-/
+theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_trans
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
+    (mid : DiskC)
+    (_hleft :
+      Relation.EqvGen (Polygon4g.SideGen (g + 1))
+        (boundaryParam (g + 1) a (1 / 2 : ℝ)) mid)
+    (_hright :
+      Relation.EqvGen (Polygon4g.SideGen (g + 1))
+        mid (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    a = b := by
+  sorry
+
+/--
 The remaining transitive-closure content for midpoint `EqvGen` separation,
 assuming the one-step canonical-residue midpoint case has already been
 handled.
@@ -3511,7 +3558,26 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_closure
         (boundaryParam (g + 1) a (1 / 2 : ℝ))
         (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
     a = b := by
-  sorry
+  generalize hx :
+      boundaryParam (g + 1) a (1 / 2 : ℝ) = x at _h
+  generalize hy :
+      boundaryParam (g + 1) b (1 / 2 : ℝ) = y at _h
+  cases _h with
+  | refl p =>
+      exact boundary_midpoint_sideRel_residue_eq_of_eqvGen_refl g a b _ha _hb
+        (by rw [hx, hy])
+  | rel p q hrel =>
+      rw [← hx, ← hy] at hrel
+      exact _hrel _ha _hb hrel
+  | symm p q hrel =>
+      rw [← hy, ← hx] at hrel
+      exact boundary_midpoint_sideRel_residue_eq_of_eqvGen_symm
+        g a b _ha _hb hrel
+  | trans p mid q hleft hright =>
+      rw [← hx] at hleft
+      rw [← hy] at hright
+      exact boundary_midpoint_sideRel_residue_eq_of_eqvGen_trans
+        g a b _ha _hb mid hleft hright
 
 /--
 Midpoint `EqvGen` separation for canonical-residue arcs, assuming the
