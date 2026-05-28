@@ -839,6 +839,22 @@ theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_
   simpa [ExactForm, exteriorDerivative] using hθ.symm
 
 /--
+**Seven-primitive closed-form vanishing from exactness.** Once this branch's
+zero-period closed form is known exact, exact-form vanishing in the current
+zero-differential substrate gives the closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
 **Closed-form vanishing for the direct primitive exactness primitive primitive
 primitive primitive primitive primitive primitive derivative split.** This is
 the comparison input needed to break the otherwise cyclic derivative collapse.
