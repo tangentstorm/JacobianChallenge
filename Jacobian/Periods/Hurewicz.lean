@@ -2369,6 +2369,72 @@ structure FiniteProjectedEndpointPairFamily
             pointChain DiskC (leftEndpoint' pair))
 
 /--
+Finite endpoint matching data for a projected-zero endpoint sum.
+
+This is the pure finite-support matching substrate: after expanding the
+integer coefficients into endpoint occurrences, vanishing of the projected
+endpoint sum pairs each disk endpoint with another endpoint having the same
+quotient image, hence related by `Polygon4g.SideRel`.
+-/
+structure FiniteProjectedEndpointMatchingData
+    (g : ℕ) (S : Type) [Fintype S]
+    (I : S → Type) [∀ s, Fintype (I s)]
+    (coeff : S → ℤ)
+    (leftEndpoint rightEndpoint : ∀ s, I s → DiskC) where
+  Pair : Type
+  pairFintype : Fintype Pair
+  leftEndpoint' : Pair → DiskC
+  rightEndpoint' : Pair → DiskC
+  endpointRel :
+    ∀ pair : Pair,
+      Polygon4g.SideRel (g + 1) (leftEndpoint' pair) (rightEndpoint' pair)
+  endpoint_sum_eq_pairs :
+    (@Finset.univ S inferInstance).sum
+        (fun s => coeff s •
+          ((@Finset.univ (I s) inferInstance).sum
+            (fun i =>
+              pointChain DiskC (rightEndpoint s i) -
+                pointChain DiskC (leftEndpoint s i)))) =
+      (@Finset.univ Pair pairFintype).sum
+        (fun pair =>
+          pointChain DiskC (rightEndpoint' pair) -
+            pointChain DiskC (leftEndpoint' pair))
+
+/--
+Architectural finite-support matching provider.
+
+Given a finite signed endpoint sum whose quotient projection vanishes,
+construct matched disk endpoints whose differences realize the original
+disk endpoint sum. This is the finite free-abelian bookkeeping leaf
+behind endpoint repair; the surrounding theorem only substitutes an
+arbitrary `boundary` known to equal this endpoint sum.
+-/
+theorem finite_projected_endpoint_matching_data
+    (g : ℕ) (S : Type) [Fintype S]
+    (I : S → Type) [∀ s, Fintype (I s)]
+    (coeff : S → ℤ)
+    (leftEndpoint rightEndpoint : ∀ s, I s → DiskC)
+    (_projected_endpoint_sum_zero :
+      (@Finset.univ S inferInstance).sum
+        (fun s =>
+          coeff s •
+            (((@Finset.univ (I s) inferInstance).sum
+                (fun i =>
+                  pointChain (Polygon4g (g + 1))
+                    (Polygon4g.mk (g + 1) (rightEndpoint s i)))) -
+              ((@Finset.univ (I s) inferInstance).sum
+                (fun i =>
+                  pointChain (Polygon4g (g + 1))
+                    (Polygon4g.mk (g + 1) (leftEndpoint s i)))))) = 0) :
+    Nonempty
+      (FiniteProjectedEndpointMatchingData
+        g S I coeff leftEndpoint rightEndpoint) := by
+  -- Finite free-abelian matching: normalize signed integer coefficients,
+  -- pair projected endpoint occurrences in the quotient, then convert
+  -- equality of quotient representatives to `Polygon4g.SideRel`.
+  sorry
+
+/--
 Finite-support quotient bookkeeping provider.  This is the exact
 remaining algebraic leaf below cycle-level endpoint extraction: from a
 finite signed endpoint expansion and vanishing of its quotient image,
@@ -2403,10 +2469,18 @@ theorem finite_projected_endpoint_sum_zero_pairing
     Nonempty
       (FiniteProjectedEndpointPairFamily g S I coeff leftEndpoint rightEndpoint
         boundary) := by
-  -- Missing finite-support algebra: normalize the signed endpoint sum,
-  -- pair equal projected point-chain occurrences, and convert equality
-  -- of quotient points to `Polygon4g.SideRel` via `Polygon4g.mk_eq_mk_iff`.
-  sorry
+  obtain ⟨pairs⟩ :=
+    finite_projected_endpoint_matching_data
+      g S I coeff leftEndpoint rightEndpoint _projected_endpoint_sum_zero
+  exact ⟨{
+    Pair := pairs.Pair
+    pairFintype := pairs.pairFintype
+    leftEndpoint' := pairs.leftEndpoint'
+    rightEndpoint' := pairs.rightEndpoint'
+    endpointRel := pairs.endpointRel
+    boundary_eq_pairs := by
+      rw [_boundary_eq_endpoint_sum, pairs.endpoint_sum_eq_pairs]
+  }⟩
 
 /--
 Chain-boundary expansion part of endpoint extraction: no quotient
