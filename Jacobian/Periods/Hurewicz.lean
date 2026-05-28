@@ -837,6 +837,17 @@ noncomputable def unitIntervalConstantZeroOneSimplex :
     C(stdSimplex ℝ (Fin 2), unitInterval) :=
   ⟨fun _ => (0 : unitInterval), continuous_const⟩
 
+/-- Constant singular two-simplex at `0 : unitInterval`. -/
+noncomputable def unitIntervalConstantZeroTwoSimplex :
+    C(stdSimplex ℝ (Fin 3), unitInterval) :=
+  ⟨fun _ => (0 : unitInterval), continuous_const⟩
+
+lemma unitIntervalConstantZeroTwoSimplex_face (i : Fin 3) :
+    singularSimplexFace unitIntervalConstantZeroTwoSimplex i =
+      unitIntervalConstantZeroOneSimplex := by
+  ext s
+  rfl
+
 lemma unitIntervalReversePrismSimplex_face_zero :
     singularSimplexFace unitIntervalReversePrismSimplex (0 : Fin 3) =
       unitIntervalReverse.comp stdSimplexToUnitInterval := by
@@ -884,8 +895,19 @@ theorem unitInterval_reverse_prism_boundary :
         singularChainElement
           (unitIntervalReverse.comp stdSimplexToUnitInterval) +
         singularChainElement stdSimplexToUnitInterval := by
-  -- Missing concrete two-simplex prism in the unit interval.
-  sorry
+  refine ⟨singularChainElement unitIntervalReversePrismSimplex +
+      singularChainElement unitIntervalConstantZeroTwoSimplex, ?_⟩
+  rw [map_add]
+  rw [singularChainElement_boundary_decomposition unitInterval 1
+        unitIntervalReversePrismSimplex]
+  rw [singularChainElement_boundary_decomposition unitInterval 1
+        unitIntervalConstantZeroTwoSimplex]
+  rw [Fin.sum_univ_three, Fin.sum_univ_three]
+  simp [unitIntervalReversePrismSimplex_face_zero,
+    unitIntervalReversePrismSimplex_face_one,
+    unitIntervalReversePrismSimplex_face_two,
+    unitIntervalConstantZeroTwoSimplex_face]
+  abel
 
 /--
 Local reverse-reparametrization prism for one path-shaped singular
