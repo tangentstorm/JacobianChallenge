@@ -1296,6 +1296,46 @@ theorem dipole_compose_chart_has_conjugate
   simp only [hchart_ℂ_id, hchart_ℂ_pt]
   exact hftotal_fderiv.congr_of_eventuallyEq hfeq.symm
 
+/-- Step 4 of the transition-map project (80-line cap): transport
+the ℂ-side conjugate from Step 3 to `X`, re-expressed for the
+*original* chart-pullback dipole. For any `x ≠ P, x ≠ Q` in `X`
+with same-chart hypotheses, exhibit a `v : X → ℝ` such that
+`IsHarmonicConjugateAtReal X f_X v x`, where `f_X` is the
+chart-pullback dipole `log ‖chart_P y - chart_P P‖ -
+log ‖chart_Q y - chart_Q Q‖`.
+
+Composes:
+- Step 3 (commit `6801b963`): ℂ-side conjugate for re-expressed `g` at `chart_x x`.
+- `chart_pullback_lift_at_basepoint` (commit `08b4ef40`) with `P := x`:
+  lift to `IsHarmonicConjugateAtReal X (g ∘ chart_x) (v_ℂ ∘ chart_x) x`.
+- `congr_of_eventuallyEq` (commit `5980dd21`) with Step 2's eventual-equality
+  (commit `5e867815`, `.symm` for direction): transport `g ∘ chart_x` to `f_X`. -/
+theorem chart_pullback_dipole_has_conjugate_at_off_PQ
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    {P Q x : X} (hxP : x ≠ P) (hxQ : x ≠ Q)
+    (hxP_src : x ∈ (chartAt ℂ P).source)
+    (hxQ_src : x ∈ (chartAt ℂ Q).source) :
+    ∃ v : X → ℝ,
+      IsHarmonicConjugateAtReal X
+        (fun y : X =>
+          Real.log ‖chartAt ℂ P y - (chartAt ℂ P) P‖
+          - Real.log ‖chartAt ℂ Q y - (chartAt ℂ Q) Q‖) v x := by
+  obtain ⟨v_ℂ, h_conj⟩ :=
+    dipole_compose_chart_has_conjugate hxP hxQ hxP_src hxQ_src
+  have h_X : IsHarmonicConjugateAtReal X
+      ((fun z : ℂ =>
+          Real.log ‖chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P‖
+          - Real.log ‖chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q‖)
+        ∘ chartAt ℂ x)
+      (v_ℂ ∘ chartAt ℂ x) x :=
+    IsHarmonicConjugateAtReal.chart_pullback_lift_at_basepoint
+      (P := x) h_conj
+  refine ⟨v_ℂ ∘ chartAt ℂ x, ?_⟩
+  exact h_X.congr_of_eventuallyEq
+    (dipole_pullback_eq_compose_chart P Q x).symm
+    (Filter.EventuallyEq.refl _ _)
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
