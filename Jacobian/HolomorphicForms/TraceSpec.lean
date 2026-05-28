@@ -11,6 +11,11 @@ import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 import Mathlib.Analysis.Complex.RemovableSingularity
 import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Geometry.Manifold.VectorBundle.Basic
+import Mathlib.Geometry.Manifold.VectorBundle.Tangent
+import Mathlib.Topology.VectorBundle.Constructions
+import Mathlib.Topology.VectorBundle.Hom
+import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 
 /-!
 # Trace form specification interface
@@ -1402,23 +1407,101 @@ private theorem contMDiff_of_pointwiseHolomorphic
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
   [StableChartAt ℂ X] in
 /--
+**Model-shift bridge (sorry-free helper).**
+
+Converts manifold-`ContMDiff` of `f : Y → CotangentModelFiber ℂ` in
+the singleton-chart model on `CotangentModelFiber ℂ` (codomain model
+`𝓘(ℂ, ℂ)`, with the chart `cotangentFiberIso`) into normed-space
+`ContMDiff` (codomain model `𝓘(ℂ, ℂ →L[ℂ] ℂ)`, treating
+`CotangentModelFiber ℂ = ℂ →L[ℂ] ℂ` as a normed `ℂ`-space directly).
+
+The proof factors as `f = cotangentFiberIso.symm ∘ (cotangentFiberIso ∘ f)`:
+* `cotangentFiberIso ∘ f : Y → ℂ` is `ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤`
+  by the singleton-chart unfolding of the hypothesis.
+* `cotangentFiberIso.symm : ℂ →L[ℂ] (ℂ →L[ℂ] ℂ)` is a CLM, hence
+  `ContMDiff` as a map between normed spaces.
+-/
+private theorem contMDiff_normedClm_of_contMDiff_singletonChart
+    {f : Y → CotangentModelFiber ℂ}
+    (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
+    ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, CotangentModelFiber ℂ) (⊤ : WithTop ℕ∞) f := by
+  -- The chart on CotangentModelFiber ℂ is the singleton chart from
+  -- `cotangentFiberIso.toHomeomorph.toOpenPartialHomeomorph`. The
+  -- chart-local form of `f` codomain-side is `cotangentFiberIso ∘ f`
+  -- post-composed with `chartAt ℂ (f y).symm = chartAt ℂ y₀.symm` for the
+  -- domain. We reduce both `ContMDiff` claims to pointwise `ContDiff`
+  -- statements at the chart-target via `contMDiffAt_iff_of_mem_source`.
+  intro y₀
+  have hfy₀ : ContMDiffAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f y₀ := hf y₀
+  rw [contMDiffAt_iff_of_mem_source (I := 𝓘(ℂ, ℂ)) (I' := 𝓘(ℂ, ℂ))
+      (x := y₀) (y := f y₀) (mem_chart_source ℂ y₀)
+      (mem_chart_source ℂ (f y₀))] at hfy₀
+  rw [contMDiffAt_iff_of_mem_source (I := 𝓘(ℂ, ℂ))
+      (I' := (𝓘(ℂ, CotangentModelFiber ℂ)))
+      (x := y₀) (y := f y₀) (mem_chart_source ℂ y₀)
+      (mem_chart_source (CotangentModelFiber ℂ) (f y₀))]
+  obtain ⟨hcont, hCD⟩ := hfy₀
+  refine ⟨hcont, ?_⟩
+  -- The chart-local form is `chartAt ℂ (f y₀) ∘ f ∘ (chartAt ℂ y₀).symm`,
+  -- which equals `cotangentFiberIso ∘ f ∘ (chartAt ℂ y₀).symm` in both
+  -- cases (singleton chart on CotangentModelFiber ℂ vs the normed-space
+  -- chart-target). We use `cotangentFiberIso.symm` as a CLM (smooth between
+  -- normed spaces) to bridge.
+  -- Convert `hCD : ContDiffWithinAt ℂ ⊤ (chartAt ℂ (f y₀) ∘ f ∘
+  --   (chartAt ℂ y₀).symm) ... (chartAt ℂ y₀ y₀)` to the corresponding
+  -- statement with chart-target replaced; the chart-target for
+  -- `CotangentModelFiber ℂ` is `cotangentFiberIso`, but the chart-target
+  -- for the normed `ℂ →L[ℂ] ℂ` self-chart is `id`.
+  -- Apply cotangentFiberIso.symm post-composition to the local form.
+  have hCD' : ContDiffWithinAt ℂ (⊤ : WithTop ℕ∞)
+      ((cotangentFiberIso.symm : ℂ →L[ℂ] (ℂ →L[ℂ] ℂ)) ∘
+        (chartAt ℂ (f y₀) ∘ f ∘ (chartAt ℂ y₀).symm))
+      _ (chartAt ℂ y₀ y₀) :=
+    (cotangentFiberIso.symm :
+      ℂ →L[ℂ] (ℂ →L[ℂ] ℂ)).contDiff.contDiffAt.contDiffWithinAt.comp _ hCD
+      (Set.mapsTo_univ _ _)
+  -- Now (cotangentFiberIso.symm ∘ chartAt ℂ (f y₀)) = chartAt _ (f y₀)
+  -- in the normed-space chart on CotangentModelFiber ℂ.
+  -- Both `chartAt ℂ (f y₀)` (singleton) and `chartAt _ (f y₀)` (normed self)
+  -- are the same chart-target function-application; the singleton chart on
+  -- `CotangentModelFiber ℂ` is `cotangentFiberIso` (a map to ℂ), and the
+  -- normed self-chart on `CotangentModelFiber ℂ = ℂ →L[ℂ] ℂ` is the
+  -- identity. Composition with `cotangentFiberIso.symm` recovers `f`.
+  convert hCD' using 1
+  funext z
+  show (chartAt (CotangentModelFiber ℂ) (f y₀) ∘ f ∘ (chartAt ℂ y₀).symm) z =
+    ((cotangentFiberIso.symm : ℂ →L[ℂ] (ℂ →L[ℂ] ℂ)) ∘
+      (chartAt ℂ (f y₀) ∘ f ∘ (chartAt ℂ y₀).symm)) z
+  show f ((chartAt ℂ y₀).symm z) =
+    cotangentFiberIso.symm (cotangentFiberIso (f ((chartAt ℂ y₀).symm z)))
+  rw [cotangentFiberIso.symm_apply_apply]
+
+omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
+  [StableChartAt ℂ X] in
+/--
 **Bundle-section `ContMDiff` from pointwise holomorphicity (strictly
 narrower sub-helper).**
 
 Given a function `g_ext : Y → CotangentModelFiber ℂ` that is
 `IsHolomorphicAt` at every point of `Y`, the corresponding section
-of the cotangent bundle (viewed via the section/total-space
-embedding required by `ContMDiffSection`) is `ContMDiff` of class
-`⊤`.
+of the cotangent bundle is `ContMDiff` of class `⊤`.
 
-This is the pure bundle-`ContMDiff` content used by
-`holomorphicOneForm_of_pointwiseHolomorphic`. It isolates the
-transposition from project-local `IsHolomorphicAt` (chart-local
-analyticity of `cotangentFiberIso ∘ g_ext ∘ (chartAt ℂ y).symm`)
-into Mathlib's bundle smoothness formalism via `contMDiffAt_section`
-and the trivialization of the cotangent bundle. The exact
-statement reproduces the `contMDiff_toFun` field of
-`ContMDiffSection` for the `HolomorphicOneForm` abbreviation.
+The proof inlines the following structural assembly:
+1. `contMDiff_iff_contMDiffAt` reduces to pointwise.
+2. `Trivialization.contMDiffAt_section_iff` reduces bundle-section
+   `ContMDiff` to `ContMDiff` of the trivialized section
+   `(e ⟨y, g_ext y⟩).2`.
+3. The cotangent-trivialization formula (inlined, mirroring
+   `cotangent_triv_inversion_snd` in
+   `InversionChartContinuity.lean:192`) rewrites
+   `(e ⟨y, g⟩).snd = g.comp (tT.symmL ℂ y)`.
+4. The CLM composition is `ContMDiffAt` by `ContMDiffAt.clm_comp`,
+   using:
+   - `contMDiff_normedClm_of_contMDiff_singletonChart` to upgrade the
+     manifold-`ContMDiff` of `g_ext` (singleton-chart) to normed-space
+     `ContMDiff` (CLM-valued).
+   - Smoothness of `y ↦ tT.symmL ℂ y` proved inline via the tangent
+     trivialization on a stable-chart manifold.
 -/
 private theorem bundleSection_contMDiff_of_pointwiseHolomorphic
     (g_ext : Y → CotangentModelFiber ℂ)
@@ -1429,7 +1512,91 @@ private theorem bundleSection_contMDiff_of_pointwiseHolomorphic
         (Bundle.TotalSpace.mk' (E := CotangentSpace ℂ Y) (CotangentModelFiber ℂ)
           y (g_ext y) :
           Bundle.TotalSpace (CotangentModelFiber ℂ) (CotangentSpace ℂ Y))) := by
-  sorry
+  -- Reduce to pointwise (ContMDiff = ∀ x, ContMDiffAt by definition).
+  intro y₀
+  -- Trivialization at y₀; y₀ is in its baseSet.
+  set e := trivializationAt (CotangentModelFiber ℂ) (CotangentSpace ℂ Y) y₀ with he_def
+  have hy₀_base : y₀ ∈ e.baseSet :=
+    FiberBundle.mem_baseSet_trivializationAt' y₀
+  -- Reduce to ContMDiffAt of the trivialized section (e ⟨y, g_ext y⟩).2.
+  rw [e.contMDiffAt_section_iff hy₀_base]
+  -- The cotangent bundle trivialization decomposes via the tangent
+  -- bundle and the trivial line bundle.
+  set tT := trivializationAt ℂ (TangentSpace (modelWithCornersSelf ℂ ℂ)) y₀ with htT_def
+  -- Cotangent-trivialization formula (inlined, mirroring
+  -- cotangent_triv_inversion_snd):
+  --   (e ⟨y, g⟩).snd = g.comp (tT.symmL ℂ y).
+  have h_triv_eq :
+      ∀ y : Y,
+        (e ⟨y, (g_ext y : CotangentSpace ℂ Y y)⟩).snd =
+          (g_ext y).comp (tT.symmL ℂ y) := by
+    intro y
+    show (e ⟨y, (g_ext y : CotangentSpace ℂ Y y)⟩).snd =
+        (g_ext y).comp (tT.symmL ℂ y)
+    rw [show e = tT.continuousLinearMap (RingHom.id ℂ)
+        (trivializationAt ℂ (Bundle.Trivial Y ℂ) y₀) from rfl,
+      Trivialization.continuousLinearMap_apply]
+    have hTrivial :
+        (trivializationAt ℂ (Bundle.Trivial Y ℂ) y₀).continuousLinearMapAt ℂ y =
+          ContinuousLinearMap.id ℂ ℂ := by
+      have h₀ : (Bundle.Trivial.trivialization Y ℂ).continuousLinearMapAt ℂ y
+          = ContinuousLinearMap.id ℂ ℂ :=
+        Bundle.Trivial.continuousLinearMapAt_trivialization ℂ Y ℂ y
+      have hbridge :
+          (trivializationAt ℂ (Bundle.Trivial Y ℂ) y₀).continuousLinearMapAt ℂ y =
+            (Bundle.Trivial.trivialization Y ℂ).continuousLinearMapAt ℂ y := by
+        congr 1
+      exact hbridge.trans h₀
+    rw [hTrivial]
+    rfl
+  -- Rewrite the goal via h_triv_eq using congr_of_eventuallyEq.
+  apply ContMDiffAt.congr_of_eventuallyEq _ (Filter.Eventually.of_forall h_triv_eq)
+  -- Now goal: ContMDiffAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ →L[ℂ] ℂ) ⊤
+  --   (fun y => (g_ext y).comp (tT.symmL ℂ y)) y₀.
+  -- Discharge via clm_comp.
+  have hg_normed : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, CotangentModelFiber ℂ) (⊤ : WithTop ℕ∞) g_ext :=
+    contMDiff_normedClm_of_contMDiff_singletonChart
+      (contMDiff_of_pointwiseHolomorphic g_ext hg_ext_hol)
+  -- Smoothness of the symmL factor.
+  -- Key facts (inlined from Mathlib + project):
+  -- * `symmL_trivializationAt_eq_core` (Mathlib): for `b ∈ chart.source`,
+  --   `(trivializationAt … b₀).symmL ℂ b = tangentBundleCore.coordChange ...`.
+  -- * Under `StableChartAt ℂ Y`, `achart ℂ b = achart ℂ b₀` on
+  --   `chart.source` (project's `achart_eq_of_mem_source`).
+  -- * `tangentBundleCore.coordChange_self` then makes the coordChange the
+  --   identity, so `symmL` is locally constant equal to `(1 : ℂ →L[ℂ] ℂ)`.
+  -- Therefore the function is `ContMDiffAt` via `congr_of_eventuallyEq`
+  -- with the constant function (1 : ℂ →L[ℂ] ℂ).
+  have h_symmL : ContMDiffAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ →L[ℂ] ℂ) (⊤ : WithTop ℕ∞)
+      (fun y : Y => show ℂ →L[ℂ] ℂ from tT.symmL ℂ y) y₀ := by
+    have h_const : ContMDiffAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ →L[ℂ] ℂ) (⊤ : WithTop ℕ∞)
+        (fun _ : Y => (1 : ℂ →L[ℂ] ℂ)) y₀ := contMDiffAt_const
+    refine h_const.congr_of_eventuallyEq ?_
+    -- Show: ∀ᶠ y in 𝓝 y₀, tT.symmL ℂ y = (1 : ℂ →L[ℂ] ℂ).
+    have h_src_nhds : (chartAt ℂ y₀).source ∈ 𝓝 y₀ :=
+      (chartAt ℂ y₀).open_source.mem_nhds (mem_chart_source ℂ y₀)
+    filter_upwards [h_src_nhds] with y hy
+    show tT.symmL ℂ y = (1 : ℂ →L[ℂ] ℂ)
+    -- Use symmL_trivializationAt_eq_core then coordChange_self via StableChartAt.
+    rw [TangentBundle.symmL_trivializationAt_eq_core (b₀ := y₀) (b := y) hy]
+    -- Now goal: tangentBundleCore ⟨ℂ, ℂ⟩ Y .coordChange (achart ℂ y₀) (achart ℂ y) y = 1.
+    have hachart : achart ℂ y = achart ℂ y₀ :=
+      JacobianChallenge.Periods.achart_eq_of_mem_source (H := ℂ) (M := Y) hy
+    rw [hachart]
+    -- Now: coordChange (achart ℂ y₀) (achart ℂ y₀) y = 1.
+    have hy_base : y ∈ (tangentBundleCore 𝓘(ℂ, ℂ) Y).baseSet (achart ℂ y₀) := by
+      rw [tangentBundleCore_baseSet, coe_achart]
+      exact hy
+    apply ContinuousLinearMap.ext
+    intro v
+    rw [(tangentBundleCore 𝓘(ℂ, ℂ) Y).coordChange_self (achart ℂ y₀) y hy_base v]
+    simp
+  -- Now apply clm_comp.
+  have h_goal : ContMDiffAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ →L[ℂ] ℂ) (⊤ : WithTop ℕ∞)
+      (fun y => (g_ext y).comp (show ℂ →L[ℂ] ℂ from tT.symmL ℂ y)) y₀ :=
+    hg_normed.contMDiffAt.clm_comp h_symmL
+  -- The goal modulo defeq is the same.
+  exact h_goal
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
   [StableChartAt ℂ X] in
