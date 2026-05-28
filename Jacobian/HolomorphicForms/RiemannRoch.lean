@@ -1,7 +1,6 @@
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.MeromorphicFunctionVector
-import Jacobian.HolomorphicForms.SinglePoleLift
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Jacobian.HolomorphicForms.ChartedSpaceComplexPoints
 import Jacobian.HolomorphicForms.HolomorphicMap
