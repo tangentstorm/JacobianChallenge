@@ -3553,7 +3553,74 @@ theorem boundary_midpoint_bPair_target_angle_eq
       boundaryParam (g + 1) b (1 / 2 : ℝ) =
         boundaryParam (g + 1) (4 * i.val + 3) (1 - t)) :
     (b : ℝ) + 1 / 2 = (4 * i.val + 3 : ℝ) + (1 - t) := by
-  sorry
+  have hval :
+      boundaryParamC' (4 * (g + 1)) b (1 / 2 : ℝ) =
+        boundaryParamC' (4 * (g + 1)) (4 * i.val + 3) (1 - t) := by
+    exact congrArg Subtype.val _hb_eq
+  have hperiod :=
+    Complex.exp_eq_exp_iff_exists_int.mp (by
+      simpa [boundaryParamC', boundaryParam', boundaryParam] using hval)
+  obtain ⟨n, hn⟩ := hperiod
+  have hangle :
+      boundaryAngle' (4 * (g + 1)) b (1 / 2 : ℝ) =
+        boundaryAngle' (4 * (g + 1)) (4 * i.val + 3) (1 - t) +
+          (n : ℝ) * (2 * Real.pi) := by
+    have hmul :
+        (boundaryAngle' (4 * (g + 1)) b (1 / 2 : ℝ) : ℂ) * Complex.I =
+          ((boundaryAngle' (4 * (g + 1)) (4 * i.val + 3) (1 - t) : ℂ) +
+              (n : ℂ) * (2 * Real.pi : ℂ)) * Complex.I := by
+      simpa [mul_assoc, add_mul] using hn
+    have hcancel :=
+      mul_right_cancel₀ (show (Complex.I : ℂ) ≠ 0 from Complex.I_ne_zero) hmul
+    exact_mod_cast hcancel
+  have hGpos : (0 : ℝ) < 4 * ((g : ℝ) + 1) := by
+    positivity
+  have hcoord :
+      ((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) =
+        ((4 * i.val + 3 : ℝ) + (1 - t)) / (4 * (g + 1) : ℝ) + (n : ℝ) := by
+    have hmul :
+        (2 * Real.pi) *
+            (((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ)) =
+          (2 * Real.pi) *
+            ((((4 * i.val + 3 : ℝ) + (1 - t)) / (4 * (g + 1) : ℝ)) +
+              (n : ℝ)) := by
+      simpa [boundaryAngle', div_eq_mul_inv, mul_add, add_mul, mul_assoc,
+        mul_comm, mul_left_comm] using hangle
+    exact mul_left_cancel₀
+      (mul_ne_zero (by norm_num : (2 : ℝ) ≠ 0) Real.pi_ne_zero) hmul
+  have hb_pos : (0 : ℝ) < ((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) := by
+    positivity
+  have hb_lt_one : ((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) < 1 := by
+    have hb_succ_le : (b : ℝ) + 1 ≤ 4 * ((g : ℝ) + 1) := by
+      exact_mod_cast (Nat.succ_le_of_lt _hb.1)
+    rw [div_lt_iff₀ hGpos]
+    linarith
+  have ht0 : 0 ≤ t := _ht.1
+  have ht1 : t ≤ 1 := _ht.2
+  have htarget_nonneg :
+      (0 : ℝ) ≤ ((4 * i.val + 3 : ℝ) + (1 - t)) / (4 * (g + 1) : ℝ) := by
+    apply div_nonneg
+    · nlinarith
+    · positivity
+  have htarget_le_one :
+      ((4 * i.val + 3 : ℝ) + (1 - t)) / (4 * (g + 1) : ℝ) ≤ 1 := by
+    have hi_succ_le : (i.val : ℝ) + 1 ≤ (g : ℝ) + 1 := by
+      exact_mod_cast (Nat.succ_le_of_lt i.2)
+    rw [div_le_iff₀ hGpos]
+    nlinarith
+  have hn_zero : n = 0 := by
+    have hn_lt_one : (n : ℝ) < 1 := by linarith
+    have hn_gt_neg_one : (-1 : ℝ) < (n : ℝ) := by linarith
+    have hn_int_lt : n < 1 := by exact_mod_cast hn_lt_one
+    have hn_int_gt : (-1 : ℤ) < n := by exact_mod_cast hn_gt_neg_one
+    omega
+  have hcoord0 :
+      ((b : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) =
+        ((4 * i.val + 3 : ℝ) + (1 - t)) / (4 * (g + 1) : ℝ) := by
+    simpa [hn_zero] using hcoord
+  have hmul := congrArg (fun x : ℝ => x * (4 * (g + 1) : ℝ)) hcoord0
+  field_simp [hGpos.ne'] at hmul
+  linarith
 
 /--
 At a canonical midpoint, equality with the reversed target side of a
