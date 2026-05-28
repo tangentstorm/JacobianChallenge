@@ -843,6 +843,22 @@ theorem HasLogarithmicSingularityAtReal.chart_pullback_lift
     simpa [hchart_self_id, hchart_self_pt] using hc
   exact hc'.congr' heq.symm
 
+/-- Single-pole `+1` log function on a general charted-space `X`.
+For any `P : X`, the chart-pulled-back log function
+`fun x => log ‖chartAt ℂ P x - (chartAt ℂ P) P‖` has a logarithmic
+singularity at `P` with sign `+1`.
+
+First concrete application of `chart_pullback_lift`: feeds the
+ℂ-side witness `log_abs_at ((chartAt ℂ P) P)` through the bridge.
+The exhibited function is exactly the bridge's output shape
+`u_ℂ ∘ chartAt ℂ P` with `u_ℂ z := log ‖z - (chartAt ℂ P) P‖`. -/
+theorem HasLogarithmicSingularityAtReal.log_pullback_at_pos
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X] (P : X) :
+    HasLogarithmicSingularityAtReal X P
+      (fun x : X => Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖) 1 :=
+  HasLogarithmicSingularityAtReal.chart_pullback_lift
+    (HasLogarithmicSingularityAtReal.log_abs_at ((chartAt ℂ P) P))
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
