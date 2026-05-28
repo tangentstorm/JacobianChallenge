@@ -279,6 +279,38 @@ theorem IsHarmonicConjugateAtReal.log_arg_sub_at_slitPlane
   rw [hfun]
   exact (((hasDerivAt_id x).sub_const P).clog hx).hasFDerivAt
 
+/-- Generic negation closure for `IsHarmonicConjugateAtReal`: if
+`v` is a harmonic conjugate of `u` at `x`, then `-v` is a harmonic
+conjugate of `-u` at `x`. Proof negates the underlying `HasFDerivAt`
+witness via `HasFDerivAt.neg`; the integrand rewrite uses
+`Complex.ofReal_neg` and a `ring` rearrangement to align
+`(-u : ℂ) + I * (-v) = -((u : ℂ) + I * v)`.
+
+Generic structural lemma — applies to any `(u, v, x)`. -/
+lemma IsHarmonicConjugateAtReal.neg
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {u v : X → ℝ} {x : X}
+    (h : IsHarmonicConjugateAtReal X u v x) :
+    IsHarmonicConjugateAtReal X (-u) (-v) x := by
+  obtain ⟨f', hf⟩ := h
+  refine ⟨-f', ?_⟩
+  have hfun :
+      (fun z : ℂ =>
+          ((-u) ((chartAt ℂ x).symm z) : ℂ)
+            + Complex.I * ((-v) ((chartAt ℂ x).symm z) : ℂ))
+        = (fun z : ℂ =>
+            -((u ((chartAt ℂ x).symm z) : ℂ)
+              + Complex.I * (v ((chartAt ℂ x).symm z) : ℂ))) := by
+    funext z
+    show ((-(u ((chartAt ℂ x).symm z)) : ℝ) : ℂ)
+          + Complex.I * ((-(v ((chartAt ℂ x).symm z)) : ℝ) : ℂ)
+        = -(((u ((chartAt ℂ x).symm z)) : ℂ)
+          + Complex.I * ((v ((chartAt ℂ x).symm z)) : ℂ))
+    push_cast
+    ring
+  rw [hfun]
+  exact hf.neg
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
