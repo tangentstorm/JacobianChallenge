@@ -1226,9 +1226,37 @@ complex-valued function whose chart-local order is nonnegative at every
 point has a global holomorphic representative with the same punctured
 germ at every point.
 
-This is the local removable-singularity step needed before applying
-compact Liouville. It is narrower than `meromorphic_no_poles_constant`:
-it supplies only a holomorphic representative, not the global constant.
+This is the local removable-singularity step in chart-holomorphic form:
+it supplies a continuous representative with analytic chart-local
+germs, but does not yet package the result as manifold-level
+`ContMDiff`.
+-/
+theorem meromorphic_no_poles_holomorphic_representative
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (F : X → ℂ)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p)
+    (horders : ∀ p : X,
+      (0 : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F) :
+    ∃ G : X → ℂ,
+      Continuous G ∧
+      (∀ p : X, JacobianChallenge.HolomorphicForms.IsHolomorphicAt G p) ∧
+      ∀ p : X, F =ᶠ[𝓝[≠] p] G := by
+  sorry
+
+/--
+**Provider (removable no-poles representative, `ContMDiff` form).**
+A meromorphic complex-valued function whose chart-local order is
+nonnegative at every point has a global complex-smooth representative
+with the same punctured germ at every point.
+
+This packages `meromorphic_no_poles_holomorphic_representative` through
+the existing chart-holomorphic plus continuity bridge
+`ContMDiff.of_isHolomorphic_and_continuous`.
 -/
 theorem meromorphic_no_poles_contMDiff_representative
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1245,7 +1273,9 @@ theorem meromorphic_no_poles_contMDiff_representative
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) G ∧
       ∀ p : X, F =ᶠ[𝓝[≠] p] G := by
-  sorry
+  obtain ⟨G, hG_cont, hG_holo, hFG⟩ :=
+    meromorphic_no_poles_holomorphic_representative F hmer horders
+  exact ⟨G, ContMDiff.of_isHolomorphic_and_continuous hG_holo hG_cont, hFG⟩
 
 /--
 **Provider (compact Liouville, germ form).** A meromorphic function
