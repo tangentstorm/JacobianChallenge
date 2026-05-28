@@ -186,6 +186,18 @@ lemma IsHarmonicOffReal.toStub
     IsHarmonicOff X P Q u :=
   trivial
 
+/-- Canonical witness on `X = ℂ`: the real-part function `Complex.re`
+is harmonic-off `{P, Q}` for ANY pair `P, Q : ℂ`. At every point
+`x : ℂ` (including the supposedly-excluded `P` and `Q` themselves)
+the conjugate `Complex.im` works via `re_im_at x`. Demonstrates
+that `IsHarmonicOffReal` is non-vacuous; analogous to
+`IsHarmonicConjugateAtReal.re_im_at` and to
+`IsHolomorphicInChartReal.id_at`. -/
+theorem IsHarmonicOffReal.re_off (P Q : ℂ) :
+    IsHarmonicOffReal ℂ P Q Complex.re := by
+  intro x _ _
+  exact ⟨Complex.im, IsHarmonicConjugateAtReal.re_im_at x⟩
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
