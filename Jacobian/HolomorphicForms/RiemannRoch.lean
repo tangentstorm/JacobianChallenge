@@ -457,6 +457,17 @@ theorem genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point
 **Headline obligation (final packaging).** Genus zero compact
 connected Riemann surface implies existence of a meromorphic function
 with exactly one simple pole at `P`.
+
+**Refactored (2026-05-27, follow-on to commit `cfca8ac3`)**: this
+theorem now routes through the narrower named provider
+`genusZero_pointRRSection_meromorphic_getD_exists` (above) and uses
+its `hpole` projection directly. This bypasses the indirect
+derivation through
+`genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point`, which
+proves `f.poles = Divisor.point P` non-trivially from
+`f.Nonconstant + f.MemRiemannRochSpace (Divisor.point P)` — content
+already supplied directly by the narrower provider's existential
+triple.
 -/
 theorem genusZero_fixedPole_meromorphicData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -466,11 +477,9 @@ theorem genusZero_fixedPole_meromorphicData_nonempty
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     Nonempty (GenusZeroFixedPoleMeromorphicData X P h) := by
-  obtain ⟨f, hnc, hmem⟩ := genusZero_pointRiemannRochSpace_witness_exists X P h
-  exact ⟨
-    { meromorphicMap := f
-      poleDivisor_eq_point :=
-        genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h ⟨f, hnc, hmem⟩ }⟩
+  obtain ⟨f, hpole, _hnc, _hmem, _hmer, _hord1⟩ :=
+    genusZero_pointRRSection_meromorphic_getD_exists X P h
+  exact ⟨{ meromorphicMap := f, poleDivisor_eq_point := hpole }⟩
 
 private theorem rr_orderAt_getD_eq_neg_one_of_mapAnalyticOrderAt_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
