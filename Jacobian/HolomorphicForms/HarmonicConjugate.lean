@@ -408,6 +408,41 @@ lemma IsHarmonicConjugateAtReal.add_const_const
   rw [hfun]
   exact hf.add_const _
 
+/-- Rotated translated log/arg witness: for `c * (x - P) ∈ Complex.slitPlane`,
+the function `fun z => Complex.arg (c * (z - P))` is a harmonic conjugate
+of `fun z => Real.log ‖c * (z - P)‖`. Combined holomorphic function is
+`fun z => Complex.log (c * (z - P))`, ℂ-differentiable at `x` by the
+chain rule (translation has derivative 1, multiplication by `c` has
+derivative `c`, `Complex.log` at `c * (x - P)` has derivative
+`(c * (x - P))⁻¹`).
+
+Key building block for branch-rotation: when `x - P` is on the
+standard branch cut `ℝ≤0`, pick a rotation `c` to move it off the
+cut and use this rotated witness instead of `log_arg_sub_at_slitPlane`.
+The `c = 0` case is vacuous (hypothesis fails by `zero_notMem_slitPlane`). -/
+theorem IsHarmonicConjugateAtReal.log_arg_rotated_sub_at_slitPlane
+    {x P c : ℂ} (hxc : c * (x - P) ∈ Complex.slitPlane) :
+    IsHarmonicConjugateAtReal ℂ
+      (fun z : ℂ => Real.log ‖c * (z - P)‖)
+      (fun z : ℂ => Complex.arg (c * (z - P))) x := by
+  refine ⟨ContinuousLinearMap.smulRight (1 : ℂ →L[ℂ] ℂ)
+            (c * 1 / (c * (x - P))), ?_⟩
+  have hfun :
+      (fun z : ℂ =>
+          (Real.log ‖c * ((chartAt ℂ x).symm z - P)‖ : ℂ)
+            + Complex.I
+              * (Complex.arg (c * ((chartAt ℂ x).symm z - P)) : ℂ))
+        = fun z : ℂ => Complex.log (c * (z - P)) := by
+    funext z
+    show (Real.log ‖c * (z - P)‖ : ℂ)
+          + Complex.I * (Complex.arg (c * (z - P)) : ℂ)
+        = Complex.log (c * (z - P))
+    rw [mul_comm Complex.I]
+    rfl
+  rw [hfun]
+  exact (((hasDerivAt_id x).sub_const P).const_mul c).clog hxc
+        |>.hasFDerivAt
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
