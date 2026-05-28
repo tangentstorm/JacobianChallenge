@@ -3842,6 +3842,325 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_refl
     a = b := by
   exact boundary_midpoint_residue_eq_of_param_eq g a b _ha _hb _hpt
 
+private theorem boundaryParam_midpoint_inj_of_lt
+    (g : ℕ) {j j' : ℕ}
+    (hj : j < 4 * (g + 1)) (hj' : j' < 4 * (g + 1))
+    {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ) 1)
+    (h :
+      boundaryParam (g + 1) j (1 / 2 : ℝ) =
+        boundaryParam (g + 1) j' t) :
+    t = 1 / 2 ∧ j = j' := by
+  have hval :
+      boundaryParamC' (4 * (g + 1)) j (1 / 2 : ℝ) =
+        boundaryParamC' (4 * (g + 1)) j' t := by
+    exact congrArg Subtype.val h
+  have hperiod :=
+    Complex.exp_eq_exp_iff_exists_int.mp (by
+      simpa [boundaryParamC', boundaryParam', boundaryParam] using hval)
+  obtain ⟨n, hn⟩ := hperiod
+  have hangle :
+      boundaryAngle' (4 * (g + 1)) j (1 / 2 : ℝ) =
+        boundaryAngle' (4 * (g + 1)) j' t +
+          (n : ℝ) * (2 * Real.pi) := by
+    have hmul :
+        (boundaryAngle' (4 * (g + 1)) j (1 / 2 : ℝ) : ℂ) * Complex.I =
+          ((boundaryAngle' (4 * (g + 1)) j' t : ℂ) +
+              (n : ℂ) * (2 * Real.pi : ℂ)) * Complex.I := by
+      simpa [mul_assoc, add_mul] using hn
+    have hcancel :=
+      mul_right_cancel₀ (show (Complex.I : ℂ) ≠ 0 from Complex.I_ne_zero) hmul
+    exact_mod_cast hcancel
+  have hGpos : (0 : ℝ) < 4 * ((g : ℝ) + 1) := by
+    positivity
+  have hcoord :
+      ((j : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) =
+        ((j' : ℝ) + t) / (4 * (g + 1) : ℝ) + (n : ℝ) := by
+    have hmul :
+        (2 * Real.pi) *
+            (((j : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ)) =
+          (2 * Real.pi) *
+            ((((j' : ℝ) + t) / (4 * (g + 1) : ℝ)) + (n : ℝ)) := by
+      simpa [boundaryAngle', div_eq_mul_inv, mul_add, add_mul, mul_assoc,
+        mul_comm, mul_left_comm] using hangle
+    exact mul_left_cancel₀
+      (mul_ne_zero (by norm_num : (2 : ℝ) ≠ 0) Real.pi_ne_zero) hmul
+  have hj_pos : (0 : ℝ) < ((j : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) := by
+    positivity
+  have hj_lt_one : ((j : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) < 1 := by
+    have hj_succ_le : (j : ℝ) + 1 ≤ 4 * ((g : ℝ) + 1) := by
+      exact_mod_cast (Nat.succ_le_of_lt hj)
+    rw [div_lt_iff₀ hGpos]
+    linarith
+  have ht0 : 0 ≤ t := ht.1
+  have ht1 : t ≤ 1 := ht.2
+  have htarget_nonneg :
+      (0 : ℝ) ≤ ((j' : ℝ) + t) / (4 * (g + 1) : ℝ) := by
+    apply div_nonneg
+    · positivity
+    · positivity
+  have htarget_le_one :
+      ((j' : ℝ) + t) / (4 * (g + 1) : ℝ) ≤ 1 := by
+    have hj'_succ_le : (j' : ℝ) + 1 ≤ 4 * ((g : ℝ) + 1) := by
+      exact_mod_cast (Nat.succ_le_of_lt hj')
+    rw [div_le_iff₀ hGpos]
+    linarith
+  have hn_zero : n = 0 := by
+    have hn_lt_one : (n : ℝ) < 1 := by linarith
+    have hn_gt_neg_one : (-1 : ℝ) < (n : ℝ) := by linarith
+    have hn_int_lt : n < 1 := by exact_mod_cast hn_lt_one
+    have hn_int_gt : (-1 : ℤ) < n := by exact_mod_cast hn_gt_neg_one
+    omega
+  have hcoord0 :
+      ((j : ℝ) + 1 / 2) / (4 * (g + 1) : ℝ) =
+        ((j' : ℝ) + t) / (4 * (g + 1) : ℝ) := by
+    simpa [hn_zero] using hcoord
+  have hreal : (j : ℝ) + 1 / 2 = (j' : ℝ) + t := by
+    have hmul := congrArg (fun x : ℝ => x * (4 * (g + 1) : ℝ)) hcoord0
+    field_simp [hGpos.ne'] at hmul
+    linarith
+  have hj_eq : j = j' := by
+    by_contra hne
+    rcases lt_or_gt_of_ne hne with hlt | hgt
+    · have hsucc : j + 1 ≤ j' := Nat.succ_le_of_lt hlt
+      have hsuccR : (j : ℝ) + 1 ≤ (j' : ℝ) := by exact_mod_cast hsucc
+      linarith
+    · have hsucc : j' + 1 ≤ j := Nat.succ_le_of_lt hgt
+      have hsuccR : (j' : ℝ) + 1 ≤ (j : ℝ) := by exact_mod_cast hsucc
+      linarith
+  have ht_half : t = 1 / 2 := by
+    subst hj_eq
+    linarith
+  exact ⟨ht_half, hj_eq⟩
+
+private theorem boundary_midpoint_sideGen_image_is_midpoint
+    (g : ℕ) {x y : DiskC}
+    (h : Polygon4g.SideGen (g + 1) x y)
+    {j : ℕ} (hj : j < 4 * (g + 1))
+    (hx : x = boundaryParam (g + 1) j (1 / 2 : ℝ)) :
+    ∃ k : ℕ, k < 4 * (g + 1) ∧
+      y = boundaryParam (g + 1) k (1 / 2 : ℝ) := by
+  cases h with
+  | a_pair i t ht =>
+      have hx_param :
+          boundaryParam (g + 1) j (1 / 2 : ℝ) =
+            boundaryParam (g + 1) (4 * i.val) t := by
+        rw [← hx]
+      obtain ⟨ht_half, _hj_eq⟩ :=
+        boundaryParam_midpoint_inj_of_lt g hj (by omega) ht hx_param
+      refine ⟨4 * i.val + 2, by omega, ?_⟩
+      norm_num [ht_half]
+  | b_pair i t ht =>
+      have hx_param :
+          boundaryParam (g + 1) j (1 / 2 : ℝ) =
+            boundaryParam (g + 1) (4 * i.val + 1) t := by
+        rw [← hx]
+      obtain ⟨ht_half, _hj_eq⟩ :=
+        boundaryParam_midpoint_inj_of_lt g hj (by omega) ht hx_param
+      refine ⟨4 * i.val + 3, by omega, ?_⟩
+      norm_num [ht_half]
+
+private theorem boundary_midpoint_sideGen_preimage_is_midpoint
+    (g : ℕ) {x y : DiskC}
+    (h : Polygon4g.SideGen (g + 1) x y)
+    {j : ℕ} (hj : j < 4 * (g + 1))
+    (hy : y = boundaryParam (g + 1) j (1 / 2 : ℝ)) :
+    ∃ k : ℕ, k < 4 * (g + 1) ∧
+      x = boundaryParam (g + 1) k (1 / 2 : ℝ) := by
+  cases h with
+  | a_pair i t ht =>
+      have ht_rev : 1 - t ∈ Set.Icc (0 : ℝ) 1 := by
+        exact ⟨by linarith [ht.2], by linarith [ht.1]⟩
+      have hy_param :
+          boundaryParam (g + 1) j (1 / 2 : ℝ) =
+            boundaryParam (g + 1) (4 * i.val + 2) (1 - t) := by
+        rw [← hy]
+      obtain ⟨hone_minus_t, _hj_eq⟩ :=
+        boundaryParam_midpoint_inj_of_lt g hj (by omega) ht_rev hy_param
+      have ht_half : t = 1 / 2 := by linarith
+      refine ⟨4 * i.val, by omega, ?_⟩
+      simp [ht_half]
+  | b_pair i t ht =>
+      have ht_rev : 1 - t ∈ Set.Icc (0 : ℝ) 1 := by
+        exact ⟨by linarith [ht.2], by linarith [ht.1]⟩
+      have hy_param :
+          boundaryParam (g + 1) j (1 / 2 : ℝ) =
+            boundaryParam (g + 1) (4 * i.val + 3) (1 - t) := by
+        rw [← hy]
+      obtain ⟨hone_minus_t, _hj_eq⟩ :=
+        boundaryParam_midpoint_inj_of_lt g hj (by omega) ht_rev hy_param
+      have ht_half : t = 1 / 2 := by linarith
+      refine ⟨4 * i.val + 1, by omega, ?_⟩
+      simp [ht_half]
+
+private theorem boundary_midpoint_eqvGen_image_is_midpoint
+    (g : ℕ) {x y : DiskC}
+    (h : Relation.EqvGen (Polygon4g.SideGen (g + 1)) x y)
+    {j : ℕ} (hj : j < 4 * (g + 1))
+    (hx : x = boundaryParam (g + 1) j (1 / 2 : ℝ)) :
+    ∃ k : ℕ, k < 4 * (g + 1) ∧
+      y = boundaryParam (g + 1) k (1 / 2 : ℝ) := by
+  have midpoint_iff :
+      (∀ {j : ℕ}, j < 4 * (g + 1) →
+          x = boundaryParam (g + 1) j (1 / 2 : ℝ) →
+          ∃ k : ℕ, k < 4 * (g + 1) ∧
+            y = boundaryParam (g + 1) k (1 / 2 : ℝ)) ∧
+      (∀ {j : ℕ}, j < 4 * (g + 1) →
+          y = boundaryParam (g + 1) j (1 / 2 : ℝ) →
+          ∃ k : ℕ, k < 4 * (g + 1) ∧
+            x = boundaryParam (g + 1) k (1 / 2 : ℝ)) := by
+    clear hj hx
+    induction h with
+    | refl p =>
+        exact ⟨
+          (fun hj hp => ⟨_, hj, hp⟩),
+          (fun hj hp => ⟨_, hj, hp⟩)⟩
+    | rel p q hrel =>
+        exact ⟨
+          (fun hj hp => boundary_midpoint_sideGen_image_is_midpoint g hrel hj hp),
+          (fun hj hq => boundary_midpoint_sideGen_preimage_is_midpoint g hrel hj hq)⟩
+    | symm p q _ ih =>
+        exact ⟨ih.2, ih.1⟩
+    | trans p mid q _ _ ih_left ih_right =>
+        exact ⟨
+          (fun hj hp => by
+            obtain ⟨m, hm, hmid⟩ := ih_left.1 hj hp
+            exact ih_right.1 hm hmid),
+          (fun hj hq => by
+            obtain ⟨m, hm, hmid⟩ := ih_right.2 hj hq
+            exact ih_left.2 hm hmid)⟩
+  exact midpoint_iff.1 hj hx
+
+private theorem boundary_midpoint_eqvGen_preimage_is_midpoint
+    (g : ℕ) {x y : DiskC}
+    (h : Relation.EqvGen (Polygon4g.SideGen (g + 1)) x y)
+    {j : ℕ} (hj : j < 4 * (g + 1))
+    (hy : y = boundaryParam (g + 1) j (1 / 2 : ℝ)) :
+    ∃ k : ℕ, k < 4 * (g + 1) ∧
+      x = boundaryParam (g + 1) k (1 / 2 : ℝ) := by
+  have midpoint_iff :
+      (∀ {j : ℕ}, j < 4 * (g + 1) →
+          x = boundaryParam (g + 1) j (1 / 2 : ℝ) →
+          ∃ k : ℕ, k < 4 * (g + 1) ∧
+            y = boundaryParam (g + 1) k (1 / 2 : ℝ)) ∧
+      (∀ {j : ℕ}, j < 4 * (g + 1) →
+          y = boundaryParam (g + 1) j (1 / 2 : ℝ) →
+          ∃ k : ℕ, k < 4 * (g + 1) ∧
+            x = boundaryParam (g + 1) k (1 / 2 : ℝ)) := by
+    clear hj hy
+    induction h with
+    | refl p =>
+        exact ⟨
+          (fun hj hp => ⟨_, hj, hp⟩),
+          (fun hj hp => ⟨_, hj, hp⟩)⟩
+    | rel p q hrel =>
+        exact ⟨
+          (fun hj hp => boundary_midpoint_sideGen_image_is_midpoint g hrel hj hp),
+          (fun hj hq => boundary_midpoint_sideGen_preimage_is_midpoint g hrel hj hq)⟩
+    | symm p q _ ih =>
+        exact ⟨ih.2, ih.1⟩
+    | trans p mid q _ _ ih_left ih_right =>
+        exact ⟨
+          (fun hj hp => by
+            obtain ⟨m, hm, hmid⟩ := ih_left.1 hj hp
+            exact ih_right.1 hm hmid),
+          (fun hj hq => by
+            obtain ⟨m, hm, hmid⟩ := ih_right.2 hj hq
+            exact ih_left.2 hm hmid)⟩
+  exact midpoint_iff.2 hj hy
+
+private def boundaryMidpointCanonicalRep (n : ℕ) : ℕ :=
+  if n % 4 < 2 then n else n - 2
+
+private theorem boundaryMidpointCanonicalRep_of_residue
+    {g n : ℕ} (hn : IsCanonicalEdgeArcResidue g n) :
+    boundaryMidpointCanonicalRep n = n := by
+  simp [boundaryMidpointCanonicalRep, hn.2]
+
+private theorem boundary_midpoint_sideGen_canonicalRep_eq
+    (g : ℕ) {x y : DiskC}
+    (h : Polygon4g.SideGen (g + 1) x y)
+    {j k : ℕ} (hj : j < 4 * (g + 1)) (hk : k < 4 * (g + 1))
+    (hx : x = boundaryParam (g + 1) j (1 / 2 : ℝ))
+    (hy : y = boundaryParam (g + 1) k (1 / 2 : ℝ)) :
+    boundaryMidpointCanonicalRep j = boundaryMidpointCanonicalRep k := by
+  cases h with
+  | a_pair i t ht =>
+      have hx_param :
+          boundaryParam (g + 1) j (1 / 2 : ℝ) =
+            boundaryParam (g + 1) (4 * i.val) t := by
+        rw [← hx]
+      obtain ⟨ht_half, hj_eq⟩ :=
+        boundaryParam_midpoint_inj_of_lt g hj (by omega) ht hx_param
+      have ht_rev : 1 - t ∈ Set.Icc (0 : ℝ) 1 := by
+        exact ⟨by linarith [ht.2], by linarith [ht.1]⟩
+      have hy_param :
+          boundaryParam (g + 1) k (1 / 2 : ℝ) =
+            boundaryParam (g + 1) (4 * i.val + 2) (1 - t) := by
+        rw [← hy]
+      obtain ⟨_hone_minus_t, hk_eq⟩ :=
+        boundaryParam_midpoint_inj_of_lt g hk (by omega) ht_rev hy_param
+      rw [hj_eq, hk_eq]
+      simp [boundaryMidpointCanonicalRep]
+  | b_pair i t ht =>
+      have hx_param :
+          boundaryParam (g + 1) j (1 / 2 : ℝ) =
+            boundaryParam (g + 1) (4 * i.val + 1) t := by
+        rw [← hx]
+      obtain ⟨ht_half, hj_eq⟩ :=
+        boundaryParam_midpoint_inj_of_lt g hj (by omega) ht hx_param
+      have ht_rev : 1 - t ∈ Set.Icc (0 : ℝ) 1 := by
+        exact ⟨by linarith [ht.2], by linarith [ht.1]⟩
+      have hy_param :
+          boundaryParam (g + 1) k (1 / 2 : ℝ) =
+            boundaryParam (g + 1) (4 * i.val + 3) (1 - t) := by
+        rw [← hy]
+      obtain ⟨_hone_minus_t, hk_eq⟩ :=
+        boundaryParam_midpoint_inj_of_lt g hk (by omega) ht_rev hy_param
+      rw [hj_eq, hk_eq]
+      simp [boundaryMidpointCanonicalRep]
+
+private theorem boundary_midpoint_eqvGen_canonicalRep_eq
+    (g : ℕ) {x y : DiskC}
+    (h : Relation.EqvGen (Polygon4g.SideGen (g + 1)) x y)
+    {j k : ℕ} (hj : j < 4 * (g + 1)) (hk : k < 4 * (g + 1))
+    (hx : x = boundaryParam (g + 1) j (1 / 2 : ℝ))
+    (hy : y = boundaryParam (g + 1) k (1 / 2 : ℝ)) :
+    boundaryMidpointCanonicalRep j = boundaryMidpointCanonicalRep k := by
+  revert j k
+  induction h with
+  | refl p =>
+      intro j k hj hk hx hy
+      have hidx :=
+        boundaryParam_midpoint_inj_of_lt g hj hk
+          (by norm_num : (1 / 2 : ℝ) ∈ Set.Icc (0 : ℝ) 1)
+          (by rw [← hx, ← hy])
+      simp [hidx.2]
+  | rel p q hrel =>
+      intro j k hj hk hx hy
+      exact boundary_midpoint_sideGen_canonicalRep_eq g hrel hj hk hx hy
+  | symm p q _ ih =>
+      intro j k hj hk hx hy
+      exact (ih hk hj hy hx).symm
+  | trans p mid q hpq hqr ih_left ih_right =>
+      intro j k hj hk hx hy
+      obtain ⟨m, hm, hmid⟩ :=
+        boundary_midpoint_eqvGen_image_is_midpoint g hpq hj hx
+      exact (ih_left hj hm hx hmid).trans (ih_right hm hk hmid hy)
+
+theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_aux
+    {g : ℕ} {x y : DiskC}
+    (h : Relation.EqvGen (Polygon4g.SideGen (g + 1)) x y)
+    {a b : ℕ}
+    (ha : IsCanonicalEdgeArcResidue g a)
+    (hb : IsCanonicalEdgeArcResidue g b)
+    (hxa : x = boundaryParam (g + 1) a (1 / 2 : ℝ))
+    (hyb : y = boundaryParam (g + 1) b (1 / 2 : ℝ)) :
+    a = b := by
+  have hrep :=
+    boundary_midpoint_eqvGen_canonicalRep_eq g h ha.1 hb.1 hxa hyb
+  simpa [boundaryMidpointCanonicalRep_of_residue ha,
+    boundaryMidpointCanonicalRep_of_residue hb] using hrep
+
 /--
 The remaining reversed-closure content for the symmetric constructor case.
 -/
@@ -3854,7 +4173,8 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_symm_core
         (boundaryParam (g + 1) b (1 / 2 : ℝ))
         (boundaryParam (g + 1) a (1 / 2 : ℝ))) :
     a = b := by
-  sorry
+  exact (boundary_midpoint_sideRel_residue_eq_of_eqvGen_aux
+    _h _hb _ha rfl rfl).symm
 
 /--
 The symmetric constructor case for canonical-residue midpoint `EqvGen`
@@ -3888,7 +4208,8 @@ theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen_trans
       Relation.EqvGen (Polygon4g.SideGen (g + 1))
         mid (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
     a = b := by
-  sorry
+  exact boundary_midpoint_sideRel_residue_eq_of_eqvGen_aux
+    (Relation.EqvGen.trans _ _ _ _hleft _hright) _ha _hb rfl rfl
 
 /--
 The remaining transitive-closure content for midpoint `EqvGen` separation,
