@@ -589,6 +589,153 @@ theorem IsHarmonicConjugateAtReal.dipole_conjugate_at_common_rotation
   rw [hfun_u, hfun_v] at hsum
   exact hsum
 
+/-- Helper: for any nonzero complex number `w`, the membership
+`c * w ∈ Complex.slitPlane` for `c ∈ {1, -1, I, -I}` can fail for
+*at most one* candidate. The failing candidate corresponds to the
+half-axis `w` lies on (if any). Stated as: at least one of any
+*two* candidates from the four works. -/
+private lemma slit_two_of_four_helper {w : ℂ} (hw : w ≠ 0) :
+    ¬ ((1 : ℂ) * w ∉ Complex.slitPlane ∧ (-1 : ℂ) * w ∉ Complex.slitPlane) ∧
+    ¬ ((1 : ℂ) * w ∉ Complex.slitPlane ∧ Complex.I * w ∉ Complex.slitPlane) ∧
+    ¬ ((1 : ℂ) * w ∉ Complex.slitPlane ∧ (-Complex.I) * w ∉ Complex.slitPlane) ∧
+    ¬ ((-1 : ℂ) * w ∉ Complex.slitPlane ∧ Complex.I * w ∉ Complex.slitPlane) ∧
+    ¬ ((-1 : ℂ) * w ∉ Complex.slitPlane ∧ (-Complex.I) * w ∉ Complex.slitPlane) ∧
+    ¬ (Complex.I * w ∉ Complex.slitPlane ∧ (-Complex.I) * w ∉ Complex.slitPlane) := by
+  -- A point z ∉ slitPlane iff ¬(0 < z.re ∨ z.im ≠ 0) iff z.re ≤ 0 ∧ z.im = 0.
+  -- Translating each candidate's bad-condition for w into constraints on w:
+  --   c = 1: w.re ≤ 0 ∧ w.im = 0  (w on closed negative real axis)
+  --   c = -1: w.re ≥ 0 ∧ w.im = 0 (w on closed positive real axis)
+  --   c = I:  w.im ≥ 0 ∧ w.re = 0 (w on closed positive imag axis)
+  --   c = -I: w.im ≤ 0 ∧ w.re = 0 (w on closed negative imag axis)
+  -- Each pair of bad-conditions forces w to be on two of these closed
+  -- half-axes simultaneously. Their pairwise intersections are subsets
+  -- of {0}, contradicting hw : w ≠ 0.
+  have hw_re_or_im : w.re ≠ 0 ∨ w.im ≠ 0 := by
+    by_contra hh
+    push_neg at hh
+    exact hw (Complex.ext hh.1 hh.2)
+  -- For convenience, extract numeric bad-conditions.
+  -- We'll prove each conjunct separately.
+  have key : ∀ (a b c d : Prop),
+      (a → w.re ≤ 0 ∧ w.im = 0) → (b → w.re ≥ 0 ∧ w.im = 0) →
+      (c → w.im ≥ 0 ∧ w.re = 0) → (d → w.im ≤ 0 ∧ w.re = 0) →
+      (¬ (a ∧ b) ∧ ¬ (a ∧ c) ∧ ¬ (a ∧ d) ∧
+       ¬ (b ∧ c) ∧ ¬ (b ∧ d) ∧ ¬ (c ∧ d)) := by
+    intro a b c d ha hb hc hd
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> rintro ⟨h₁, h₂⟩
+    · -- a ∧ b: w.re ≤ 0 ∧ w.re ≥ 0 ∧ w.im = 0 → w = 0
+      obtain ⟨hre₁, him₁⟩ := ha h₁
+      obtain ⟨hre₂, _⟩ := hb h₂
+      have : w.re = 0 := le_antisymm hre₁ hre₂
+      rcases hw_re_or_im with hne | hne <;> exact hne ‹_›
+    · obtain ⟨hre₁, him₁⟩ := ha h₁
+      obtain ⟨_, hre₂⟩ := hc h₂
+      rcases hw_re_or_im with hne | hne <;> exact hne ‹_›
+    · obtain ⟨hre₁, him₁⟩ := ha h₁
+      obtain ⟨_, hre₂⟩ := hd h₂
+      rcases hw_re_or_im with hne | hne <;> exact hne ‹_›
+    · obtain ⟨hre₁, him₁⟩ := hb h₁
+      obtain ⟨_, hre₂⟩ := hc h₂
+      rcases hw_re_or_im with hne | hne <;> exact hne ‹_›
+    · obtain ⟨hre₁, him₁⟩ := hb h₁
+      obtain ⟨_, hre₂⟩ := hd h₂
+      rcases hw_re_or_im with hne | hne <;> exact hne ‹_›
+    · obtain ⟨him₁, hre₁⟩ := hc h₁
+      obtain ⟨him₂, _⟩ := hd h₂
+      have : w.im = 0 := le_antisymm him₂ him₁
+      rcases hw_re_or_im with hne | hne <;> exact hne ‹_›
+  refine key _ _ _ _ ?_ ?_ ?_ ?_
+  · -- bad for c = 1: 1 * w ∉ slitPlane → w.re ≤ 0 ∧ w.im = 0
+    intro h
+    rw [Complex.mem_slitPlane_iff, not_or, not_lt, not_ne_iff, one_mul] at h
+    exact h
+  · -- bad for c = -1: (-1) * w ∉ slitPlane → w.re ≥ 0 ∧ w.im = 0
+    intro h
+    rw [Complex.mem_slitPlane_iff, not_or, not_lt, not_ne_iff] at h
+    have hre : ((-1 : ℂ) * w).re = -w.re := by simp
+    have him : ((-1 : ℂ) * w).im = -w.im := by simp
+    rw [hre, him] at h
+    constructor
+    · linarith [h.1]
+    · linarith [h.2]
+  · -- bad for c = I: I * w ∉ slitPlane → w.im ≥ 0 ∧ w.re = 0
+    intro h
+    rw [Complex.mem_slitPlane_iff, not_or, not_lt, not_ne_iff] at h
+    have hre : (Complex.I * w).re = -w.im := by simp
+    have him : (Complex.I * w).im = w.re := by simp
+    rw [hre, him] at h
+    constructor
+    · linarith [h.1]
+    · exact h.2
+  · -- bad for c = -I: (-I) * w ∉ slitPlane → w.im ≤ 0 ∧ w.re = 0
+    intro h
+    rw [Complex.mem_slitPlane_iff, not_or, not_lt, not_ne_iff] at h
+    have hre : ((-Complex.I) * w).re = w.im := by simp
+    have him : ((-Complex.I) * w).im = -w.re := by simp
+    rw [hre, him] at h
+    constructor
+    · exact h.1
+    · linarith [h.2]
+
+/-- For any two nonzero complex numbers `w₁, w₂`, there exists a
+rotation `c` such that both `c * w₁ ∈ Complex.slitPlane` and
+`c * w₂ ∈ Complex.slitPlane`.
+
+Concrete construction: pick from `{1, -1, I, -I}` based on which
+half-axis (if any) each `w_i` lies on. For any nonzero `w`, the
+four candidates `c` make `c * w` bad-for-slitPlane iff `w` lies on
+a specific half-axis: negative real (c = 1), positive real (c = -1),
+positive imaginary (c = I), negative imaginary (c = -I). These four
+half-axes are pairwise disjoint when `w ≠ 0`, so each `w_i` blocks
+at most one of the four candidates. With ≤ 2 blocked across both
+`w_i`s, at least 2 candidates work. -/
+lemma slit_rotation_for_two_nonzero
+    {w₁ w₂ : ℂ} (h₁ : w₁ ≠ 0) (h₂ : w₂ ≠ 0) :
+    ∃ c : ℂ, c * w₁ ∈ Complex.slitPlane ∧ c * w₂ ∈ Complex.slitPlane := by
+  by_cases hA : (1 : ℂ) * w₁ ∈ Complex.slitPlane ∧ (1 : ℂ) * w₂ ∈ Complex.slitPlane
+  · exact ⟨1, hA.1, hA.2⟩
+  by_cases hB : (-1 : ℂ) * w₁ ∈ Complex.slitPlane ∧ (-1 : ℂ) * w₂ ∈ Complex.slitPlane
+  · exact ⟨-1, hB.1, hB.2⟩
+  by_cases hC : Complex.I * w₁ ∈ Complex.slitPlane ∧ Complex.I * w₂ ∈ Complex.slitPlane
+  · exact ⟨Complex.I, hC.1, hC.2⟩
+  by_cases hD : (-Complex.I) * w₁ ∈ Complex.slitPlane
+                ∧ (-Complex.I) * w₂ ∈ Complex.slitPlane
+  · exact ⟨-Complex.I, hD.1, hD.2⟩
+  exfalso
+  -- Convert each ¬(P ∧ Q) into ¬P ∨ ¬Q via not_and_or.
+  rw [not_and_or] at hA hB hC hD
+  -- Each of hA, hB, hC, hD now has the form
+  -- "c * w₁ ∉ slitPlane ∨ c * w₂ ∉ slitPlane".
+  -- For at least one of w₁, w₂, ≥ 2 distinct candidates fail.
+  have hP1 := slit_two_of_four_helper h₁
+  have hP2 := slit_two_of_four_helper h₂
+  -- Brute-force: in the 2^4 = 16 sub-cases of (hA, hB, hC, hD) each picking
+  -- either w₁ or w₂, at least one w_i gets two-or-more failures, contradicting
+  -- the corresponding component of hPi.
+  rcases hA with hA | hA <;> rcases hB with hB | hB <;>
+    rcases hC with hC | hC <;> rcases hD with hD | hD
+  all_goals (
+    first
+    | exact hP1.1 ⟨hA, hB⟩
+    | exact hP1.2.1 ⟨hA, hC⟩
+    | exact hP1.2.2.1 ⟨hA, hD⟩
+    | exact hP1.2.2.2.1 ⟨hB, hC⟩
+    | exact hP1.2.2.2.2.1 ⟨hB, hD⟩
+    | exact hP1.2.2.2.2.2 ⟨hC, hD⟩
+    | exact hP2.1 ⟨hA, hB⟩
+    | exact hP2.2.1 ⟨hA, hC⟩
+    | exact hP2.2.2.1 ⟨hA, hD⟩
+    | exact hP2.2.2.2.1 ⟨hB, hC⟩)
+
+/-- For any `x ∉ {P, Q}` in ℂ, there exists a rotation `c` such
+that both `c * (x - P)` and `c * (x - Q)` lie in `Complex.slitPlane`.
+Final topological piece for full-coverage canonical dipole conjugate;
+one-liner via `slit_rotation_for_two_nonzero`. -/
+lemma exists_rotation_to_slitPlane {x P Q : ℂ} (hP : x ≠ P) (hQ : x ≠ Q) :
+    ∃ c : ℂ, c * (x - P) ∈ Complex.slitPlane
+             ∧ c * (x - Q) ∈ Complex.slitPlane :=
+  slit_rotation_for_two_nonzero (sub_ne_zero.mpr hP) (sub_ne_zero.mpr hQ)
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
