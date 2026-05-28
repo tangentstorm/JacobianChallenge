@@ -1110,6 +1110,39 @@ lemma chart_transition_contDiffOn
              Function.id_comp, Function.comp_id] at h
   exact h
 
+/-- The chart-pullback dipole `log ‖chart_P y - chart_P P‖ -
+log ‖chart_Q y - chart_Q Q‖` agrees with `g ∘ chart_x` on a
+neighborhood of `x` in `X`, where
+`g(z) := log ‖chart_P (chart_x.symm z) - chart_P P‖
+         - log ‖chart_Q (chart_x.symm z) - chart_Q Q‖`.
+
+The agreement holds on `chart_x.source`, an open neighborhood
+of `x` (since `x ∈ chart_x.source` automatically). Pure
+`chart_x.left_inv` identity — no analyticity or harmonicity
+used.
+
+Step 2 of the multi-commit transition-map project. The
+eventual-equality form is set up for downstream
+`congr_of_eventuallyEq` use in Step 3. -/
+lemma dipole_pullback_eq_compose_chart
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    (P Q x : X) :
+    (fun y : X =>
+        Real.log ‖chartAt ℂ P y - (chartAt ℂ P) P‖
+        - Real.log ‖chartAt ℂ Q y - (chartAt ℂ Q) Q‖)
+    =ᶠ[nhds x]
+    (fun y : X =>
+        Real.log ‖chartAt ℂ P ((chartAt ℂ x).symm (chartAt ℂ x y))
+                   - (chartAt ℂ P) P‖
+        - Real.log ‖chartAt ℂ Q ((chartAt ℂ x).symm (chartAt ℂ x y))
+                   - (chartAt ℂ Q) Q‖) := by
+  have hsrc_nhds : (chartAt ℂ x).source ∈ nhds x :=
+    (chartAt ℂ x).open_source.mem_nhds (mem_chart_source ℂ x)
+  filter_upwards [hsrc_nhds] with y hy
+  have hinv : (chartAt ℂ x).symm ((chartAt ℂ x) y) = y :=
+    (chartAt ℂ x).left_inv hy
+  rw [hinv]
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
