@@ -799,6 +799,50 @@ theorem existence_of_dipole_harmonic_off_on_complex
     HasLogarithmicSingularityAtReal.dipole_at_neg hPQ,
     dipole_isHarmonicOffReal_on_complex P Q⟩
 
+/-- Single-pole chart-pullback bridge for
+`HasLogarithmicSingularityAtReal`. Given a charted-space `X`, a
+point `P : X`, and `u_ℂ : ℂ → ℝ` with a logarithmic singularity
+at `(chartAt ℂ P) P` in ℂ, the pulled-back function
+`u_ℂ ∘ chartAt ℂ P` has a logarithmic singularity at `P` in `X`.
+
+Proof unfolds both predicates and observes that the
+`X`-predicate's integrand reduces *locally* near `(chartAt ℂ P) P`
+to the simplified ℂ-predicate integrand using
+`(chartAt ℂ P) ((chartAt ℂ P).symm z) = z` on `chart.target`
+(`OpenPartialHomeomorph.right_inv`). The Tendsto transfers via
+`Filter.Tendsto.congr'`. -/
+theorem HasLogarithmicSingularityAtReal.chart_pullback_lift
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {P : X} {u_ℂ : ℂ → ℝ} {sign : ℝ}
+    (h : HasLogarithmicSingularityAtReal ℂ ((chartAt ℂ P) P) u_ℂ sign) :
+    HasLogarithmicSingularityAtReal X P (u_ℂ ∘ chartAt ℂ P) sign := by
+  obtain ⟨c, hc⟩ := h
+  refine ⟨c, ?_⟩
+  have hp_target : (chartAt ℂ P) P ∈ (chartAt ℂ P).target :=
+    (chartAt ℂ P).map_source (mem_chart_source ℂ P)
+  have htgt_nhds : (chartAt ℂ P).target ∈ nhds ((chartAt ℂ P) P) :=
+    (chartAt ℂ P).open_target.mem_nhds hp_target
+  have heq : (fun z : ℂ =>
+      (u_ℂ ∘ chartAt ℂ P) ((chartAt ℂ P).symm z)
+        - sign * Real.log ‖z - (chartAt ℂ P) P‖)
+    =ᶠ[nhds ((chartAt ℂ P) P)]
+    (fun z : ℂ => u_ℂ z - sign * Real.log ‖z - (chartAt ℂ P) P‖) := by
+    filter_upwards [htgt_nhds] with z hz
+    show u_ℂ ((chartAt ℂ P) ((chartAt ℂ P).symm z))
+          - sign * Real.log ‖z - (chartAt ℂ P) P‖
+        = u_ℂ z - sign * Real.log ‖z - (chartAt ℂ P) P‖
+    rw [(chartAt ℂ P).right_inv hz]
+  -- ℂ-predicate `hc` already gives the simplified form (chart on ℂ is identity).
+  have hc' : Filter.Tendsto
+      (fun z : ℂ => u_ℂ z - sign * Real.log ‖z - (chartAt ℂ P) P‖)
+      (nhds ((chartAt ℂ P) P)) (nhds c) := by
+    have hchart_self_id : ∀ z : ℂ, (chartAt ℂ ((chartAt ℂ P) P)).symm z = z :=
+      fun z => rfl
+    have hchart_self_pt :
+        (chartAt ℂ ((chartAt ℂ P) P)) ((chartAt ℂ P) P) = (chartAt ℂ P) P := rfl
+    simpa [hchart_self_id, hchart_self_pt] using hc
+  exact hc'.congr' heq.symm
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
