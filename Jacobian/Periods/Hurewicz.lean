@@ -2692,6 +2692,384 @@ structure Polygon4gProjectedEndpointBoundaryCancellation
                   (Polygon4g.mk (g + 1)
                     ((lifted.simplexLift s).lift i (stdSimplexVertex 0))))))) = 0
 
+/-- Degree-zero singular chains transported to the concrete Finsupp presentation. -/
+noncomputable def singularZeroChainFinsupp
+    (X : Type) [TopologicalSpace X] :
+    SingularChainCoproduct X 0 →+
+      ((TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌) →₀ ℤ) := by
+  classical
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)
+  let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
+  let iso := ModuleCat.coprodIsoDirectSum Z
+  exact ((finsuppLEquivDirectSum ℤ ℤ I).symm.toAddMonoidHom).comp
+    iso.hom.hom.toAddMonoidHom
+
+/-- The Finsupp bridge sends a degree-zero singular generator to the corresponding unit vector. -/
+theorem singularZeroChainFinsupp_singularChainElement
+    (X : Type) [TopologicalSpace X]
+    (σ : C(stdSimplex ℝ (Fin 1), X)) :
+    singularZeroChainFinsupp X
+      (singularChainElement σ : SingularChainCoproduct X 0) =
+      Finsupp.single (singularChainSimplexIndex X 0 σ) 1 := by
+  classical
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)
+  let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
+  let idx : I := singularChainSimplexIndex X 0 σ
+  have hι :
+      (ModuleCat.coprodIsoDirectSum Z).hom.hom
+        ((Sigma.ι Z idx).hom (1 : ℤ)) =
+        DirectSum.lof ℤ I (fun _ : I => ℤ) idx (1 : ℤ) := by
+    have hm := ModuleCat.ι_coprodIsoDirectSum_hom Z idx
+    have hh := congrArg ModuleCat.Hom.hom hm
+    exact congrArg (fun f => f (1 : ℤ)) hh
+  change (finsuppLEquivDirectSum ℤ ℤ I).symm
+      ((ModuleCat.coprodIsoDirectSum Z).hom.hom ((Sigma.ι Z idx).hom (1 : ℤ))) =
+    Finsupp.single idx (1 : ℤ)
+  rw [hι]
+  exact finsuppLEquivDirectSum_symm_lof ℤ ℤ I idx (1 : ℤ)
+
+/-- Specialization of the bridge generator computation to point zero-chains. -/
+theorem singularZeroChainFinsupp_pointChain
+    (X : Type) [TopologicalSpace X] (x : X) :
+    singularZeroChainFinsupp X (pointChain X x) =
+      Finsupp.single
+        (singularChainSimplexIndex X 0 (pointSingularSimplex X x)) 1 := by
+  exact singularZeroChainFinsupp_singularChainElement X (pointSingularSimplex X x)
+
+/-- Every singular zero-simplex is determined by its unique vertex. -/
+lemma zeroSimplex_eq_pointSingularSimplex
+    (X : Type) [TopologicalSpace X]
+    (σ : C(stdSimplex ℝ (Fin 1), X)) :
+    σ = pointSingularSimplex X (σ (stdSimplex.vertex (0 : Fin 1))) := by
+  ext s
+  have hs : s = stdSimplex.vertex (0 : Fin 1) := Subsingleton.elim _ _
+  simp [hs, pointSingularSimplex]
+
+/-- The point recovered from a zero-simplex index maps back to that index. -/
+theorem singularZeroChainFinsupp_pointChain_of_index
+    (X : Type) [TopologicalSpace X]
+    (i : (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)) :
+    singularZeroChainFinsupp X
+      (pointChain X
+        (((singularChainSimplexIndex X 0).symm i)
+          (stdSimplex.vertex (0 : Fin 1)))) =
+      Finsupp.single i 1 := by
+  rw [singularZeroChainFinsupp_pointChain]
+  have hσ := zeroSimplex_eq_pointSingularSimplex X
+    ((singularChainSimplexIndex X 0).symm i)
+  change Finsupp.single
+      (singularChainSimplexIndex X 0
+        (pointSingularSimplex X
+          (((singularChainSimplexIndex X 0).symm i)
+            (stdSimplex.vertex (0 : Fin 1))))) 1 =
+    Finsupp.single i 1
+  rw [← hσ]
+  simp
+
+/--
+Functoriality of the degree-zero Finsupp presentation, parameterized by an
+explicit finite support decomposition to keep elaboration concrete.
+-/
+theorem singularZeroChainFinsupp_map_of_decomposition
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (f : C(X, Y)) (c : SingularChainCoproduct X 0)
+    (decomp : SingularChainSupportDecomposition X 0 c) :
+    singularZeroChainFinsupp Y
+      (ModuleCat.Hom.hom
+        ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f 0) c) =
+    Finsupp.mapDomain
+      (fun i =>
+        singularChainSimplexIndex Y 0
+          (f.comp ((singularChainSimplexIndex X 0).symm i)))
+      (singularZeroChainFinsupp X c) := by
+  classical
+  letI := decomp.simplexFintype
+  let IX := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)
+  let IY := (TopCat.toSSet.obj (TopCat.of Y)).obj (op ⦋0⦌)
+  let φ : IX → IY := fun i =>
+    singularChainSimplexIndex Y 0
+      (f.comp ((singularChainSimplexIndex X 0).symm i))
+  let L : (IX →₀ ℤ) →ₗ[ℤ] (IY →₀ ℤ) := Finsupp.lmapDomain ℤ ℤ φ
+  have hterm (s : decomp.Simplex) :
+      singularZeroChainFinsupp Y
+        (ModuleCat.Hom.hom
+          ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+            (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f 0)
+          (singularChainElement (decomp.simplex s))) =
+        L (singularZeroChainFinsupp X
+          (singularChainElement (decomp.simplex s))) := by
+    rw [singularChainElement_map]
+    rw [singularZeroChainFinsupp_singularChainElement]
+    rw [singularZeroChainFinsupp_singularChainElement]
+    simp [L, φ, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
+  rw [decomp.chain_eq]
+  calc
+    singularZeroChainFinsupp Y
+      (ModuleCat.Hom.hom
+        ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f 0)
+        (∑ s : decomp.Simplex,
+          decomp.coeff s • singularChainElement (decomp.simplex s)))
+        = ∑ s : decomp.Simplex,
+            decomp.coeff s • singularZeroChainFinsupp Y
+              (ModuleCat.Hom.hom
+                ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+                  (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f 0)
+                (singularChainElement (decomp.simplex s))) := by
+          rw [map_sum]
+          rw [map_sum]
+          simp only [map_zsmul]
+    _ = ∑ s : decomp.Simplex,
+            decomp.coeff s • L (singularZeroChainFinsupp X
+              (singularChainElement (decomp.simplex s))) := by
+          exact Finset.sum_congr rfl (fun s _ => by rw [hterm])
+    _ = L (∑ s : decomp.Simplex,
+            decomp.coeff s • singularZeroChainFinsupp X
+              (singularChainElement (decomp.simplex s))) := by
+          rw [map_sum]
+          simp only [map_zsmul]
+    _ = Finsupp.mapDomain φ
+          (singularZeroChainFinsupp X
+            (∑ s : decomp.Simplex,
+              decomp.coeff s • singularChainElement (decomp.simplex s))) := by
+          have hxsum :
+              singularZeroChainFinsupp X
+                (∑ s : decomp.Simplex,
+                  decomp.coeff s • singularChainElement (decomp.simplex s)) =
+                ∑ s : decomp.Simplex,
+                  decomp.coeff s • singularZeroChainFinsupp X
+                    (singularChainElement (decomp.simplex s)) := by
+            rw [map_sum]
+            simp only [map_zsmul]
+          rw [hxsum]
+          rfl
+
+/-- The Finsupp bridge is injective. -/
+theorem singularZeroChainFinsupp_injective
+    (X : Type) [TopologicalSpace X] :
+    Function.Injective (singularZeroChainFinsupp X) := by
+  classical
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)
+  let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
+  let iso := ModuleCat.coprodIsoDirectSum Z
+  intro c d h
+  have hdir :
+      iso.hom.hom c = iso.hom.hom d := by
+    apply (finsuppLEquivDirectSum ℤ ℤ I).symm.injective
+    simpa [singularZeroChainFinsupp, I, Z, iso] using h
+  have hback := congrArg iso.inv.hom hdir
+  simpa [iso, Z] using hback
+
+/--
+Subtracting one positive occurrence and one negative occurrence strictly
+decreases the sum of absolute coefficients.
+-/
+lemma finsupp_signed_pair_sub_measure_lt
+    {α : Type} [DecidableEq α] (x : α →₀ ℤ) {a b : α}
+    (hab : a ≠ b)
+    (ha : 0 < x a) (hb : x b < 0) :
+    ((x - (Finsupp.single a (1 : ℤ) -
+          Finsupp.single b (1 : ℤ))).support.sum
+        (fun t => Int.natAbs
+          ((x - (Finsupp.single a (1 : ℤ) -
+            Finsupp.single b (1 : ℤ))) t))) <
+      x.support.sum (fun t => Int.natAbs (x t)) := by
+  classical
+  let δ : α →₀ ℤ := Finsupp.single a (1 : ℤ) - Finsupp.single b (1 : ℤ)
+  let y : α →₀ ℤ := x - δ
+  let S : Finset α := insert a (insert b x.support)
+  have hx_support : x.support ⊆ S := by intro t ht; simp [S, ht]
+  have hy_support : y.support ⊆ S := by
+    intro t ht
+    by_contra hnot
+    have hta : t ≠ a := by intro h; apply hnot; simp [S, h]
+    have htb : t ≠ b := by intro h; apply hnot; simp [S, h]
+    have htx : t ∉ x.support := by intro hxmem; apply hnot; simp [S, hxmem]
+    have hxzero : x t = 0 := by simpa using (Finsupp.notMem_support_iff.mp htx)
+    have hdzero : δ t = 0 := by simp [δ, hta, htb]
+    have : y t = 0 := by simp [y, hxzero, hdzero]
+    rw [Finsupp.mem_support_iff] at ht
+    exact ht this
+  have hx_sum :
+      x.support.sum (fun t => Int.natAbs (x t)) =
+        S.sum (fun t => Int.natAbs (x t)) := by
+    exact Finset.sum_subset (s₁ := x.support) (s₂ := S)
+      (f := fun t => Int.natAbs (x t)) hx_support (by
+        intro t _ ht
+        have : x t = 0 := by simpa using (Finsupp.notMem_support_iff.mp ht)
+        simp [this])
+  have hy_sum :
+      y.support.sum (fun t => Int.natAbs (y t)) =
+        S.sum (fun t => Int.natAbs (y t)) := by
+    exact Finset.sum_subset (s₁ := y.support) (s₂ := S)
+      (f := fun t => Int.natAbs (y t)) hy_support (by
+        intro t _ ht
+        have : y t = 0 := by simpa using (Finsupp.notMem_support_iff.mp ht)
+        simp [this])
+  have hyt (t : α) (hta : t ≠ a) (htb : t ≠ b) : y t = x t := by
+    simp [y, δ, hta, htb]
+  rw [hy_sum, hx_sum]
+  have hle (t : α) (_ht : t ∈ S) : Int.natAbs (y t) ≤ Int.natAbs (x t) := by
+    by_cases hta : t = a
+    · subst t
+      have hya : y a = x a - 1 := by simp [y, δ, hab]
+      exact le_of_lt (Int.natAbs_lt_natAbs_of_nonneg_of_lt (by omega) (by omega))
+    · by_cases htb : t = b
+      · subst t
+        have hyb : y b = x b + 1 := by simp [y, δ, hab]
+        exact le_of_lt (by
+          simpa [Int.natAbs_neg] using
+            Int.natAbs_lt_natAbs_of_nonneg_of_lt
+              (show 0 ≤ -y b by omega)
+              (show -y b < -x b by omega))
+      · rw [hyt t hta htb]
+  have hlt_exists : ∃ t ∈ S, Int.natAbs (y t) < Int.natAbs (x t) := by
+    refine ⟨a, ?_, ?_⟩
+    · simp [S]
+    · have hya : y a = x a - 1 := by simp [y, δ, hab]
+      exact Int.natAbs_lt_natAbs_of_nonneg_of_lt (by omega) (by omega)
+  exact Finset.sum_lt_sum hle hlt_exists
+
+lemma finsupp_mapDomain_fiber_sum_zero
+    {α β : Type} [DecidableEq α] [DecidableEq β]
+    (f : α → β) (x : α →₀ ℤ) (hx : Finsupp.mapDomain f x = 0)
+    (a : α) :
+    (∑ b ∈ x.support.filter (fun b => f b = f a), x b) = 0 := by
+  classical
+  have h := congrArg (fun y : β →₀ ℤ => y (f a)) hx
+  rw [Finsupp.mapDomain] at h
+  simp [Finsupp.sum, Finset.sum_filter, eq_comm] at h ⊢
+  simpa [Finsupp.single_apply, eq_comm] using h.symm
+
+lemma finsupp_mapDomain_exists_negative_in_fiber
+    {α β : Type} [DecidableEq α] [DecidableEq β]
+    (f : α → β) (x : α →₀ ℤ) (hx : Finsupp.mapDomain f x = 0)
+    {a : α} (ha : 0 < x a) :
+    ∃ b ∈ x.support, f b = f a ∧ x b < 0 := by
+  classical
+  have hsum := finsupp_mapDomain_fiber_sum_zero f x hx a
+  by_contra hneg
+  push_neg at hneg
+  have h_nonneg : ∀ b ∈ x.support.filter (fun b => f b = f a), 0 ≤ x b := by
+    intro b hb
+    exact hneg b (Finset.mem_filter.mp hb).1 (by simpa using (Finset.mem_filter.mp hb).2)
+  have ha_mem : a ∈ x.support.filter (fun b => f b = f a) := by
+    rw [Finset.mem_filter]
+    constructor
+    · rw [Finsupp.mem_support_iff]; omega
+    · rfl
+  have hpos : 0 < (∑ b ∈ x.support.filter (fun b => f b = f a), x b) := by
+    exact Finset.sum_pos' h_nonneg ⟨a, ha_mem, ha⟩
+  omega
+
+def FinsuppFiberKernelDecompAt
+    {α β : Type} [DecidableEq α] [DecidableEq β]
+    (f : α → β) (n : ℕ) : Prop :=
+  ∀ x : α →₀ ℤ,
+    x.support.sum (fun t => Int.natAbs (x t)) = n →
+    Finsupp.mapDomain f x = 0 →
+      ∃ (Pair : Type) (_ : Fintype Pair)
+        (left right : Pair → α),
+          (∀ p, f (left p) = f (right p)) ∧
+            x =
+              ∑ p : Pair,
+                (Finsupp.single (right p) (1 : ℤ) -
+                  Finsupp.single (left p) (1 : ℤ))
+
+theorem finsupp_fiberKernelDecomp_strong_induction
+    {α β : Type} [DecidableEq α] [DecidableEq β]
+    (f : α → β) :
+    ∀ n, FinsuppFiberKernelDecompAt f n := by
+  classical
+  intro n
+  induction n using Nat.strong_induction_on with
+  | h n ih =>
+      intro x hμ hx
+      by_cases hxzero : x = 0
+      · subst x
+        refine ⟨PEmpty, inferInstance, PEmpty.elim, PEmpty.elim, ?_, ?_⟩
+        · intro p; cases p
+        · simp
+      · have hsupp_ne : x.support.Nonempty := by
+          rw [Finset.nonempty_iff_ne_empty]
+          intro h
+          exact hxzero ((Finsupp.support_eq_empty).mp h)
+        obtain ⟨c, hc⟩ := hsupp_ne
+        have hc_ne : x c ≠ 0 := by simpa [Finsupp.mem_support_iff] using hc
+        have hc_pos_or_neg : 0 < x c ∨ x c < 0 := by omega
+        obtain ⟨a, b, ha_pos, hb_neg, hfab, _ha_mem, _hb_mem⟩ : ∃ a b,
+            0 < x a ∧ x b < 0 ∧ f a = f b ∧ a ∈ x.support ∧ b ∈ x.support := by
+          cases hc_pos_or_neg with
+          | inl hpos =>
+              obtain ⟨b, hbmem, hfb, hbneg⟩ :=
+                finsupp_mapDomain_exists_negative_in_fiber f x hx hpos
+              exact ⟨c, b, hpos, hbneg, hfb.symm, hc, hbmem⟩
+          | inr hneg =>
+              have hmap_neg : Finsupp.mapDomain f (-x) = 0 := by
+                have h := (Finsupp.mapDomain.addMonoidHom (M := ℤ) f).map_neg x
+                change Finsupp.mapDomain f (-x) = -Finsupp.mapDomain f x at h
+                rw [h, hx, neg_zero]
+              have hpos_neg : 0 < (-x) c := by simp [hneg]
+              obtain ⟨a, hamem_neg, hfa, haneg_neg⟩ :=
+                finsupp_mapDomain_exists_negative_in_fiber f (-x) hmap_neg hpos_neg
+              have hamem : a ∈ x.support := by
+                simpa [Finsupp.mem_support_iff] using hamem_neg
+              have hapos : 0 < x a := by
+                change -x a < 0 at haneg_neg
+                omega
+              exact ⟨a, c, hapos, hneg, hfa, hamem, hc⟩
+        have hab : a ≠ b := by
+          intro h; subst b; omega
+        let δ : α →₀ ℤ := Finsupp.single a (1 : ℤ) - Finsupp.single b (1 : ℤ)
+        let y : α →₀ ℤ := x - δ
+        have hδ_map : Finsupp.mapDomain f δ = 0 := by
+          have h := (Finsupp.mapDomain.addMonoidHom (M := ℤ) f).map_sub
+            (Finsupp.single a (1 : ℤ)) (Finsupp.single b (1 : ℤ))
+          change Finsupp.mapDomain f (Finsupp.single a (1 : ℤ) - Finsupp.single b (1 : ℤ)) =
+            Finsupp.mapDomain f (Finsupp.single a (1 : ℤ)) -
+              Finsupp.mapDomain f (Finsupp.single b (1 : ℤ)) at h
+          rw [h]
+          simp [Finsupp.mapDomain_single, hfab]
+        have hy_map : Finsupp.mapDomain f y = 0 := by
+          have h := (Finsupp.mapDomain.addMonoidHom (M := ℤ) f).map_sub x δ
+          change Finsupp.mapDomain f (x - δ) = Finsupp.mapDomain f x - Finsupp.mapDomain f δ at h
+          rw [h, hx, hδ_map, sub_zero]
+        have hy_measure : y.support.sum (fun t => Int.natAbs (y t)) < n := by
+          rw [← hμ]
+          exact finsupp_signed_pair_sub_measure_lt x hab ha_pos hb_neg
+        obtain ⟨Pair, instPair, left, right, hrel, hsum⟩ :=
+          ih (y.support.sum (fun t => Int.natAbs (y t))) hy_measure y rfl hy_map
+        letI := instPair
+        refine ⟨Option Pair, inferInstance,
+          (fun p => match p with | none => b | some q => left q),
+          (fun p => match p with | none => a | some q => right q),
+          ?_, ?_⟩
+        · intro p
+          cases p with
+          | none => exact hfab.symm
+          | some q => exact hrel q
+        · rw [Fintype.sum_option]
+          change x = (Finsupp.single a (1 : ℤ) - Finsupp.single b (1 : ℤ)) +
+            ∑ x : Pair, (Finsupp.single (right x) (1 : ℤ) - Finsupp.single (left x) (1 : ℤ))
+          rw [← hsum]
+          simp [y, δ, sub_eq_add_neg, add_comm, add_left_comm, add_assoc]
+
+theorem finsupp_mapDomain_zero_fiber_difference_decomposition
+    {α β : Type} [DecidableEq α] [DecidableEq β]
+    (f : α → β) (x : α →₀ ℤ)
+    (hx : Finsupp.mapDomain f x = 0) :
+    ∃ (Pair : Type) (_ : Fintype Pair)
+      (left right : Pair → α),
+        (∀ p, f (left p) = f (right p)) ∧
+          x =
+            ∑ p : Pair,
+              (Finsupp.single (right p) (1 : ℤ) -
+                Finsupp.single (left p) (1 : ℤ)) := by
+  classical
+  exact finsupp_fiberKernelDecomp_strong_induction f
+    (x.support.sum (fun t => Int.natAbs (x t))) x rfl hx
+
 /--
 Pure finite-support endpoint pairing output.  This strips the
 cycle-level names away from endpoint matching: a finite signed endpoint
@@ -2780,10 +3158,111 @@ theorem finite_projected_endpoint_matching_data
     Nonempty
       (FiniteProjectedEndpointMatchingData
         g S I coeff leftEndpoint rightEndpoint) := by
-  -- Finite free-abelian matching: normalize signed integer coefficients,
-  -- pair projected endpoint occurrences in the quotient, then convert
-  -- equality of quotient representatives to `Polygon4g.SideRel`.
-  sorry
+  classical
+  let endpointChain : SingularChainCoproduct DiskC 0 :=
+    (@Finset.univ S inferInstance).sum
+      (fun s => coeff s •
+        ((@Finset.univ (I s) inferInstance).sum
+          (fun i =>
+            pointChain DiskC (rightEndpoint s i) -
+              pointChain DiskC (leftEndpoint s i))))
+  let Q := (TopCat.toSSet.obj (TopCat.of (Polygon4g (g + 1)))).obj (op ⦋0⦌)
+  let D := (TopCat.toSSet.obj (TopCat.of DiskC)).obj (op ⦋0⦌)
+  let projectIdx : D → Q := fun i =>
+    singularChainSimplexIndex (Polygon4g (g + 1)) 0
+      ((polygon4gMkContinuousMap (g + 1)).comp
+        ((singularChainSimplexIndex DiskC 0).symm i))
+  let endpointFinsupp : D →₀ ℤ := singularZeroChainFinsupp DiskC endpointChain
+  obtain ⟨decomp⟩ :=
+    singularChainCoproduct_sum_support_decomposition_degree DiskC 0 endpointChain
+  have hprojected_chain :
+      ModuleCat.Hom.hom
+        ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).map
+          (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 0)
+        endpointChain = 0 := by
+    change
+      ModuleCat.Hom.hom
+        ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).map
+          (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 0)
+        ((@Finset.univ S inferInstance).sum
+          (fun s => coeff s •
+            ((@Finset.univ (I s) inferInstance).sum
+              (fun i =>
+                pointChain DiskC (rightEndpoint s i) -
+                  pointChain DiskC (leftEndpoint s i))))) = 0
+    simpa [pointChain_map, polygon4gMkContinuousMap, Finset.sum_sub_distrib]
+      using _projected_endpoint_sum_zero
+  have hkernel : Finsupp.mapDomain projectIdx endpointFinsupp = 0 := by
+    have hbridge :=
+      singularZeroChainFinsupp_map_of_decomposition
+        (polygon4gMkContinuousMap (g + 1)) endpointChain decomp
+    rw [hprojected_chain, map_zero] at hbridge
+    simpa [endpointFinsupp, projectIdx, D, Q] using hbridge.symm
+  obtain ⟨Pair, pairFintype, leftIdx, rightIdx, hidx, hsum⟩ :=
+    finsupp_mapDomain_zero_fiber_difference_decomposition projectIdx endpointFinsupp hkernel
+  letI := pairFintype
+  let pointOfIdx : D → DiskC := fun i =>
+    ((singularChainSimplexIndex DiskC 0).symm i)
+      (stdSimplex.vertex (0 : Fin 1))
+  refine ⟨{
+    Pair := Pair
+    pairFintype := pairFintype
+    leftEndpoint' := fun pair => pointOfIdx (leftIdx pair)
+    rightEndpoint' := fun pair => pointOfIdx (rightIdx pair)
+    endpointRel := ?_
+    endpoint_sum_eq_pairs := ?_
+  }⟩
+  · intro pair
+    have hsimplex := congrArg
+      (fun i : Q => (singularChainSimplexIndex (Polygon4g (g + 1)) 0).symm i)
+      (hidx pair)
+    change
+      (polygon4gMkContinuousMap (g + 1)).comp
+          ((singularChainSimplexIndex DiskC 0).symm (leftIdx pair)) =
+        (polygon4gMkContinuousMap (g + 1)).comp
+          ((singularChainSimplexIndex DiskC 0).symm (rightIdx pair)) at hsimplex
+    have hmk :
+        Polygon4g.mk (g + 1) (pointOfIdx (leftIdx pair)) =
+          Polygon4g.mk (g + 1) (pointOfIdx (rightIdx pair)) := by
+      simpa [pointOfIdx, polygon4gMkContinuousMap] using
+        congrArg
+          (fun σ : C(stdSimplex ℝ (Fin 1), Polygon4g (g + 1)) =>
+            σ (stdSimplex.vertex (0 : Fin 1)))
+          hsimplex
+    exact ((Polygon4g.mk_eq_mk_iff (g + 1)
+      (pointOfIdx (leftIdx pair)) (pointOfIdx (rightIdx pair))).mp hmk)
+  · change endpointChain =
+      (@Finset.univ Pair pairFintype).sum
+        (fun pair =>
+          pointChain DiskC (pointOfIdx (rightIdx pair)) -
+            pointChain DiskC (pointOfIdx (leftIdx pair)))
+    apply singularZeroChainFinsupp_injective DiskC
+    have hpair_finsupp :
+        singularZeroChainFinsupp DiskC
+          ((@Finset.univ Pair pairFintype).sum
+            (fun pair =>
+              pointChain DiskC (pointOfIdx (rightIdx pair)) -
+                pointChain DiskC (pointOfIdx (leftIdx pair)))) =
+        (@Finset.univ Pair pairFintype).sum
+          (fun pair =>
+            Finsupp.single (rightIdx pair) (1 : ℤ) -
+              Finsupp.single (leftIdx pair) (1 : ℤ)) := by
+      rw [map_sum]
+      apply Finset.sum_congr rfl
+      intro pair _hpair
+      rw [map_sub]
+      rw [singularZeroChainFinsupp_pointChain_of_index]
+      rw [singularZeroChainFinsupp_pointChain_of_index]
+    change singularZeroChainFinsupp DiskC endpointChain =
+      singularZeroChainFinsupp DiskC
+        ((@Finset.univ Pair pairFintype).sum
+          (fun pair =>
+            pointChain DiskC (pointOfIdx (rightIdx pair)) -
+              pointChain DiskC (pointOfIdx (leftIdx pair))))
+    rw [hpair_finsupp]
+    exact hsum
 
 /--
 Finite-support quotient bookkeeping provider.  This is the exact
