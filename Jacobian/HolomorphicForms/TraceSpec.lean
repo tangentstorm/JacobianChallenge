@@ -634,6 +634,78 @@ private theorem unramifiedFiberPoint_partialTrace_locally_bounded
   convert hbound_v
 
 /--
+**Chart-local `z^k` form extraction (Commit A — sorry-free helper).**
+
+Given a holomorphic `f : X → Y` between charted-on-`ℂ` spaces and a
+point `x₀ : X` with `mapAnalyticOrderAt f x₀ = k ≥ 1`, this helper
+exposes the chart-local power form: there exists an analytic function
+`φ : ℂ → ℂ` with `φ z₀ = 0` (where `z₀ := chartAt ℂ x₀ x₀`),
+`deriv φ z₀ ≠ 0`, and `chartLocalAt f x₀ z = c₀ + φ(z)^k` near `z₀`
+(where `c₀ := chartAt ℂ (f x₀) (f x₀)`).
+
+This packages Mathlib's `exists_local_power_form` for the project's
+chart-local setup. It is the foundational step for the roots-of-unity
+cancellation in `ramifiedKfoldSum_locally_bounded`: under this form,
+the `k` preimages of a nearby chart-target point `c₀ + w` are exactly
+`φ⁻¹(ζ_k^j ⋅ w^{1/k})` for `j = 0..k-1`.
+
+This is **Commit A** in the 3-commit discharge of
+`ramifiedKfoldSum_locally_bounded`. Commit B will use this `φ` to
+compute the chart-pullback of `cotangentPushforward`; Commit C will
+apply the roots-of-unity cancellation to bound the partial sum.
+-/
+private theorem chartLocal_zPow_form_of_ramified
+    [IsManifold 𝓘(ℂ, ℂ) ω X] [IsManifold 𝓘(ℂ, ℂ) ω Y]
+    {f : X → Y} {x₀ : X} (hf : IsHolomorphicAt f x₀)
+    {k : ℕ} (hk : 0 < k) (hram : mapAnalyticOrderAt f x₀ = k) :
+    ∃ φ : ℂ → ℂ,
+      AnalyticAt ℂ φ (chartAt ℂ x₀ x₀) ∧
+      φ (chartAt ℂ x₀ x₀) = 0 ∧
+      deriv φ (chartAt ℂ x₀ x₀) ≠ 0 ∧
+      ∀ᶠ z in 𝓝 (chartAt ℂ x₀ x₀),
+        chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀) = φ z ^ k := by
+  -- Set up the chart-local map shifted by c₀ so its order at z₀ is k.
+  set z₀ := chartAt ℂ x₀ x₀ with hz₀_def
+  set c₀ := chartAt ℂ (f x₀) (f x₀) with hc₀_def
+  set g : ℂ → ℂ := fun z => chartLocalAt f x₀ z - c₀ with hg_def
+  -- g is analytic at z₀.
+  have hg_an : AnalyticAt ℂ g z₀ := by
+    have h_chart_an : AnalyticAt ℂ (chartLocalAt f x₀) z₀ := hf
+    exact h_chart_an.sub analyticAt_const
+  -- g z₀ = 0.
+  have hg_z₀ : g z₀ = 0 := by
+    show chartLocalAt f x₀ z₀ - c₀ = 0
+    -- chartLocalAt f x₀ z₀ = chartAt ℂ (f x₀) (f ((chartAt ℂ x₀).symm z₀))
+    --                     = chartAt ℂ (f x₀) (f x₀) = c₀.
+    have h_inv : (chartAt ℂ x₀).symm z₀ = x₀ := by
+      show (chartAt ℂ x₀).symm (chartAt ℂ x₀ x₀) = x₀
+      exact (chartAt ℂ x₀).left_inv (mem_chart_source ℂ x₀)
+    show chartAt ℂ (f x₀) (f ((chartAt ℂ x₀).symm z₀)) - c₀ = 0
+    rw [h_inv]
+    show chartAt ℂ (f x₀) (f x₀) - c₀ = 0
+    rw [hc₀_def]
+    ring
+  -- analyticOrderNatAt g z₀ = k.
+  have hord_nat : analyticOrderNatAt g z₀ = k := by
+    show analyticOrderNatAt
+      (fun z => chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀)) z₀ = k
+    simpa [mapAnalyticOrderAt, hz₀_def, hc₀_def] using hram
+  -- analyticOrderAt g z₀ ≠ ⊤ (follows from k ≥ 1 and order = k).
+  have hord_ne_top : analyticOrderAt g z₀ ≠ ⊤ := by
+    intro htop
+    have hnat : analyticOrderNatAt g z₀ = 0 := by
+      simp [analyticOrderNatAt, htop]
+    omega
+  -- Apply exists_local_power_form.
+  obtain ⟨φ, hφ_an, hφ_z₀, hφ_deriv, hφ_eq⟩ :=
+    AnalyticLocalMapping.exists_local_power_form g z₀ k hk hg_an hg_z₀
+      hord_nat hord_ne_top
+  refine ⟨φ, hφ_an, hφ_z₀, hφ_deriv, ?_⟩
+  filter_upwards [hφ_eq] with z hz
+  show chartLocalAt f x₀ z - c₀ = φ z ^ k
+  exact hz
+
+/--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
 Given the kfold-ramification chart-local data (a chart-nhd `U_kfold`
