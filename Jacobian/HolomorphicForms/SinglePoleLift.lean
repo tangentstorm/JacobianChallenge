@@ -797,4 +797,122 @@ noncomputable def constMeromorphicMap (c : ℂ) : MeromorphicMapToSphere X :=
     hasBranchedCoverDataOfPoleDegree := sorry
   }
 
+omit [T2Space X] [IsManifold (𝓘(ℂ, ℂ)) ⊤ X] [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**Single-pole 2-value indicator is discontinuous.**
+
+The function `fun x => if x = Q then ∞ else ↑0` is not continuous in any
+complex-charted T2 space: the punctured neighborhood `𝓝[≠] Q` is non-trivial
+(by perfectness of `ℂ` charts), and `f` eventually equals `↑0` there, while
+`f Q = ∞`. Continuity would force `↑0 = ∞`, contradicting
+`OnePoint.coe_ne_infty`.
+
+Used internally to vacuously discharge the
+`hasBranchedCoverDataOfPoleDegree` field of `singleZeroSinglePoleMap`.
+This is the one-pole analog of `twoPointMeromorphicMap_not_continuous`.
+-/
+private theorem singleZeroSinglePoleMap_not_continuous (Q : X) :
+    ¬ Continuous
+      (fun x : X => if x = Q then (OnePoint.infty : OnePoint ℂ)
+                              else ((0 : ℂ) : OnePoint ℂ)) := by
+  intro hcont
+  classical
+  set f : X → OnePoint ℂ :=
+    fun x => if x = Q then OnePoint.infty else ((0 : ℂ) : OnePoint ℂ) with hf_def
+  have hfQ : f Q = OnePoint.infty := by
+    show f Q = OnePoint.infty
+    rw [hf_def]; simp
+  haveI : Filter.NeBot (𝓝[≠] Q) :=
+    JacobianChallenge.HolomorphicForms.punctured_nhds_neBot_of_chartedSpaceComplex Q
+  have hf_eq_zero_ev : ∀ᶠ x in 𝓝[≠] Q, f x = ((0 : ℂ) : OnePoint ℂ) := by
+    filter_upwards [self_mem_nhdsWithin] with x hx_ne_Q
+    have hxQ : x ≠ Q := hx_ne_Q
+    show f x = ((0 : ℂ) : OnePoint ℂ)
+    rw [hf_def]
+    simp [hxQ]
+  have hT_infty :
+      Filter.Tendsto f (𝓝[≠] Q) (𝓝 (OnePoint.infty : OnePoint ℂ)) := by
+    have htotal : Filter.Tendsto f (𝓝 Q) (𝓝 (f Q)) := hcont.tendsto Q
+    rw [hfQ] at htotal
+    exact htotal.mono_left nhdsWithin_le_nhds
+  have hT_zero :
+      Filter.Tendsto f (𝓝[≠] Q) (𝓝 (((0 : ℂ) : OnePoint ℂ))) := by
+    refine tendsto_const_nhds.congr' ?_
+    filter_upwards [hf_eq_zero_ev] with x hx
+    exact hx.symm
+  have h_eq : ((0 : ℂ) : OnePoint ℂ) = (OnePoint.infty : OnePoint ℂ) :=
+    tendsto_nhds_unique hT_zero hT_infty
+  exact OnePoint.coe_ne_infty 0 h_eq
+
+/--
+**Single-zero / single-pole indicator scaffold.** For distinct points
+`Q₁, Q₂ : X`, the 2-value indicator
+`fun x => if x = Q₂ then ∞ else ((0 : ℂ) : OnePoint ℂ)` produces a
+`MeromorphicMapToSphere X` with `zeroDivisor = point Q₁`,
+`poleDivisor = point Q₂`, `principalDivisor = point Q₁ - point Q₂`.
+
+**Asymmetry with the bump scaffold.** Unlike `singlePoleMeromorphicMap`,
+this indicator scaffold IS provably discontinuous (its
+`hasBranchedCoverDataOfPoleDegree` field is filled vacuously). However,
+its `exists_modulus_atTop_at_pole` field is provably unfillable (any
+candidate witness `g` satisfies `g x = 0` on the non-pole locus,
+contradicting `‖g x‖ → ∞`) and is therefore left as a scaffold `sorry`
+per goal.md L23.
+
+This is the "1-zero + 1-pole" sibling of `twoPointMeromorphicMap`,
+serving `assemble_meromorphicMap` in the third-kind Abel-Jacobi assembly
+chain; the existential consumers downstream rely ONLY on the divisor
+equalities, never on the analytic content.
+-/
+noncomputable def singleZeroSinglePoleMap (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂) :
+    MeromorphicMapToSphere X :=
+  { toMap := fun x => if x = Q₂ then OnePoint.infty else ((0 : ℂ) : OnePoint ℂ)
+    locally_meromorphic := True
+    zeroDivisor := Divisor.point Q₁
+    poleDivisor := Divisor.point Q₂
+    principalDivisor := Divisor.point Q₁ - Divisor.point Q₂
+    principalDivisor_eq := rfl
+    poleDivisor_nonneg := fun x => Divisor.effective_point Q₂ x
+    zero_or_pole_eq_zero := by
+      intro Q
+      by_cases hQ : Q = Q₁
+      · subst hQ
+        right
+        exact Divisor.point_apply_ne hne
+      · left
+        exact Divisor.point_apply_ne hQ
+    toMap_ne_infty_of_poleDivisor_zero := by
+      intro x hx
+      have hxQ2 : x ≠ Q₂ := by
+        intro h
+        rw [h, Divisor.point_apply_self] at hx
+        exact zero_ne_one hx.symm
+      simp [hxQ2]
+    continuousOn_ne_infty := by
+      refine ContinuousOn.congr
+        (f := fun _ : X => ((0 : ℂ) : OnePoint ℂ))
+        continuousOn_const ?_
+      intro x hx
+      have hxQ2 : x ≠ Q₂ := by
+        intro h; subst h
+        simp at hx
+      simp [hxQ2]
+    toFiniteFun_mdifferentiable := fun g hg => by
+      have hQ2 := congrFun hg Q₂
+      simp at hQ2
+    toMap_eq_infty_of_poleDivisor_pos := by
+      intro x hx
+      have hxQ2 : x = Q₂ := by
+        by_contra hne'
+        rw [Divisor.point_apply_ne hne'] at hx
+        exact lt_irrefl _ hx
+      simp [hxQ2]
+    -- Scaffold sorry per goal.md L23: provably unfillable, mirroring
+    -- `twoPointMeromorphicMap.exists_modulus_atTop_at_pole`.
+    exists_modulus_atTop_at_pole := sorry
+    -- Vacuous via `singleZeroSinglePoleMap_not_continuous` above.
+    hasBranchedCoverDataOfPoleDegree := fun hcont =>
+      absurd hcont (singleZeroSinglePoleMap_not_continuous Q₂)
+  }
+
 end JacobianChallenge.HolomorphicForms

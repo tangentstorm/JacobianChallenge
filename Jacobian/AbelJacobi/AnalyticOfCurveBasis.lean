@@ -1352,22 +1352,8 @@ theorem assemble_meromorphicMap
       f.zeroDivisor = HolomorphicForms.Divisor.point Q₁ ∧
       f.poleDivisor = HolomorphicForms.Divisor.point Q₂ ∧
       f.principalDivisor =
-        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
-  classical
-  let f_base := HolomorphicForms.singlePoleMeromorphicMap Q₂
-  refine ⟨{ f_base with
-    zeroDivisor := HolomorphicForms.Divisor.point Q₁
-    principalDivisor :=
-      HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂
-    principalDivisor_eq := rfl
-    zero_or_pole_eq_zero := by
-      intro Q
-      by_cases hQ : Q = Q₁
-      · subst hQ
-        right
-        exact HolomorphicForms.Divisor.point_apply_ne hne
-      · left
-        exact HolomorphicForms.Divisor.point_apply_ne hQ }, ⟨rfl, rfl, rfl⟩⟩
+        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ :=
+  ⟨HolomorphicForms.singleZeroSinglePoleMap Q₁ Q₂ hne, rfl, rfl, rfl⟩
 
 
 theorem build_meromorphicMap_from_global_extension
