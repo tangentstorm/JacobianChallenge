@@ -410,6 +410,31 @@ theorem traceAtRegularValue_BCD_invariance
   congr 1
 
 /--
+**Substrate axiom: local-vs-global trace germ comparison on the regular
+locus.** Near a regular value `y`, the fixed-fibre local trace expression
+and the moving-fibre `dite`-extended global trace agree as germs.
+
+Discharging this requires compact-source properness to exclude extra nearby
+preimages plus `BranchedCoverData.localInverse_is_inverse` to identify the
+nearby branch values with the fixed inverse branches.
+-/
+theorem localTraceAtRegularValue_eq_traceAtRegularValue_germ
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X)
+    (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (y : Y) (hy : isRegularValue hbc y) :
+    localTraceAtRegularValue hbc
+        (isHolomorphic_of_contMDiff hf
+          (hasLocalKfoldRamification_of_contMDiff hf)) η y hy =ᶠ[𝓝 y]
+      fun y' : Y =>
+        open Classical in
+        if hy' : isRegularValue hbc y' then
+          traceAtRegularValue hbc (fun x => η.toFun x) y' hy'
+        else (0 : CotangentModelFiber ℂ) := by
+  sorry
+
+/--
 **Trace-locus pointwise holomorphic auxiliary for Provider (3).**
 
 Provider (1) gives holomorphicity of `localTraceAtRegularValue` (a
@@ -429,7 +454,15 @@ theorem regularLocus_dite_trace_holomorphicAt
         if hy' : isRegularValue hbc y' then
           traceAtRegularValue hbc (fun x => η.toFun x) y' hy'
         else (0 : CotangentModelFiber ℂ)) y := by
-  sorry
+  classical
+  intro y hyReg
+  have hy : isRegularValue hbc y := by
+    simpa [regularLocus] using hyReg
+  exact
+    (traceAtRegularValue_locally_holomorphic_on_regular_locus
+      f _hf η hbc _hcompat y hy).congr_of_eventuallyEq
+      (localTraceAtRegularValue_eq_traceAtRegularValue_germ
+        f _hf η hbc _hcompat y hy)
 
 
 private theorem traceForm_extension_per_BCD
