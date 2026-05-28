@@ -198,6 +198,26 @@ theorem IsHarmonicOffReal.re_off (P Q : ℂ) :
   intro x _ _
   exact ⟨Complex.im, IsHarmonicConjugateAtReal.re_im_at x⟩
 
+/-- Honest existence theorem for `IsHarmonicOffReal`, specialized
+on `X = ℂ`. For any `P, Q : ℂ`, exhibit a `u : ℂ → ℝ` (namely
+`Complex.re`) genuinely satisfying `IsHarmonicOffReal ℂ P Q u`.
+Proof is the one-line tuple ⟨Complex.re, re_off P Q⟩.
+
+Fourth honest existential in the project. Mirrors:
+- existence_of_dipole_harmonic_on_complex (9aaa54d7) — dipole track
+- existence_of_harmonic_conjugate_for_re_on_complex (95367526) — Stub 1
+- existence_of_continuous_cr_to_holomorphic_for_re_im_on_complex (33db01e9) — Stub 2
+
+Specialized to the witness `Complex.re` because that is currently
+the only `IsHarmonicOffReal` witness; a generic-`u` version on
+`X = ℂ` would require richer harmonic-conjugate machinery
+(Complex.log/arg pair for the canonical dipole, plus closure
+lemmas), which is a multi-commit follow-up. Does not touch the
+still-cheating generic `existence_of_dipole_harmonic`. -/
+theorem existence_of_harmonic_off_for_re_on_complex (P Q : ℂ) :
+    ∃ u : ℂ → ℝ, IsHarmonicOffReal ℂ P Q u :=
+  ⟨Complex.re, IsHarmonicOffReal.re_off P Q⟩
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
