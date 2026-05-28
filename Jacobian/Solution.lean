@@ -261,9 +261,16 @@ lemma pullback_id_apply (P : Jacobian X) : pullback id contMDiff_id P = P := sor
 lemma pullback_comp_apply (P : Jacobian Z) :
     pullback (g.comp f) (hg.comp hf) P = pullback f hf (pullback g hg P) := sorry
 
-def _root_.ContMDiff.degree
-    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
-  sorry
+noncomputable def _root_.ContMDiff.degree
+    (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
+  open Classical in
+  if _hconst : ∃ y₀, ∀ x, f x = y₀ then 0
+  else
+    if hbc : ∃ hbc : JacobianChallenge.HolomorphicForms.BranchedCoverData X Y f,
+        hbc.RamificationIndexCompatible then
+      JacobianChallenge.HolomorphicForms.branchedDegree
+        (X := X) (Y := Y) (f := f) hbc.choose
+    else 0
 
 lemma pushforward_pullback (P : Jacobian Y) :
   pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P := sorry
