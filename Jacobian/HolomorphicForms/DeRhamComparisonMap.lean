@@ -376,28 +376,14 @@ theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_f
   simp
 
 /--
-**Substrate axiom: prescribed-period Čech data carries `φ z = 0` for every
-cycle.** This is the exact upstream content needed to discharge the induced
-cycle zero claim in the current local-representative scaffold.
--/
-theorem deRhamComparisonMap1_local_representatives_phi_zero_axiom_frontier
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
-    (data : PrescribedPeriodCechData X φ)
-    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
-    (z : IntegralOneCycle X) :
-    φ z = 0 := by
-  sorry
+**One-cycle period-realization frontier.** The smooth local-representative
+closed form assembled from prescribed-period Čech data realizes the
+prescribed period functional on the selected integral cycle.
 
-/--
-**Induced local-representative cycle value frontier.** This isolates the
-remaining prescribed-period value computation at one integral cycle in the
-current local-representative scaffold.
+This is the honest analytic integration content: integrating the assembled
+closed form over `z` gives `φ z`.
 -/
-theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_frontier
+theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_axiom_frontier
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -406,13 +392,10 @@ theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_f
     (data : PrescribedPeriodCechData X φ)
     (localData : PrescribedPeriodLocalRepresentativeData X φ data)
     (z : IntegralOneCycle X) :
-    deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
-      X φ data localData z = 0 := by
-  exact
-    deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_of_phi_zero_frontier
-      X φ data localData z
-      (deRhamComparisonMap1_local_representatives_phi_zero_axiom_frontier
-        X φ data localData z)
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z = φ z := by
+  sorry
 
 /--
 **Smooth local-representative one-cycle period from zero values.** Once the
@@ -491,12 +474,10 @@ theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_frontier
           X φ data localData) z =
       deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
         X φ data localData z := by
-  exact deRhamComparisonMap1_smooth_local_representatives_period_cycle_of_zero_frontier
-    X φ data localData z
-    (deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_frontier
-      X φ data localData z)
-    (deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_frontier
-      X φ data localData z)
+  rw [deRhamComparisonMap1_smooth_local_representatives_period_cycle_axiom_frontier
+    X φ data localData z]
+  exact (deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_phi_frontier
+    X φ data localData z).symm
 
 /--
 **Closed-form assembly transport for one-cycle periods.** The public
