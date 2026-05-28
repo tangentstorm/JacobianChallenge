@@ -368,6 +368,49 @@ lemma IsHarmonicConjugateAtReal.add
   rw [hfun]
   exact hf₁.add hf₂
 
+/-- Combined conjugate witness for the canonical dipole at the
+slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
+AND `x - Q ∈ Complex.slitPlane`, the function
+`fun z => Complex.arg (z - P) - Complex.arg (z - Q)` is a
+harmonic conjugate of
+`fun z => Real.log ‖z - P‖ - Real.log ‖z - Q‖` (the canonical
+real dipole). Combines `log_arg_sub_at_slitPlane` (+1 pole at P)
+with `neg_log_arg_sub_at_slitPlane` (−1 pole at Q) via the
+generic additive closure `IsHarmonicConjugateAtReal.add`.
+
+NOT yet full coverage of `x ∉ {P, Q}` — both `x - P` and
+`x - Q` must lie in the same (standard) slit `slitPlane`. The
+branch-rotation step in the next commit lifts this restriction. -/
+theorem IsHarmonicConjugateAtReal.dipole_conjugate_at_slit_intersection
+    {x P Q : ℂ}
+    (hxP : x - P ∈ Complex.slitPlane)
+    (hxQ : x - Q ∈ Complex.slitPlane) :
+    IsHarmonicConjugateAtReal ℂ
+      (fun z : ℂ => Real.log ‖z - P‖ - Real.log ‖z - Q‖)
+      (fun z : ℂ => Complex.arg (z - P) - Complex.arg (z - Q)) x := by
+  have hP := IsHarmonicConjugateAtReal.log_arg_sub_at_slitPlane
+                (P := P) hxP
+  have hQ := IsHarmonicConjugateAtReal.neg_log_arg_sub_at_slitPlane
+                (Q := Q) hxQ
+  have hsum := hP.add hQ
+  -- Rewrite Pi.add of (f, -g) to fun z => f z - g z.
+  have hfun_u :
+      (fun z : ℂ => Real.log ‖z - P‖) + (fun z : ℂ => -Real.log ‖z - Q‖)
+        = fun z : ℂ => Real.log ‖z - P‖ - Real.log ‖z - Q‖ := by
+    funext z
+    show Real.log ‖z - P‖ + -Real.log ‖z - Q‖
+        = Real.log ‖z - P‖ - Real.log ‖z - Q‖
+    ring
+  have hfun_v :
+      (fun z : ℂ => Complex.arg (z - P)) + (fun z : ℂ => -Complex.arg (z - Q))
+        = fun z : ℂ => Complex.arg (z - P) - Complex.arg (z - Q) := by
+    funext z
+    show Complex.arg (z - P) + -Complex.arg (z - Q)
+        = Complex.arg (z - P) - Complex.arg (z - Q)
+    ring
+  rw [hfun_u, hfun_v] at hsum
+  exact hsum
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
