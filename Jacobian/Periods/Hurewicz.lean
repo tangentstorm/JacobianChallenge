@@ -4570,28 +4570,6 @@ theorem signedFaceTargetEdgeCoefficient_zero
   hcancel
 
 /--
-Substrate axiom: target-edge signed-face cancellation for the support
-decomposition of a singular 2-boundary.
-
-When a singular two-chain `B` is decomposed as a finite sum of singular
-two-simplices, the target-edge coefficient of the alternating signed-face
-decomposition vanishes. This is the `∂² = 0` content specialized to one
-concrete target edge.
--/
-theorem signedFaceTargetEdgeCoefficient_zero_of_singular_boundary
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    (B : (singularChainComplexZ (Polygon4g (g + 1))).X 2)
-    (Simplex : Type) [Fintype Simplex]
-    (coeff : Simplex → ℤ)
-    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
-    (_hdecomp :
-      B = ∑ s : Simplex, coeff s • singularChainElement (simplex s)) :
-    signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0 := by
-  -- Substrate provider: this is the `d ∘ d = 0` singular-chain
-  -- computation read at the target concrete edge coefficient.
-  sorry
-
-/--
 Scalar target-edge coefficient comparison for a finite signed face sum.
 
 The fields are stated directly for the explicit signed count of those
@@ -4855,11 +4833,18 @@ theorem edgeChain_sum_singular_boundary_decomposition_scalar_coefficient_zero
     _ = ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e := hB
 
 /--
-Pointwise coefficient form of edge-chain singular-boundary independence.
+Architectural axiom: edge-chain singular-boundary independence.
 
-This is the remaining scalar-coordinate geometric input needed for
-edge independence: if a concrete singular two-boundary is a finite sum
-of concrete edge chains, then the coefficient of each target edge is zero.
+If a singular 2-chain `B` has boundary
+`∂B = ∑ e, v e • edgeChain g e`, then each target coordinate of `v`
+vanishes. This is the homological fact that the concrete polygon edge
+chains form the free basis of `H₁ (Polygon4g (g + 1); ℤ)`, specialized to
+one coordinate.
+
+This replaces the previously circular substrate axiom
+`signedFaceTargetEdgeCoefficient_zero_of_singular_boundary`: `d ∘ d = 0`
+only proves the signed face one-chain is a cycle, not that a particular
+edge coefficient in that cycle is zero.
 -/
 theorem edgeChain_sum_singular_boundary_scalar_coefficient_zero
     (g : ℕ) (target : Fin (2 * (g + 1)))
@@ -4869,31 +4854,7 @@ theorem edgeChain_sum_singular_boundary_scalar_coefficient_zero
       ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom B =
         ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) :
     v target = 0 := by
-  let X := Polygon4g (g + 1)
-  obtain ⟨decomp⟩ :=
-    singularChainCoproduct_sum_support_decomposition_degree X 2 B
-  letI := decomp.simplexFintype
-  have hcancel :
-      signedFaceTargetEdgeCoefficient g target decomp.Simplex
-        decomp.coeff decomp.simplex = 0 :=
-    signedFaceTargetEdgeCoefficient_zero_of_singular_boundary
-      g target B decomp.Simplex decomp.coeff decomp.simplex
-      decomp.chain_eq
-  apply
-    edgeChain_sum_singular_boundary_decomposition_scalar_coefficient_zero
-      g target v decomp.Simplex decomp.coeff decomp.simplex hcancel
-  calc
-    (∑ s : decomp.Simplex, decomp.coeff s •
-        ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom
-          (singularChainElement (decomp.simplex s))) =
-        ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom B := by
-        have hmap :=
-          congrArg
-            (fun z : SingularChainCoproduct (Polygon4g (g + 1)) 2 =>
-              ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom z)
-            decomp.chain_eq
-        simpa only [map_sum, map_zsmul] using hmap.symm
-    _ = ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e := hB
+  sorry
 
 /--
 Pointwise coefficient form of edge-chain boundary independence.
