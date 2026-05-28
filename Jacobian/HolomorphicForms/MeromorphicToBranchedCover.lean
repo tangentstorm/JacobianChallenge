@@ -3104,6 +3104,41 @@ theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
     Nonempty (PointRiemannRochSection X P) :=
   ⟨PointRiemannRochSection.of_meromorphicMap_analyticData_simple_pole f han P hpole⟩
 
+/--
+**Granular variant of
+`genusZero_pointRRSection_outside_constants_exists_with_analyticData`.**
+
+Like `_with_analyticData` (commit `6ed6908d`) but taking the granular
+projections `hmer` and `hord1` instead of the full `AnalyticData`
+record — pattern-symmetric with the granular assembly helper
+`of_meromorphicMap_meromorphic_getD_simple_pole` (commit `38662ec3`).
+
+The bare form `genusZero_pointRRSection_outside_constants_exists`
+(above) remains as `sorry` until the upstream genus-zero RR chain is
+dependency-broken to produce `MeromorphicMapToSphere + AnalyticData`
+honestly.
+
+Use this form when the caller has partial analytic data — just
+`MeromorphicAtX` + `mapAnalyticOrderAt = 1` — without a full
+`AnalyticData` record.
+-/
+theorem genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (_h : analyticGenus ℂ X = 0)
+    (f : MeromorphicMapToSphere X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p)
+    (hpole : f.poles = Divisor.point P)
+    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1) :
+    Nonempty (PointRiemannRochSection X P) :=
+  ⟨PointRiemannRochSection.of_meromorphicMap_meromorphic_getD_simple_pole
+    f hmer P hpole hord1⟩
+
 
 theorem genusZero_fixedPole_rrSection_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
