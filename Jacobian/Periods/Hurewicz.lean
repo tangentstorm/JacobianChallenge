@@ -824,6 +824,23 @@ noncomputable def unitIntervalReverse : C(unitInterval, unitInterval) where
   norm_num [unitIntervalReverse]
 
 /--
+Local reverse-reparametrization prism for one path-shaped singular
+simplex.  This is the exact relative one-simplex leaf needed by
+boundary-arc reversal: a path and the same path traversed with
+`t ↦ 1 - t` bound a singular two-chain.
+-/
+theorem singularChainElement_reverse_path_homologous
+    (X : Type) [TopologicalSpace X] (γ : C(unitInterval, X)) :
+    ∃ reverseHomotopy : SingularChainCoproduct X 2,
+      (singularChainComplexZ X).d 2 1 reverseHomotopy =
+        singularChainElement
+          ((γ.comp unitIntervalReverse).comp stdSimplexToUnitInterval) +
+        singularChainElement (γ.comp stdSimplexToUnitInterval) := by
+  -- Missing relative singular-prism computation for the path square
+  -- comparing a path with its reversed reparametrization.
+  sorry
+
+/--
 The parameter along a partial oriented boundary arc.  The
 `startParam` and `endParam` fields are closed-interval points, so this
 can represent arbitrary side-interior endpoints, not only full side
@@ -1156,9 +1173,16 @@ theorem polygon4gBoundaryArcStep_reverse_projected_homotopy
         polygon4gBoundaryArcStepsProjectedChain g
             [Polygon4gBoundaryArcStep.reverse step] +
           polygon4gBoundaryArcStepsProjectedChain g [step] := by
-  -- Missing singular-prism computation for one projected path simplex
-  -- and its reversed reparametrization.
-  sorry
+  let γ : C(unitInterval, Polygon4g (g + 1)) :=
+    (polygon4gMkContinuousMap (g + 1)).comp step.path
+  obtain ⟨B, hB⟩ :=
+    singularChainElement_reverse_path_homologous
+      (Polygon4g (g + 1)) γ
+  refine ⟨step.orientation.sign • B, ?_⟩
+  rw [map_zsmul, hB, zsmul_add]
+  simp [polygon4gBoundaryArcStepsProjectedChain,
+    polygon4gBoundaryArcStepProjectedChain, Polygon4gBoundaryArcStep.reverse,
+    γ, ContinuousMap.comp_assoc]
 
 /--
 Reversing a finite list of projected boundary-arc chains is
