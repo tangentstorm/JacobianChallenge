@@ -157,6 +157,35 @@ theorem existence_of_continuous_cr_to_holomorphic_for_re_im_on_complex :
   · intro x
     exact IsHolomorphicInChartReal.id_at x
 
+/-- Genuine sibling to the `True`-stub `IsHarmonicOff`: at every
+point off the singular set `{P, Q}`, `u` admits a local harmonic
+conjugate (in the contentful `IsHarmonicConjugateAtReal` sense).
+On simply-connected charts this is mathematically equivalent to
+classical harmonicity (`Δu = 0`), but stated this way it stays
+within our existing `HasFDerivAt`-on-ℂ semantic framework and
+avoids `iteratedFDeriv ℝ 2` plumbing. `True`-style cheats no
+longer satisfy it once it is the demanded predicate.
+
+Lives in `HarmonicConjugate.lean` rather than `HarmonicDipole.lean`
+because it references `IsHarmonicConjugateAtReal`, which is
+defined here. -/
+def IsHarmonicOffReal
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (P Q : X) (u : X → ℝ) : Prop :=
+  ∀ x : X, x ≠ P → x ≠ Q →
+    ∃ v : X → ℝ, IsHarmonicConjugateAtReal X u v x
+
+/-- Bridge from the genuine `IsHarmonicOffReal` predicate to the
+`True`-stub `IsHarmonicOff`. Allows contentful harmonic-off
+witnesses to be supplied without breaking the stub-based proof
+of `existence_of_dipole_harmonic`. -/
+lemma IsHarmonicOffReal.toStub
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {P Q : X} {u : X → ℝ}
+    (_h : IsHarmonicOffReal X P Q u) :
+    IsHarmonicOff X P Q u :=
+  trivial
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
