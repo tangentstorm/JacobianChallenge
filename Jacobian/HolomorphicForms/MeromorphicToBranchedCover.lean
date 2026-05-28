@@ -1270,7 +1270,117 @@ theorem mapAnalyticOrderAt_onePointExtend_of_order_neg_one
         ((-1 : ℤ) : WithTop ℤ)) :
     JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
       (onePointExtend F P) P = 1 := by
-  sorry
+  set e := chartAt ℂ P with he_def
+  set z₀ : ℂ := e P with hz₀_def
+  set f : ℂ → ℂ := F ∘ e.symm with hf_def
+  set g : ℂ → ℂ :=
+    fun t =>
+      JacobianChallenge.HolomorphicForms.chartLocalAt (onePointExtend F P) P t -
+        JacobianChallenge.HolomorphicForms.chartLocalAt (onePointExtend F P) P z₀
+    with hg_def
+  have _hmer_at_P := hmer P
+  have hP_source : P ∈ e.source := by
+    rw [he_def]
+    exact mem_chart_source ℂ P
+  have hP_target : z₀ ∈ e.target := by
+    rw [hz₀_def]
+    exact e.map_source hP_source
+  have hOrd_f :
+      meromorphicOrderAt f z₀ = ((-1 : ℤ) : WithTop ℤ) := by
+    have h1 :
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+          meromorphicOrderAt (F ∘ (chartAt ℂ P).symm) (chartAt ℂ P P) :=
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt P F
+    rw [h1] at horder
+    simpa [hf_def, he_def, hz₀_def] using horder
+  have hg_center : g z₀ = 0 := by
+    simp [hg_def]
+  have hchart_center :
+      JacobianChallenge.HolomorphicForms.chartLocalAt (onePointExtend F P) P z₀ = 0 := by
+    have hsymm : e.symm z₀ = P := by
+      rw [hz₀_def]
+      exact e.left_inv hP_source
+    calc
+      JacobianChallenge.HolomorphicForms.chartLocalAt (onePointExtend F P) P z₀ =
+          chartAt ℂ (onePointExtend F P P) (onePointExtend F P (e.symm z₀)) := by
+            simp [JacobianChallenge.HolomorphicForms.chartLocalAt, Function.comp_def,
+              he_def, hz₀_def]
+      _ = chartAt ℂ (OnePoint.infty : OnePoint ℂ) (OnePoint.infty : OnePoint ℂ) := by
+            rw [hsymm, onePointExtend_at]
+      _ = 0 := by
+            change inversionChart (OnePoint.infty : OnePoint ℂ) = 0
+            rfl
+  have hg_eventually_inv :
+      g =ᶠ[𝓝[≠] z₀] f⁻¹ := by
+    rw [Filter.EventuallyEq, eventually_nhdsWithin_iff]
+    filter_upwards [e.open_target.mem_nhds hP_target] with t ht ht_ne
+    have ht_ne' : t ≠ z₀ := by
+      intro htz
+      exact ht_ne (by simp [htz])
+    have hsymm_ne : e.symm t ≠ P := by
+      intro hsymm
+      have ht_eq : e (e.symm t) = t := e.right_inv ht
+      have hz_eq : e P = z₀ := hz₀_def
+      rw [hsymm, hz_eq] at ht_eq
+      exact ht_ne' ht_eq.symm
+    have htarget_chart :
+        chartAt ℂ (onePointExtend F P P) = inversionChart := by
+      rw [onePointExtend_at]
+      rfl
+    have hlocal_t :
+        JacobianChallenge.HolomorphicForms.chartLocalAt (onePointExtend F P) P t =
+          (f t)⁻¹ := by
+      calc
+        JacobianChallenge.HolomorphicForms.chartLocalAt (onePointExtend F P) P t =
+            chartAt ℂ (onePointExtend F P P) (onePointExtend F P (e.symm t)) := by
+              simp [JacobianChallenge.HolomorphicForms.chartLocalAt, Function.comp_def,
+                he_def]
+        _ = inversionChart (onePointExtend F P (e.symm t)) := by
+              rw [htarget_chart]
+        _ = inversionChart (((F (e.symm t) : ℂ) : OnePoint ℂ)) := by
+              rw [onePointExtend_off hsymm_ne]
+        _ = (f t)⁻¹ := by
+              change invFwd (((F (e.symm t) : ℂ) : OnePoint ℂ)) = (f t)⁻¹
+              simp [hf_def]
+    calc
+      g t =
+          JacobianChallenge.HolomorphicForms.chartLocalAt (onePointExtend F P) P t -
+            JacobianChallenge.HolomorphicForms.chartLocalAt (onePointExtend F P) P z₀ := by
+            simp [hg_def]
+      _ = (f t)⁻¹ := by
+            rw [hlocal_t, hchart_center]
+            simp
+      _ = (f⁻¹) t := rfl
+  have hOrd_g : meromorphicOrderAt g z₀ = ((1 : ℤ) : WithTop ℤ) := by
+    calc
+      meromorphicOrderAt g z₀ = meromorphicOrderAt (f⁻¹) z₀ :=
+        meromorphicOrderAt_congr hg_eventually_inv
+      _ = -meromorphicOrderAt f z₀ := meromorphicOrderAt_inv
+      _ = ((1 : ℤ) : WithTop ℤ) := by
+        rw [hOrd_f]
+        norm_num
+  have hAnalytic_g : AnalyticAt ℂ g z₀ := by
+    have hpos : (0 : WithTop ℤ) < meromorphicOrderAt g z₀ := by
+      rw [hOrd_g]
+      norm_num
+    exact AnalyticAt.of_meromorphicOrderAt_pos hpos hg_center
+  have hAnalyticOrder_g : analyticOrderAt g z₀ = (1 : ℕ∞) := by
+    have hcompat := hAnalytic_g.meromorphicOrderAt_eq
+    rw [hOrd_g] at hcompat
+    cases horder_an : analyticOrderAt g z₀ with
+    | top =>
+        simp [horder_an] at hcompat
+    | coe n =>
+        have hn : (n : WithTop ℤ) = ((1 : ℤ) : WithTop ℤ) := by
+          simpa [horder_an] using hcompat.symm
+        have hn_nat : n = 1 := by
+          exact_mod_cast (WithTop.coe_inj.mp hn)
+        simp [hn_nat]
+  unfold JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+  rw [← hg_def, ← he_def, ← hz₀_def]
+  rw [show analyticOrderNatAt g z₀ = 1 by
+    rw [analyticOrderNatAt, hAnalyticOrder_g]
+    rfl]
 
 /--
 **Provider (local Laurent → modulus divergence).** If `F` has
