@@ -1,6 +1,7 @@
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
+import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.HolomorphicForms.HarmonicDipole
@@ -1142,6 +1143,158 @@ lemma dipole_pullback_eq_compose_chart
   have hinv : (chartAt ℂ x).symm ((chartAt ℂ x) y) = y :=
     (chartAt ℂ x).left_inv hy
   rw [hinv]
+
+/-- Step 3 of the transition-map project (150-line cap):
+the re-expressed ℂ-side dipole `g(z) := log ‖h_P z‖ - log ‖h_Q z‖`
+(with `h_P z := chart_P (chart_x.symm z) - chart_P P`, similarly h_Q)
+admits a local conjugate at `chart_x x` in ℂ.
+
+Bundles: AnalyticAt of transition pieces (Step 1's role-swapped form
++ `ContDiffOn.analyticOn`), subtraction of constants (still AnalyticAt),
+nonzero-at-basepoint via chart injectivity, `slit_rotation_for_two_nonzero`
+to find a common slit-plane rotation, `AnalyticAt.clog` to land both
+Complex.log pieces, and finally a `HasFDerivAt` witness for the conjugate
+pair `(g, v_ℂ)` via the Complex.log decomposition + log-mul cancellation
++ `HasFDerivAt.congr_of_eventuallyEq`. -/
+theorem dipole_compose_chart_has_conjugate
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    {P Q x : X} (hxP : x ≠ P) (hxQ : x ≠ Q)
+    (hxP_src : x ∈ (chartAt ℂ P).source)
+    (hxQ_src : x ∈ (chartAt ℂ Q).source) :
+    ∃ v_ℂ : ℂ → ℝ,
+      IsHarmonicConjugateAtReal ℂ
+        (fun z : ℂ =>
+          Real.log ‖chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P‖
+          - Real.log ‖chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q‖)
+        v_ℂ ((chartAt ℂ x) x) := by
+  -- Setup: AnalyticAt for h_P, h_Q via Step 1 + ContDiffOn.analyticOn.
+  have hxinv : (chartAt ℂ x).symm ((chartAt ℂ x) x) = x :=
+    (chartAt ℂ x).left_inv (mem_chart_source ℂ x)
+  have hxt : (chartAt ℂ x) x ∈ (chartAt ℂ x).target :=
+    (chartAt ℂ x).map_source (mem_chart_source ℂ x)
+  have hxP_pre : (chartAt ℂ x) x ∈ (chartAt ℂ x).symm ⁻¹' (chartAt ℂ P).source := by
+    rw [Set.mem_preimage, hxinv]; exact hxP_src
+  have hxQ_pre : (chartAt ℂ x) x ∈ (chartAt ℂ x).symm ⁻¹' (chartAt ℂ Q).source := by
+    rw [Set.mem_preimage, hxinv]; exact hxQ_src
+  have hP_open : IsOpen ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ P).source) :=
+    (chartAt ℂ x).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ x).open_target (chartAt ℂ P).open_source
+  have hQ_open : IsOpen ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ Q).source) :=
+    (chartAt ℂ x).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ x).open_target (chartAt ℂ Q).open_source
+  have hxP_in : (chartAt ℂ x) x ∈
+      (chartAt ℂ x).target ∩ (chartAt ℂ x).symm ⁻¹' (chartAt ℂ P).source :=
+    Set.mem_inter hxt hxP_pre
+  have hxQ_in : (chartAt ℂ x) x ∈
+      (chartAt ℂ x).target ∩ (chartAt ℂ x).symm ⁻¹' (chartAt ℂ Q).source :=
+    Set.mem_inter hxt hxQ_pre
+  have hP_an : AnalyticAt ℂ (chartAt ℂ P ∘ (chartAt ℂ x).symm) ((chartAt ℂ x) x) :=
+    AnalyticOn.analyticAt (hP_open.mem_nhds hxP_in)
+      (chart_transition_contDiffOn x P).analyticOn
+  have hQ_an : AnalyticAt ℂ (chartAt ℂ Q ∘ (chartAt ℂ x).symm) ((chartAt ℂ x) x) :=
+    AnalyticOn.analyticAt (hQ_open.mem_nhds hxQ_in)
+      (chart_transition_contDiffOn x Q).analyticOn
+  have hP_h : AnalyticAt ℂ
+      (fun z => chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P)
+      ((chartAt ℂ x) x) := hP_an.sub analyticAt_const
+  have hQ_h : AnalyticAt ℂ
+      (fun z => chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q)
+      ((chartAt ℂ x) x) := hQ_an.sub analyticAt_const
+  have hP_ne : chartAt ℂ P x - (chartAt ℂ P) P ≠ 0 := fun h =>
+    hxP ((chartAt ℂ P).injOn hxP_src (mem_chart_source ℂ P) (sub_eq_zero.mp h))
+  have hQ_ne : chartAt ℂ Q x - (chartAt ℂ Q) Q ≠ 0 := fun h =>
+    hxQ ((chartAt ℂ Q).injOn hxQ_src (mem_chart_source ℂ Q) (sub_eq_zero.mp h))
+  obtain ⟨c, hcP_slit, hcQ_slit⟩ := slit_rotation_for_two_nonzero hP_ne hQ_ne
+  have hc_ne : c ≠ 0 := fun hc0 => by
+    rw [hc0, zero_mul] at hcP_slit; exact Complex.zero_notMem_slitPlane hcP_slit
+  have hcP_val : c * (chartAt ℂ P ((chartAt ℂ x).symm ((chartAt ℂ x) x))
+                      - (chartAt ℂ P) P) ∈ Complex.slitPlane := by
+    rw [hxinv]; exact hcP_slit
+  have hcQ_val : c * (chartAt ℂ Q ((chartAt ℂ x).symm ((chartAt ℂ x) x))
+                      - (chartAt ℂ Q) Q) ∈ Complex.slitPlane := by
+    rw [hxinv]; exact hcQ_slit
+  have hPmul_an : AnalyticAt ℂ
+      (fun z => c * (chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P))
+      ((chartAt ℂ x) x) := analyticAt_const.mul hP_h
+  have hQmul_an : AnalyticAt ℂ
+      (fun z => c * (chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q))
+      ((chartAt ℂ x) x) := analyticAt_const.mul hQ_h
+  have hPlog_an : AnalyticAt ℂ
+      (fun z => Complex.log (c * (chartAt ℂ P ((chartAt ℂ x).symm z)
+                                   - (chartAt ℂ P) P)))
+      ((chartAt ℂ x) x) := AnalyticAt.clog hPmul_an hcP_val
+  have hQlog_an : AnalyticAt ℂ
+      (fun z => Complex.log (c * (chartAt ℂ Q ((chartAt ℂ x).symm z)
+                                   - (chartAt ℂ Q) Q)))
+      ((chartAt ℂ x) x) := AnalyticAt.clog hQmul_an hcQ_val
+  have hftotal_an : AnalyticAt ℂ
+      (fun z =>
+        Complex.log (c * (chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P))
+        - Complex.log (c * (chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q)))
+      ((chartAt ℂ x) x) := hPlog_an.sub hQlog_an
+  have hftotal_fderiv := hftotal_an.differentiableAt.hasFDerivAt
+  -- Identification: define v_ℂ and find nbhd where c·h_P, c·h_Q ∈ slitPlane.
+  set v_ℂ : ℂ → ℝ := fun z =>
+    Complex.arg (c * (chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P))
+    - Complex.arg (c * (chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q))
+    with hv_def
+  have hcontP : ContinuousAt
+      (fun z => c * (chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P))
+      ((chartAt ℂ x) x) :=
+    (continuous_const.continuousAt).mul hP_h.continuousAt
+  have hcontQ : ContinuousAt
+      (fun z => c * (chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q))
+      ((chartAt ℂ x) x) :=
+    (continuous_const.continuousAt).mul hQ_h.continuousAt
+  have hPnbhd : (fun z => c * (chartAt ℂ P ((chartAt ℂ x).symm z)
+                                  - (chartAt ℂ P) P)) ⁻¹' Complex.slitPlane
+                ∈ nhds ((chartAt ℂ x) x) :=
+    hcontP.preimage_mem_nhds (Complex.isOpen_slitPlane.mem_nhds hcP_val)
+  have hQnbhd : (fun z => c * (chartAt ℂ Q ((chartAt ℂ x).symm z)
+                                  - (chartAt ℂ Q) Q)) ⁻¹' Complex.slitPlane
+                ∈ nhds ((chartAt ℂ x) x) :=
+    hcontQ.preimage_mem_nhds (Complex.isOpen_slitPlane.mem_nhds hcQ_val)
+  have hfeq : (fun z =>
+        Complex.log (c * (chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P))
+        - Complex.log (c * (chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q)))
+      =ᶠ[nhds ((chartAt ℂ x) x)]
+      (fun z =>
+        ((Real.log ‖chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P‖
+          - Real.log ‖chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q‖ : ℝ) : ℂ)
+        + Complex.I * (v_ℂ z : ℂ)) := by
+    filter_upwards [hPnbhd, hQnbhd] with z hzP hzQ
+    have hzP_ne : c * (chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P) ≠ 0 :=
+      fun h => Complex.zero_notMem_slitPlane (h ▸ hzP)
+    have hzQ_ne : c * (chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q) ≠ 0 :=
+      fun h => Complex.zero_notMem_slitPlane (h ▸ hzQ)
+    have hhP_ne : chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P ≠ 0 :=
+      fun h => hzP_ne (by rw [h, mul_zero])
+    have hhQ_ne : chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q ≠ 0 :=
+      fun h => hzQ_ne (by rw [h, mul_zero])
+    show Complex.log (c * (chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P))
+          - Complex.log (c * (chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q))
+        = ((Real.log ‖chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P‖
+            - Real.log ‖chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q‖ : ℝ) : ℂ)
+          + Complex.I * (v_ℂ z : ℂ)
+    simp only [Complex.log, norm_mul, hv_def, Complex.ofReal_sub,
+               Real.log_mul (norm_ne_zero_iff.mpr hc_ne) (norm_ne_zero_iff.mpr hhP_ne),
+               Real.log_mul (norm_ne_zero_iff.mpr hc_ne) (norm_ne_zero_iff.mpr hhQ_ne)]
+    push_cast
+    ring
+  -- Transport: bundle the conjugate witness.
+  refine ⟨v_ℂ, fderiv ℂ
+      (fun z =>
+        Complex.log (c * (chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P))
+        - Complex.log (c * (chartAt ℂ Q ((chartAt ℂ x).symm z) - (chartAt ℂ Q) Q)))
+      ((chartAt ℂ x) x), ?_⟩
+  have hchart_ℂ_id : ∀ z : ℂ, (chartAt ℂ ((chartAt ℂ x) x)).symm z = z := fun _ => rfl
+  have hchart_ℂ_pt :
+      (chartAt ℂ ((chartAt ℂ x) x)) ((chartAt ℂ x) x) = (chartAt ℂ x) x := rfl
+  simp only [hchart_ℂ_id, hchart_ℂ_pt]
+  exact hftotal_fderiv.congr_of_eventuallyEq hfeq.symm
 
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
