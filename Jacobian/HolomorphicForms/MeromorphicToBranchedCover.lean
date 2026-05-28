@@ -1234,7 +1234,28 @@ theorem toMeromorphicNFAt_moving_center_coherent_of_orderAt_nonneg
     (horder : (0 : WithTop ℤ) ≤ meromorphicOrderAt f z₀) :
     ∃ U ∈ 𝓝 z₀, ∀ z ∈ U,
       toMeromorphicNFAt f z z = toMeromorphicNFAt f z₀ z := by
-  sorry
+  let g : ℂ → ℂ := toMeromorphicNFAt f z₀
+  have hg_order : (0 : WithTop ℤ) ≤ meromorphicOrderAt g z₀ := by
+    simpa [g, meromorphicOrderAt_congr hf.eq_nhdsNE_toMeromorphicNFAt] using horder
+  have hg_an : AnalyticAt ℂ g z₀ := by
+    exact (meromorphicNFAt_toMeromorphicNFAt
+      (f := f) (x := z₀)).meromorphicOrderAt_nonneg_iff_analyticAt.mp
+        (by simpa [g] using hg_order)
+  refine ⟨{z : ℂ | AnalyticAt ℂ g z}, hg_an.eventually_analyticAt, ?_⟩
+  intro z hz_an
+  by_cases hz : z = z₀
+  · simp [hz]
+  · have hfg_nhds : f =ᶠ[𝓝 z] g := by
+      filter_upwards [compl_singleton_mem_nhds hz] with y hy
+      simpa [g] using hf.eqOn_compl_singleton_toMeromorphicNFAt hy
+    have hf_an_z : AnalyticAt ℂ f z := hz_an.congr hfg_nhds.symm
+    have hnf : MeromorphicNFAt f z := hf_an_z.meromorphicNFAt
+    have hto : toMeromorphicNFAt f z = f :=
+      (toMeromorphicNFAt_eq_self (f := f) (x := z)).mpr hnf
+    calc
+      toMeromorphicNFAt f z z = f z := by rw [hto]
+      _ = toMeromorphicNFAt f z₀ z := by
+        simpa [g] using hf.eqOn_compl_singleton_toMeromorphicNFAt hz
 
 /--
 **Provider (removable no-poles representative).** A meromorphic
