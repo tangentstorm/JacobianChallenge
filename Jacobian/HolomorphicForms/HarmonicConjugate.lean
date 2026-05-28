@@ -117,6 +117,21 @@ lemma continuous_cr_to_holomorphic_bridge_real_bridge
   obtain ⟨f, hf_eq, _⟩ := h
   exact ⟨f, hf_eq, trivial⟩
 
+/-- Canonical witness on `X = ℂ`: the identity function is
+holomorphic-in-the-chart at every point `x : ℂ`. The self-chart
+`chartAt ℂ x` is `OpenPartialHomeomorph.refl ℂ`, so the chart
+pullback `z ↦ id ((chart).symm z) = z` is exactly the identity,
+and the identity function is trivially ℂ-Fréchet-differentiable
+with derivative `ContinuousLinearMap.id`. Demonstrates that
+`IsHolomorphicInChartReal` is non-vacuous; analogous to
+`IsHarmonicConjugateAtReal.re_im_at`. -/
+theorem IsHolomorphicInChartReal.id_at (x : ℂ) :
+    IsHolomorphicInChartReal ℂ id x := by
+  refine ⟨ContinuousLinearMap.id ℂ ℂ, ?_⟩
+  -- Chart pullback collapses: (chartAt ℂ x).symm is rfl-equal to id on ℂ.
+  -- The integrand is then literally fun z : ℂ => z.
+  exact (ContinuousLinearMap.id ℂ ℂ).hasFDerivAt
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
