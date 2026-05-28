@@ -998,6 +998,33 @@ theorem dipole_pullback_at_neg
   rw [hfun] at hsum
   exact hsum
 
+/-- Combined honest dipole existential on a general charted-space `X`,
+under same-chart hypotheses for both poles. For any `P ≠ Q` in `X`
+with `P ∈ (chartAt ℂ Q).source ∧ Q ∈ (chartAt ℂ P).source`, exhibit
+a `u : X → ℝ` satisfying both `HasLogarithmicSingularityAtReal X P u 1`
+and `HasLogarithmicSingularityAtReal X Q u (-1)`.
+
+The exhibited `u` is the chart-pullback dipole
+`fun x => log ‖chart_P x - chart_P P‖ - log ‖chart_Q x - chart_Q Q‖`.
+
+Mirrors `existence_of_dipole_harmonic_on_complex` (9aaa54d7) for
+general `X`. The same-chart hypotheses are mild — automatic on
+`X = ℂ` and arrangeable on most useful compact Riemann surface
+setups. -/
+theorem existence_of_dipole_harmonic_on_X
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {P Q : X} (hPQ : P ≠ Q)
+    (hP_in_Q : P ∈ (chartAt ℂ Q).source)
+    (hQ_in_P : Q ∈ (chartAt ℂ P).source) :
+    ∃ u : X → ℝ,
+      HasLogarithmicSingularityAtReal X P u 1 ∧
+      HasLogarithmicSingularityAtReal X Q u (-1) :=
+  ⟨fun x : X =>
+      Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖
+      - Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖,
+    dipole_pullback_at_pos hPQ hP_in_Q,
+    dipole_pullback_at_neg hPQ hQ_in_P⟩
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
