@@ -1366,6 +1366,38 @@ private theorem globalHolomorphicFunction_from_local_extensions
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
   [StableChartAt ℂ X] in
 /--
+**Bundle-section `ContMDiff` from pointwise holomorphicity (strictly
+narrower sub-helper).**
+
+Given a function `g_ext : Y → CotangentModelFiber ℂ` that is
+`IsHolomorphicAt` at every point of `Y`, the corresponding section
+of the cotangent bundle (viewed via the section/total-space
+embedding required by `ContMDiffSection`) is `ContMDiff` of class
+`⊤`.
+
+This is the pure bundle-`ContMDiff` content used by
+`holomorphicOneForm_of_pointwiseHolomorphic`. It isolates the
+transposition from project-local `IsHolomorphicAt` (chart-local
+analyticity of `cotangentFiberIso ∘ g_ext ∘ (chartAt ℂ y).symm`)
+into Mathlib's bundle smoothness formalism via `contMDiffAt_section`
+and the trivialization of the cotangent bundle. The exact
+statement reproduces the `contMDiff_toFun` field of
+`ContMDiffSection` for the `HolomorphicOneForm` abbreviation.
+-/
+private theorem bundleSection_contMDiff_of_pointwiseHolomorphic
+    (g_ext : Y → CotangentModelFiber ℂ)
+    (hg_ext_hol : ∀ y : Y, IsHolomorphicAt g_ext y) :
+    ContMDiff (𝓘(ℂ, ℂ)) ((𝓘(ℂ, ℂ)).prod 𝓘(ℂ, CotangentModelFiber ℂ))
+      (⊤ : WithTop ℕ∞)
+      (fun y : Y =>
+        (Bundle.TotalSpace.mk' (E := CotangentSpace ℂ Y) (CotangentModelFiber ℂ)
+          y (g_ext y) :
+          Bundle.TotalSpace (CotangentModelFiber ℂ) (CotangentSpace ℂ Y))) := by
+  sorry
+
+omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
+  [StableChartAt ℂ X] in
+/--
 **Bundle-section packaging: pointwise holomorphicity → `HolomorphicOneForm`.**
 
 Given a function `g_ext : Y → CotangentModelFiber ℂ` that is
@@ -1373,22 +1405,22 @@ Given a function `g_ext : Y → CotangentModelFiber ℂ` that is
 into a `HolomorphicOneForm ℂ Y` whose underlying function `τ.toFun`
 equals `g_ext` pointwise.
 
-Mathematically: pointwise chart-local analyticity of `g_ext`,
-combined with the singleton-chart structure on
-`CotangentModelFiber ℂ` (where the chart is the homeomorphism
-`cotangentFiberIso`), promotes `g_ext` to a smooth section of the
-cotangent bundle, i.e. a `ContMDiffSection` with smoothness `⊤`,
-which is the definition of `HolomorphicOneForm`.
-
-This isolates the **bundle-section packaging** obligation — convert
-pointwise `IsHolomorphicAt` data into the `ContMDiffSection`
-formalism — deferred as a single `sorry`.
+This is now a sorry-free reduction to the strictly narrower
+bundle-section `ContMDiff` sub-helper
+`bundleSection_contMDiff_of_pointwiseHolomorphic`. The
+`HolomorphicOneForm` is constructed via the `ContMDiffSection`
+constructor with `toFun := g_ext` (relying on the defeq
+`CotangentSpace ℂ Y y = CotangentModelFiber ℂ` coming from
+`TangentSpace 𝓘(ℂ, ℂ) y = ℂ` and `Bundle.Trivial Y ℂ y = ℂ`); the
+agreement `τ.toFun y = g_ext y` then holds by `rfl`.
 -/
 private theorem holomorphicOneForm_of_pointwiseHolomorphic
     (g_ext : Y → CotangentModelFiber ℂ)
     (hg_ext_hol : ∀ y : Y, IsHolomorphicAt g_ext y) :
-    ∃ τ : HolomorphicOneForm ℂ Y, ∀ y : Y, τ.toFun y = g_ext y := by
-  sorry
+    ∃ τ : HolomorphicOneForm ℂ Y, ∀ y : Y, τ.toFun y = g_ext y :=
+  ⟨⟨g_ext,
+    bundleSection_contMDiff_of_pointwiseHolomorphic g_ext hg_ext_hol⟩,
+    fun _ => rfl⟩
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
   [StableChartAt ℂ X] in
