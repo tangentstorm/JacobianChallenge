@@ -272,6 +272,13 @@ noncomputable def _root_.ContMDiff.degree
         (X := X) (Y := Y) (f := f) hbc.choose
     else 0
 
+@[simp]
+theorem _root_.ContMDiff.degree_constant (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (hconst : ∃ y₀, ∀ x, f x = y₀) :
+    ContMDiff.degree f hf = 0 := by
+  unfold ContMDiff.degree
+  simp [hconst]
+
 lemma pushforward_pullback (P : Jacobian Y) :
   pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P := sorry
 
