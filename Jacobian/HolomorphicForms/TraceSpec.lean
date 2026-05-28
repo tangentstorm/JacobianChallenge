@@ -761,6 +761,57 @@ private theorem chartLocal_deriv_of_zPow_form
   rw [deriv_const_add, deriv_fun_pow hφ_diff k]
 
 /--
+**Manifold derivative ↔ chart-local derivative bridge (Commit C1 —
+sorry-free helper).**
+
+For a smooth `f : X → Y` and `x` in the source of `chartAt ℂ x₀`
+(so that `chartAt ℂ x = chartAt ℂ x₀` by `StableChartAt`), the
+manifold derivative `mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x` coincides with
+multiplication-by-deriv:
+
+```
+mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x =
+  ContinuousLinearMap.toSpanSingleton ℂ
+    (deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x))
+```
+
+(after the `chart ℂ x = chart ℂ x₀` identification on the
+domain side; the Y-side identification `chart ℂ (f x) = chart ℂ (f x₀)`
+also requires `StableChartAt ℂ Y` and `f x ∈ (chart ℂ (f x₀)).source`).
+
+This is **Commit C1** in the 4-commit C-sub-split discharge of
+`ramifiedKfoldSum_locally_bounded`. It is the foundational
+manifold-derivative bridge: combined with Commit B's chart-local
+derivative formula, it identifies `mfderiv f x` with
+`k * φ(z)^{k-1} * deriv φ z`, the explicit ramified-singular factor
+in `cotangentPushforward`.
+-/
+private theorem mfderiv_eq_toSpanSingleton_chartLocal_deriv
+    {f : X → Y} (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (x₀ : X) :
+    ∀ᶠ x in 𝓝 x₀, mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x =
+      ContinuousLinearMap.toSpanSingleton ℂ
+        (deriv (chartLocalAt f x) (chartAt ℂ x x)) := by
+  -- Reduce to MDifferentiableAt + mfderiv computation pointwise.
+  have h_mdiff : ∀ x : X, MDifferentiableAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x := fun x => by
+    have h_ne_zero : (⊤ : WithTop ℕ∞) ≠ 0 := by decide
+    exact (hf.contMDiffAt).mdifferentiableAt h_ne_zero
+  filter_upwards with x
+  -- `mfderiv f x = fderiv ℂ (chartLocalAt f x) (chart x x)` by definition.
+  rw [(h_mdiff x).mfderiv]
+  -- writtenInExtChartAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) x f = chartLocalAt f x.
+  show fderivWithin ℂ
+    ((chartAt ℂ (f x)) ∘ f ∘ (chartAt ℂ x).symm)
+    (Set.range 𝓘(ℂ, ℂ)) ((chartAt ℂ x) x) =
+    ContinuousLinearMap.toSpanSingleton ℂ
+      (deriv (chartLocalAt f x) (chartAt ℂ x x))
+  -- range 𝓘(ℂ, ℂ) = univ; fderivWithin univ = fderiv.
+  rw [ModelWithCorners.range_eq_univ, fderivWithin_univ]
+  -- Goal: fderiv ℂ (chartLocalAt f x) (chart x x) =
+  --   toSpanSingleton ℂ (deriv (chartLocalAt f x) (chart x x)).
+  exact toSpanSingleton_deriv.symm
+
+/--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
 Given the kfold-ramification chart-local data (a chart-nhd `U_kfold`
