@@ -4558,16 +4558,37 @@ theorem signedFaceTargetEdgeCoefficient_eq_of_edgeSimplex_sum
     g target v Simplex coeff simplex hB]
   exact edgeSimplexTargetCoefficient_eq g target v
 
-/--
-The explicit target-edge coefficient of a signed finite face-boundary
-sum vanishes.  This is the remaining geometric face-cancellation leaf.
--/
+/-- Read an explicit target-edge cancellation input as the zero statement. -/
 theorem signedFaceTargetEdgeCoefficient_zero
     (g : ℕ) (target : Fin (2 * (g + 1)))
     (Simplex : Type) [Fintype Simplex]
     (coeff : Simplex → ℤ)
-    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1))) :
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hcancel :
+      signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0) :
+    signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0 :=
+  hcancel
+
+/--
+Substrate axiom: target-edge signed-face cancellation for the support
+decomposition of a singular 2-boundary.
+
+When a singular two-chain `B` is decomposed as a finite sum of singular
+two-simplices, the target-edge coefficient of the alternating signed-face
+decomposition vanishes. This is the `∂² = 0` content specialized to one
+concrete target edge.
+-/
+theorem signedFaceTargetEdgeCoefficient_zero_of_singular_boundary
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (B : (singularChainComplexZ (Polygon4g (g + 1))).X 2)
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (_hdecomp :
+      B = ∑ s : Simplex, coeff s • singularChainElement (simplex s)) :
     signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0 := by
+  -- Substrate provider: this is the `d ∘ d = 0` singular-chain
+  -- computation read at the target concrete edge coefficient.
   sorry
 
 /--
@@ -4601,6 +4622,8 @@ theorem edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_coefficien
     (Simplex : Type) [Fintype Simplex]
     (coeff : Simplex → ℤ)
     (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hcancel :
+      signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0)
     (_hB :
       (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
           (Finset.univ : Finset (Fin 3)),
@@ -4620,7 +4643,7 @@ theorem edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_coefficien
           g target v Simplex coeff simplex _hB
       targetCoeff_zero :=
         signedFaceTargetEdgeCoefficient_zero
-          g target Simplex coeff simplex
+          g target Simplex coeff simplex hcancel
     }⟩
 
 /--
@@ -4636,6 +4659,8 @@ theorem edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_scalar_coe
     (Simplex : Type) [Fintype Simplex]
     (coeff : Simplex → ℤ)
     (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hcancel :
+      signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0)
     (hB :
       (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
           (Finset.univ : Finset (Fin 3)),
@@ -4648,7 +4673,7 @@ theorem edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_scalar_coe
     v target = 0 := by
   obtain ⟨data⟩ :=
     edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_coefficient_comparison
-      g target v Simplex coeff simplex hB
+      g target v Simplex coeff simplex hcancel hB
   rw [← data.targetCoeff_eq]
   exact data.targetCoeff_zero
 
@@ -4665,6 +4690,8 @@ theorem edgeChain_sum_singular_boundary_face_terms_edgeSimplex_scalar_coefficien
     (Simplex : Type) [Fintype Simplex]
     (coeff : Simplex → ℤ)
     (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hcancel :
+      signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0)
     (hB :
       (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
           (Finset.univ : Finset (Fin 3)),
@@ -4677,7 +4704,7 @@ theorem edgeChain_sum_singular_boundary_face_terms_edgeSimplex_scalar_coefficien
     v target = 0 := by
   apply
     edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_scalar_coefficient_zero
-      g target v Simplex coeff simplex
+      g target v Simplex coeff simplex hcancel
   calc
     (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
         (Finset.univ : Finset (Fin 3)),
@@ -4709,6 +4736,8 @@ theorem edgeChain_sum_singular_boundary_faces_edgeSimplex_scalar_coefficient_zer
     (Simplex : Type) [Fintype Simplex]
     (coeff : Simplex → ℤ)
     (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hcancel :
+      signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0)
     (hB :
       (∑ s : Simplex, coeff s •
           (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
@@ -4720,7 +4749,7 @@ theorem edgeChain_sum_singular_boundary_faces_edgeSimplex_scalar_coefficient_zer
     v target = 0 := by
   apply
     edgeChain_sum_singular_boundary_face_terms_edgeSimplex_scalar_coefficient_zero
-      g target v Simplex coeff simplex
+      g target v Simplex coeff simplex hcancel
   calc
     (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
           (Finset.univ : Finset (Fin 3)),
@@ -4772,6 +4801,8 @@ theorem edgeChain_sum_singular_boundary_faces_scalar_coefficient_zero
     (Simplex : Type) [Fintype Simplex]
     (coeff : Simplex → ℤ)
     (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hcancel :
+      signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0)
     (hB :
       (∑ s : Simplex, coeff s •
           (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
@@ -4781,7 +4812,7 @@ theorem edgeChain_sum_singular_boundary_faces_scalar_coefficient_zero
     v target = 0 := by
   apply
     edgeChain_sum_singular_boundary_faces_edgeSimplex_scalar_coefficient_zero
-      g target v Simplex coeff simplex
+      g target v Simplex coeff simplex hcancel
   simpa [edgeChain] using hB
 
 /--
@@ -4798,6 +4829,8 @@ theorem edgeChain_sum_singular_boundary_decomposition_scalar_coefficient_zero
     (Simplex : Type) [Fintype Simplex]
     (coeff : Simplex → ℤ)
     (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hcancel :
+      signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0)
     (hB :
       (∑ s : Simplex, coeff s •
           ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom
@@ -4806,7 +4839,7 @@ theorem edgeChain_sum_singular_boundary_decomposition_scalar_coefficient_zero
     v target = 0 := by
   apply
     edgeChain_sum_singular_boundary_faces_scalar_coefficient_zero
-      g target v Simplex coeff simplex
+      g target v Simplex coeff simplex hcancel
   calc
     (∑ s : Simplex, coeff s •
         (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
@@ -4840,9 +4873,15 @@ theorem edgeChain_sum_singular_boundary_scalar_coefficient_zero
   obtain ⟨decomp⟩ :=
     singularChainCoproduct_sum_support_decomposition_degree X 2 B
   letI := decomp.simplexFintype
+  have hcancel :
+      signedFaceTargetEdgeCoefficient g target decomp.Simplex
+        decomp.coeff decomp.simplex = 0 :=
+    signedFaceTargetEdgeCoefficient_zero_of_singular_boundary
+      g target B decomp.Simplex decomp.coeff decomp.simplex
+      decomp.chain_eq
   apply
     edgeChain_sum_singular_boundary_decomposition_scalar_coefficient_zero
-      g target v decomp.Simplex decomp.coeff decomp.simplex
+      g target v decomp.Simplex decomp.coeff decomp.simplex hcancel
   calc
     (∑ s : decomp.Simplex, decomp.coeff s •
         ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom
