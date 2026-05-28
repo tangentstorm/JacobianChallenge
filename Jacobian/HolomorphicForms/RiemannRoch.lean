@@ -18,7 +18,7 @@ prescribed simple pole.
 
 namespace JacobianChallenge.HolomorphicForms
 
-open scoped Manifold OnePoint
+open scoped Manifold OnePoint Topology
 
 /-!
 The old `riemannRochSpace : Submodule ℂ (MeromorphicFunctionType X)` and the
@@ -421,16 +421,214 @@ theorem genusZero_fixedPole_meromorphicData_nonempty
       poleDivisor_eq_point :=
         genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h ⟨f, hnc, hmem⟩ }⟩
 
+private theorem rr_orderAt_getD_eq_neg_one_of_mapAnalyticOrderAt_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P)
+    (han : f.AnalyticData) :
+    JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
+        (fun x => (f.toMap x).getD 0) =
+      ((-1 : ℤ) : WithTop ℤ) := by
+  classical
+  set e := chartAt ℂ P with he_def
+  set z₀ : ℂ := e P with hz₀_def
+  set F : X → ℂ := fun x => (f.toMap x).getD 0 with hF_def
+  set Flocal : ℂ → ℂ := F ∘ e.symm with hFlocal_def
+  set g : ℂ → ℂ :=
+    fun t =>
+      JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P t -
+        JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P z₀
+    with hg_def
+  have hP_source : P ∈ e.source := by
+    rw [he_def]
+    exact mem_chart_source ℂ P
+  have hP_target : z₀ ∈ e.target := by
+    rw [hz₀_def]
+    exact e.map_source hP_source
+  have hmap :
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 :=
+    han.simple_pole_order_one P hpole
+  have hpole_toMap : f.toMap P = (OnePoint.infty : OnePoint ℂ) := by
+    refine f.toMap_eq_infty_of_poleDivisor_pos P ?_
+    have hh : f.poleDivisor P = (Divisor.point P : Divisor X) P := by
+      change f.poles P = (Divisor.point P : Divisor X) P
+      rw [hpole]
+    rw [hh, Divisor.point_apply_self]
+    decide
+  have hchart_center :
+      JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P z₀ = 0 := by
+    have hsymm : e.symm z₀ = P := by
+      rw [hz₀_def]
+      exact e.left_inv hP_source
+    calc
+      JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P z₀ =
+          chartAt ℂ (f.toMap P) (f.toMap (e.symm z₀)) := by
+            simp [JacobianChallenge.HolomorphicForms.chartLocalAt, Function.comp_def,
+              he_def, hz₀_def]
+      _ = chartAt ℂ (OnePoint.infty : OnePoint ℂ) (OnePoint.infty : OnePoint ℂ) := by
+            rw [hsymm, hpole_toMap]
+      _ = 0 := by
+            change inversionChart (OnePoint.infty : OnePoint ℂ) = 0
+            rfl
+  have hg_nat : analyticOrderNatAt g z₀ = 1 := by
+    unfold JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt at hmap
+    simpa [hg_def, he_def, hz₀_def] using hmap
+  have hAnalytic_g : AnalyticAt ℂ g z₀ := by
+    by_contra hnot
+    have hzero := analyticOrderNatAt_of_not_analyticAt (𝕜 := ℂ) (E := ℂ)
+      (f := g) (z₀ := z₀) hnot
+    rw [hzero] at hg_nat
+    norm_num at hg_nat
+  have hOrd_g : meromorphicOrderAt g z₀ = ((1 : ℤ) : WithTop ℤ) := by
+    have hcompat := hAnalytic_g.meromorphicOrderAt_eq
+    cases horder_an : analyticOrderAt g z₀ with
+    | top =>
+        simp [analyticOrderNatAt, horder_an] at hg_nat
+    | coe n =>
+        have hn : n = 1 := by
+          simpa [analyticOrderNatAt, horder_an] using hg_nat
+        rw [hcompat, horder_an, hn]
+        rfl
+  have hg_eventually_inv :
+      g =ᶠ[𝓝[≠] z₀] Flocal⁻¹ := by
+    rw [Filter.EventuallyEq, eventually_nhdsWithin_iff]
+    filter_upwards [e.open_target.mem_nhds hP_target] with t ht ht_ne
+    have ht_ne' : t ≠ z₀ := by
+      intro htz
+      exact ht_ne (by simp [htz])
+    have hsymm_ne : e.symm t ≠ P := by
+      intro hsymm
+      have ht_eq : e (e.symm t) = t := e.right_inv ht
+      have hz_eq : e P = z₀ := hz₀_def
+      rw [hsymm, hz_eq] at ht_eq
+      exact ht_ne' ht_eq.symm
+    have htarget_chart :
+        chartAt ℂ (f.toMap P) = inversionChart := by
+      rw [hpole_toMap]
+      rfl
+    have hfinite :
+        f.toMap (e.symm t) = (((F (e.symm t)) : ℂ) : OnePoint ℂ) := by
+      have hpoleZero : f.poleDivisor (e.symm t) = 0 := by
+        have hh :
+            f.poleDivisor (e.symm t) = (Divisor.point P : Divisor X) (e.symm t) := by
+          change f.poles (e.symm t) = (Divisor.point P : Divisor X) (e.symm t)
+          rw [hpole]
+        rw [hh, Divisor.point_apply_ne hsymm_ne]
+      have hne : f.toMap (e.symm t) ≠ (OnePoint.infty : OnePoint ℂ) :=
+        f.toMap_ne_infty_of_poleDivisor_zero (e.symm t) hpoleZero
+      rcases hfx : f.toMap (e.symm t) with _ | z
+      · exact (hne hfx).elim
+      · simp only [hF_def, hfx, Option.getD_some]
+        change (some z : OnePoint ℂ) = ((z : ℂ) : OnePoint ℂ)
+        rfl
+    have hlocal_t :
+        JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P t =
+          (Flocal t)⁻¹ := by
+      calc
+        JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P t =
+            chartAt ℂ (f.toMap P) (f.toMap (e.symm t)) := by
+              simp [JacobianChallenge.HolomorphicForms.chartLocalAt, Function.comp_def,
+                he_def]
+        _ = inversionChart (f.toMap (e.symm t)) := by
+              rw [htarget_chart]
+        _ = inversionChart (((F (e.symm t) : ℂ) : OnePoint ℂ)) := by
+              rw [hfinite]
+        _ = (Flocal t)⁻¹ := by
+              change invFwd (((F (e.symm t) : ℂ) : OnePoint ℂ)) = (Flocal t)⁻¹
+              simp [Flocal]
+    calc
+      g t =
+          JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P t -
+            JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P z₀ := by
+            simp [hg_def]
+      _ = (Flocal t)⁻¹ := by
+            rw [hlocal_t, hchart_center]
+            simp
+      _ = (Flocal⁻¹) t := rfl
+  have hOrd_inv : meromorphicOrderAt (Flocal⁻¹) z₀ = ((1 : ℤ) : WithTop ℤ) := by
+    rw [← meromorphicOrderAt_congr hg_eventually_inv]
+    exact hOrd_g
+  have hOrd_Flocal : meromorphicOrderAt Flocal z₀ = ((-1 : ℤ) : WithTop ℤ) := by
+    rw [meromorphicOrderAt_inv] at hOrd_inv
+    have hneg := congrArg (fun a : WithTop ℤ => -a) hOrd_inv
+    simpa using hneg
+  have horder :
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+        meromorphicOrderAt (F ∘ (chartAt ℂ P).symm) (chartAt ℂ P P) :=
+    JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt P F
+  rw [horder]
+  simpa [Flocal, hFlocal_def, he_def, hz₀_def, F, hF_def] using hOrd_Flocal
+
+private theorem rr_tendsto_norm_atTop_of_order_neg_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (F : X → ℂ) (P : X)
+    (_hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p)
+    (horder :
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+        ((-1 : ℤ) : WithTop ℤ)) :
+    Filter.Tendsto (fun x => ‖F x‖) (nhdsWithin P {P}ᶜ) Filter.atTop := by
+  set e := chartAt ℂ P with he_def
+  have hP_source : P ∈ e.source := mem_chart_source ℂ P
+  have hOrd_pullback :
+      meromorphicOrderAt (F ∘ e.symm) (e P) = ((-1 : ℤ) : WithTop ℤ) := by
+    have h1 :
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+          meromorphicOrderAt (F ∘ e.symm) (e P) :=
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt P F
+    rw [h1] at horder
+    exact horder
+  have hNeg : meromorphicOrderAt (F ∘ e.symm) (e P) < (0 : WithTop ℤ) := by
+    rw [hOrd_pullback]
+    decide
+  have hTendsto_pullback :
+      Filter.Tendsto (fun w => ‖(F ∘ e.symm) w‖) (nhdsWithin (e P) {e P}ᶜ)
+        Filter.atTop := by
+    have h := tendsto_cobounded_of_meromorphicOrderAt_neg
+      (f := F ∘ e.symm) (x := e P) hNeg
+    rwa [← tendsto_norm_atTop_iff_cobounded] at h
+  have hChart_tendsto :
+      Filter.Tendsto (fun x => e x) (nhdsWithin P {P}ᶜ) (nhdsWithin (e P) {e P}ᶜ) := by
+    rw [tendsto_nhdsWithin_iff]
+    refine ⟨?_, ?_⟩
+    · have hcont : Filter.Tendsto e (𝓝 P) (𝓝 (e P)) :=
+        (e.continuousAt hP_source).tendsto
+      exact hcont.mono_left nhdsWithin_le_nhds
+    · have hsrc_nhd : e.source ∈ nhdsWithin P {P}ᶜ :=
+        mem_nhdsWithin_of_mem_nhds (e.open_source.mem_nhds hP_source)
+      filter_upwards [hsrc_nhd, self_mem_nhdsWithin] with x hx_src hx_ne
+      have hxP : x ≠ P := hx_ne
+      intro hex
+      apply hxP
+      exact e.injOn hx_src hP_source hex
+  have hComp_tendsto :
+      Filter.Tendsto (fun x => ‖(F ∘ e.symm) (e x)‖) (nhdsWithin P {P}ᶜ)
+        Filter.atTop :=
+    hTendsto_pullback.comp hChart_tendsto
+  refine hComp_tendsto.congr' ?_
+  have hsrc_nhd : e.source ∈ nhdsWithin P {P}ᶜ :=
+    mem_nhdsWithin_of_mem_nhds (e.open_source.mem_nhds hP_source)
+  filter_upwards [hsrc_nhd] with x hx_src
+  show ‖(F ∘ e.symm) (e x)‖ = ‖F x‖
+  congr 1
+  show F (e.symm (e x)) = F x
+  rw [e.left_inv hx_src]
+
 /--
 For an honest meromorphic-map-to-sphere `f` arising from the
 genus-zero Riemann-Roch witness (nonconstant, in `L([P])`, with
-`f.poles = Divisor.point P`), the local Laurent expansion near `P`
-gives the modulus-divergence content of `PoleModulusData`.
+`f.poles = Divisor.point P`) and carrying analytic simple-pole data,
+the local Laurent expansion near `P` gives the modulus-divergence
+content of `PoleModulusData`.
 
-**Why kept.** This theorem is referenced from the docstring of the
-genus-zero Riemann-Roch analytic-data bridge as part of the
-audit-trail discussion of why the production pipeline does *not*
-depend on the bare-hypothesis modulus theorem.
+The `AnalyticData` hypothesis is essential: the bare divisor equality
+does not imply modulus divergence for scaffold carriers.
 -/
 theorem genusZero_fixedPole_poleModulusData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -442,7 +640,8 @@ theorem genusZero_fixedPole_poleModulusData
     (f : MeromorphicMapToSphere X)
     (_hnc : f.Nonconstant)
     (_hmem : f.MemRiemannRochSpace (Divisor.point P))
-    (hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P)
+    (han : f.AnalyticData) :
     f.PoleModulusData := by
   classical
   refine ⟨?_⟩
@@ -456,7 +655,6 @@ theorem genusZero_fixedPole_poleModulusData
       rw [hpole]; exact hzero
     rw [hzero'] at hQ
     exact (lt_irrefl _) hQ
-  subst hQP
   refine ⟨fun x => (f.toMap x).getD 0, ?_, ?_⟩
   · intro x hx
     have hne_infty : f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) :=
@@ -465,8 +663,14 @@ theorem genusZero_fixedPole_poleModulusData
     · exact (hne_infty hfx).elim
     · simp only [hfx, Option.getD_some]
       rfl
-  · 
-    exact MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point f Q hpole
+  · have horder :
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
+            (fun x => (f.toMap x).getD 0) =
+          ((-1 : ℤ) : WithTop ℤ) :=
+      rr_orderAt_getD_eq_neg_one_of_mapAnalyticOrderAt_one f P hpole han
+    have hdivP := rr_tendsto_norm_atTop_of_order_neg_one
+      (fun x => (f.toMap x).getD 0) P han.meromorphic_getD horder
+    simpa [hQP] using hdivP
 
 /-!
 The remaining genus-zero fixed-pole route-data assemblies

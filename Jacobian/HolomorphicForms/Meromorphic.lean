@@ -260,22 +260,4 @@ theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivi
   show ‖g x‖ = ‖(f.toMap x).getD 0‖
   rw [hfx]; rfl
 
-/--
-For any `MeromorphicMapToSphere X` with pole divisor `Divisor.point P`,
-the norm of the canonical finite lift `x ↦ (f.toMap x).getD 0` tends to
-`+∞` along the punctured neighborhood of `P`.
--/
-theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (f : MeromorphicMapToSphere X) (P : X)
-    (hpole : f.poles = Divisor.point P) :
-    Filter.Tendsto
-      (fun x => ‖(f.toMap x).getD 0‖)
-      (nhdsWithin P {P}ᶜ)
-      Filter.atTop := by
-  sorry
-
 end JacobianChallenge.HolomorphicForms

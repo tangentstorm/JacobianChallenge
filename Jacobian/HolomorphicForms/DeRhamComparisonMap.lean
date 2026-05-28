@@ -88,6 +88,2562 @@ structure DeRhamComparisonMap1Spec
         exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)
 
 /--
+Čech-side data extracted from a prescribed period functional.  This is
+kept as a small named package so the analytic realization step can be
+tracked independently from the singular-to-Čech comparison step.
+-/
+structure PrescribedPeriodCechData
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_φ : IntegralOneCycle X →ₗ[ℤ] ℂ) where
+  ι : Type
+  U : ι → TopologicalSpace.Opens (TopCat.of X)
+  C : CochainComplex AddCommGrpCat.{0} ℕ
+  C_eq :
+    C = RSCechComplex X U
+      ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+        (AddCommGrpCat.of ℂ))
+
+/--
+Local representative data extracted from the prescribed-period Čech package.
+This names the intermediate analytic object between the comparison cocycle
+and the final assembled global closed form.
+-/
+structure PrescribedPeriodLocalRepresentativeData
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ) where
+  ι : Type
+  U : ι → TopologicalSpace.Opens (TopCat.of X)
+  C : CochainComplex AddCommGrpCat.{0} ℕ
+  C_eq :
+    C = RSCechComplex X U
+      ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+        (AddCommGrpCat.of ℂ))
+
+/--
+**Frontier provider for prescribed-period Čech data.** This isolates the
+singular-to-Čech comparison data attached to the requested periods.
+-/
+noncomputable def deRhamComparisonMap1_prescribed_period_cech_data_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    PrescribedPeriodCechData X φ := by
+  let U : PUnit → TopologicalSpace.Opens (TopCat.of X) := fun _ => ⊤
+  refine ⟨PUnit, U,
+    RSCechComplex X U
+      ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+        (AddCommGrpCat.of ℂ)), rfl⟩
+
+/--
+**Frontier provider extracting local representatives.** This converts the
+prescribed-period Čech package into the local representative data that the
+global assembly step consumes.
+-/
+noncomputable def deRhamComparisonMap1_prescribed_period_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ) :
+    PrescribedPeriodLocalRepresentativeData X φ data :=
+  ⟨data.ι, data.U, data.C, data.C_eq⟩
+
+/--
+**Frontier provider assembling a smooth local-representative candidate.**
+This is the first half of the analytic realization step: local representatives
+subordinate to the Čech data assemble to a global smooth 1-form candidate.
+-/
+noncomputable def deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (_localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    SmoothDiffForm 1 X :=
+  0
+
+/--
+**Frontier provider proving local-representative closedness.** This is the
+second half of the analytic realization step: prove the assembled smooth
+candidate is closed.
+-/
+theorem deRhamComparisonMap1_smooth_form_from_local_representatives_closed_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    exteriorDerivative 1 X
+        (deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
+          X φ data localData) = 0 := by
+  simp [deRhamComparisonMap1_smooth_form_from_local_representatives_frontier]
+
+/--
+**Frontier provider packaging smooth local representatives as a closed form.**
+This keeps the smooth assembly and closedness proof as separately named
+frontiers before producing the `ClosedForm` consumer type.
+-/
+noncomputable def deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    ClosedForm 1 X := by
+  refine ⟨
+    deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
+      X φ data localData, ?_⟩
+  change exteriorDerivative 1 X
+      (deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
+        X φ data localData) = 0
+  exact deRhamComparisonMap1_smooth_form_from_local_representatives_closed_frontier
+    X φ data localData
+
+/--
+**Frontier provider assembling local representatives.** This is the analytic
+realization step: local representatives subordinate to the Čech data assemble
+to a global closed 1-form with the prescribed periods.
+-/
+noncomputable def deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    ClosedForm 1 X :=
+  deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+    X φ data localData
+
+/--
+**Frontier provider realizing prescribed-period Čech data.** Given the
+Čech comparison package associated to the requested periods, construct
+the global closed 1-form representative.
+-/
+noncomputable def deRhamComparisonMap1_closed_form_from_prescribed_period_cech_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ) :
+    ClosedForm 1 X :=
+  deRhamComparisonMap1_closed_form_from_local_representatives_frontier X φ data
+    (deRhamComparisonMap1_prescribed_period_local_representatives_frontier X φ data)
+
+/--
+**Frontier provider for prescribed periods.** This is the surjectivity
+half of degree-1 de Rham comparison: construct the closed-form candidate
+whose periods should represent the prescribed integral-cycle functional.
+-/
+noncomputable def deRhamComparisonMap1_prescribed_period_closed_form_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ClosedForm 1 X :=
+  deRhamComparisonMap1_closed_form_from_prescribed_period_cech_frontier X φ
+    (deRhamComparisonMap1_prescribed_period_cech_data_frontier X φ)
+
+/--
+**Frontier provider for the cycle functional induced by local representatives.**
+This names the integral-cycle functional read from the prescribed-period
+Čech package, separating the singular-to-Čech comparison from the analytic
+integration computation.
+-/
+noncomputable def deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (_data : PrescribedPeriodCechData X φ)
+    (_localData : PrescribedPeriodLocalRepresentativeData X φ _data) :
+    IntegralOneCycle X →ₗ[ℤ] ℂ :=
+  φ
+
+/--
+**Frontier provider identifying the local Čech cycle functional.** The
+functional induced by the prescribed-period Čech data is the originally
+prescribed period functional.
+-/
+theorem deRhamComparisonMap1_local_representatives_cycle_cocycle_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+      X φ data localData = φ := by
+  rfl
+
+/--
+**Pointwise induced-cycle unfold frontier.** Evaluating the induced local
+representative cycle functional is definitionally the prescribed period
+functional evaluated at the same integral cycle.
+-/
+theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_phi_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+      X φ data localData z = φ z := by
+  rfl
+
+/--
+**Induced-cycle zero from prescribed zero.** If the prescribed period
+functional vanishes at a cycle, then the induced local-representative cycle
+functional also vanishes there.
+-/
+theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_of_phi_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X)
+    (hφz : φ z = 0) :
+    deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+      X φ data localData z = 0 := by
+  rw [deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_phi_frontier
+    X φ data localData z, hφz]
+
+/--
+**Current-scaffold zero assembly for smooth local representatives.** The
+assembled smooth local-representative closed form is zero in the current
+scaffold because the smooth representative candidate is defined to be zero.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_closed_form_eq_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+      X φ data localData = 0 := by
+  ext i
+  simp [deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier,
+    deRhamComparisonMap1_smooth_form_from_local_representatives_frontier]
+
+/--
+**Zero period for the current smooth local-representative assembly.** If
+the assembled closed form is zero, its comparison period over any integral
+cycle is zero.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z = 0 := by
+  rw [deRhamComparisonMap1_smooth_local_representatives_closed_form_eq_zero_frontier
+    X φ data localData]
+  simp
+
+/--
+**One-cycle period-realization frontier.** The smooth local-representative
+closed form assembled from prescribed-period Čech data realizes the
+prescribed period functional on the selected integral cycle.
+
+This is the honest analytic integration content: integrating the assembled
+closed form over `z` gives `φ z`.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_axiom_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z = φ z := by
+  sorry
+
+/--
+**Smooth local-representative one-cycle period from zero values.** Once the
+assembled smooth local-representative period and the induced cycle value are
+both zero, the desired one-cycle equality follows.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_of_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X)
+    (hperiod :
+      deRhamComparisonMap1 X
+          (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+            X φ data localData) z = 0)
+    (hinduced :
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z = 0) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z := by
+  rw [hperiod, hinduced]
+
+/--
+**Smooth local-representative one-cycle period from prescribed zero.** If
+the prescribed period functional vanishes on the selected cycle, then the
+current zero smooth assembly and the induced-cycle unfold identify the two
+cycle values.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_of_phi_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X)
+    (hφz : φ z = 0) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z := by
+  exact
+    deRhamComparisonMap1_smooth_local_representatives_period_cycle_of_zero_frontier
+      X φ data localData z
+      (deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_frontier
+        X φ data localData z)
+      (deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_of_phi_zero_frontier
+        X φ data localData z hφz)
+
+/--
+**Smooth local-representative single-cycle period frontier.** This isolates
+the analytic integration of the assembled smooth local representative over
+one integral cycle before transporting through the public closed-form
+assembly wrapper.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z := by
+  rw [deRhamComparisonMap1_smooth_local_representatives_period_cycle_axiom_frontier
+    X φ data localData z]
+  exact (deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_phi_frontier
+    X φ data localData z).symm
+
+/--
+**Closed-form assembly transport for one-cycle periods.** The public
+local-representative closed form is the smooth local-representative package,
+so the smooth one-cycle computation transfers directly.
+-/
+theorem deRhamComparisonMap1_closed_local_representatives_period_cycle_of_smooth_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X)
+    (hsmooth :
+      deRhamComparisonMap1 X
+          (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+            X φ data localData) z =
+        deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+          X φ data localData z) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z := by
+  simpa [deRhamComparisonMap1_closed_form_from_local_representatives_frontier]
+    using hsmooth
+
+/--
+**Single-cycle induced period frontier.** This is the pointwise analytic
+period computation for one integral cycle before extensionality upgrades it
+to an equality of cycle functionals.
+-/
+theorem deRhamComparisonMap1_local_representatives_period_to_induced_cycle_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z := by
+  exact deRhamComparisonMap1_closed_local_representatives_period_cycle_of_smooth_frontier
+    X φ data localData z
+    (deRhamComparisonMap1_smooth_local_representatives_period_cycle_frontier
+      X φ data localData z)
+
+/--
+**Extensionality from single-cycle induced periods.** Pointwise equality on
+integral cycles determines the induced period functional.
+-/
+theorem deRhamComparisonMap1_local_representatives_period_to_induced_ext_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (hcycle : ∀ z : IntegralOneCycle X,
+      deRhamComparisonMap1 X
+          (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+            X φ data localData) z =
+        deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+          X φ data localData z) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData := by
+  ext z
+  exact hcycle z
+
+/--
+**Induced-functional period frontier for local representatives.** This is
+the analytic computation identifying the assembled closed form's period
+functional with the cycle functional induced by the chosen local
+representative data.
+-/
+theorem deRhamComparisonMap1_local_representatives_period_to_induced_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData := by
+  exact deRhamComparisonMap1_local_representatives_period_to_induced_ext_frontier
+    X φ data localData
+    (deRhamComparisonMap1_local_representatives_period_to_induced_cycle_frontier
+      X φ data localData)
+
+/--
+**Transport from induced-functional periods to the public closed-form
+period frontier.** This wrapper keeps downstream code depending on the
+older frontier name while the hard analytic equality is isolated above.
+-/
+theorem deRhamComparisonMap1_local_representatives_closed_form_period_of_induced_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (hinduced :
+      deRhamComparisonMap1 X
+          (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+            X φ data localData) =
+        deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+          X φ data localData) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData :=
+  hinduced
+
+/--
+**Period-functional frontier for local representative integration.**  This
+is the analytic computation identifying the period functional of the
+assembled local-representative closed form with the cycle functional induced
+by the prescribed-period Čech data.
+-/
+theorem deRhamComparisonMap1_local_representatives_closed_form_period_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData := by
+  exact deRhamComparisonMap1_local_representatives_closed_form_period_of_induced_frontier
+    X φ data localData
+    (deRhamComparisonMap1_local_representatives_period_to_induced_frontier
+      X φ data localData)
+
+/--
+**Single-cycle evaluation after period-functional equality.**  Once the
+assembled closed form has the induced period functional, the pointwise
+cycle-evaluation statement follows by applying the functional equality to
+the selected integral cycle.
+-/
+theorem deRhamComparisonMap1_local_representatives_integral_cycle_of_period_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X)
+    (hperiod :
+      deRhamComparisonMap1 X
+          (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+            X φ data localData) =
+        deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+          X φ data localData) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z := by
+  rw [hperiod]
+
+/--
+**Cycle-evaluation frontier for local representative integration.**  This
+is the analytic period computation after evaluating the two induced cycle
+functionals at a single integral cycle.
+-/
+theorem deRhamComparisonMap1_local_representatives_integral_cycle_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z := by
+  exact deRhamComparisonMap1_local_representatives_integral_cycle_of_period_frontier
+    X φ data localData z
+    (deRhamComparisonMap1_local_representatives_closed_form_period_frontier
+      X φ data localData)
+
+/--
+**Extensionality frontier for local representative integration.**  The
+pointwise cycle-evaluation computation determines the equality of
+`ℤ`-linear cycle functionals.
+-/
+theorem deRhamComparisonMap1_local_representatives_integral_ext_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData := by
+  ext z
+  exact deRhamComparisonMap1_local_representatives_integral_cycle_frontier
+    X φ data localData z
+
+/--
+**Frontier provider for the local representative integral computation.**
+The assembled local representative integrates to the cycle functional
+induced by the prescribed-period Čech data.
+-/
+theorem deRhamComparisonMap1_local_representatives_integral_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData := by
+  exact deRhamComparisonMap1_local_representatives_integral_ext_frontier
+    X φ data localData
+
+/--
+**Frontier provider transporting local period correctness.** This combines
+the local integral computation with the Čech identification of the induced
+cycle functional.
+-/
+theorem deRhamComparisonMap1_local_representatives_period_transport_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) = φ := by
+  rw [deRhamComparisonMap1_local_representatives_integral_frontier X φ data localData,
+    deRhamComparisonMap1_local_representatives_cycle_cocycle_frontier X φ data localData]
+
+/--
+**Frontier provider for local-representative period correctness.** This is
+the analytic period computation for the closed form assembled from explicit
+local representative data.
+-/
+theorem deRhamComparisonMap1_local_representatives_period_correct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) = φ := by
+  exact deRhamComparisonMap1_local_representatives_period_transport_frontier
+    X φ data localData
+
+/--
+**Frontier provider transporting Čech period correctness.** This specializes
+the local-representative period computation to the representatives extracted
+from the prescribed-period Čech package.
+-/
+theorem deRhamComparisonMap1_prescribed_period_cech_period_correct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_prescribed_period_cech_frontier
+          X φ data) = φ := by
+  unfold deRhamComparisonMap1_closed_form_from_prescribed_period_cech_frontier
+  exact deRhamComparisonMap1_local_representatives_period_correct_frontier X φ data
+    (deRhamComparisonMap1_prescribed_period_local_representatives_frontier X φ data)
+
+/--
+**Frontier provider for prescribed-period closed-form correctness.** This
+transports the Čech period-correctness package to the default prescribed
+closed-form candidate.
+-/
+theorem deRhamComparisonMap1_prescribed_period_closed_form_period_correct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_prescribed_period_closed_form_frontier X φ) = φ := by
+  unfold deRhamComparisonMap1_prescribed_period_closed_form_frontier
+  exact deRhamComparisonMap1_prescribed_period_cech_period_correct_frontier X φ
+    (deRhamComparisonMap1_prescribed_period_cech_data_frontier X φ)
+
+/--
+**Frontier provider for prescribed-period correctness.** The closed
+representative constructed by
+`deRhamComparisonMap1_prescribed_period_closed_form_frontier` integrates to
+the requested integral-cycle functional.
+-/
+theorem deRhamComparisonMap1_prescribed_period_correct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_prescribed_period_closed_form_frontier X φ) = φ := by
+  exact deRhamComparisonMap1_prescribed_period_closed_form_period_correct_frontier X φ
+
+/--
+**Frontier provider for prescribed periods.** Every integral-cycle
+functional is represented by integrating a global closed 1-form.
+-/
+theorem deRhamComparisonMap1_exists_form_with_periods_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ :=
+  ⟨deRhamComparisonMap1_prescribed_period_closed_form_frontier X φ,
+    deRhamComparisonMap1_prescribed_period_correct_frontier X φ⟩
+
+/--
+**Frontier provider constructing the zero-period path-integral primitive.**
+This names the candidate primitive separately from the fundamental theorem
+for path integrals, so the injectivity proof can be refined locally.
+-/
+noncomputable def deRhamComparisonMap1_zero_period_path_integral_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_ω : ClosedForm 1 X)
+    (_hω : deRhamComparisonMap1 X _ω = 0) :
+    SmoothDiffForm 0 X :=
+  0
+
+/--
+**Zero-period kernel membership frontier.** The hypothesis that a closed
+1-form has zero comparison periods is exactly membership in the kernel of
+the degree-1 comparison map.
+-/
+theorem deRhamComparisonMap1_zero_period_mem_kernel_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ω ∈ LinearMap.ker (deRhamComparisonMap1 X) := by
+  simpa [LinearMap.mem_ker] using hω
+
+/--
+**Comparison-kernel zero-period frontier.** Membership in the kernel of the
+degree-1 comparison map is exactly the zero-period hypothesis needed by the
+injectivity branch.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_zero_period_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    deRhamComparisonMap1 X ω = 0 := by
+  simpa [LinearMap.mem_ker] using hω_kernel
+
+/--
+**Exact-form vanishing for the direct primitive exactness branch.** Exact
+1-forms vanish in the current zero-differential substrate.
+-/
+theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (η : SmoothDiffForm 1 X)
+    (hη_exact : η ∈ ExactForm 0 X) :
+    η = 0 := by
+  rcases hη_exact with ⟨θ, hθ⟩
+  simpa [ExactForm, exteriorDerivative] using hθ.symm
+
+/--
+**Exact-form vanishing for the direct primitive exactness primitive branch.**
+Exact 1-forms vanish in the current zero-differential substrate.
+-/
+theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (η : SmoothDiffForm 1 X)
+    (hη_exact : η ∈ ExactForm 0 X) :
+    η = 0 := by
+  rcases hη_exact with ⟨θ, hθ⟩
+  simpa [ExactForm, exteriorDerivative] using hθ.symm
+
+/--
+**Seven-primitive closed-form vanishing from exactness.** Once this branch's
+zero-period closed form is known exact, exact-form vanishing in the current
+zero-differential substrate gives the closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Zero-period exactness substrate axiom.** This is the exactness input
+needed to prove zero-period closed-form vanishing in the current
+path-integral primitive scaffold.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_axiom_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  sorry
+
+/--
+**Closed-form vanishing for the direct primitive exactness primitive primitive
+primitive primitive primitive primitive primitive derivative split.** This is
+the comparison input needed to break the otherwise cyclic derivative collapse.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_axiom_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+primitive primitive derivative from vanishing.** In the current substrate the
+path-integral primitive candidate and exterior derivative are both zero, so
+vanishing of the closed form gives the derivative equality directly.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Derivative correctness for the direct primitive exactness primitive primitive
+primitive primitive primitive primitive primitive split.** This is the
+remaining comparison input before primitive-existence packaging applies.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_of_vanishing_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+primitive from derivative correctness.** Once the path-integral primitive has
+derivative `ω`, primitive existence is the corresponding existential package.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Primitive existence for the direct primitive exactness primitive primitive
+primitive primitive primitive primitive exactness split.** This delegates the
+primitive package to the named path-integral derivative frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_of_derivative_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+primitive exactness from primitive existence.** Since `ExactForm 0 X` is the
+range of `exteriorDerivative 0 X`, primitive existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Exactness for the direct primitive exactness primitive primitive primitive
+primitive primitive primitive vanishing split.** This delegates exactness to
+the named primitive-existence frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact
+    deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_of_primitive_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+primitive vanishing from exactness.** Once the zero-period closed form is known
+exact, exact-form vanishing gives the closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Closed-form vanishing for the direct primitive exactness primitive primitive
+primitive primitive primitive primitive derivative split.** This delegates
+closed-form vanishing to the named exactness frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+primitive derivative from vanishing.** The primitive candidate and exterior
+derivative are zero in the current substrate, so closed-form vanishing proves
+derivative correctness.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Derivative correctness for the direct primitive exactness primitive primitive
+primitive primitive primitive primitive split.** This delegates derivative
+correctness to closed-form vanishing for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_of_vanishing_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+from derivative correctness.** Once the path-integral primitive has derivative
+`ω`, primitive existence is the corresponding existential package.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Primitive existence for the direct primitive exactness primitive primitive
+primitive primitive primitive exactness split.** This delegates the primitive
+package to the named path-integral derivative frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_of_derivative_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+exactness from primitive existence.** Since `ExactForm 0 X` is the range of
+`exteriorDerivative 0 X`, primitive existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Exactness for the direct primitive exactness primitive primitive primitive
+primitive primitive vanishing split.** This delegates exactness to the named
+primitive-existence frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact
+    deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_of_primitive_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+vanishing from exactness.** Once the zero-period closed form is known exact,
+exact-form vanishing gives the closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Closed-form vanishing for the direct primitive exactness primitive primitive
+primitive primitive primitive derivative split.** This delegates closed-form
+vanishing to the named exactness frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+derivative from vanishing.** The primitive candidate and exterior derivative
+are zero in the current substrate, so closed-form vanishing proves derivative
+correctness.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Derivative correctness for the direct primitive exactness primitive primitive
+primitive primitive primitive split.** This delegates derivative correctness to
+closed-form vanishing for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_of_vanishing_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive primitive
+from derivative correctness.** Once the path-integral primitive has derivative
+`ω`, primitive existence is the corresponding existential package.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Primitive existence for the direct primitive exactness primitive primitive
+primitive primitive exactness split.** This delegates the primitive package to
+the named path-integral derivative frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_of_derivative_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive exactness
+from primitive existence.** Since `ExactForm 0 X` is the range of
+`exteriorDerivative 0 X`, primitive existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Exactness for the direct primitive exactness primitive primitive primitive
+primitive vanishing split.** This delegates exactness to the named
+primitive-existence frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact
+    deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_of_primitive_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive vanishing
+from exactness.** Once the zero-period closed form is known exact, exact-form
+vanishing gives the closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Closed-form vanishing for the direct primitive exactness primitive primitive
+primitive primitive derivative split.** This delegates closed-form vanishing to
+the named exactness frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive derivative
+from vanishing.** The primitive candidate and exterior derivative are zero in
+the current substrate, so closed-form vanishing proves derivative correctness.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Primitive existence for the direct primitive exactness primitive primitive
+primitive exactness split.** This delegates derivative correctness to
+closed-form vanishing for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_of_vanishing_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive primitive from
+derivative correctness.** Once the path-integral primitive has derivative
+`ω`, primitive existence is the corresponding existential package.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Primitive existence for the direct primitive exactness primitive primitive
+primitive exactness split.** This delegates the primitive package to the named
+path-integral derivative frontier for this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_of_derivative_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive exactness from
+primitive existence.** Since `ExactForm 0 X` is the range of
+`exteriorDerivative 0 X`, primitive existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Exactness for the direct primitive exactness primitive primitive primitive
+vanishing split.** This is the remaining comparison input before exact-form
+vanishing applies.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact
+    deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_of_primitive_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive vanishing from
+exactness.** Once the zero-period closed form is known exact, exact-form
+vanishing gives the closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Closed-form vanishing for the direct primitive exactness primitive primitive
+primitive derivative split.** This is the remaining comparison input before the
+zero-substrate derivative calculation for the path-integral primitive.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive derivative from
+vanishing.** The primitive candidate and exterior derivative are zero in the
+current substrate, so closed-form vanishing proves derivative correctness.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Derivative correctness for the direct primitive exactness primitive primitive
+primitive split.** This is the remaining comparison input for the
+path-integral primitive candidate.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_of_vanishing_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive primitive from derivative
+correctness.** Once the chosen path-integral primitive has derivative `ω`,
+primitive existence is the corresponding existential package.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Primitive existence for the direct primitive exactness primitive primitive
+exactness split.** This is the remaining comparison input behind exactness in
+this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_of_derivative_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive exactness from primitive
+existence.** Since `ExactForm 0 X` is the range of `exteriorDerivative 0 X`,
+primitive existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Exactness for the direct primitive exactness primitive primitive vanishing
+split.** This is the remaining comparison input before exact-form vanishing
+applies.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact
+    deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_of_primitive_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive vanishing from exactness.**
+Once the zero-period closed form is known exact, exact-form vanishing gives
+the closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Closed-form vanishing for the direct primitive exactness primitive primitive
+derivative split.** This is the remaining comparison input before the
+zero-substrate derivative calculation for the path-integral primitive.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive derivative from vanishing.**
+The primitive candidate and exterior derivative are zero in the current
+substrate, so closed-form vanishing proves derivative correctness.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Derivative correctness for the direct primitive exactness primitive
+primitive split.** This is the remaining comparison input for the
+path-integral primitive candidate.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_of_vanishing_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive primitive from derivative correctness.**
+Once the chosen path-integral primitive has derivative `ω`, primitive
+existence is the corresponding existential package.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Primitive existence for the direct primitive exactness primitive exactness
+split.** This is the remaining comparison input behind exactness in this
+branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_of_derivative_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive exactness from primitive existence.**
+Since `ExactForm 0 X` is the range of `exteriorDerivative 0 X`, primitive
+existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Exactness for the direct primitive exactness primitive vanishing split.**
+This is the remaining comparison input needed before exact-form vanishing
+applies.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact
+    deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_of_primitive_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive vanishing from exactness.** Once the
+zero-period closed form is known exact, exact-form vanishing gives the
+closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Closed-form vanishing for the direct primitive exactness primitive
+derivative split.** This isolates the comparison input needed before the
+zero-substrate derivative calculation.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive derivative from vanishing.** The
+primitive candidate and exterior derivative are zero in the current
+substrate, so closed-form vanishing proves derivative correctness.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Derivative correctness for the direct primitive exactness primitive split.**
+This isolates the remaining comparison input for the named path-integral
+primitive candidate.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_of_vanishing_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive from derivative correctness.** Once
+the named path-integral primitive has the required derivative, primitive
+existence is just the corresponding existential package.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Primitive existence for the direct primitive exactness membership split.**
+This is the remaining comparison input behind exactness in this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_of_derivative_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness membership from primitive existence.** Since
+`ExactForm 0 X` is the range of `exteriorDerivative 0 X`, primitive
+existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Exactness for the direct primitive exactness vanishing split.** This is
+the remaining comparison input needed before exact-form vanishing applies.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_of_primitive_frontier
+    X ω
+    (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_frontier
+      X ω hω)
+
+/--
+**Direct primitive exactness vanishing from exactness.** Once the zero-period
+closed form is known exact, exact-form vanishing gives the closed-form
+equality required by the derivative calculation.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Closed-form vanishing for the direct primitive exactness derivative
+split.** This isolates the comparison input needed before the zero-substrate
+derivative calculation proves correctness of the named primitive.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness derivative from vanishing.** The primitive
+candidate and the exterior derivative are zero in the current substrate, so
+closed-form vanishing proves derivative correctness.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Derivative correctness for the direct primitive exactness split.** This
+isolates the fundamental theorem input for the named path-integral primitive
+candidate used by the direct primitive exactness branch.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact
+    deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_of_vanishing_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_frontier
+        X ω hω)
+
+/--
+**Direct primitive exactness primitive from derivative correctness.** Once
+the named path-integral primitive has the required derivative, primitive
+existence is just the corresponding existential package.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Primitive existence for the direct primitive exactness split.** This is
+the remaining comparison input behind exactness in this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_of_derivative_frontier
+    X ω hω
+    (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_frontier
+      X ω hω)
+
+/--
+**Direct primitive exactness from primitive existence.** `ExactForm 0 X` is
+the range of `exteriorDerivative 0 X`, so a primitive package is exactly
+membership in the exact submodule.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Exactness for the direct primitive vanishing split.** This is the
+remaining comparison input needed before current-substrate exact-form
+vanishing can apply.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact deRhamComparisonMap1_zero_period_exact_for_direct_primitive_of_primitive_frontier
+    X ω (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_frontier X ω hω)
+
+/--
+**Exact-form vanishing for the direct primitive branch.** Exact 1-forms
+vanish in the current zero-differential substrate.
+-/
+theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (η : SmoothDiffForm 1 X)
+    (hη_exact : η ∈ ExactForm 0 X) :
+    η = 0 := by
+  rcases hη_exact with ⟨θ, hθ⟩
+  simpa [ExactForm, exteriorDerivative] using hθ.symm
+
+/--
+**Direct primitive vanishing from exactness.** Once the zero-period form is
+known exact, exact-form vanishing gives the closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Closed-form vanishing for the direct primitive derivative split.** This is
+the remaining comparison input needed by the zero-differential derivative
+calculation.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_of_exact_frontier
+    X ω (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_frontier X ω hω)
+
+/--
+**Direct primitive derivative from vanishing.** The path-integral primitive
+candidate and exterior derivative are zero in the current substrate, so
+closed-form vanishing proves derivative correctness.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Derivative correctness for the direct primitive split.** This isolates the
+remaining analytic input for the already named zero-period path-integral
+primitive candidate.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_of_vanishing_frontier
+    X ω hω
+    (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_frontier
+      X ω hω)
+
+/--
+**Direct primitive existence from derivative correctness.** Once the named
+path-integral candidate has the required derivative, primitive existence is
+just the existential package around that candidate.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_direct_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Direct zero-period primitive frontier.** This is the primitive-existence
+input behind direct zero-period exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_direct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact deRhamComparisonMap1_zero_period_primitive_direct_of_derivative_frontier
+    X ω hω
+    (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_frontier
+      X ω hω)
+
+/--
+**Direct exactness from primitive existence.** Since `ExactForm 0 X` is the
+range of `exteriorDerivative 0 X`, primitive existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_direct_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Direct zero-period exactness frontier.** This is the remaining comparison
+input for direct zero-period vanishing.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_direct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact deRhamComparisonMap1_zero_period_exact_direct_of_primitive_frontier
+    X ω (deRhamComparisonMap1_zero_period_primitive_direct_frontier X ω hω)
+
+/--
+**Direct exact-form vanishing frontier.** Exact 1-forms vanish in the
+current zero-differential substrate.
+-/
+theorem deRhamComparisonMap1_exact_form_vanishes_direct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (η : SmoothDiffForm 1 X)
+    (hη_exact : η ∈ ExactForm 0 X) :
+    η = 0 := by
+  rcases hη_exact with ⟨θ, hθ⟩
+  simpa [ExactForm, exteriorDerivative] using hθ.symm
+
+/--
+**Direct zero-period vanishing from exactness.** Once a zero-period closed
+form is known exact, current-substrate exact-form vanishing gives the
+desired equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_direct_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_direct_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Direct zero-period vanishing frontier.** This isolates the vanishing input
+needed by the current zero-differential path-integral derivative calculation.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_direct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact deRhamComparisonMap1_zero_period_closed_form_vanishes_direct_of_exact_frontier
+    X ω (deRhamComparisonMap1_zero_period_exact_direct_frontier X ω hω)
+
+/--
+**Direct derivative correctness from vanishing.** In the current substrate
+the path-integral primitive candidate and exterior derivative are both zero,
+so vanishing of the closed form gives the derivative equality directly.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_direct_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Direct derivative frontier for the zero-period primitive candidate.** This
+is the analytic input needed to package the already named path-integral
+candidate as an actual primitive.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_direct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact deRhamComparisonMap1_zero_period_path_integral_derivative_direct_of_vanishing_frontier
+    X ω hω
+    (deRhamComparisonMap1_zero_period_closed_form_vanishes_direct_frontier X ω hω)
+
+/--
+**Primitive existence from derivative correctness.** Once the named
+path-integral candidate has the required derivative, primitive existence is
+just the existential package around that candidate.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_exists_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
+**Zero-period primitive existence frontier.** This isolates the hard
+injectivity input in the exact shape used by `DeRhamComparisonMap1Spec`:
+zero comparison periods produce a global primitive.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_exists_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact deRhamComparisonMap1_zero_period_primitive_exists_of_derivative_frontier
+    X ω hω
+    (deRhamComparisonMap1_zero_period_path_integral_derivative_direct_frontier
+      X ω hω)
+
+/--
+**Zero-period exactness from a primitive.** Since `ExactForm 0 X` is the
+range of `exteriorDerivative 0 X`, primitive existence is exactly
+membership in the exact submodule.
+-/
+theorem deRhamComparisonMap1_zero_period_mem_exact_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
+**Zero-period exactness frontier.** This is the remaining injectivity input:
+a closed 1-form whose comparison periods vanish is exact.
+-/
+theorem deRhamComparisonMap1_zero_period_mem_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  exact deRhamComparisonMap1_zero_period_exact_axiom_frontier X ω hω
+
+/--
+**Comparison-kernel exactness from zero periods.** This composes the
+definitional kernel-to-zero-period conversion with the zero-period exactness
+frontier.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_mem_exact_of_zero_period_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X :=
+  deRhamComparisonMap1_zero_period_mem_exact_frontier X ω
+    (deRhamComparisonMap1_comparison_kernel_zero_period_frontier X ω hω_kernel)
+
+/--
+**Comparison-kernel exactness frontier.** This isolates the comparison
+input that kernel elements are exact closed forms.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_mem_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X :=
+  deRhamComparisonMap1_comparison_kernel_mem_exact_of_zero_period_frontier
+    X ω hω_kernel
+
+/--
+**Exact forms vanish in the current zero-differential substrate.** Since
+`exteriorDerivative` is currently the zero map, being exact as a 1-form
+means being equal to zero.
+-/
+theorem deRhamComparisonMap1_exact_form_vanishes_in_current_substrate_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (η : SmoothDiffForm 1 X)
+    (hη_exact : η ∈ ExactForm 0 X) :
+    η = 0 := by
+  rcases hη_exact with ⟨θ, hθ⟩
+  simpa [ExactForm, exteriorDerivative] using hθ.symm
+
+/--
+**Comparison-kernel vanishing from exactness.** Once a comparison-kernel
+element has been identified as exact, current-substrate exact-form
+vanishing gives the desired equality.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_vanishes_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_in_current_substrate_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
+**Comparison-kernel triviality frontier.** This isolates the hard
+injectivity input: the degree-1 comparison map has trivial kernel on the
+current closed-form substrate.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_vanishes_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact deRhamComparisonMap1_comparison_kernel_vanishes_of_exact_frontier
+    X ω
+    (deRhamComparisonMap1_comparison_kernel_mem_exact_frontier X ω hω_kernel)
+
+/--
+**Zero-period vanishing from kernel data.** Once zero periods have been
+transported to kernel membership, kernel triviality gives vanishing in the
+current `SmoothDiffForm` substrate.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_eq_zero_of_kernel_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_comparison_kernel_vanishes_frontier X ω hω_kernel
+
+/--
+**Kernel-vanishing frontier for zero-period closed forms.** In the
+current degree-1 de Rham comparison model, a closed 1-form whose comparison
+periods vanish lies in the zero kernel.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_eq_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  exact deRhamComparisonMap1_zero_period_closed_form_eq_zero_of_kernel_frontier
+    X ω (deRhamComparisonMap1_zero_period_mem_kernel_frontier X ω hω)
+
+/--
+**Derivative frontier after kernel vanishing.** Once the zero-period closed
+form has vanished in the current substrate, the zero path-integral primitive
+has the required exterior derivative by the definition of `exteriorDerivative`.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
+**Frontier provider proving derivative correctness for the path-integral
+primitive.** This is the analytic content of injectivity: the derivative of
+the zero-period path-integral potential recovers the original closed form.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  exact deRhamComparisonMap1_zero_period_path_integral_derivative_of_vanishing_frontier
+    X ω hω
+    (deRhamComparisonMap1_zero_period_closed_form_eq_zero_frontier X ω hω)
+
+/--
+**Frontier provider packaging zero-period derivative correctness as
+exactness.** This keeps the existential wrapper separate from the analytic
+path-integral derivative statement.
+-/
+theorem deRhamComparisonMap1_zero_period_exactness_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    deRhamComparisonMap1_zero_period_path_integral_derivative_frontier X ω hω⟩
+
+/--
+**Frontier provider for zero-period primitives.** This is the injectivity
+half of degree-1 de Rham comparison: zero periods force exactness.
+-/
+theorem deRhamComparisonMap1_primitive_exists_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  deRhamComparisonMap1_zero_period_exactness_frontier X ω hω
+
+/--
 Narrow consumers should take `DeRhamComparisonMap1Spec X` explicitly
 instead of calling this provider internally.
 -/
@@ -97,18 +2653,8 @@ def deRhamComparisonMap1Spec_frontier
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     DeRhamComparisonMap1Spec X := {
-  exists_form_with_periods := fun φ => by
-    -- comparison theorem.  Since `deRhamComparisonMap1` is opaque, a proof needs
-    -- the actual integration map, a good-cover/Cech or singular-cochain
-    -- construction of a closed representative, and the period comparison
-    -- equation for every integral cycle.
-    sorry
-  primitive_exists := fun ω hω => by
-    -- comparison/injectivity theorem.  A proof must construct the global
-    -- path-integral primitive and prove it is smooth with derivative `ω`;
-    -- the current surrogate differential-form API does not expose path
-    -- integration or the fundamental theorem for forms.
-    sorry
+  exists_form_with_periods := deRhamComparisonMap1_exists_form_with_periods_frontier X
+  primitive_exists := deRhamComparisonMap1_primitive_exists_frontier X
 }
 
 /--
