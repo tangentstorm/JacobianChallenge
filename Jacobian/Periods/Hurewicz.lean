@@ -824,6 +824,20 @@ noncomputable def unitIntervalReverse : C(unitInterval, unitInterval) where
   norm_num [unitIntervalReverse]
 
 /--
+Concrete unit-interval reverse prism boundary.  This is the purely
+geometric chain in `[0,1]` whose boundary is the standard interval
+simplex plus its reversed parametrization.
+-/
+theorem unitInterval_reverse_prism_boundary :
+    ∃ reverseHomotopy : SingularChainCoproduct unitInterval 2,
+      (singularChainComplexZ unitInterval).d 2 1 reverseHomotopy =
+        singularChainElement
+          (unitIntervalReverse.comp stdSimplexToUnitInterval) +
+        singularChainElement stdSimplexToUnitInterval := by
+  -- Missing concrete two-simplex prism in the unit interval.
+  sorry
+
+/--
 Local reverse-reparametrization prism for one path-shaped singular
 simplex.  This is the exact relative one-simplex leaf needed by
 boundary-arc reversal: a path and the same path traversed with
@@ -836,9 +850,28 @@ theorem singularChainElement_reverse_path_homologous
         singularChainElement
           ((γ.comp unitIntervalReverse).comp stdSimplexToUnitInterval) +
         singularChainElement (γ.comp stdSimplexToUnitInterval) := by
-  -- Missing relative singular-prism computation for the path square
-  -- comparing a path with its reversed reparametrization.
-  sorry
+  obtain ⟨B, hB⟩ := unitInterval_reverse_prism_boundary
+  let F :=
+    (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+      (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom γ))
+  refine ⟨ModuleCat.Hom.hom (F.f 2) B, ?_⟩
+  have hcomm :
+      ModuleCat.Hom.hom (F.f 1)
+          ((singularChainComplexZ unitInterval).d 2 1 B) =
+        (singularChainComplexZ X).d 2 1
+          (ModuleCat.Hom.hom (F.f 2) B) := by
+    rw [← ModuleCat.comp_apply ((singularChainComplexZ unitInterval).d 2 1) (F.f 1)]
+    rw [← ModuleCat.comp_apply (F.f 2) ((singularChainComplexZ X).d 2 1)]
+    exact congrArg
+      (fun φ : (singularChainComplexZ unitInterval).X 2 ⟶
+          (singularChainComplexZ X).X 1 =>
+        ModuleCat.Hom.hom φ B)
+      (F.comm 2 1).symm
+  rw [← hcomm, hB, map_add]
+  rw [singularChainElement_map γ 1
+      (unitIntervalReverse.comp stdSimplexToUnitInterval)]
+  rw [singularChainElement_map γ 1 stdSimplexToUnitInterval]
+  rw [ContinuousMap.comp_assoc]
 
 /--
 The parameter along a partial oriented boundary arc.  The
