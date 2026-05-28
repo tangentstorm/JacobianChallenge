@@ -298,6 +298,24 @@ theorem deRhamComparisonMap1_local_representatives_cycle_cocycle_frontier
   rfl
 
 /--
+**Pointwise induced-cycle unfold frontier.** Evaluating the induced local
+representative cycle functional is definitionally the prescribed period
+functional evaluated at the same integral cycle.
+-/
+theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_phi_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+      X φ data localData z = φ z := by
+  rfl
+
+/--
 **Current-scaffold zero assembly for smooth local representatives.** The
 assembled smooth local-representative closed form is zero in the current
 scaffold because the smooth representative candidate is defined to be zero.
