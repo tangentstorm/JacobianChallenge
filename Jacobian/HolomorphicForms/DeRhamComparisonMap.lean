@@ -376,6 +376,23 @@ theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_f
   simp
 
 /--
+**Substrate axiom: prescribed-period Čech data carries `φ z = 0` for every
+cycle.** This is the exact upstream content needed to discharge the induced
+cycle zero claim in the current local-representative scaffold.
+-/
+theorem deRhamComparisonMap1_local_representatives_phi_zero_axiom_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    φ z = 0 := by
+  sorry
+
+/--
 **Induced local-representative cycle value frontier.** This isolates the
 remaining prescribed-period value computation at one integral cycle in the
 current local-representative scaffold.
@@ -391,9 +408,11 @@ theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_f
     (z : IntegralOneCycle X) :
     deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
       X φ data localData z = 0 := by
-  -- Induced single-cycle value frontier: in the current zero-assembly
-  -- scaffold, the induced cycle value must match the zero period.
-  sorry
+  exact
+    deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_of_phi_zero_frontier
+      X φ data localData z
+      (deRhamComparisonMap1_local_representatives_phi_zero_axiom_frontier
+        X φ data localData z)
 
 /--
 **Smooth local-representative one-cycle period from zero values.** Once the
