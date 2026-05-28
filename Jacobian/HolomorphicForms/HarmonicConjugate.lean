@@ -939,6 +939,65 @@ theorem dipole_pullback_at_pos
   rw [hfun] at hsum
   exact hsum
 
+/-- General-X dipole `-1` pole at `Q`, under the same-chart hypothesis
+`Q ∈ (chartAt ℂ P).source`. Symmetric mirror of `dipole_pullback_at_pos`.
+The `-f_Q` part contributes the singularity (witnessed by
+`log_pullback_at_neg Q`), and `f_P` is continuous at `Q` (it would
+only blow up at `P`, and `P ≠ Q`), so `add_tendsto` keeps the pole. -/
+theorem dipole_pullback_at_neg
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {P Q : X} (hPQ : P ≠ Q) (hQ_in_P : Q ∈ (chartAt ℂ P).source) :
+    HasLogarithmicSingularityAtReal X Q
+      (fun x : X =>
+        Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖
+        - Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖) (-1) := by
+  have hQ := HasLogarithmicSingularityAtReal.log_pullback_at_neg (X := X) Q
+  set g : X → ℝ :=
+    fun x : X => Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖ with hg_def
+  have hg_cont_at_Q : Filter.Tendsto (fun z : ℂ => g ((chartAt ℂ Q).symm z))
+      (nhds ((chartAt ℂ Q) Q))
+      (nhds (Real.log ‖chartAt ℂ P Q - (chartAt ℂ P) P‖)) := by
+    have hsymm_to_Q : Filter.Tendsto (fun z : ℂ => (chartAt ℂ Q).symm z)
+        (nhds ((chartAt ℂ Q) Q)) (nhds Q) := by
+      have hcont : ContinuousAt (chartAt ℂ Q).symm ((chartAt ℂ Q) Q) :=
+        (chartAt ℂ Q).continuousAt_symm
+          ((chartAt ℂ Q).map_source (mem_chart_source ℂ Q))
+      have hinv : (chartAt ℂ Q).symm ((chartAt ℂ Q) Q) = Q :=
+        (chartAt ℂ Q).left_inv (mem_chart_source ℂ Q)
+      simpa [ContinuousAt, hinv] using hcont.tendsto
+    have hP_cont_at_Q : ContinuousAt (chartAt ℂ P) Q :=
+      (chartAt ℂ P).continuousAt hQ_in_P
+    have hsub_cont : ContinuousAt (fun x : X => chartAt ℂ P x - (chartAt ℂ P) P) Q :=
+      hP_cont_at_Q.sub continuousAt_const
+    have hnorm_cont :
+        ContinuousAt (fun x : X => ‖chartAt ℂ P x - (chartAt ℂ P) P‖) Q :=
+      continuous_norm.continuousAt.comp hsub_cont
+    have hne_at_Q : chartAt ℂ P Q - (chartAt ℂ P) P ≠ 0 := by
+      intro h
+      apply hPQ.symm
+      have heq := sub_eq_zero.mp h
+      exact (chartAt ℂ P).injOn hQ_in_P (mem_chart_source ℂ P) heq
+    have hnorm_ne : ‖chartAt ℂ P Q - (chartAt ℂ P) P‖ ≠ 0 :=
+      norm_ne_zero_iff.mpr hne_at_Q
+    have hlog_cont : ContinuousAt
+        (fun x : X => Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖) Q :=
+      hnorm_cont.log hnorm_ne
+    exact hlog_cont.tendsto.comp hsymm_to_Q
+  have hsum := HasLogarithmicSingularityAtReal.add_tendsto hQ hg_cont_at_Q
+  have hfun :
+      (fun x : X => -Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖) + g
+        = fun x : X =>
+            Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖
+            - Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖ := by
+    funext x
+    show -Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖ + g x
+        = Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖
+          - Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖
+    simp [hg_def]
+    ring
+  rw [hfun] at hsum
+  exact hsum
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
