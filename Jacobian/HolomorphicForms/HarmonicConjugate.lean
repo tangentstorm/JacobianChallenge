@@ -1,5 +1,6 @@
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
+import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.HolomorphicForms.HarmonicDipole
 
@@ -217,6 +218,38 @@ still-cheating generic `existence_of_dipole_harmonic`. -/
 theorem existence_of_harmonic_off_for_re_on_complex (P Q : ℂ) :
     ∃ u : ℂ → ℝ, IsHarmonicOffReal ℂ P Q u :=
   ⟨Complex.re, IsHarmonicOffReal.re_off P Q⟩
+
+/-- Second-phase witness for `IsHarmonicConjugateAtReal` using
+nontrivial Mathlib API. On `X = ℂ` at any `x ∈ Complex.slitPlane`
+(i.e. `x ∉ ℝ≤0`), `Complex.arg` is a harmonic conjugate of
+`fun z => Real.log ‖z‖`. The full holomorphic function is
+`Complex.log z`, which is ℂ-differentiable on `slitPlane` by
+`Complex.hasDerivAt_log`. The chart pullback collapses via the
+self-chart `rfl`, and the integrand
+`(↑(log ‖z‖) + I * ↑(arg z))` equals `Complex.log z` after a
+`mul_comm` (the equation is essentially the definition of
+`Complex.log` rotated).
+
+Building block toward proving the canonical dipole
+`log ‖· - P‖ - log ‖· - Q‖` is harmonic off `{P, Q}`. -/
+theorem IsHarmonicConjugateAtReal.log_arg_at_slitPlane
+    {x : ℂ} (hx : x ∈ Complex.slitPlane) :
+    IsHarmonicConjugateAtReal ℂ (fun z : ℂ => Real.log ‖z‖) Complex.arg x := by
+  refine ⟨ContinuousLinearMap.smulRight (1 : ℂ →L[ℂ] ℂ) x⁻¹, ?_⟩
+  -- Chart pullback on the self-chart collapses to identity; rewrite
+  -- the integrand to Complex.log via its definition + mul_comm.
+  have hfun :
+      (fun z : ℂ =>
+          (Real.log ‖(chartAt ℂ x).symm z‖ : ℂ)
+            + Complex.I * (Complex.arg ((chartAt ℂ x).symm z) : ℂ))
+        = Complex.log := by
+    funext z
+    show (Real.log ‖z‖ : ℂ) + Complex.I * (Complex.arg z : ℂ)
+        = Complex.log z
+    rw [mul_comm]
+    rfl
+  rw [hfun]
+  exact (Complex.hasDerivAt_log hx).hasFDerivAt
 
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
