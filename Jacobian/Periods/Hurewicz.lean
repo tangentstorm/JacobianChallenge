@@ -4453,7 +4453,41 @@ theorem signedFaceTargetEdgeCoefficient_eq_edgeSimplexTargetCoefficient_of_sum
             SingularChainCoproduct (Polygon4g (g + 1)) 1)) :
     signedFaceTargetEdgeCoefficient g target Simplex coeff simplex =
       edgeSimplexTargetCoefficient g target v := by
-  sorry
+  classical
+  let I := (TopCat.toSSet.obj (TopCat.of (Polygon4g (g + 1)))).obj (op ⦋1⦌)
+  let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
+  let iso := ModuleCat.coprodIsoDirectSum Z
+  let targetIdx : I := singularChainSimplexIndex (Polygon4g (g + 1)) 1
+    (edgeSimplex g target)
+  let coeffAt : SingularChainCoproduct (Polygon4g (g + 1)) 1 →ₗ[ℤ] ℤ :=
+    (DirectSum.component ℤ I (fun _ : I => ℤ) targetIdx).comp iso.hom.hom
+  have hι (i : I) :
+      iso.hom.hom ((Sigma.ι Z i).hom (1 : ℤ)) =
+        DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ) := by
+    have hm := ModuleCat.ι_coprodIsoDirectSum_hom Z i
+    have hh := congrArg ModuleCat.Hom.hom hm
+    exact congrArg (fun f => f (1 : ℤ)) hh
+  have hcoeff := congrArg coeffAt _hB
+  have hleft :
+      coeffAt
+        (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
+          (Finset.univ : Finset (Fin 3)),
+          (coeff si.1 * ((-1 : ℤ) ^ (si.2 : ℕ))) •
+            (singularChainElement (singularSimplexFace (simplex si.1) si.2) :
+              SingularChainCoproduct (Polygon4g (g + 1)) 1)) =
+        signedFaceTargetEdgeCoefficient g target Simplex coeff simplex := by
+    simp [signedFaceTargetEdgeCoefficient, coeffAt, targetIdx,
+      singularChainElement, I, Z, iso, hι, map_sum, DirectSum.component.of]
+  have hright :
+      coeffAt
+        (∑ e : Fin (2 * (g + 1)), v e •
+          (singularChainElement (edgeSimplex g e) :
+            SingularChainCoproduct (Polygon4g (g + 1)) 1)) =
+        edgeSimplexTargetCoefficient g target v := by
+    simp [edgeSimplexTargetCoefficient, coeffAt, targetIdx,
+      singularChainElement, I, Z, iso, hι, map_sum, DirectSum.component.of]
+  rw [hleft, hright] at hcoeff
+  exact hcoeff
 
 /--
 The target coefficient of the concrete edge-simplex sum is the target
