@@ -316,6 +316,26 @@ theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_phi_fr
   rfl
 
 /--
+**Induced-cycle zero from prescribed zero.** If the prescribed period
+functional vanishes at a cycle, then the induced local-representative cycle
+functional also vanishes there.
+-/
+theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_of_phi_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X)
+    (hφz : φ z = 0) :
+    deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+      X φ data localData z = 0 := by
+  rw [deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_phi_frontier
+    X φ data localData z, hφz]
+
+/--
 **Current-scaffold zero assembly for smooth local representatives.** The
 assembled smooth local-representative closed form is zero in the current
 scaffold because the smooth representative candidate is defined to be zero.
