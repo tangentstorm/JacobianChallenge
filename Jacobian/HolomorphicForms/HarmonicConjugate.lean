@@ -491,6 +491,47 @@ theorem IsHarmonicConjugateAtReal.log_arg_rotated_sub_at_slitPlane
   exact (((hasDerivAt_id x).sub_const P).const_mul c).clog hxc
         |>.hasFDerivAt
 
+/-- Normalized rotated witness: absorb the `log ‖c‖` constant from
+`log_arg_rotated_sub_at_slitPlane` to land the `u` slot at the
+standard `log ‖z - P‖`. The `v` slot keeps the rotated form
+`arg (c * (z - P))`, which is a perfectly valid conjugate (the
+`IsHarmonicConjugateAtReal` predicate is existential in `v`).
+
+For `c * (x - P) ∈ Complex.slitPlane`, both `c ≠ 0` and `x ≠ P`
+follow via `zero_notMem_slitPlane` + `mul_ne_zero_iff`. The
+`log ‖c * (z - P)‖ = log ‖c‖ + log ‖z - P‖` identity holds on
+a neighborhood of `x` (specifically `{z | z ≠ P}`), so the
+`add_const_const + congr_of_eventuallyEq` chain absorbs the
+constant. -/
+theorem IsHarmonicConjugateAtReal.log_arg_rotated_normalized_at
+    {x P c : ℂ} (hxc : c * (x - P) ∈ Complex.slitPlane) :
+    IsHarmonicConjugateAtReal ℂ
+      (fun z : ℂ => Real.log ‖z - P‖)
+      (fun z : ℂ => Complex.arg (c * (z - P))) x := by
+  have hcxP_ne : c * (x - P) ≠ 0 :=
+    fun h => Complex.zero_notMem_slitPlane (h ▸ hxc)
+  have hc_ne : c ≠ 0 := (mul_ne_zero_iff.mp hcxP_ne).1
+  have hxP_ne : x - P ≠ 0 := (mul_ne_zero_iff.mp hcxP_ne).2
+  have hxP : x ≠ P := sub_ne_zero.mp hxP_ne
+  have h₀ := IsHarmonicConjugateAtReal.log_arg_rotated_sub_at_slitPlane
+                (P := P) (c := c) hxc
+  have h₁ := h₀.add_const_const (-Real.log ‖c‖) 0
+  refine h₁.congr_of_eventuallyEq ?_ ?_
+  · -- u-eventual-equality: log ‖c * (z - P)‖ + (-log ‖c‖) = log ‖z - P‖ near x.
+    have hopen : {z : ℂ | z ≠ P} ∈ nhds x :=
+      IsOpen.mem_nhds (isOpen_compl_iff.mpr (T1Space.t1 P)) hxP
+    filter_upwards [hopen] with z hzP
+    have hzP_ne : z - P ≠ 0 := sub_ne_zero.mpr hzP
+    show Real.log ‖c * (z - P)‖ + (-Real.log ‖c‖) = Real.log ‖z - P‖
+    rw [norm_mul,
+        Real.log_mul (norm_ne_zero_iff.mpr hc_ne)
+                     (norm_ne_zero_iff.mpr hzP_ne)]
+    ring
+  · -- v-eventual-equality: arg (c * (z - P)) + 0 = arg (c * (z - P)).
+    refine Filter.Eventually.of_forall (fun z => ?_)
+    show Complex.arg (c * (z - P)) + 0 = Complex.arg (c * (z - P))
+    ring
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
