@@ -2828,18 +2828,22 @@ noncomputable def toRiemannRochSectionAtPoint
       s.finiteLift P s.meromorphic_everywhere s.orderAt_P_eq_neg_one
 
 /--
-**Assembly helper: build a `PointRiemannRochSection X P` from
-`MeromorphicMapToSphere + AnalyticData + (poles = Divisor.point P)`
-data.**
+**Canonical assembly primitive: build a `PointRiemannRochSection X P`
+from `MeromorphicMapToSphere + granular meromorphic / pole-order
+hypotheses + (poles = Divisor.point P)` data.**
 
-Given any `MeromorphicMapToSphere X` `f` with pole divisor exactly
-`Divisor.point P` and an `AnalyticData` record `han` (which supplies
-the meromorphicity of the finite lift and the simple-pole order
-condition), this assembly produces a `PointRiemannRochSection X P`
-by consuming the existing field bridges:
+This is the canonical single entry point for assembling a
+`PointRiemannRochSection X P` from analytic data. It takes the
+granular hypotheses
 
-* `finiteLift := (f.toMap ·).getD 0`.
-* `meromorphic_everywhere := han.meromorphic_getD`.
+* `hmer : ∀ p, MeromorphicAtX ((f.toMap ·).getD 0) p` — chart-local
+  meromorphicity of the canonical finite lift at every point;
+* `hord1 : mapAnalyticOrderAt f.toMap P = 1` — the chart-local
+  analytic-order-one condition for the extension at the simple pole;
+
+and consumes the existing sorry-free field bridges:
+
+* `meromorphic_everywhere := hmer` (direct).
 * `order_ge_neg_one_at_P` — from
   `orderAt_getD_eq_neg_one_of_simple_pole` (equality `-1` weakened
   to `≤ -1` via `Eq.le`).
@@ -2849,49 +2853,14 @@ by consuming the existing field bridges:
 * `continuous_finiteLift_off` — from
   `continuousOn_getD_off_pole_of_poleDivisor_point` (structural-only).
 
-This assembly is **independent of the `genusZero_pointRRSection_outside_constants_exists`
-sorry**: it consumes only sorry-free bridges and the explicit input
-hypotheses. Future consumers with `AnalyticData` in hand can call
-this to obtain a `PointRiemannRochSection X P` directly.
--/
-noncomputable def of_meromorphicMap_analyticData_simple_pole
-    (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
-    (hpole : f.poles = Divisor.point P) :
-    PointRiemannRochSection X P where
-  finiteLift := fun q => (f.toMap q).getD 0
-  meromorphic_everywhere := han.meromorphic_getD
-  order_ge_neg_one_at_P := by
-    have h_eq : JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
-        (fun q => (f.toMap q).getD 0) = ((-1 : ℤ) : WithTop ℤ) :=
-      f.orderAt_getD_eq_neg_one_of_simple_pole
-        han.meromorphic_getD P hpole (han.simple_pole_order_one P hpole)
-    rw [h_eq]
-  noPoleOff_P :=
-    f.noPoleOff_P_of_poleDivisor_point han.meromorphic_getD P hpole
-  outside_constants := f.outside_constants_of_poleDivisor_point P hpole
-  continuous_finiteLift_off :=
-    f.continuousOn_getD_off_pole_of_poleDivisor_point P hpole
+The convenience wrapper `of_meromorphicMap_analyticData_simple_pole`
+below takes a full `AnalyticData` record instead and delegates here.
 
-/--
-**Granular variant of the assembly helper (pattern-symmetric with
-commit `2a4618ae`).**
-
-Like `of_meromorphicMap_analyticData_simple_pole` (commit `1a8f8102`)
-but taking only the granular projections `hmer` and `hord1` instead
-of the full `AnalyticData` record. This avoids requiring callers to
-construct a full `AnalyticData` shim when only the two specific
-projections are needed.
-
-The two `AnalyticData`-dependent bridges
-(`orderAt_getD_eq_neg_one_of_simple_pole` and
-`noPoleOff_P_of_poleDivisor_point`) were refactored in `2a4618ae` to
-take exactly these granular hypotheses; this helper completes the
-symmetry at the assembly level.
-
-The two structural-only fields (`outside_constants`,
-`continuous_finiteLift_off`) come directly from the corresponding
-bridges, which require no `AnalyticData` content. The trivial
-`meromorphic_everywhere` field is supplied directly by `hmer`.
+This assembly is **independent of the L2779 sorry**: it consumes only
+sorry-free bridges and the explicit input hypotheses. Future
+consumers with granular hypotheses (or a full `AnalyticData` record,
+via the wrapper) in hand can call this to obtain a
+`PointRiemannRochSection X P` directly.
 -/
 noncomputable def of_meromorphicMap_meromorphic_getD_simple_pole
     (f : MeromorphicMapToSphere X)
@@ -2912,6 +2881,27 @@ noncomputable def of_meromorphicMap_meromorphic_getD_simple_pole
   outside_constants := f.outside_constants_of_poleDivisor_point P hpole
   continuous_finiteLift_off :=
     f.continuousOn_getD_off_pole_of_poleDivisor_point P hpole
+
+/--
+**Assembly convenience wrapper (delegates to the canonical granular
+primitive `of_meromorphicMap_meromorphic_getD_simple_pole`).**
+
+Convenience form taking a full `AnalyticData` record `han` instead of
+the granular projections. The body is a one-line delegation: project
+`han.meromorphic_getD` and `han.simple_pole_order_one P hpole` and
+forward to the canonical granular primitive
+`of_meromorphicMap_meromorphic_getD_simple_pole` (commit `38662ec3`).
+
+The granular primitive (which consumes the bridges directly) is the
+single canonical assembly entry point; this wrapper exists for
+ergonomics when the caller has a full `AnalyticData` record in hand.
+-/
+noncomputable def of_meromorphicMap_analyticData_simple_pole
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    PointRiemannRochSection X P :=
+  of_meromorphicMap_meromorphic_getD_simple_pole
+    f han.meromorphic_getD P hpole (han.simple_pole_order_one P hpole)
 
 end PointRiemannRochSection
 
@@ -3071,56 +3061,25 @@ theorem genusZero_pointRRSection_outside_constants_exists
     (genusZero_singlePoleMeromorphicAnalyticData_nonempty X P h)
 
 /--
-**Explicit-input form of `genusZero_pointRRSection_outside_constants_exists`.**
+**Canonical explicit-input form of L2779 (granular).**
 
-Given a `MeromorphicMapToSphere X` `f` together with explicit
-`AnalyticData` and the pole-divisor equation `f.poles = Divisor.point P`,
-the `PointRiemannRochSection X P` carrier is inhabited — discharged
-sorry-free by the assembly helper
-`PointRiemannRochSection.of_meromorphicMap_analyticData_simple_pole`
-(commit `1a8f8102`).
+Given a `MeromorphicMapToSphere X` `f`, the granular projections
+`hmer` (chart-local meromorphicity of the canonical finite lift) and
+`hord1` (chart-local analytic-order-one for the extension at `P`),
+and the pole-divisor equation `f.poles = Divisor.point P`, the
+`PointRiemannRochSection X P` carrier is inhabited — discharged
+sorry-free by the canonical granular assembly primitive
+`PointRiemannRochSection.of_meromorphicMap_meromorphic_getD_simple_pole`
+(commit `38662ec3`).
 
-Pattern-aligned with the established `*_with_meromorphicData` /
-`*_with_analyticData` variants throughout the codebase
-(see e.g. `ofCurve_inj_with_meromorphicData` in `Solution.lean` and
-`nonconstant_single_pole_implies_genus_zero_with_meromorphicData`
-in `AnalyticOfCurveBasis.lean`).
-
-The bare form `genusZero_pointRRSection_outside_constants_exists`
-(above) remains as `sorry` until the upstream genus-zero RR chain is
-dependency-broken to produce `MeromorphicMapToSphere + AnalyticData`
-honestly. Future consumers with explicit analytic data in hand
-should prefer this form.
--/
-theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (_h : analyticGenus ℂ X = 0)
-    (f : MeromorphicMapToSphere X) (han : f.AnalyticData)
-    (hpole : f.poles = Divisor.point P) :
-    Nonempty (PointRiemannRochSection X P) :=
-  ⟨PointRiemannRochSection.of_meromorphicMap_analyticData_simple_pole f han P hpole⟩
-
-/--
-**Granular variant of
-`genusZero_pointRRSection_outside_constants_exists_with_analyticData`.**
-
-Like `_with_analyticData` (commit `6ed6908d`) but taking the granular
-projections `hmer` and `hord1` instead of the full `AnalyticData`
-record — pattern-symmetric with the granular assembly helper
-`of_meromorphicMap_meromorphic_getD_simple_pole` (commit `38662ec3`).
+The convenience wrapper
+`genusZero_pointRRSection_outside_constants_exists_with_analyticData`
+below takes a full `AnalyticData` record instead and delegates here.
 
 The bare form `genusZero_pointRRSection_outside_constants_exists`
 (above) remains as `sorry` until the upstream genus-zero RR chain is
-dependency-broken to produce `MeromorphicMapToSphere + AnalyticData`
-honestly.
-
-Use this form when the caller has partial analytic data — just
-`MeromorphicAtX` + `mapAnalyticOrderAt = 1` — without a full
-`AnalyticData` record.
+dependency-broken to produce `MeromorphicMapToSphere` plus granular
+analytic content honestly.
 -/
 theorem genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -3138,6 +3097,37 @@ theorem genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
     Nonempty (PointRiemannRochSection X P) :=
   ⟨PointRiemannRochSection.of_meromorphicMap_meromorphic_getD_simple_pole
     f hmer P hpole hord1⟩
+
+/--
+**Explicit-input convenience wrapper of L2779
+(delegates to the canonical granular form
+`genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD`).**
+
+Convenience form taking a full `AnalyticData` record `han` instead of
+the granular projections. The body is a one-line delegation: project
+`han.meromorphic_getD` and `han.simple_pole_order_one P hpole` and
+forward to the canonical granular form
+`genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD`
+(commit `4a675e96`).
+
+Pattern-aligned with the established `*_with_meromorphicData` /
+`*_with_analyticData` variants throughout the codebase
+(see e.g. `ofCurve_inj_with_meromorphicData` in `Solution.lean` and
+`nonconstant_single_pole_implies_genus_zero_with_meromorphicData`
+in `AnalyticOfCurveBasis.lean`).
+-/
+theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData)
+    (hpole : f.poles = Divisor.point P) :
+    Nonempty (PointRiemannRochSection X P) :=
+  genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
+    X P h f han.meromorphic_getD hpole (han.simple_pole_order_one P hpole)
 
 
 theorem genusZero_fixedPole_rrSection_nonempty
