@@ -327,6 +327,47 @@ theorem IsHarmonicConjugateAtReal.neg_log_arg_sub_at_slitPlane
                 (P := Q) hxQ).neg
   exact h
 
+/-- Generic additive closure for `IsHarmonicConjugateAtReal`: if
+`(u₁, v₁)` and `(u₂, v₂)` both satisfy the predicate at the same
+`x`, then their pointwise sum `(u₁ + u₂, v₁ + v₂)` does too. Proof
+adds the underlying `HasFDerivAt` witnesses via `HasFDerivAt.add`;
+the integrand rewrite uses `Complex.ofReal_add` (via `push_cast`)
+and `ring` to align
+`((u₁ + u₂) : ℂ) + I * (v₁ + v₂) = ((u₁ : ℂ) + I * v₁) + ((u₂ : ℂ) + I * v₂)`.
+
+Generic structural lemma — applies to any `(u_i, v_i, x)`.
+Companion to `IsHarmonicConjugateAtReal.neg`. -/
+lemma IsHarmonicConjugateAtReal.add
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {u₁ v₁ u₂ v₂ : X → ℝ} {x : X}
+    (h₁ : IsHarmonicConjugateAtReal X u₁ v₁ x)
+    (h₂ : IsHarmonicConjugateAtReal X u₂ v₂ x) :
+    IsHarmonicConjugateAtReal X (u₁ + u₂) (v₁ + v₂) x := by
+  obtain ⟨f₁', hf₁⟩ := h₁
+  obtain ⟨f₂', hf₂⟩ := h₂
+  refine ⟨f₁' + f₂', ?_⟩
+  have hfun :
+      (fun z : ℂ =>
+          ((u₁ + u₂) ((chartAt ℂ x).symm z) : ℂ)
+            + Complex.I * ((v₁ + v₂) ((chartAt ℂ x).symm z) : ℂ))
+        = (fun z : ℂ =>
+            ((u₁ ((chartAt ℂ x).symm z) : ℂ)
+              + Complex.I * (v₁ ((chartAt ℂ x).symm z) : ℂ))
+            + ((u₂ ((chartAt ℂ x).symm z) : ℂ)
+              + Complex.I * (v₂ ((chartAt ℂ x).symm z) : ℂ))) := by
+    funext z
+    show (((u₁ ((chartAt ℂ x).symm z) + u₂ ((chartAt ℂ x).symm z)) : ℝ) : ℂ)
+          + Complex.I
+            * (((v₁ ((chartAt ℂ x).symm z) + v₂ ((chartAt ℂ x).symm z)) : ℝ) : ℂ)
+        = ((u₁ ((chartAt ℂ x).symm z) : ℂ)
+            + Complex.I * (v₁ ((chartAt ℂ x).symm z) : ℂ))
+          + ((u₂ ((chartAt ℂ x).symm z) : ℂ)
+            + Complex.I * (v₂ ((chartAt ℂ x).symm z) : ℂ))
+    push_cast
+    ring
+  rw [hfun]
+  exact hf₁.add hf₂
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
