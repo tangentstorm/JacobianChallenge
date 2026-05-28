@@ -922,10 +922,11 @@ theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primiti
     X (ω : SmoothDiffForm 1 X) hω_exact
 
 /--
-**Seven-primitive exactness substrate axiom.** This is the exactness input
-needed by the seven-primitive closed-form vanishing frontier.
+**Zero-period exactness substrate axiom.** This is the exactness input
+needed to prove zero-period closed-form vanishing in the current
+path-integral primitive scaffold.
 -/
-theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_axiom_frontier
+theorem deRhamComparisonMap1_zero_period_exact_axiom_frontier
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -951,7 +952,7 @@ theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primiti
   exact
     deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_of_exact_frontier
       X ω
-      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_axiom_frontier
+      (deRhamComparisonMap1_zero_period_exact_axiom_frontier
         X ω hω)
 
 /--
