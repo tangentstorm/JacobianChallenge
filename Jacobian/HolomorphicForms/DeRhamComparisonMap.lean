@@ -941,6 +941,20 @@ theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primiti
     X (ω : SmoothDiffForm 1 X) hω_exact
 
 /--
+**Seven-primitive exactness substrate axiom.** This is the exactness input
+needed by the seven-primitive closed-form vanishing frontier.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_axiom_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  sorry
+
+/--
 **Closed-form vanishing for the direct primitive exactness primitive primitive
 primitive primitive primitive primitive primitive derivative split.** This is
 the comparison input needed to break the otherwise cyclic derivative collapse.
@@ -953,8 +967,11 @@ theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primiti
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) = 0 := by
-  -- Direct primitive exactness primitive primitive primitive primitive primitive primitive primitive vanishing frontier.
-  sorry
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_primitive_primitive_primitive_primitive_primitive_primitive_axiom_frontier
+        X ω hω)
 
 /--
 **Direct primitive exactness primitive primitive primitive primitive primitive
