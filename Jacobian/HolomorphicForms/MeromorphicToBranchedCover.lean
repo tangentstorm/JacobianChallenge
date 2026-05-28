@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.MeromorphicToCp1
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
+import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
@@ -1220,6 +1221,33 @@ They feed the conversion `PointRiemannRochSection.toRiemannRochSectionAtPoint`.
 -/
 
 /--
+**Provider (removable no-poles representative).** A meromorphic
+complex-valued function whose chart-local order is nonnegative at every
+point has a global holomorphic representative with the same punctured
+germ at every point.
+
+This is the local removable-singularity step needed before applying
+compact Liouville. It is narrower than `meromorphic_no_poles_constant`:
+it supplies only a holomorphic representative, not the global constant.
+-/
+theorem meromorphic_no_poles_contMDiff_representative
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (F : X → ℂ)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p)
+    (horders : ∀ p : X,
+      (0 : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F) :
+    ∃ G : X → ℂ,
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) G ∧
+      ∀ p : X, F =ᶠ[𝓝[≠] p] G := by
+  sorry
+
+/--
 **Provider (compact Liouville, germ form).** A meromorphic function
 on a compact connected charted space with no poles anywhere agrees,
 locally on a punctured neighborhood of every point, with a single
@@ -1244,7 +1272,13 @@ theorem meromorphic_no_poles_constant
       (0 : WithTop ℤ) ≤
         JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F) :
     ∃ c : ℂ, ∀ p : X, ∀ᶠ z in 𝓝[≠] p, F z = c := by
-  sorry
+  obtain ⟨G, hG_hol, hFG⟩ :=
+    meromorphic_no_poles_contMDiff_representative F hmer horders
+  obtain ⟨c, hGc⟩ := holomorphic_compact_connected_constant X G hG_hol
+  refine ⟨c, ?_⟩
+  intro p
+  filter_upwards [hFG p] with z hz
+  exact hz.trans (hGc z)
 
 /--
 **Provider (local Laurent → chart-order one for the extension).**
