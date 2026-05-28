@@ -1336,6 +1336,58 @@ theorem chart_pullback_dipole_has_conjugate_at_off_PQ
     (dipole_pullback_eq_compose_chart P Q x).symm
     (Filter.EventuallyEq.refl _ _)
 
+/-- Honest `IsHarmonicOffReal` for the chart-pullback dipole on
+general `X`, under the hypothesis that `chart_P.source ∩
+chart_Q.source` covers `X \ {P, Q}`. Direct application of
+`chart_pullback_dipole_has_conjugate_at_off_PQ` (Step 4) at each
+point. -/
+theorem dipole_pullback_isHarmonicOffReal_on_X
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (P Q : X)
+    (hcover : ∀ y : X, y ≠ P → y ≠ Q →
+      y ∈ (chartAt ℂ P).source ∧ y ∈ (chartAt ℂ Q).source) :
+    IsHarmonicOffReal X P Q
+      (fun y : X =>
+        Real.log ‖chartAt ℂ P y - (chartAt ℂ P) P‖
+        - Real.log ‖chartAt ℂ Q y - (chartAt ℂ Q) Q‖) := by
+  intro x hxP hxQ
+  obtain ⟨hxP_src, hxQ_src⟩ := hcover x hxP hxQ
+  exact chart_pullback_dipole_has_conjugate_at_off_PQ hxP hxQ hxP_src hxQ_src
+
+/-- Honest replacement for the former `existence_of_dipole_harmonic`
+cheat (deleted in this commit from `HarmonicDipole.lean`). Under
+`IsManifold` + same-chart-at-{P,Q} hypotheses + chart-cover hypothesis,
+the chart-pullback dipole
+`log ‖chart_P y - chart_P P‖ - log ‖chart_Q y - chart_Q Q‖` satisfies
+all three honest dipole properties simultaneously:
+- `HasLogarithmicSingularityAtReal X P u 1`
+- `HasLogarithmicSingularityAtReal X Q u (-1)`
+- `IsHarmonicOffReal X P Q u`
+
+Mirrors `existence_of_dipole_harmonic_off_on_complex` (commit `cb8e06fe`)
+for general `X`. Step 5 of the transition-map project, concluding the
+multi-commit sequence — the original `fun _ => 0` cheat in
+`HarmonicDipole.lean` is retired in this same commit. -/
+theorem existence_of_dipole_harmonic_off_on_X
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    {P Q : X} (hPQ : P ≠ Q)
+    (hP_in_Q : P ∈ (chartAt ℂ Q).source)
+    (hQ_in_P : Q ∈ (chartAt ℂ P).source)
+    (hcover : ∀ y : X, y ≠ P → y ≠ Q →
+      y ∈ (chartAt ℂ P).source ∧ y ∈ (chartAt ℂ Q).source) :
+    ∃ u : X → ℝ,
+      HasLogarithmicSingularityAtReal X P u 1 ∧
+      HasLogarithmicSingularityAtReal X Q u (-1) ∧
+      IsHarmonicOffReal X P Q u :=
+  ⟨fun y : X =>
+      Real.log ‖chartAt ℂ P y - (chartAt ℂ P) P‖
+      - Real.log ‖chartAt ℂ Q y - (chartAt ℂ Q) Q‖,
+    dipole_pullback_at_pos hPQ hP_in_Q,
+    dipole_pullback_at_neg hPQ hQ_in_P,
+    dipole_pullback_isHarmonicOffReal_on_X P Q hcover⟩
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function

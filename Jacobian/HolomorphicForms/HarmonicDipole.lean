@@ -33,7 +33,9 @@ def HasLogarithmicSingularityAtReal
 
 /-- Bridge from the genuine log-singularity predicate to the `True`-stub.
 Allows the contentful predicate to be substituted in callers without
-breaking the stub-based proof of `existence_of_dipole_harmonic`. -/
+breaking stub-based proofs (originally for the now-retired
+`existence_of_dipole_harmonic` cheat; replaced by
+`existence_of_dipole_harmonic_off_on_X` in `HarmonicConjugate.lean`). -/
 lemma HasLogarithmicSingularityAtReal.toStub
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     {P : X} {u : X → ℝ} {sign : ℝ}
@@ -47,8 +49,9 @@ genuine logarithmic singularity at `0` with sign `+1`. The chart at
 chart pullback collapses and the integrand
 `log ‖z‖ - 1 * log ‖z‖` is identically zero. Demonstrates that
 `HasLogarithmicSingularityAtReal` is non-vacuous and is the intended
-target predicate for the eventual real construction in
-`existence_of_dipole_harmonic`. -/
+target predicate for the real construction in
+`existence_of_dipole_harmonic_off_on_X` (in `HarmonicConjugate.lean`,
+which retired the former `existence_of_dipole_harmonic` cheat). -/
 theorem HasLogarithmicSingularityAtReal.log_abs_at_zero :
     HasLogarithmicSingularityAtReal ℂ (0 : ℂ) (fun z : ℂ => Real.log ‖z‖) 1 := by
   refine ⟨0, ?_⟩
@@ -72,8 +75,9 @@ theorem HasLogarithmicSingularityAtReal.log_abs_at_zero :
 function `z ↦ -log ‖z‖` has a logarithmic singularity at `0` with
 sign `-1`. The chart pullback collapses (identity chart on ℂ) and the
 integrand `-log ‖z‖ - (-1) * log ‖z‖` reduces to `0`. Together with
-`log_abs_at_zero`, this gives both poles needed for the eventual
-dipole construction in `existence_of_dipole_harmonic`. -/
+`log_abs_at_zero`, this gives both poles needed for the
+dipole construction in `existence_of_dipole_harmonic_off_on_X`
+(in `HarmonicConjugate.lean`). -/
 theorem HasLogarithmicSingularityAtReal.neg_log_abs_at_zero :
     HasLogarithmicSingularityAtReal ℂ (0 : ℂ)
       (fun z : ℂ => -Real.log ‖z‖) (-1) := by
@@ -151,8 +155,11 @@ and `g`'s chart-pullback tends to `d` at `(chartAt ℂ P) P`, then `u + g`
 has a logarithmic singularity at `P` with the same sign and limit `c + d`.
 
 Key building block for combining the single-point witnesses into the
-two-point dipole `log ‖· - P‖ - log ‖· - Q‖` needed to retire the
-`fun _ => 0` cheat in `existence_of_dipole_harmonic`. -/
+two-point dipole `log ‖· - P‖ - log ‖· - Q‖` used in the honest
+`existence_of_dipole_harmonic_off_on_complex` (and its general-`X`
+counterpart `existence_of_dipole_harmonic_off_on_X` in
+`HarmonicConjugate.lean`) that retired the former `fun _ => 0`
+cheat. -/
 lemma HasLogarithmicSingularityAtReal.add_tendsto
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     {P : X} {u g : X → ℝ} {sign : ℝ}
@@ -279,11 +286,11 @@ points `P Q : ℂ`, the canonical real dipole
 and `Q` (sign `-1`).
 
 First *honest* dipole-existence theorem in the project — does not
-rely on the `True`-stub side or on `fun _ => 0`. Companion to the
-still-cheating general-`X` `existence_of_dipole_harmonic`; the
-general statement requires partition-of-unity / chart-pullback
-machinery to lift this ℂ-specific construction, which is a
-multi-commit follow-up. -/
+rely on the `True`-stub side or on `fun _ => 0`. The general-`X`
+counterpart `existence_of_dipole_harmonic_off_on_X` (in
+`HarmonicConjugate.lean`) extends this construction using the
+chart-pullback dipole and retired the former cheating
+`existence_of_dipole_harmonic`. -/
 theorem existence_of_dipole_harmonic_on_complex
     {P Q : ℂ} (hPQ : P ≠ Q) :
     ∃ u : ℂ → ℝ,
@@ -298,19 +305,5 @@ def IsHarmonicOff
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (_P _Q : X) (_u : X → ℝ) : Prop :=
   True
-
-/-- Global existence of a harmonic dipole on X \ {P, Q}.
-Follows the project's scaffolding strategy by providing a trivial realization
-of the axiomatized local coordinate singularity. -/
-theorem existence_of_dipole_harmonic
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (P Q : X) (_h_neq : P ≠ Q) :
-    ∃ u : X → ℝ, HasLogarithmicSingularityAt X P u 1 ∧
-                 HasLogarithmicSingularityAt X Q u (-1) ∧
-                 IsHarmonicOff X P Q u := by
-  use fun _ => 0
-  exact ⟨trivial, trivial, trivial⟩
 
 end JacobianChallenge.HolomorphicForms
