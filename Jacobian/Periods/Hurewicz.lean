@@ -823,6 +823,56 @@ noncomputable def unitIntervalReverse : C(unitInterval, unitInterval) where
   ext
   norm_num [unitIntervalReverse]
 
+/-- The degenerate two-simplex in `[0,1]` filling an interval and its reverse. -/
+noncomputable def unitIntervalReversePrismSimplex :
+    C(stdSimplex ℝ (Fin 3), unitInterval) where
+  toFun := fun p =>
+    ⟨p.1 1, mem_Icc_of_mem_stdSimplex p.2 1⟩
+  continuous_toFun := by
+    exact Continuous.subtype_mk
+      ((continuous_apply 1).comp continuous_subtype_val) _
+
+/-- Constant singular one-simplex at `0 : unitInterval`. -/
+noncomputable def unitIntervalConstantZeroOneSimplex :
+    C(stdSimplex ℝ (Fin 2), unitInterval) :=
+  ⟨fun _ => (0 : unitInterval), continuous_const⟩
+
+lemma unitIntervalReversePrismSimplex_face_zero :
+    singularSimplexFace unitIntervalReversePrismSimplex (0 : Fin 3) =
+      unitIntervalReverse.comp stdSimplexToUnitInterval := by
+  ext s
+  have hcoord :
+      (stdSimplex.map Fin.succ s).val (1 : Fin 3) = s.1 (0 : Fin 2) := by
+    exact stdSimplex_map_succ_apply (n := 1) s (0 : Fin 2)
+  have hsum : s.1 0 + s.1 1 = 1 := by
+    simpa [Fin.sum_univ_two] using s.2.2
+  simp [singularSimplexFace, stdSimplexFaceMap, unitIntervalReversePrismSimplex,
+    unitIntervalReverse, stdSimplexToUnitInterval, hcoord]
+  linarith
+
+lemma unitIntervalReversePrismSimplex_face_one :
+    singularSimplexFace unitIntervalReversePrismSimplex (1 : Fin 3) =
+      unitIntervalConstantZeroOneSimplex := by
+  ext s
+  exact stdSimplex_map_succAbove_coord_eq_zero (n := 1) (j := (1 : Fin 3)) s
+
+lemma unitIntervalReversePrismSimplex_face_two :
+    singularSimplexFace unitIntervalReversePrismSimplex (2 : Fin 3) =
+      stdSimplexToUnitInterval := by
+  ext s
+  have hcoord :
+      (stdSimplex.map (Fin.succAbove (2 : Fin 3)) s).val (1 : Fin 3) =
+        s.1 (1 : Fin 2) := by
+    have hsucc :
+        (Fin.succAbove (2 : Fin 3) : Fin 2 → Fin 3) = Fin.castSucc := by
+      funext k
+      fin_cases k <;> rfl
+    rw [hsucc]
+    exact
+      stdSimplex_map_castSucc_apply (n := 1) s (1 : Fin 2)
+  simp [singularSimplexFace, stdSimplexFaceMap, unitIntervalReversePrismSimplex,
+    stdSimplexToUnitInterval, hcoord]
+
 /--
 Concrete unit-interval reverse prism boundary.  This is the purely
 geometric chain in `[0,1]` whose boundary is the standard interval
