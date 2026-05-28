@@ -311,6 +311,22 @@ lemma IsHarmonicConjugateAtReal.neg
   rw [hfun]
   exact hf.neg
 
+/-- Specialization of `IsHarmonicConjugateAtReal.neg` to the
+translated log/arg pair: the `-1`-pole-side conjugate witness
+needed for the canonical dipole. On `X = ℂ` at any `x` with
+`x - Q ∈ Complex.slitPlane`, the function
+`fun z => -Complex.arg (z - Q)` is a harmonic conjugate of
+`fun z => -Real.log ‖z - Q‖`. Combined holomorphic function is
+`-Complex.log (z - Q)`. -/
+theorem IsHarmonicConjugateAtReal.neg_log_arg_sub_at_slitPlane
+    {x Q : ℂ} (hxQ : x - Q ∈ Complex.slitPlane) :
+    IsHarmonicConjugateAtReal ℂ
+      (fun z : ℂ => -Real.log ‖z - Q‖)
+      (fun z : ℂ => -Complex.arg (z - Q)) x := by
+  have h := (IsHarmonicConjugateAtReal.log_arg_sub_at_slitPlane
+                (P := Q) hxQ).neg
+  exact h
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
