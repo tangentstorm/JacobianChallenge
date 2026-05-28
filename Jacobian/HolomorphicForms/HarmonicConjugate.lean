@@ -547,6 +547,48 @@ theorem IsHarmonicConjugateAtReal.neg_log_arg_rotated_normalized_at
                 (P := Q) (c := c) hxc).neg
   exact h
 
+/-- Rotated dipole conjugate under common rotation. For any `x` with
+a single rotation `c` such that `c * (x - P) ∈ Complex.slitPlane`
+AND `c * (x - Q) ∈ Complex.slitPlane`, the canonical dipole
+`log ‖z - P‖ - log ‖z - Q‖` has a harmonic conjugate at `x` given by
+`arg (c * (z - P)) - arg (c * (z - Q))`.
+
+Structurally identical to `dipole_conjugate_at_slit_intersection`
+but with both branches rotated by the same `c`. Coverage region is
+much larger: the topological existence-of-rotation lemma (next
+commit) shows any `x ∉ {P, Q}` admits such a `c`. -/
+theorem IsHarmonicConjugateAtReal.dipole_conjugate_at_common_rotation
+    {x P Q c : ℂ}
+    (hxP : c * (x - P) ∈ Complex.slitPlane)
+    (hxQ : c * (x - Q) ∈ Complex.slitPlane) :
+    IsHarmonicConjugateAtReal ℂ
+      (fun z : ℂ => Real.log ‖z - P‖ - Real.log ‖z - Q‖)
+      (fun z : ℂ =>
+        Complex.arg (c * (z - P)) - Complex.arg (c * (z - Q))) x := by
+  have hP := IsHarmonicConjugateAtReal.log_arg_rotated_normalized_at
+                (P := P) (c := c) hxP
+  have hQ := IsHarmonicConjugateAtReal.neg_log_arg_rotated_normalized_at
+                (Q := Q) (c := c) hxQ
+  have hsum := hP.add hQ
+  have hfun_u :
+      (fun z : ℂ => Real.log ‖z - P‖) + (fun z : ℂ => -Real.log ‖z - Q‖)
+        = fun z : ℂ => Real.log ‖z - P‖ - Real.log ‖z - Q‖ := by
+    funext z
+    show Real.log ‖z - P‖ + -Real.log ‖z - Q‖
+        = Real.log ‖z - P‖ - Real.log ‖z - Q‖
+    ring
+  have hfun_v :
+      (fun z : ℂ => Complex.arg (c * (z - P)))
+          + (fun z : ℂ => -Complex.arg (c * (z - Q)))
+        = fun z : ℂ =>
+            Complex.arg (c * (z - P)) - Complex.arg (c * (z - Q)) := by
+    funext z
+    show Complex.arg (c * (z - P)) + -Complex.arg (c * (z - Q))
+        = Complex.arg (c * (z - P)) - Complex.arg (c * (z - Q))
+    ring
+  rw [hfun_u, hfun_v] at hsum
+  exact hsum
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
