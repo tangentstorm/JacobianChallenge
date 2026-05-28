@@ -2459,8 +2459,7 @@ theorem deRhamComparisonMap1_zero_period_mem_exact_frontier
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
-  exact deRhamComparisonMap1_zero_period_mem_exact_of_primitive_frontier
-    X ω (deRhamComparisonMap1_zero_period_primitive_exists_frontier X ω hω)
+  exact deRhamComparisonMap1_zero_period_exact_axiom_frontier X ω hω
 
 /--
 **Comparison-kernel exactness from zero periods.** This composes the
