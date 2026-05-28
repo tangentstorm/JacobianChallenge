@@ -9,6 +9,8 @@ import Jacobian.HolomorphicForms.PullbackBundled
 import Jacobian.TraceDegree.TraceDefinition
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
+import Mathlib.Analysis.Complex.RemovableSingularity
+import Mathlib.Analysis.Complex.CauchyIntegral
 
 /-!
 # Trace form specification interface
@@ -999,7 +1001,32 @@ private theorem removableSingularity_oneD_punctured_disc
     ∃ (φ_ext : ℂ → ℂ) (s' : Set ℂ),
       s' ∈ 𝓝 c ∧ s' ⊆ _s ∧ AnalyticAt ℂ φ_ext c ∧
       ∀ z ∈ s', z ≠ c → φ_ext z = φ z := by
-  sorry
+  classical
+  -- φ is differentiable on _s \ {c}.
+  have hdiff : DifferentiableOn ℂ φ (_s \ {c}) := by
+    intro z hz
+    have hz_ne : z ≠ c := by
+      intro hzc; exact hz.2 hzc
+    exact ((_hφ_hol z hz.1 hz_ne).differentiableAt).differentiableWithinAt
+  -- ‖φ‖ is bounded above on _s \ {c} by M.
+  have hbnd : BddAbove (norm ∘ φ '' (_s \ {c})) := by
+    refine ⟨M, ?_⟩
+    rintro x ⟨z, ⟨hz_in_s, hz_not_c⟩, rfl⟩
+    have hz_ne : z ≠ c := fun hzc => hz_not_c hzc
+    exact _hφ_bnd z hz_in_s hz_ne
+  -- Apply Riemann's removable singularity theorem (bounded version).
+  have hext_diff :
+      DifferentiableOn ℂ
+        (Function.update φ c (limUnder (𝓝[≠] c) φ)) _s :=
+    Complex.differentiableOn_update_limUnder_of_bddAbove _hs_nhds hdiff hbnd
+  -- The updated function is analytic at c (1D Cauchy: DifferentiableOn → AnalyticAt).
+  set φ_ext : ℂ → ℂ := Function.update φ c (limUnder (𝓝[≠] c) φ) with hφ_ext_def
+  have hAnalyticAt : AnalyticAt ℂ φ_ext c := hext_diff.analyticAt _hs_nhds
+  refine ⟨φ_ext, _s, _hs_nhds, Set.Subset.rfl, hAnalyticAt, ?_⟩
+  -- Agreement: φ_ext z = φ z for z ≠ c.
+  intro z _ hz_ne
+  show Function.update φ c (limUnder (𝓝[≠] c) φ) z = φ z
+  exact Function.update_of_ne hz_ne _ _
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
   [StableChartAt ℂ X] in
