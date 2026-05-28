@@ -86,6 +86,37 @@ theorem existence_of_harmonic_conjugate_for_re_on_complex (x : ℂ) :
     ∃ v : ℂ → ℝ, IsHarmonicConjugateAtReal ℂ Complex.re v x :=
   ⟨Complex.im, IsHarmonicConjugateAtReal.re_im_at x⟩
 
+/-- Genuine sibling to the `True` slot in
+`continuous_cr_to_holomorphic_bridge`: `f : X → ℂ` is
+holomorphic-in-the-chart at `x` in the sense that the
+chart-pullback `z ↦ f ((chartAt ℂ x).symm z)` is
+`ℂ`-Fréchet-differentiable at the chart image of `x`.
+Generic over `f`, in contrast to `IsHarmonicConjugateAtReal`
+which fixes `f = u + iv`. Both predicates share the same
+`HasFDerivAt`-on-ℂ semantic framework. -/
+def IsHolomorphicInChartReal
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (f : X → ℂ) (x : X) : Prop :=
+  ∃ f' : ℂ →L[ℂ] ℂ,
+    HasFDerivAt (fun z : ℂ => f ((chartAt ℂ x).symm z)) f'
+      ((chartAt ℂ x) x)
+
+/-- Bridge: if some `f : X → ℂ` satisfies the equation
+`f x = u x + i v x` everywhere AND is holomorphic-in-chart at
+every point, then the existing `∃ f, … ∧ True` conclusion of
+`continuous_cr_to_holomorphic_bridge` holds. Allows contentful
+holomorphy data to be supplied without breaking the stub-based
+proof. -/
+lemma continuous_cr_to_holomorphic_bridge_real_bridge
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {u v : X → ℝ}
+    (h : ∃ f : X → ℂ,
+        (∀ x, f x = ↑(u x) + Complex.I * ↑(v x)) ∧
+          ∀ x, IsHolomorphicInChartReal X f x) :
+    ∃ f : X → ℂ, (∀ x, f x = ↑(u x) + Complex.I * ↑(v x)) ∧ True := by
+  obtain ⟨f, hf_eq, _⟩ := h
+  exact ⟨f, hf_eq, trivial⟩
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
