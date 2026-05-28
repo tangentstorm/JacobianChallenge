@@ -532,6 +532,21 @@ theorem IsHarmonicConjugateAtReal.log_arg_rotated_normalized_at
     show Complex.arg (c * (z - P)) + 0 = Complex.arg (c * (z - P))
     ring
 
+/-- Symmetric rotated -1 witness: the -1-pole-side counterpart to
+`log_arg_rotated_normalized_at`. For `c * (x - Q) ∈ Complex.slitPlane`,
+`fun z => -Complex.arg (c * (z - Q))` is a harmonic conjugate of
+`fun z => -Real.log ‖z - Q‖`. Combined holomorphic function is
+`-Complex.log (c * (z - Q))` (modulo absorbing `log ‖c‖` into the
+constant). Mirrors the unrotated `neg_log_arg_sub_at_slitPlane`. -/
+theorem IsHarmonicConjugateAtReal.neg_log_arg_rotated_normalized_at
+    {x Q c : ℂ} (hxc : c * (x - Q) ∈ Complex.slitPlane) :
+    IsHarmonicConjugateAtReal ℂ
+      (fun z : ℂ => -Real.log ‖z - Q‖)
+      (fun z : ℂ => -Complex.arg (c * (z - Q))) x := by
+  have h := (IsHarmonicConjugateAtReal.log_arg_rotated_normalized_at
+                (P := Q) (c := c) hxc).neg
+  exact h
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
