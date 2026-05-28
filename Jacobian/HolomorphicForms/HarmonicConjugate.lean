@@ -408,6 +408,54 @@ lemma IsHarmonicConjugateAtReal.add_const_const
   rw [hfun]
   exact hf.add_const _
 
+/-- Eventual-equality congruence for `IsHarmonicConjugateAtReal`:
+if `(u₁, v₁)` satisfy the predicate at `x` and `(u₂, v₂)` agree
+with `(u₁, v₁)` on a neighborhood of `x`, then `(u₂, v₂)` satisfy
+the predicate at `x` as well. Proof transports the underlying
+`HasFDerivAt` witness via `HasFDerivAt.congr_of_eventuallyEq`.
+
+Needed because some natural function identities (e.g.
+`Real.log ‖c * (z - P)‖ = Real.log ‖c‖ + Real.log ‖z - P‖` via
+`Real.log_mul + norm_mul`) only hold locally away from special
+points (here `z ≠ P`, since `Real.log 0 = 0` by convention).
+Global-function rewrites fail; eventual-equality rewrites work.
+
+Generic structural lemma — companion to `.neg`, `.add`, `.add_const_const`. -/
+lemma IsHarmonicConjugateAtReal.congr_of_eventuallyEq
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {u₁ v₁ u₂ v₂ : X → ℝ} {x : X}
+    (h : IsHarmonicConjugateAtReal X u₁ v₁ x)
+    (hu : u₁ =ᶠ[nhds x] u₂) (hv : v₁ =ᶠ[nhds x] v₂) :
+    IsHarmonicConjugateAtReal X u₂ v₂ x := by
+  obtain ⟨f', hf⟩ := h
+  refine ⟨f', ?_⟩
+  have hsymm_cont : Filter.Tendsto (fun z : ℂ => (chartAt ℂ x).symm z)
+      (nhds ((chartAt ℂ x) x)) (nhds x) := by
+    have hcont : ContinuousAt (chartAt ℂ x).symm ((chartAt ℂ x) x) :=
+      (chartAt ℂ x).continuousAt_symm
+        ((chartAt ℂ x).map_source (mem_chart_source ℂ x))
+    have hinv : (chartAt ℂ x).symm ((chartAt ℂ x) x) = x :=
+      (chartAt ℂ x).left_inv (mem_chart_source ℂ x)
+    simpa [ContinuousAt, hinv] using hcont.tendsto
+  have hu' : (fun z : ℂ => u₁ ((chartAt ℂ x).symm z))
+              =ᶠ[nhds ((chartAt ℂ x) x)]
+             (fun z : ℂ => u₂ ((chartAt ℂ x).symm z)) :=
+    hsymm_cont.eventually hu
+  have hv' : (fun z : ℂ => v₁ ((chartAt ℂ x).symm z))
+              =ᶠ[nhds ((chartAt ℂ x) x)]
+             (fun z : ℂ => v₂ ((chartAt ℂ x).symm z)) :=
+    hsymm_cont.eventually hv
+  have hsum : (fun z : ℂ =>
+                (u₁ ((chartAt ℂ x).symm z) : ℂ)
+                  + Complex.I * (v₁ ((chartAt ℂ x).symm z) : ℂ))
+              =ᶠ[nhds ((chartAt ℂ x) x)]
+              (fun z : ℂ =>
+                (u₂ ((chartAt ℂ x).symm z) : ℂ)
+                  + Complex.I * (v₂ ((chartAt ℂ x).symm z) : ℂ)) := by
+    filter_upwards [hu', hv'] with z hzu hzv
+    rw [hzu, hzv]
+  exact hf.congr_of_eventuallyEq hsum.symm
+
 /-- Rotated translated log/arg witness: for `c * (x - P) ∈ Complex.slitPlane`,
 the function `fun z => Complex.arg (c * (z - P))` is a harmonic conjugate
 of `fun z => Real.log ‖c * (z - P)‖`. Combined holomorphic function is
