@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.MeromorphicToCp1
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
+import Mathlib.Analysis.Meromorphic.NormalForm
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
@@ -1219,6 +1220,20 @@ The four lemmas below isolate the *purely local* facts about a
 meromorphic function with prescribed chart-local order at one pole.
 They feed the conversion `PointRiemannRochSection.toRiemannRochSectionAtPoint`.
 -/
+
+/--
+Moving-center coherence for `toMeromorphicNFAt`: when `f` is meromorphic
+at `z₀` with nonnegative meromorphic order, the pointwise normal-form
+replacements at nearby centers agree with the fixed normal form extracted
+at `z₀`.
+-/
+theorem toMeromorphicNFAt_moving_center_coherent_of_orderAt_nonneg
+    (f : ℂ → ℂ) (z₀ : ℂ)
+    (hf : MeromorphicAt f z₀)
+    (horder : (0 : WithTop ℤ) ≤ meromorphicOrderAt f z₀) :
+    ∃ U ∈ 𝓝 z₀, ∀ z ∈ U,
+      toMeromorphicNFAt f z z = toMeromorphicNFAt f z₀ z := by
+  sorry
 
 /--
 **Provider (removable no-poles representative).** A meromorphic
