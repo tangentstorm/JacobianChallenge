@@ -318,32 +318,477 @@ theorem traceAtRegularValue_locally_holomorphic_on_regular_locus
     (isHolomorphic_of_contMDiff hf
       (hasLocalKfoldRamification_of_contMDiff hf)) η y hy
 
+omit [T2Space X] [CompactSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [IsManifold 𝓘(ℂ, ℂ) ω Y]
+  [StableChartAt ℂ Y] in
 /--
-**Strictly narrower fiber-point helper (Provider 2 internal).**
+**Local-inverse preimage of any nhd is a nhd.** The single
+continuity-like consequence we need: for any open `W ∋ x`, the preimage
+`(h.localInverseAt x hx) ⁻¹' W` is a `𝓝 (f x)`-set.
 
-Given a branched cover datum `hbc` and a fiber point `x₀ ∈ f⁻¹{y₀}`,
-this provides a `Y`-neighbourhood `V` of `y₀`, an `X`-neighbourhood
-`W ⊆ W₀` of `x₀`, and a uniform bound `M` on the partial trace sum
-restricted to preimages of `y` lying in `W`, for all regular `y ∈ V`.
+Proof sketch: the BCD's `localInverseAt` agrees on a neighborhood of `f x`
+with an analytic local inverse `analyticInv` (constructed from the
+analytic-inverse-function theorem applied to `chartLocalAt f x` whose
+derivative at `chartAt ℂ x x` is nonzero because the ramification index
+is 1). The analytic local inverse is genuinely continuous at `f x`
+because it is the composition `(chartAt x).symm ∘ r ∘ chartAt(f x)`,
+where `r` is analytic on a neighborhood of `chartAt(f x)(f x)`. By
+combining the Tendsto from analytic continuity with the eventually-equality,
+the preimage of any open `W ∋ x` is a neighborhood of `f x`.
+-/
+private theorem localInverseAt_preimage_mem_nhds
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (hcompat : h.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    (x : X) (hx : h.ramificationIndex x = 1)
+    {W : Set X} (hW_open : IsOpen W) (hxW : x ∈ W) :
+    h.localInverseAt x hx ⁻¹' W ∈ 𝓝 (f x) := by
+  classical
+  obtain ⟨U, V, hUopen, hVopen, hxU, hfxV, hbij, _hright_branch, hleft_branch⟩ :=
+    h.localInverse_is_inverse hx
+  have hramAt : mapAnalyticOrderAt f x = 1 := by
+    rw [← h.ramificationIndex_eq_mapAnalyticOrderAt hcompat (hHol.holomorphicAt x)]
+    exact hx
+  have hderiv : deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 := by
+    have h_order : analyticOrderAt
+        (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
+        (chartAt ℂ x x) = 1 := by
+      convert hramAt using 1
+      unfold mapAnalyticOrderAt
+      simp +decide [analyticOrderNatAt]
+    have h_deriv_an : AnalyticAt ℂ
+        (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
+        (chartAt ℂ x x) :=
+      (hHol.holomorphicAt x).sub analyticAt_const
+    have h_deriv_order : analyticOrderAt
+        (deriv (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x)))
+        (chartAt ℂ x x) = 0 := by
+      have := AnalyticAt.analyticOrderAt_deriv_add_one h_deriv_an
+      aesop
+    rw [analyticOrderAt_eq_zero] at h_deriv_order
+    rcases h_deriv_order with hzero | hnezero
+    · exfalso; exact hzero (AnalyticAt.deriv h_deriv_an)
+    · simpa [deriv_sub_const] using hnezero
+  let analyticInv : Y → X := (hHol.holomorphicAt x).localInverse hderiv
+  let F : ℂ → ℂ := chartLocalAt f x
+  let z₀ : ℂ := chartAt ℂ x x
+  let w₀ : ℂ := chartAt ℂ (f x) (f x)
+  let r : ℂ → ℂ :=
+    (hHol.holomorphicAt x).hasStrictDerivAt.localInverse F
+      (deriv F z₀) z₀ hderiv
+  have hFz₀ : F z₀ = w₀ := by simp [F, z₀, w₀]
+  have hr_z₀ : r w₀ = z₀ := by
+    dsimp [r]
+    rw [← hFz₀]
+    exact (HasStrictDerivAt.eventually_left_inverse
+      (f := F) (f' := deriv F z₀) (a := z₀)
+      (hf := (hHol.holomorphicAt x).hasStrictDerivAt) (hf' := hderiv)).self_of_nhds
+  have hlocalInv_tendsto : Filter.Tendsto analyticInv (𝓝 (f x)) (𝓝 x) := by
+    have hr_an : AnalyticAt ℂ r w₀ := by
+      dsimp [r, F, z₀, w₀]
+      simpa [F, z₀, w₀, hFz₀] using
+        (hHol.holomorphicAt x).analyticAt_localInverse hderiv
+    have hr_tendsto : Filter.Tendsto r (𝓝 w₀) (𝓝 z₀) := by
+      simpa [ContinuousAt, hr_z₀] using hr_an.continuousAt
+    have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
+        (𝓝 (f x)) (𝓝 w₀) := by
+      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+    have hsymm_tendsto : Filter.Tendsto (fun z => (chartAt ℂ x).symm z)
+        (𝓝 z₀) (𝓝 x) := by
+      have hcont := (chartAt ℂ x).continuousAt_symm
+        ((chartAt ℂ x).map_source (mem_chart_source ℂ x))
+      change Filter.Tendsto (fun z => (chartAt ℂ x).symm z) (𝓝 z₀)
+        (𝓝 ((chartAt ℂ x).symm z₀)) at hcont
+      simpa [z₀, (chartAt ℂ x).left_inv (mem_chart_source ℂ x)] using hcont
+    have hcomp := hsymm_tendsto.comp (hr_tendsto.comp hchart_tendsto)
+    simpa [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀, w₀] using hcomp
+  have hanalyticInv_mem_U : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ U :=
+    hlocalInv_tendsto.eventually (hUopen.mem_nhds hxU)
+  have hanalyticInv_right : ∀ᶠ y in 𝓝 (f x), f (analyticInv y) = y := by
+    have hright_z : ∀ᶠ z in 𝓝 w₀, F (r z) = z := by
+      dsimp [r]
+      simpa [F, z₀, w₀, hFz₀] using
+        (HasStrictDerivAt.eventually_right_inverse
+          (f := F) (f' := deriv F z₀) (a := z₀)
+          (hf := (hHol.holomorphicAt x).hasStrictDerivAt) (hf' := hderiv))
+    have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
+        (𝓝 (f x)) (𝓝 w₀) := by
+      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+    have hright_y : ∀ᶠ y in 𝓝 (f x), F (r (chartAt ℂ (f x) y)) =
+        chartAt ℂ (f x) y :=
+      hchart_tendsto.eventually hright_z
+    have hy_source : ∀ᶠ y in 𝓝 (f x), y ∈ (chartAt ℂ (f x)).source :=
+      (chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x))
+    have hf_analyticInv_source : ∀ᶠ y in 𝓝 (f x),
+        f (analyticInv y) ∈ (chartAt ℂ (f x)).source := by
+      have htendsto : Filter.Tendsto (fun y => f (analyticInv y)) (𝓝 (f x)) (𝓝 (f x)) :=
+        Filter.Tendsto.comp hHol.continuous.continuousAt hlocalInv_tendsto
+      exact htendsto.eventually
+        ((chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x)))
+    filter_upwards [hright_y, hy_source, hf_analyticInv_source] with y hy_eq hy_src hfy_src
+    have hchart : chartAt ℂ (f x) (f (analyticInv y)) = chartAt ℂ (f x) y := by
+      simpa [analyticInv, IsHolomorphicAt.localInverse, F, r, z₀, w₀] using hy_eq
+    exact (chartAt ℂ (f x)).injOn hfy_src hy_src hchart
+  have heq : ∀ᶠ y in 𝓝 (f x), analyticInv y = h.localInverseAt x hx y := by
+    filter_upwards [hanalyticInv_mem_U, hanalyticInv_right] with y hy_an_U hy_an_right
+    have hleft := hleft_branch (analyticInv y) hy_an_U
+    rw [hy_an_right] at hleft
+    exact hleft.symm
+  have hW_nhd : W ∈ 𝓝 x := hW_open.mem_nhds hxW
+  have hanalyticInv_in_W : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ W :=
+    hlocalInv_tendsto.eventually hW_nhd
+  filter_upwards [hanalyticInv_in_W, heq] with y hy_an_W hy_eq
+  show h.localInverseAt x hx y ∈ W
+  rw [← hy_eq]; exact hy_an_W
 
-This isolates the entire analytic content needed for Provider (2):
+omit [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Local helper: continuity from `IsHolomorphicAt` for maps into
+`CotangentModelFiber ℂ`.** The chart on `CotangentModelFiber ℂ` is the
+homeomorphism `cotangentFiberIso : (ℂ →L[ℂ] ℂ) ≃L[ℂ] ℂ`, with global
+source. From `IsHolomorphicAt g p` (i.e. the chart-local pullback
+`cotangentFiberIso ∘ g ∘ (chartAt ℂ p).symm` is analytic at
+`chartAt ℂ p p`) we extract `ContinuousAt g p` by precomposing with
+the continuous chart map at `p` and postcomposing with the continuous
+inverse `cotangentFiberIso.symm`.
+-/
+private theorem IsHolomorphicAt.continuousAt_cotangentModelFiber
+    {p : Y} {g : Y → CotangentModelFiber ℂ}
+    (hg : IsHolomorphicAt g p) : ContinuousAt g p := by
+  -- `chartLocalAt g p` is analytic, hence continuous, at `chartAt ℂ p p`.
+  have h_chart_cont :
+      ContinuousAt (chartLocalAt g p) (chartAt ℂ p p) :=
+    hg.continuousAt
+  -- `chartAt ℂ p` is continuous at `p` (chart source is a nhd).
+  have h_chartAt_p_cont : ContinuousAt (chartAt ℂ p) p :=
+    (chartAt ℂ p).continuousAt (mem_chart_source ℂ p)
+  -- Composition: `chartLocalAt g p ∘ chartAt ℂ p` is continuous at `p`.
+  have h_comp_cont :
+      ContinuousAt (chartLocalAt g p ∘ chartAt ℂ p) p :=
+    h_chart_cont.comp h_chartAt_p_cont
+  -- On the chart source of `p`, this composition equals
+  -- `cotangentFiberIso ∘ g`.
+  have h_source_nhd : (chartAt ℂ p).source ∈ 𝓝 p :=
+    (chartAt ℂ p).open_source.mem_nhds (mem_chart_source ℂ p)
+  have h_eventually_eq :
+      ∀ᶠ q in 𝓝 p,
+        (chartLocalAt g p ∘ chartAt ℂ p) q = cotangentFiberIso (g q) := by
+    filter_upwards [h_source_nhd] with q hq
+    -- chartLocalAt g p = chartAt ℂ (g p) ∘ g ∘ (chartAt ℂ p).symm
+    -- evaluated at chartAt ℂ p q.
+    -- (chartAt ℂ p).symm (chartAt ℂ p q) = q since q in source.
+    show chartAt ℂ (g p) (g ((chartAt ℂ p).symm (chartAt ℂ p q))) =
+      cotangentFiberIso (g q)
+    rw [(chartAt ℂ p).left_inv hq]
+    -- chartAt ℂ (g p) on CotangentModelFiber ℂ is cotangentFiberIso.
+    rfl
+  -- Conclude `cotangentFiberIso ∘ g` is continuous at `p`.
+  have h_iso_g_cont : ContinuousAt (fun q => cotangentFiberIso (g q)) p :=
+    h_comp_cont.congr h_eventually_eq
+  -- `cotangentFiberIso.symm` is continuous on `CotangentModelFiber ℂ`.
+  have h_symm_cont :
+      Continuous (fun w : ℂ => cotangentFiberIso.symm w) :=
+    cotangentFiberIso.symm.continuous
+  -- Compose: `cotangentFiberIso.symm ∘ cotangentFiberIso ∘ g = g`.
+  have h_back :
+      ContinuousAt
+        (fun q => cotangentFiberIso.symm (cotangentFiberIso (g q))) p :=
+    h_symm_cont.continuousAt.comp h_iso_g_cont
+  -- Simplify using `cotangentFiberIso.symm_apply_apply`.
+  have h_eq : (fun q => cotangentFiberIso.symm (cotangentFiberIso (g q))) = g := by
+    funext q
+    exact cotangentFiberIso.symm_apply_apply (g q)
+  rw [h_eq] at h_back
+  exact h_back
 
-* at an **unramified** `x₀` (where `hbc.ramificationIndex x₀ = 1`),
-  `f` is locally a biholomorphism near `x₀` (via `localInverseAt`),
-  the cotangent pushforward varies continuously in `y`, and the bound
-  follows from sup norms on a small closed chart neighbourhood;
-* at a **ramified** `x₀` of index `n`, the local coordinate form
-  `w = z^n` makes the cotangent pushforwards at the `n` distinct
-  preimages of `y` near `y₀` have leading terms of the form
-  `(g(z_k) / (n z_k^{n-1})) dw`; summing over the `n` roots-of-unity
-  preimages cancels the fractional powers, leaving a clean power
-  series in `w` whose leading coefficient bounds the partial sum.
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**Strictly narrower fiber-point helper (Provider 2 internal),
+unramified leaf.** When `x₀` is unramified (ramification index 1),
+the local inverse of `f` near `x₀` makes the partial sum over
+preimages of `y` in `W₀ ∩ U₀` a single term, equal to the
+holomorphic function `localPullbackAt hbc hHol η x₀ hx₀_ram y`.
+Boundedness on a small `Y`-nhd of `y₀` follows from
+continuity at `y₀`.
+-/
+private theorem unramifiedFiberPoint_partialTrace_locally_bounded
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X)
+    (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (y₀ : Y) (x₀ : X) (hx₀_fiber : f x₀ = y₀)
+    (hx₀_ram : hbc.ramificationIndex x₀ = 1)
+    (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
+    ∃ (V : Set Y) (W : Set X) (M : ℝ),
+      IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
+      ∀ y ∈ V, ∀ (hy : isRegularValue hbc y),
+        ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+            (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+              CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
+  classical
+  have hHol : IsHolomorphic f :=
+    isHolomorphic_of_contMDiff hf (hasLocalKfoldRamification_of_contMDiff hf)
+  -- Step 1: extract local bijection (U₀, V₀).
+  obtain ⟨U₀, V₀, hU₀_open, hV₀_open, hxU₀, hfxV₀, hbij, hright, hleft⟩ :=
+    hbc.localInverse_is_inverse hx₀_ram
+  -- Step 2: W := W₀ ∩ U₀: open, x₀ ∈ W, W ⊆ W₀ and W ⊆ U₀.
+  set W : Set X := W₀ ∩ U₀ with hW_def
+  have hW_open : IsOpen W := hW₀_open.inter hU₀_open
+  have hxW : x₀ ∈ W := ⟨hxW₀, hxU₀⟩
+  have hW_sub_W₀ : W ⊆ W₀ := fun _ h => h.1
+  have hW_sub_U₀ : W ⊆ U₀ := fun _ h => h.2
+  -- Step 3: localInverseAt preimage of W is a Y-nhd of f x₀ = y₀.
+  have hWpre_nhd : hbc.localInverseAt x₀ hx₀_ram ⁻¹' W ∈ 𝓝 (f x₀) :=
+    localInverseAt_preimage_mem_nhds hbc hcompat hHol x₀ hx₀_ram hW_open hxW
+  obtain ⟨V₁, hV₁_sub, hV₁_open, hV₁_mem⟩ := mem_nhds_iff.mp hWpre_nhd
+  -- V₁ is open Y-set, f x₀ ∈ V₁, V₁ ⊆ preimage of W.
+  -- Step 4: the localPullbackAt is continuous at y₀ = f x₀.
+  have h_pullbackHol : IsHolomorphicAt
+      (localPullbackAt hbc hHol η x₀ hx₀_ram) (f x₀) :=
+    localPullbackAt_holomorphic hbc hcompat hHol η x₀ hx₀_ram
+  have h_pullbackCont : ContinuousAt
+      (localPullbackAt hbc hHol η x₀ hx₀_ram) (f x₀) :=
+    h_pullbackHol.continuousAt_cotangentModelFiber
+  -- Step 5: define M as ‖value at y₀‖ + 1 and extract bound.
+  set M : ℝ := ‖localPullbackAt hbc hHol η x₀ hx₀_ram (f x₀)‖ + 1 with hM_def
+  have hM_nhd : ∀ᶠ y in 𝓝 (f x₀),
+      ‖localPullbackAt hbc hHol η x₀ hx₀_ram y‖ ≤ M := by
+    have h_norm_cont : ContinuousAt
+        (fun y => ‖localPullbackAt hbc hHol η x₀ hx₀_ram y‖) (f x₀) :=
+      continuous_norm.continuousAt.comp h_pullbackCont
+    have h_lt : (fun y => ‖localPullbackAt hbc hHol η x₀ hx₀_ram y‖) (f x₀) < M := by
+      simp [hM_def]
+    exact h_norm_cont.eventually_lt_const h_lt |>.mono (fun y => le_of_lt)
+  obtain ⟨V₂, hV₂_sub, hV₂_open, hV₂_mem⟩ := mem_nhds_iff.mp hM_nhd
+  -- Step 6: assemble V := V₀ ∩ V₁ ∩ V₂.
+  set V : Set Y := V₀ ∩ V₁ ∩ V₂ with hV_def
+  have hV_open : IsOpen V := (hV₀_open.inter hV₁_open).inter hV₂_open
+  have hy₀_V : y₀ ∈ V := by
+    refine ⟨⟨?_, ?_⟩, ?_⟩
+    · rw [← hx₀_fiber]; exact hfxV₀
+    · rw [← hx₀_fiber]; exact hV₁_mem
+    · rw [← hx₀_fiber]; exact hV₂_mem
+  refine ⟨V, W, M, hV_open, hy₀_V, hW_open, hxW, hW_sub_W₀, ?_⟩
+  intro y hy_V hy_reg
+  -- The single-summand reduction: T.filter (· ∈ W) = {localInverseAt x₀ hx₀_ram y}.
+  set T : Finset X := (hbc.finite_fiber y).toFinset with hT_def
+  set xy : X := hbc.localInverseAt x₀ hx₀_ram y with hxy_def
+  have hy_V₀ : y ∈ V₀ := hy_V.1.1
+  have hy_V₁ : y ∈ V₁ := hy_V.1.2
+  have hy_V₂ : y ∈ V₂ := hy_V.2
+  -- f xy = y (since y ∈ V₀ and `hright`).
+  have hfxy : f xy = y := hright y hy_V₀
+  -- xy ∈ W (since y ∈ V₁ ⊆ preimage of W).
+  have hxyW : xy ∈ W := hV₁_sub hy_V₁
+  -- xy ∈ T (since f xy = y means xy ∈ f ⁻¹' {y}).
+  have hxyT : xy ∈ T := by
+    rw [hT_def, Set.Finite.mem_toFinset]
+    exact hfxy
+  -- T.filter (· ∈ W) = {xy} as a Finset.
+  have hfilter_eq : T.filter (· ∈ W) = ({xy} : Finset X) := by
+    apply Finset.ext
+    intro x'
+    simp only [Finset.mem_filter, Finset.mem_singleton]
+    constructor
+    · rintro ⟨hx'T, hx'W⟩
+      have hfx' : f x' = y := by
+        rw [hT_def, Set.Finite.mem_toFinset] at hx'T
+        exact hx'T
+      have hx'U₀ : x' ∈ U₀ := hW_sub_U₀ hx'W
+      have hLI : hbc.localInverseAt x₀ hx₀_ram (f x') = x' := hleft x' hx'U₀
+      rw [hfx'] at hLI
+      exact hLI.symm
+    · intro hx'_eq
+      refine ⟨?_, ?_⟩
+      · rw [hx'_eq]; exact hxyT
+      · rw [hx'_eq]; exact hxyW
+  -- Compute the sum: it's a single summand, equal to
+  -- localPullbackAt h hHol η x₀ hx₀_ram y.
+  have hM_bound : ‖localPullbackAt hbc hHol η x₀ hx₀_ram y‖ ≤ M :=
+    hV₂_sub hy_V₂
+  -- Type-stable summand using CotangentModelFiber ℂ (avoid dependent types).
+  let v : X → CotangentModelFiber ℂ := fun x =>
+    cotangentPushforward f x (η.toFun x)
+  -- The v-sum equals localPullbackAt.
+  have hv_sum_eq :
+      ((T.filter (· ∈ W)).attach.sum (fun x => v x.1) :
+        CotangentModelFiber ℂ) =
+        localPullbackAt hbc hHol η x₀ hx₀_ram y := by
+    rw [show (T.filter (· ∈ W)).attach.sum (fun x => v x.1) =
+          (T.filter (· ∈ W)).sum v from Finset.sum_attach _ v]
+    rw [hfilter_eq, Finset.sum_singleton]
+    rfl
+  have hbound_v : ‖((T.filter (· ∈ W)).attach.sum (fun x => v x.1) :
+        CotangentModelFiber ℂ)‖ ≤ M :=
+    (congrArg norm hv_sum_eq).le.trans hM_bound
+  -- Convert the goal to the v-sum form.
+  convert hbound_v
 
-Both branches require substantial chart-local analytic infrastructure
-that does not yet exist in this directory as composable lemmas. The
-helper is therefore a strictly narrower named provider, deferred to
-follow-up commits; combining it with the combinatorial fiber-assembly
-argument below produces the full Provider (2) bound.
+/--
+**Pure `k`-element-sum boundedness helper for the ramified leaf.**
+
+Given the kfold-ramification chart-local data (a chart-nhd `U_kfold`
+of `x₀` and Y-nhd `V_kfold` of `y₀` such that every `y ∈ V_kfold`
+with `y ≠ y₀` has a Finset `s_y` of exactly `k` unramified
+preimages of `y` in `U_kfold`, exhausting all preimages of `y` in
+`U_kfold`), this provides an open `Y`-nhd `V`, an open `X`-nhd
+`W ⊆ W₀ ∩ U_kfold` of `x₀`, and a uniform bound `M` on the partial
+sum over preimages in `W` for regular `y ∈ V, y ≠ y₀`.
+
+The hypothesis explicitly carries the kfold-ramification structure,
+making the obligation strictly chart-local: it only depends on the
+kfold chart data and the input form `η`, not on the global properties
+of `f` or `hbc`.
+
+This is the genuinely deep roots-of-unity cancellation step. The
+chart-local form `w = z^k + …` makes the `k` preimages
+`z_j ≈ w^{1/k} ζ^j` (with `ζ = e^{2πi/k}`), each contributing a
+cotangent pushforward whose leading term has fractional `w`-power
+`w^{(1-k)/k}` that individually blows up as `y → y₀`. Summing over
+the `k` preimages cancels these fractional powers (roots-of-unity
+summing to 0 except in multiples of `k`), leaving a clean power
+series in `w` whose leading coefficient provides the bound.
+
+This is the sole remaining sorry for the ramified leaf, isolated
+as a single chart-local analytic statement.
+-/
+private theorem ramifiedKfoldSum_locally_bounded
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X)
+    (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (y₀ : Y) (x₀ : X) (hx₀_fiber : f x₀ = y₀)
+    (k : ℕ) (hk_pos : 0 < k) (hk_ram : k = hbc.ramificationIndex x₀)
+    (U_kfold : Set X) (hU_kfold_open : IsOpen U_kfold) (hxU_kfold : x₀ ∈ U_kfold)
+    (V_kfold : Set Y) (hV_kfold_open : IsOpen V_kfold) (hy₀V_kfold : y₀ ∈ V_kfold)
+    (h_kfold_data : ∀ y ∈ V_kfold, y ≠ y₀ →
+      ∃ s : Finset X, s.card = k ∧ (↑s : Set X) ⊆ U_kfold ∧
+        (∀ x' ∈ s, f x' = y ∧ hbc.ramificationIndex x' = 1) ∧
+        (∀ x' ∈ U_kfold, f x' = y → x' ∈ s))
+    (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
+    ∃ (V : Set Y) (W : Set X) (M : ℝ),
+      IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
+      ∀ y ∈ V, y ≠ y₀ → ∀ (hy : isRegularValue hbc y),
+        ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+            (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+              CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
+  sorry
+
+/--
+**Strictly narrower fiber-point helper (Provider 2 internal),
+ramified leaf, `y ≠ y₀` case.** When `x₀` is ramified of index
+`n ≥ 2`, the local coordinate form `w = z^n + …` makes the `n`
+cotangent pushforwards at the preimages of `y` near `y₀ = f x₀` have
+leading terms with fractional `w`-powers `w^{(1-n)/n}` that
+individually blow up. The sum over the `n` roots-of-unity preimages
+cancels these fractional powers, leaving a clean power series in
+`w` whose leading coefficient provides a chart-local bound.
+
+The hypothesis `y ≠ y₀` is essential: at `y = y₀ = f x₀`, the
+preimages collapse to `x₀` itself (no `n`-fold splitting), and the
+sum is not given by the same formula. (The `y = y₀` case is
+vacuous in the broader `ramifiedFiberPoint_partialTrace_locally_bounded`
+because `y₀` is not a regular value when `x₀` is ramified.)
+
+This is now a sorry-free reduction to the strictly narrower
+`ramifiedKfoldSum_locally_bounded`: apply `local_kfold_ramified` to
+identify the partial sum over preimages in `W₀ ∩ U_kfold` with the
+`k`-element Finset of unramified preimages of `y` produced by the
+kfold structure, then delegate the pure boundedness obligation.
+-/
+private theorem ramifiedNonY₀FiberPoint_partialTrace_locally_bounded
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X)
+    (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (y₀ : Y) (x₀ : X) (hx₀_fiber : f x₀ = y₀)
+    (hx₀_ram : hbc.ramificationIndex x₀ ≠ 1)
+    (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
+    ∃ (V : Set Y) (W : Set X) (M : ℝ),
+      IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
+      ∀ y ∈ V, y ≠ y₀ → ∀ (hy : isRegularValue hbc y),
+        ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+            (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+              CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
+  -- Extract the kfold-ramification structure at x₀ from IsHolomorphic.
+  have hHol : IsHolomorphic f :=
+    isHolomorphic_of_contMDiff hf (hasLocalKfoldRamification_of_contMDiff hf)
+  let k : ℕ := hbc.ramificationIndex x₀
+  have hk_pos : 0 < k := hbc.ramificationIndex_pos x₀
+  have hk_ram_eq : k = mapAnalyticOrderAt f x₀ :=
+    hbc.ramificationIndex_eq_mapAnalyticOrderAt hcompat (hHol.holomorphicAt x₀)
+  obtain ⟨U_kfold, hU_kfold_open, hxU_kfold, V_kfold, hV_kfold_open,
+    hfxV_kfold, h_kfold_raw⟩ :=
+    hHol.local_kfold_ramified hk_pos hk_ram_eq.symm
+  have hy₀V_kfold : y₀ ∈ V_kfold := hx₀_fiber ▸ hfxV_kfold
+  -- Convert mapAnalyticOrderAt-typed kfold_data to hbc.ramificationIndex-typed.
+  have h_kfold_data : ∀ y ∈ V_kfold, y ≠ y₀ →
+      ∃ s : Finset X, s.card = k ∧ (↑s : Set X) ⊆ U_kfold ∧
+        (∀ x' ∈ s, f x' = y ∧ hbc.ramificationIndex x' = 1) ∧
+        (∀ x' ∈ U_kfold, f x' = y → x' ∈ s) := by
+    intro y hyV hyne
+    have hyne' : y ≠ f x₀ := by rw [hx₀_fiber]; exact hyne
+    obtain ⟨s, hs_card, hs_sub, hs_data, hs_exhaust⟩ :=
+      h_kfold_raw y hyV hyne'
+    refine ⟨s, hs_card, hs_sub, ?_, hs_exhaust⟩
+    intro x' hx's
+    refine ⟨(hs_data x' hx's).1, ?_⟩
+    -- mapAnalyticOrderAt f x' = 1 ⇒ ramificationIndex x' = 1.
+    have hx'_hol : IsHolomorphicAt f x' := hHol.holomorphicAt x'
+    rw [hbc.ramificationIndex_eq_mapAnalyticOrderAt hcompat hx'_hol]
+    exact (hs_data x' hx's).2
+  -- Apply the kfold-sum bound helper.
+  exact ramifiedKfoldSum_locally_bounded f hf η hbc hcompat y₀ x₀ hx₀_fiber
+    k hk_pos rfl U_kfold hU_kfold_open hxU_kfold V_kfold hV_kfold_open
+    hy₀V_kfold h_kfold_data W₀ hW₀_open hxW₀
+
+/--
+**Strictly narrower fiber-point helper (Provider 2 internal),
+ramified leaf, dispatcher.** Refines the `ramifiedNonY₀` narrower
+helper to the broader signature accepted by
+`fiberPoint_partialTrace_locally_bounded`'s dispatcher. The case
+`y = y₀` is vacuous: if `y` were regular and equal to `y₀ = f x₀`,
+then by `isRegularValue` we'd get `hbc.ramificationIndex x₀ = 1`,
+contradicting `hx₀_ram`. The case `y ≠ y₀` is delegated to
+`ramifiedNonY₀FiberPoint_partialTrace_locally_bounded`.
+
+Sorry-free.
+-/
+private theorem ramifiedFiberPoint_partialTrace_locally_bounded
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X)
+    (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (y₀ : Y) (x₀ : X) (hx₀_fiber : f x₀ = y₀)
+    (hx₀_ram : hbc.ramificationIndex x₀ ≠ 1)
+    (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
+    ∃ (V : Set Y) (W : Set X) (M : ℝ),
+      IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
+      ∀ y ∈ V, ∀ (hy : isRegularValue hbc y),
+        ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+            (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+              CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
+  obtain ⟨V', W', M', hV'_open, hy₀_V', hW'_open, hxW', hW'_sub, hbound'⟩ :=
+    ramifiedNonY₀FiberPoint_partialTrace_locally_bounded f hf η hbc hcompat
+      y₀ x₀ hx₀_fiber hx₀_ram W₀ hW₀_open hxW₀
+  refine ⟨V', W', M', hV'_open, hy₀_V', hW'_open, hxW', hW'_sub, ?_⟩
+  intro y hy_V hy_reg
+  by_cases hy_eq : y = y₀
+  · -- `y = y₀`: regularity contradicts ramification of x₀.
+    exfalso
+    apply hx₀_ram
+    have hx₀_fib_y : x₀ ∈ f ⁻¹' {y} := by
+      rw [Set.mem_preimage, Set.mem_singleton_iff, hx₀_fiber, hy_eq]
+    exact hy_reg x₀ hx₀_fib_y
+  · -- `y ≠ y₀`: delegate to the narrower helper.
+    exact hbound' y hy_V hy_eq hy_reg
+
+/--
+**Strictly narrower fiber-point helper (Provider 2 internal),
+dispatcher.** Branches on whether `x₀` is unramified or ramified
+and delegates to the appropriate leaf. Sorry-free.
 -/
 private theorem fiberPoint_partialTrace_locally_bounded
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
@@ -358,7 +803,11 @@ private theorem fiberPoint_partialTrace_locally_bounded
         ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
             (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
               CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
-  sorry
+  by_cases hx₀_ram : hbc.ramificationIndex x₀ = 1
+  · exact unramifiedFiberPoint_partialTrace_locally_bounded f hf η hbc hcompat
+      y₀ x₀ hx₀_fiber hx₀_ram W₀ hW₀_open hxW₀
+  · exact ramifiedFiberPoint_partialTrace_locally_bounded f hf η hbc hcompat
+      y₀ x₀ hx₀_fiber hx₀_ram W₀ hW₀_open hxW₀
 
 /--
 **Provider (2).** *Trace locally bounded near branch values.* At
@@ -521,6 +970,442 @@ theorem traceAtRegularValue_locally_bounded_near_branch_values
   exact hbound x₀ hx₀S y (hy_in_V_x x₀ hx₀S) hy_reg
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [ChartedSpace ℂ Y] [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**One-dimensional Riemann removable-singularity provider (sub-helper).**
+
+Given an analytic function `φ : ℂ → ℂ` on a punctured neighbourhood
+`s \ {c}` of `c : ℂ` that is bounded on that punctured nhd,
+Riemann's removable singularity theorem produces an analytic
+extension `φ_ext` to a full nhd of `c`, agreeing with `φ` on the
+punctured nhd.
+
+This is the pure 1D classical complex-analysis content, intended
+to be directly answerable by Mathlib's
+`Mathlib.Analysis.Complex.RemovableSingularity`:
+* `analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt`,
+* `tendsto_limUnder_of_differentiable_on_punctured_nhds_of_bounded_under`,
+* `differentiableOn_update_limUnder_of_bddAbove`.
+
+Provided here as a `private` 1D sub-lemma used by
+`removableSingularity_at_branchPoint`'s chart-local transposition.
+-/
+private theorem removableSingularity_oneD_punctured_disc
+    (φ : ℂ → ℂ) (c : ℂ)
+    (_s : Set ℂ) (_hs_nhds : _s ∈ 𝓝 c)
+    (_hφ_hol : ∀ z ∈ _s, z ≠ c → AnalyticAt ℂ φ z)
+    (M : ℝ) (_hφ_bnd : ∀ z ∈ _s, z ≠ c → ‖φ z‖ ≤ M) :
+    ∃ (φ_ext : ℂ → ℂ) (s' : Set ℂ),
+      s' ∈ 𝓝 c ∧ s' ⊆ _s ∧ AnalyticAt ℂ φ_ext c ∧
+      ∀ z ∈ s', z ≠ c → φ_ext z = φ z := by
+  sorry
+
+omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
+  [StableChartAt ℂ X] in
+/--
+**Per-branch-point Riemann removable-singularity provider.**
+
+Given a function `g : Y → CotangentModelFiber ℂ` holomorphic on
+`regular` (with finite complement) and locally bounded on a
+neighborhood `U` of a branch point `y₀ ∈ regularᶜ`, Riemann's
+removable singularity theorem produces a function `g_y₀` that is
+holomorphic at `y₀` and agrees with `g` on a small `Y`-nhd of `y₀`
+intersected with `regular`.
+
+Mathematically: in chart-local coordinates around `y₀`, the function
+`cotangentFiberIso ∘ g ∘ chart.symm` is a `ℂ`-valued holomorphic
+function on a punctured disc around `chart y₀` (since the only
+non-regular point in a small `Y`-nhd of `y₀` is `y₀` itself, by
+finiteness of `regularᶜ`) and is bounded there. Riemann's classical
+removable singularity theorem extends this to a holomorphic function
+on the full disc, which translates back to `g_y₀` holomorphic at `y₀`.
+
+The chart-local transposition is now sorry-free: the entire analytic
+content has been reduced to the strictly narrower 1D sub-lemma
+`removableSingularity_oneD_punctured_disc` via
+* `StableChartAt ℂ Y` (chart agrees with `chartAt ℂ y₀` near `y₀`),
+* `singletonChartedSpace_chartAt_eq` (the chart on
+  `CotangentModelFiber ℂ` is `cotangentFiberIso`),
+* operator-norm bound `‖cotangentFiberIso w‖ ≤ ‖cotangentFiberIso‖ * ‖w‖`,
+* `AnalyticAt.congr` / `apply_symm_apply` / `symm_apply_apply`.
+-/
+private theorem removableSingularity_at_branchPoint
+    (regular : Set Y) (hOpen : IsOpen regular)
+    (hFiniteCompl : regularᶜ.Finite)
+    (g : Y → CotangentModelFiber ℂ)
+    (hHol : ∀ y ∈ regular, IsHolomorphicAt (fun y' : Y => g y') y)
+    (y₀ : Y) (hy₀_branch : y₀ ∈ regularᶜ)
+    (U : Set Y) (hU_open : IsOpen U) (hy₀_U : y₀ ∈ U) (M : ℝ)
+    (hbound : ∀ y ∈ U ∩ regular, ‖g y‖ ≤ M) :
+    ∃ (g_y₀ : Y → CotangentModelFiber ℂ) (V : Set Y),
+      IsOpen V ∧ y₀ ∈ V ∧ V ⊆ U ∧
+      IsHolomorphicAt g_y₀ y₀ ∧
+      ∀ y ∈ V ∩ regular, g_y₀ y = g y := by
+  classical
+  -- Set up chart at y₀ and refine the open nhd to exclude other branch points.
+  set chart := chartAt ℂ y₀ with hchart_def
+  set c : ℂ := chart y₀ with hc_def
+  have hy₀_chart_src : y₀ ∈ chart.source := mem_chart_source ℂ y₀
+  -- Other branch points (regularᶜ \ {y₀}) form a finite (hence closed) set.
+  set otherBranches : Set Y := regularᶜ \ {y₀} with hotherBranches_def
+  have hotherBranches_finite : otherBranches.Finite := hFiniteCompl.diff
+  have hotherBranches_closed : IsClosed otherBranches :=
+    hotherBranches_finite.isClosed
+  -- Refined open nhd of y₀ inside U ∩ chart.source minus other branch points.
+  set U' : Set Y := U ∩ chart.source ∩ otherBranchesᶜ with hU'_def
+  have hU'_open : IsOpen U' :=
+    (hU_open.inter chart.open_source).inter hotherBranches_closed.isOpen_compl
+  have hy₀_U' : y₀ ∈ U' := by
+    refine ⟨⟨hy₀_U, hy₀_chart_src⟩, ?_⟩
+    intro hcontra
+    exact hcontra.2 rfl
+  have hU'_sub_src : U' ⊆ chart.source :=
+    fun y hy => hy.1.2
+  have hU'_sub_U : U' ⊆ U := fun y hy => hy.1.1
+  -- s = chart '' U', open in ℂ, nhd of c.
+  set s : Set ℂ := chart '' U' with hs_def
+  have hs_open : IsOpen s := chart.isOpen_image_of_subset_source hU'_open hU'_sub_src
+  have hc_mem_s : c ∈ s := ⟨y₀, hy₀_U', rfl⟩
+  have hs_nhds : s ∈ 𝓝 c := hs_open.mem_nhds hc_mem_s
+  -- φ : ℂ → ℂ, the chart-local form of g at y₀.
+  set φ : ℂ → ℂ := fun z => cotangentFiberIso (g (chart.symm z)) with hφ_def
+  -- Analyticity of φ on s \ {c}. For z ∈ s with z ≠ c, let y := chart.symm z.
+  -- y ∈ U', y ≠ y₀ (chart-injective), and y ∉ otherBranches, so y ∈ regular.
+  -- Then chartLocalAt g y = φ near z (via StableChartAt), giving AnalyticAt φ z.
+  have hφ_hol : ∀ z ∈ s, z ≠ c → AnalyticAt ℂ φ z := by
+    intro z hz_in_s hz_ne_c
+    obtain ⟨y, hy_U', hy_chart⟩ := hz_in_s
+    -- y ∈ chart.source.
+    have hy_src : y ∈ chart.source := hU'_sub_src hy_U'
+    -- y ≠ y₀, because chart y ≠ chart y₀.
+    have hy_ne_y₀ : y ≠ y₀ := by
+      intro h
+      apply hz_ne_c
+      rw [← hy_chart, h]
+    -- y ∉ otherBranches.
+    have hy_not_other : y ∉ otherBranches := hy_U'.2
+    -- y ∈ regular: y is not in regularᶜ \ {y₀} and y ≠ y₀, so y ∉ regularᶜ.
+    have hy_reg : y ∈ regular := by
+      by_contra hy_not_reg
+      apply hy_not_other
+      exact ⟨hy_not_reg, hy_ne_y₀⟩
+    -- StableChartAt: chartAt ℂ y = chartAt ℂ y₀ = chart.
+    have hchart_y_eq : chartAt ℂ y = chart := by
+      have := StableChartAt.chartAt_eq_of_mem_source (H := ℂ) (M := Y) y₀ y hy_src
+      exact this
+    -- IsHolomorphicAt g y means AnalyticAt ℂ (chartLocalAt g y) (chartAt ℂ y y).
+    have hg_hol_y : IsHolomorphicAt g y := hHol y hy_reg
+    -- chartLocalAt g y = cotangentFiberIso ∘ g ∘ (chartAt ℂ y).symm.
+    -- Under hchart_y_eq, this equals cotangentFiberIso ∘ g ∘ chart.symm = φ.
+    -- And (chartAt ℂ y) y = chart y = z.
+    have hg_hol_y' : AnalyticAt ℂ (chartLocalAt g y) (chartAt ℂ y y) := hg_hol_y
+    -- Rewrite using hchart_y_eq.
+    have hchart_loc_eq :
+        chartLocalAt g y = fun q => chartAt ℂ (g y) (g (chart.symm q)) := by
+      unfold chartLocalAt
+      funext q
+      simp [hchart_y_eq, Function.comp]
+    have h_point_eq : chartAt ℂ y y = z := by
+      rw [hchart_y_eq, ← hy_chart]
+    rw [hchart_loc_eq, h_point_eq] at hg_hol_y'
+    -- chartAt ℂ (g y) = cotangentFiberIso (singleton chart on CotangentModelFiber ℂ).
+    -- So chartLocalAt g y q = cotangentFiberIso (g (chart.symm q)) = φ q.
+    have hchart_target_eq :
+        (fun q => chartAt ℂ (g y) (g (chart.symm q))) = φ := by
+      funext q
+      show chartAt ℂ (g y) (g (chart.symm q)) = cotangentFiberIso (g (chart.symm q))
+      rfl
+    rw [hchart_target_eq] at hg_hol_y'
+    exact hg_hol_y'
+  -- Boundedness of φ on s \ {c}.
+  -- ‖φ z‖ = ‖cotangentFiberIso (g y)‖ ≤ ‖cotangentFiberIso‖ * ‖g y‖ ≤ ‖cotangentFiberIso‖ * M.
+  set Miso : ℝ := ‖(cotangentFiberIso : (ℂ →L[ℂ] ℂ) →L[ℂ] ℂ)‖ with hMiso_def
+  have hMiso_nonneg : 0 ≤ Miso :=
+    norm_nonneg (cotangentFiberIso : (ℂ →L[ℂ] ℂ) →L[ℂ] ℂ)
+  set M' : ℝ := Miso * M + 1 with hM'_def
+  have hφ_bnd : ∀ z ∈ s, z ≠ c → ‖φ z‖ ≤ M' := by
+    intro z hz_in_s hz_ne_c
+    obtain ⟨y, hy_U', hy_chart⟩ := hz_in_s
+    have hy_src : y ∈ chart.source := hU'_sub_src hy_U'
+    have hy_ne_y₀ : y ≠ y₀ := by
+      intro h; apply hz_ne_c; rw [← hy_chart, h]
+    have hy_not_other : y ∉ otherBranches := hy_U'.2
+    have hy_reg : y ∈ regular := by
+      by_contra hy_not_reg
+      apply hy_not_other
+      exact ⟨hy_not_reg, hy_ne_y₀⟩
+    have hy_U : y ∈ U := hU'_sub_U hy_U'
+    have hbnd_y : ‖g y‖ ≤ M := hbound y ⟨hy_U, hy_reg⟩
+    -- ‖φ z‖ = ‖cotangentFiberIso (g y)‖.
+    have hφz_eq : φ z = cotangentFiberIso (g y) := by
+      show cotangentFiberIso (g (chart.symm z)) = cotangentFiberIso (g y)
+      rw [← hy_chart, chart.left_inv hy_src]
+    rw [hφz_eq]
+    -- Use ‖cotangentFiberIso (g y)‖ ≤ ‖cotangentFiberIso‖ * ‖g y‖.
+    have h_op_bnd : ‖cotangentFiberIso (g y)‖ ≤ Miso * ‖g y‖ :=
+      (cotangentFiberIso : (ℂ →L[ℂ] ℂ) →L[ℂ] ℂ).le_opNorm (g y)
+    have h_mul_bnd : Miso * ‖g y‖ ≤ Miso * M :=
+      mul_le_mul_of_nonneg_left hbnd_y hMiso_nonneg
+    have h_total : ‖cotangentFiberIso (g y)‖ ≤ Miso * M :=
+      h_op_bnd.trans h_mul_bnd
+    linarith
+  -- Apply the 1D removable-singularity helper.
+  obtain ⟨φ_ext, s', hs'_nhds, hs'_sub, hφ_ext_an, hφ_ext_eq⟩ :=
+    removableSingularity_oneD_punctured_disc φ c s hs_nhds hφ_hol M' hφ_bnd
+  -- Define g_y₀ on chart.source and 0 elsewhere.
+  let g_y₀ : Y → CotangentModelFiber ℂ := fun y =>
+    if hy : y ∈ chart.source then cotangentFiberIso.symm (φ_ext (chart y))
+    else (0 : CotangentModelFiber ℂ)
+  -- Extract an open subset s'_open ⊆ s' that is a nhd of c.
+  -- Since s' ∈ 𝓝 c, ∃ open T ⊆ s' with c ∈ T.
+  obtain ⟨s'_open, hs'_open_sub, hs'_open_isOpen, hc_mem_s'_open⟩ :=
+    mem_nhds_iff.mp hs'_nhds
+  -- V = chart ⁻¹' s'_open ∩ U'. This is open (preimage of open under continuous chart
+  -- restricted to source, intersected with open U' which ⊆ source).
+  set V : Set Y := chart.source ∩ chart ⁻¹' s'_open ∩ U' with hV_def
+  have hV_open : IsOpen V := by
+    have h1 : IsOpen (chart.source ∩ chart ⁻¹' s'_open) :=
+      chart.continuousOn.isOpen_inter_preimage chart.open_source hs'_open_isOpen
+    exact h1.inter hU'_open
+  have hy₀_V : y₀ ∈ V := by
+    refine ⟨⟨hy₀_chart_src, ?_⟩, hy₀_U'⟩
+    show chart y₀ ∈ s'_open
+    rw [← hc_def]; exact hc_mem_s'_open
+  have hV_sub_U : V ⊆ U := fun y hy => hU'_sub_U hy.2
+  refine ⟨g_y₀, V, hV_open, hy₀_V, hV_sub_U, ?_, ?_⟩
+  · -- IsHolomorphicAt g_y₀ y₀: chartLocalAt g_y₀ y₀ is analytic at c.
+    -- Show chartLocalAt g_y₀ y₀ =ᶠ[𝓝 c] φ_ext, then apply
+    -- AnalyticAt.congr (φ_ext is analytic at c).
+    show AnalyticAt ℂ (chartLocalAt g_y₀ y₀) (chartAt ℂ y₀ y₀)
+    -- Need a nhd of c where chartLocalAt g_y₀ y₀ q = φ_ext q.
+    -- For q in chart.target, chart.symm q ∈ chart.source, so
+    -- g_y₀ (chart.symm q) = cotangentFiberIso.symm (φ_ext (chart (chart.symm q)))
+    --                     = cotangentFiberIso.symm (φ_ext q).
+    -- Then chartLocalAt g_y₀ y₀ q = chartAt ℂ (g_y₀ y₀) (g_y₀ (chart.symm q))
+    --                             = cotangentFiberIso (cotangentFiberIso.symm (φ_ext q))
+    --                             = φ_ext q.
+    have h_target_nhd : chart.target ∈ 𝓝 c := by
+      have hc_target : c ∈ chart.target := by
+        rw [hc_def]; exact chart.map_source hy₀_chart_src
+      exact chart.open_target.mem_nhds hc_target
+    have h_ev_eq : chartLocalAt g_y₀ y₀ =ᶠ[𝓝 (chart y₀)] φ_ext := by
+      have : chart y₀ = c := by rw [hc_def]
+      rw [this]
+      filter_upwards [h_target_nhd] with q hq_target
+      have hsymm_src : chart.symm q ∈ chart.source := chart.map_target hq_target
+      have hright_inv : chart (chart.symm q) = q := chart.right_inv hq_target
+      show chartAt ℂ (g_y₀ y₀) (g_y₀ (chart.symm q)) = φ_ext q
+      have h_gy_eq : g_y₀ (chart.symm q) = cotangentFiberIso.symm (φ_ext q) := by
+        show (if hy : chart.symm q ∈ chart.source then
+                cotangentFiberIso.symm (φ_ext (chart (chart.symm q)))
+              else (0 : CotangentModelFiber ℂ)) =
+              cotangentFiberIso.symm (φ_ext q)
+        rw [dif_pos hsymm_src, hright_inv]
+      rw [h_gy_eq]
+      show cotangentFiberIso (cotangentFiberIso.symm (φ_ext q)) = φ_ext q
+      exact cotangentFiberIso.apply_symm_apply (φ_ext q)
+    exact hφ_ext_an.congr h_ev_eq.symm
+  · -- Agreement: g_y₀ y = g y for y ∈ V ∩ regular.
+    intro y hyV
+    obtain ⟨⟨⟨hy_src, hy_pre⟩, hy_U'⟩, hy_reg⟩ := hyV
+    -- chart y ∈ s'_open ⊆ s'.
+    have hy_s' : chart y ∈ s' := hs'_open_sub hy_pre
+    -- chart y ≠ c since y ≠ y₀ (because y ∈ regular, y₀ ∉ regular).
+    have hy_ne_y₀ : y ≠ y₀ := by
+      intro h; rw [h] at hy_reg; exact hy₀_branch hy_reg
+    have hchart_ne_c : chart y ≠ c := by
+      intro h
+      apply hy_ne_y₀
+      have hinj := chart.injOn
+      exact hinj hy_src hy₀_chart_src (by rw [h, hc_def])
+    have hext_eq : φ_ext (chart y) = φ (chart y) :=
+      hφ_ext_eq (chart y) hy_s' hchart_ne_c
+    -- φ (chart y) = cotangentFiberIso (g (chart.symm (chart y))) = cotangentFiberIso (g y).
+    have hφ_chart_y : φ (chart y) = cotangentFiberIso (g y) := by
+      show cotangentFiberIso (g (chart.symm (chart y))) = cotangentFiberIso (g y)
+      rw [chart.left_inv hy_src]
+    -- g_y₀ y = cotangentFiberIso.symm (φ_ext (chart y))
+    --       = cotangentFiberIso.symm (cotangentFiberIso (g y)) = g y.
+    show (if hy : y ∈ chart.source then cotangentFiberIso.symm (φ_ext (chart y))
+          else (0 : CotangentModelFiber ℂ)) = g y
+    rw [dif_pos hy_src, hext_eq, hφ_chart_y]
+    exact cotangentFiberIso.symm_apply_apply (g y)
+
+omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
+  [StableChartAt ℂ X] in
+/--
+**Pointwise gluing of per-branch-point local extensions into a
+globally-holomorphic function.**
+
+Given the holomorphic function `g` on the open dense `regular` set,
+together with per-branch-point local extensions `g_y₀` (each
+holomorphic at its branch point `y₀` and agreeing with `g` on a nhd
+of `y₀` intersected with `regular`), this helper produces a single
+function `g_ext : Y → CotangentModelFiber ℂ` that is `IsHolomorphicAt`
+at every point of `Y` and agrees with `g` on `regular`.
+
+Mathematically: define `g_ext y := if y ∈ regular then g y else
+g_{y₀ y} y` where `y₀ y` is the unique branch point (or any one, by
+choice). Holomorphicity at `y ∈ regular` follows from `hHol`; at a
+branch point `y₀`, from the local extension's `IsHolomorphicAt g_y₀
+y₀` combined with the eq-on-`V ∩ regular` clause (which identifies
+`g_ext` with `g_y₀` on a punctured nhd of `y₀`).
+
+This isolates the **pointwise function-level** gluing obligation —
+the per-branch-point selection via `Classical.choice` plus the local
+holomorphicity verification — deferred as a single `sorry`.
+-/
+private theorem globalHolomorphicFunction_from_local_extensions
+    (regular : Set Y) (hOpen : IsOpen regular) (hDense : Dense regular)
+    (hFiniteCompl : regularᶜ.Finite)
+    (g : Y → CotangentModelFiber ℂ)
+    (hHol : ∀ y ∈ regular, IsHolomorphicAt (fun y' : Y => g y') y)
+    (extensions : ∀ y₀ ∈ regularᶜ,
+      ∃ (g_y₀ : Y → CotangentModelFiber ℂ) (V : Set Y),
+        IsOpen V ∧ y₀ ∈ V ∧ IsHolomorphicAt g_y₀ y₀ ∧
+        ∀ y ∈ V ∩ regular, g_y₀ y = g y) :
+    ∃ g_ext : Y → CotangentModelFiber ℂ,
+      (∀ y : Y, IsHolomorphicAt g_ext y) ∧
+      ∀ y ∈ regular, g_ext y = g y := by
+  classical
+  -- Define g_ext via dite, selecting g on regular and the chosen local
+  -- extension at each branch point.
+  let g_ext : Y → CotangentModelFiber ℂ := fun y =>
+    if hy : y ∈ regular then g y
+    else (extensions y hy).choose y
+  refine ⟨g_ext, ?_, ?_⟩
+  · -- Pointwise holomorphicity.
+    intro y
+    by_cases hy_reg : y ∈ regular
+    · -- Case: y ∈ regular.
+      -- g_ext = g on the open set `regular`, a nhd of y.
+      have h_eventually : g_ext =ᶠ[𝓝 y] g := by
+        have : regular ∈ 𝓝 y := hOpen.mem_nhds hy_reg
+        filter_upwards [this] with z hz_reg
+        show g_ext z = g z
+        simp [g_ext, hz_reg]
+      exact (hHol y hy_reg).congr_of_eventuallyEq h_eventually.symm
+    · -- Case: y ∈ regularᶜ. Extract the chosen extension witness.
+      have hy_branch : y ∈ regularᶜ := hy_reg
+      set ext_data := (extensions y hy_branch).choose_spec.choose_spec
+      let g_y := (extensions y hy_branch).choose
+      let V_y := (extensions y hy_branch).choose_spec.choose
+      have hV_y_open : IsOpen V_y := ext_data.1
+      have hy_V_y : y ∈ V_y := ext_data.2.1
+      have hg_y_hol : IsHolomorphicAt g_y y := ext_data.2.2.1
+      have hg_y_eq : ∀ z ∈ V_y ∩ regular, g_y z = g z := ext_data.2.2.2
+      -- Refine V_y to exclude other branch points besides y.
+      set otherBranches : Set Y := regularᶜ \ {y} with hotherBranches_def
+      have hotherBranches_finite : otherBranches.Finite :=
+        hFiniteCompl.diff
+      have hotherBranches_closed : IsClosed otherBranches :=
+        hotherBranches_finite.isClosed
+      set V_y' : Set Y := V_y ∩ otherBranchesᶜ with hV_y'_def
+      have hV_y'_open : IsOpen V_y' :=
+        hV_y_open.inter hotherBranches_closed.isOpen_compl
+      have hy_V_y' : y ∈ V_y' := by
+        refine ⟨hy_V_y, ?_⟩
+        intro h_other
+        exact h_other.2 rfl
+      -- On V_y', g_ext = g_y.
+      have h_eventually : g_ext =ᶠ[𝓝 y] g_y := by
+        have : V_y' ∈ 𝓝 y := hV_y'_open.mem_nhds hy_V_y'
+        filter_upwards [this] with z hz_V_y'
+        show g_ext z = g_y z
+        by_cases hz_reg : z ∈ regular
+        · -- z ∈ V_y ∩ regular, so g_y z = g z by hg_y_eq.
+          have : g_y z = g z := hg_y_eq z ⟨hz_V_y'.1, hz_reg⟩
+          simp [g_ext, hz_reg, this]
+        · -- z ∈ regularᶜ. Since z ∈ V_y' = V_y ∩ otherBranchesᶜ, z ∉ otherBranches.
+          -- z ∈ regularᶜ ∧ z ∉ otherBranches = regularᶜ \ {y}, so z = y.
+          have hz_branch : z ∈ regularᶜ := hz_reg
+          have hz_not_other : z ∉ otherBranches := hz_V_y'.2
+          have hz_eq_y : z = y := by
+            by_contra hz_ne
+            exact hz_not_other ⟨hz_branch, hz_ne⟩
+          -- Substitute z = y; then both sides have the same Classical.choose term.
+          subst hz_eq_y
+          -- After subst, g_ext z and g_y z are both `(extensions z _).choose z`.
+          -- Use simp to unfold the let bindings.
+          simp only [g_ext]
+          rw [dif_neg hz_reg]
+      exact hg_y_hol.congr_of_eventuallyEq h_eventually.symm
+  · -- Equality on regular.
+    intro y hy_reg
+    show g_ext y = g y
+    simp [g_ext, hy_reg]
+
+omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
+  [StableChartAt ℂ X] in
+/--
+**Bundle-section packaging: pointwise holomorphicity → `HolomorphicOneForm`.**
+
+Given a function `g_ext : Y → CotangentModelFiber ℂ` that is
+`IsHolomorphicAt` at every point of `Y`, this helper packages it
+into a `HolomorphicOneForm ℂ Y` whose underlying function `τ.toFun`
+equals `g_ext` pointwise.
+
+Mathematically: pointwise chart-local analyticity of `g_ext`,
+combined with the singleton-chart structure on
+`CotangentModelFiber ℂ` (where the chart is the homeomorphism
+`cotangentFiberIso`), promotes `g_ext` to a smooth section of the
+cotangent bundle, i.e. a `ContMDiffSection` with smoothness `⊤`,
+which is the definition of `HolomorphicOneForm`.
+
+This isolates the **bundle-section packaging** obligation — convert
+pointwise `IsHolomorphicAt` data into the `ContMDiffSection`
+formalism — deferred as a single `sorry`.
+-/
+private theorem holomorphicOneForm_of_pointwiseHolomorphic
+    (g_ext : Y → CotangentModelFiber ℂ)
+    (hg_ext_hol : ∀ y : Y, IsHolomorphicAt g_ext y) :
+    ∃ τ : HolomorphicOneForm ℂ Y, ∀ y : Y, τ.toFun y = g_ext y := by
+  sorry
+
+omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
+  [StableChartAt ℂ X] in
+/--
+**Global assembly of a holomorphic 1-form from per-branch-point
+local extensions.**
+
+Given the holomorphic function `g` on the open dense `regular` set,
+together with per-branch-point local extensions `g_y₀` (each
+holomorphic at its branch point `y₀` and agreeing with `g` on a nhd
+of `y₀` intersected with `regular`), this provider glues them into a
+single global `HolomorphicOneForm ℂ Y` whose `toFun` agrees with `g`
+on `regular`.
+
+This is now a sorry-free reduction to two strictly narrower providers:
+* `globalHolomorphicFunction_from_local_extensions` (pointwise
+  function-level gluing into a globally `IsHolomorphicAt` function);
+* `holomorphicOneForm_of_pointwiseHolomorphic` (bundle-section
+  packaging of a pointwise-holomorphic function as a
+  `HolomorphicOneForm`).
+-/
+private theorem assemble_holomorphicOneForm_from_local_extensions
+    (regular : Set Y) (hOpen : IsOpen regular) (hDense : Dense regular)
+    (hFiniteCompl : regularᶜ.Finite)
+    (g : Y → CotangentModelFiber ℂ)
+    (hHol : ∀ y ∈ regular, IsHolomorphicAt (fun y' : Y => g y') y)
+    (extensions : ∀ y₀ ∈ regularᶜ,
+      ∃ (g_y₀ : Y → CotangentModelFiber ℂ) (V : Set Y),
+        IsOpen V ∧ y₀ ∈ V ∧ IsHolomorphicAt g_y₀ y₀ ∧
+        ∀ y ∈ V ∩ regular, g_y₀ y = g y) :
+    ∃ τ : HolomorphicOneForm ℂ Y, ∀ y ∈ regular, τ.toFun y = g y := by
+  -- Step 1: pointwise gluing into a globally holomorphic function.
+  obtain ⟨g_ext, hg_ext_hol, hg_ext_eq⟩ :=
+    globalHolomorphicFunction_from_local_extensions regular hOpen hDense
+      hFiniteCompl g hHol extensions
+  -- Step 2: bundle-section packaging.
+  obtain ⟨τ, hτ⟩ := holomorphicOneForm_of_pointwiseHolomorphic g_ext hg_ext_hol
+  -- Combine: τ.toFun y = g_ext y = g y for y ∈ regular.
+  refine ⟨τ, ?_⟩
+  intro y hy_reg
+  rw [hτ y]
+  exact hg_ext_eq y hy_reg
+
+omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
   [StableChartAt ℂ X] in
 /--
 **Provider (3).** *Generic removable-singularity provider for
@@ -541,19 +1426,40 @@ when specialized to the trace function. Note that the conclusion
 quantifies over a single open set `regular` and does not mention
 branched-cover data, so it is strictly smaller than
 `traceForm_global_extension` (which quantifies over *all* BCDs).
+
+This is now a sorry-free combinatorial reduction to two strictly
+narrower providers:
+* `removableSingularity_at_branchPoint` (per-branch-point Riemann
+  removable singularity);
+* `assemble_holomorphicOneForm_from_local_extensions` (global bundle
+  section gluing).
 -/
 theorem holomorphicOneForm_of_regularLocus_holomorphic_branchLocus_bounded
-    (regular : Set Y) (_hOpen : IsOpen regular) (_hDense : Dense regular)
-    (_hFiniteCompl : regularᶜ.Finite)
+    (regular : Set Y) (hOpen : IsOpen regular) (hDense : Dense regular)
+    (hFiniteCompl : regularᶜ.Finite)
     (g : Y → CotangentModelFiber ℂ)
-    (_hHol : ∀ y ∈ regular,
+    (hHol : ∀ y ∈ regular,
       IsHolomorphicAt (fun y' : Y => g y') y)
-    (_hBounded : ∀ y₀ ∈ regularᶜ,
+    (hBounded : ∀ y₀ ∈ regularᶜ,
       ∃ (U : Set Y) (M : ℝ), IsOpen U ∧ y₀ ∈ U ∧
         ∀ y ∈ U ∩ regular, ‖g y‖ ≤ M) :
     ∃ τ : HolomorphicOneForm ℂ Y,
       ∀ y ∈ regular, τ.toFun y = g y := by
-  sorry
+  -- For each branch point, extract local bound data + apply per-point
+  -- removable singularity to get a local extension.
+  have extensions : ∀ y₀ ∈ regularᶜ,
+      ∃ (g_y₀ : Y → CotangentModelFiber ℂ) (V : Set Y),
+        IsOpen V ∧ y₀ ∈ V ∧ IsHolomorphicAt g_y₀ y₀ ∧
+        ∀ y ∈ V ∩ regular, g_y₀ y = g y := by
+    intro y₀ hy₀_branch
+    obtain ⟨U, M, hU_open, hy₀_U, hbound⟩ := hBounded y₀ hy₀_branch
+    obtain ⟨g_y₀, V, hV_open, hy₀_V, _hV_sub_U, hg_y₀_hol, hg_y₀_eq⟩ :=
+      removableSingularity_at_branchPoint regular hOpen hFiniteCompl g hHol
+        y₀ hy₀_branch U hU_open hy₀_U M hbound
+    exact ⟨g_y₀, V, hV_open, hy₀_V, hg_y₀_hol, hg_y₀_eq⟩
+  -- Assemble the global holomorphic form.
+  exact assemble_holomorphicOneForm_from_local_extensions regular hOpen hDense
+    hFiniteCompl g hHol extensions
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
   [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [IsManifold 𝓘(ℂ, ℂ) ω Y]
@@ -582,131 +1488,6 @@ theorem traceAtRegularValue_BCD_invariance
   have hsub : hbc.finite_fiber y = hbc'.finite_fiber y :=
     Subsingleton.elim _ _
   congr 1
-
-/--
-**Local-inverse preimage of any nhd is a nhd.** The single
-continuity-like consequence we need: for any open `W ∋ x`, the preimage
-`(h.localInverseAt x hx) ⁻¹' W` is a `𝓝 (f x)`-set.
-
-Proof sketch: the BCD's `localInverseAt` agrees on a neighborhood of `f x`
-with an analytic local inverse `analyticInv` (constructed from the
-analytic-inverse-function theorem applied to `chartLocalAt f x` whose
-derivative at `chartAt ℂ x x` is nonzero because the ramification index
-is 1). The analytic local inverse is genuinely continuous at `f x`
-because it is the composition `(chartAt x).symm ∘ r ∘ chartAt(f x)`,
-where `r` is analytic on a neighborhood of `chartAt(f x)(f x)`. By
-combining the Tendsto from analytic continuity with the eventually-equality,
-the preimage of any open `W ∋ x` is a neighborhood of `f x`.
--/
-private theorem localInverseAt_preimage_mem_nhds
-    {f : X → Y} (h : BranchedCoverData X Y f)
-    (hcompat : h.RamificationIndexCompatible)
-    (hHol : IsHolomorphic f)
-    (x : X) (hx : h.ramificationIndex x = 1)
-    {W : Set X} (hW_open : IsOpen W) (hxW : x ∈ W) :
-    h.localInverseAt x hx ⁻¹' W ∈ 𝓝 (f x) := by
-  classical
-  obtain ⟨U, V, hUopen, hVopen, hxU, hfxV, hbij, _hright_branch, hleft_branch⟩ :=
-    h.localInverse_is_inverse hx
-  -- Derive deriv ≠ 0 from compatibility.
-  have hramAt : mapAnalyticOrderAt f x = 1 := by
-    rw [← h.ramificationIndex_eq_mapAnalyticOrderAt hcompat (hHol.holomorphicAt x)]
-    exact hx
-  have hderiv : deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 := by
-    have h_order : analyticOrderAt
-        (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
-        (chartAt ℂ x x) = 1 := by
-      convert hramAt using 1
-      unfold mapAnalyticOrderAt
-      simp +decide [analyticOrderNatAt]
-    have h_deriv_an : AnalyticAt ℂ
-        (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
-        (chartAt ℂ x x) :=
-      (hHol.holomorphicAt x).sub analyticAt_const
-    have h_deriv_order : analyticOrderAt
-        (deriv (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x)))
-        (chartAt ℂ x x) = 0 := by
-      have := AnalyticAt.analyticOrderAt_deriv_add_one h_deriv_an
-      aesop
-    rw [analyticOrderAt_eq_zero] at h_deriv_order
-    rcases h_deriv_order with hzero | hnezero
-    · exfalso; exact hzero (AnalyticAt.deriv h_deriv_an)
-    · simpa [deriv_sub_const] using hnezero
-  -- Construct the analytic local inverse and prove Tendsto.
-  let analyticInv : Y → X := (hHol.holomorphicAt x).localInverse hderiv
-  let F : ℂ → ℂ := chartLocalAt f x
-  let z₀ : ℂ := chartAt ℂ x x
-  let w₀ : ℂ := chartAt ℂ (f x) (f x)
-  let r : ℂ → ℂ :=
-    (hHol.holomorphicAt x).hasStrictDerivAt.localInverse F
-      (deriv F z₀) z₀ hderiv
-  have hFz₀ : F z₀ = w₀ := by simp [F, z₀, w₀]
-  have hr_z₀ : r w₀ = z₀ := by
-    dsimp [r]
-    rw [← hFz₀]
-    exact (HasStrictDerivAt.eventually_left_inverse
-      (f := F) (f' := deriv F z₀) (a := z₀)
-      (hf := (hHol.holomorphicAt x).hasStrictDerivAt) (hf' := hderiv)).self_of_nhds
-  have hlocalInv_tendsto : Filter.Tendsto analyticInv (𝓝 (f x)) (𝓝 x) := by
-    have hr_an : AnalyticAt ℂ r w₀ := by
-      dsimp [r, F, z₀, w₀]
-      simpa [F, z₀, w₀, hFz₀] using
-        (hHol.holomorphicAt x).analyticAt_localInverse hderiv
-    have hr_tendsto : Filter.Tendsto r (𝓝 w₀) (𝓝 z₀) := by
-      simpa [ContinuousAt, hr_z₀] using hr_an.continuousAt
-    have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
-        (𝓝 (f x)) (𝓝 w₀) := by
-      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
-    have hsymm_tendsto : Filter.Tendsto (fun z => (chartAt ℂ x).symm z)
-        (𝓝 z₀) (𝓝 x) := by
-      have hcont := (chartAt ℂ x).continuousAt_symm
-        ((chartAt ℂ x).map_source (mem_chart_source ℂ x))
-      change Filter.Tendsto (fun z => (chartAt ℂ x).symm z) (𝓝 z₀)
-        (𝓝 ((chartAt ℂ x).symm z₀)) at hcont
-      simpa [z₀, (chartAt ℂ x).left_inv (mem_chart_source ℂ x)] using hcont
-    have hcomp := hsymm_tendsto.comp (hr_tendsto.comp hchart_tendsto)
-    simpa [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀, w₀] using hcomp
-  -- Show analyticInv = localInverseAt x hx eventually near f x.
-  have hanalyticInv_mem_U : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ U :=
-    hlocalInv_tendsto.eventually (hUopen.mem_nhds hxU)
-  have hanalyticInv_right : ∀ᶠ y in 𝓝 (f x), f (analyticInv y) = y := by
-    have hright_z : ∀ᶠ z in 𝓝 w₀, F (r z) = z := by
-      dsimp [r]
-      simpa [F, z₀, w₀, hFz₀] using
-        (HasStrictDerivAt.eventually_right_inverse
-          (f := F) (f' := deriv F z₀) (a := z₀)
-          (hf := (hHol.holomorphicAt x).hasStrictDerivAt) (hf' := hderiv))
-    have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
-        (𝓝 (f x)) (𝓝 w₀) := by
-      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
-    have hright_y : ∀ᶠ y in 𝓝 (f x), F (r (chartAt ℂ (f x) y)) =
-        chartAt ℂ (f x) y :=
-      hchart_tendsto.eventually hright_z
-    have hy_source : ∀ᶠ y in 𝓝 (f x), y ∈ (chartAt ℂ (f x)).source :=
-      (chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x))
-    have hf_analyticInv_source : ∀ᶠ y in 𝓝 (f x),
-        f (analyticInv y) ∈ (chartAt ℂ (f x)).source := by
-      have htendsto : Filter.Tendsto (fun y => f (analyticInv y)) (𝓝 (f x)) (𝓝 (f x)) :=
-        Filter.Tendsto.comp hHol.continuous.continuousAt hlocalInv_tendsto
-      exact htendsto.eventually
-        ((chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x)))
-    filter_upwards [hright_y, hy_source, hf_analyticInv_source] with y hy_eq hy_src hfy_src
-    have hchart : chartAt ℂ (f x) (f (analyticInv y)) = chartAt ℂ (f x) y := by
-      simpa [analyticInv, IsHolomorphicAt.localInverse, F, r, z₀, w₀] using hy_eq
-    exact (chartAt ℂ (f x)).injOn hfy_src hy_src hchart
-  -- analyticInv y = h.localInverseAt x hx y eventually.
-  have heq : ∀ᶠ y in 𝓝 (f x), analyticInv y = h.localInverseAt x hx y := by
-    filter_upwards [hanalyticInv_mem_U, hanalyticInv_right] with y hy_an_U hy_an_right
-    have hleft := hleft_branch (analyticInv y) hy_an_U
-    rw [hy_an_right] at hleft
-    exact hleft.symm
-  -- Use Tendsto + eventually-eq to get preimage of W is a nhd.
-  have hW_nhd : W ∈ 𝓝 x := hW_open.mem_nhds hxW
-  have hanalyticInv_in_W : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ W :=
-    hlocalInv_tendsto.eventually hW_nhd
-  filter_upwards [hanalyticInv_in_W, heq] with y hy_an_W hy_eq
-  show h.localInverseAt x hx y ∈ W
-  rw [← hy_eq]; exact hy_an_W
 
 /--
 **Trace-locus pointwise holomorphic auxiliary for Provider (3).**
