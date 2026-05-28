@@ -706,6 +706,61 @@ private theorem chartLocal_zPow_form_of_ramified
   exact hz
 
 /--
+**Chart-local derivative formula via chain rule (Commit B — sorry-free helper).**
+
+Given the chart-local `z^k` form `chartLocalAt f x₀ z - c₀ = φ(z)^k`
+(produced by `chartLocal_zPow_form_of_ramified`), the chain rule
+yields the explicit derivative:
+
+```
+deriv (chartLocalAt f x₀) z = (k : ℂ) * φ(z)^(k - 1) * deriv φ z
+```
+
+on a neighbourhood of `z₀ := chartAt ℂ x₀ x₀`.
+
+This formula is the chart-local expression of `mfderiv f x_j` at any
+nearby preimage `x_j`; its inverse `(mfderiv)⁻¹` is the divergent
+factor that `cotangentPushforward f x_j` post-composes with. The
+explicit `k * φ^{k-1}` shape is exactly what the roots-of-unity
+cancellation in Commit C will exploit.
+
+This is **Commit B** in the 3-commit discharge of
+`ramifiedKfoldSum_locally_bounded`. Combined with Commit A
+(`chartLocal_zPow_form_of_ramified`), it provides the full chart-local
+representation needed by Commit C.
+-/
+private theorem chartLocal_deriv_of_zPow_form
+    {f : X → Y} {x₀ : X} {k : ℕ} (hk : 0 < k)
+    {φ : ℂ → ℂ} (hφ_an : AnalyticAt ℂ φ (chartAt ℂ x₀ x₀))
+    (hφ_eq : ∀ᶠ z in 𝓝 (chartAt ℂ x₀ x₀),
+      chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀) = φ z ^ k) :
+    ∀ᶠ z in 𝓝 (chartAt ℂ x₀ x₀),
+      deriv (chartLocalAt f x₀) z =
+        (k : ℂ) * φ z ^ (k - 1) * deriv φ z := by
+  -- Rewrite: chartLocalAt f x₀ z = c₀ + φ(z)^k near z₀, hence
+  --   deriv (chartLocalAt f x₀) z = deriv (fun z => φ(z)^k) z
+  --                               = k * φ(z)^{k-1} * deriv φ z.
+  set z₀ := chartAt ℂ x₀ x₀ with hz₀_def
+  -- φ is analytic on a nhd of z₀ (eventually_analyticAt).
+  have hφ_eventually_an : ∀ᶠ z in 𝓝 z₀, AnalyticAt ℂ φ z := hφ_an.eventually_analyticAt
+  -- The eventually-equation gives equal derivatives via Filter.EventuallyEq.deriv_eq.
+  -- But we need to handle this pointwise: at each z in the small nhd, the eq holds
+  -- ON A NHD of z, not just at z.
+  filter_upwards [hφ_eq, hφ_eventually_an,
+    eventually_mem_nhds_iff.mpr hφ_eq, eventually_mem_nhds_iff.mpr hφ_eventually_an]
+    with z hz_eq hz_an hz_eq_nhd hz_an_nhd
+  -- Use hz_eq_nhd : ∀ᶠ w in 𝓝 z, chartLocalAt f x₀ w - c₀ = φ w ^ k
+  have h_eventually_eq :
+      (fun w => chartLocalAt f x₀ w) =ᶠ[𝓝 z]
+        (fun w => chartAt ℂ (f x₀) (f x₀) + φ w ^ k) := by
+    filter_upwards [hz_eq_nhd] with w hw
+    linear_combination hw
+  rw [Filter.EventuallyEq.deriv_eq h_eventually_eq]
+  -- Now compute deriv (fun w => c₀ + φ w ^ k) z.
+  have hφ_diff : DifferentiableAt ℂ φ z := hz_an.differentiableAt
+  rw [deriv_const_add, deriv_fun_pow hφ_diff k]
+
+/--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
 Given the kfold-ramification chart-local data (a chart-nhd `U_kfold`
