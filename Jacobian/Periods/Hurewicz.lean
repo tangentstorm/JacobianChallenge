@@ -4,6 +4,7 @@ import Mathlib.Algebra.Category.ModuleCat.Products
 import Mathlib.Algebra.DirectSum.Finsupp
 import Mathlib.Algebra.Homology.ConcreteCategory
 import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
+import Mathlib.Analysis.Convex.Contractible
 import Mathlib.LinearAlgebra.Pi
 import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 import Mathlib.LinearAlgebra.Matrix.SemiringInverse
@@ -1358,6 +1359,94 @@ theorem polygon4gBoundaryArcStepsReverse_repair_identities
     polygon4gBoundaryArcStepsReverse_projected_homotopy g steps⟩
 
 
+/--
+Early local copy of the concrete quotient fact needed by the subdivision
+leaf: a zero `H₁` class is represented by an explicit degree-one
+short-complex boundary.
+-/
+theorem singularH1ClassOfCycle_eq_zero_sc_boundary
+    (X : Type) [TopologicalSpace X]
+    (z : SingularChainCoproduct X 1)
+    (hz : (singularChainComplexZ X).d 1 0 z = 0)
+    (h : singularH1ClassOfCycle X z hz = 0) :
+    ∃ B : ((singularChainComplexZ X).sc 1).X₁,
+      ModuleCat.Hom.hom (((singularChainComplexZ X).sc 1).f) B = z := by
+  let K := singularChainComplexZ X
+  let S := K.sc 1
+  let c : K.cycles 1 :=
+    K.cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz
+  have hπ :
+      ModuleCat.Hom.hom (K.homologyπ 1) c = 0 := by
+    change singularH1ClassOfCycle X z hz = 0 at h
+    simpa [K, c, singularH1ClassOfCycle] using h
+  have hπS :
+      ModuleCat.Hom.hom S.homologyπ c = 0 := by
+    simpa [S, K] using hπ
+  have hq :
+      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.π
+          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) = 0 := by
+    have hπiso :
+        ModuleCat.Hom.hom (S.homologyπ ≫ S.moduleCatHomologyIso.hom) c = 0 := by
+      rw [ModuleCat.comp_apply, hπS, map_zero]
+    rwa [S.π_moduleCatCyclesIso_hom] at hπiso
+  have hmem :
+      ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c ∈
+        LinearMap.range S.moduleCatLeftHomologyData.f'.hom := by
+    simpa [ShortComplex.moduleCatLeftHomologyData_π_hom] using
+      (Submodule.Quotient.mk_eq_zero
+        (LinearMap.range S.moduleCatLeftHomologyData.f'.hom)).1 hq
+  rcases hmem with ⟨B, hB⟩
+  refine ⟨B, ?_⟩
+  have hBsub :
+      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatLeftHomologyData.f' B) =
+        ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) := by
+    rw [hB]
+  have hcycleSub :
+      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) =
+        ModuleCat.Hom.hom S.iCycles c := by
+    change
+      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) =
+        ModuleCat.Hom.hom S.iCycles c
+    rw [← ModuleCat.comp_apply, S.moduleCatCyclesIso_hom_i]
+  calc
+    ModuleCat.Hom.hom (((singularChainComplexZ X).sc 1).f) B =
+        ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+          (ModuleCat.Hom.hom S.moduleCatLeftHomologyData.f' B) := by
+          change ModuleCat.Hom.hom S.f B =
+            ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
+              (ModuleCat.Hom.hom S.moduleCatLeftHomologyData.f' B)
+          rw [← ModuleCat.comp_apply, S.moduleCatLeftHomologyData.f'_i]
+    _ = ModuleCat.Hom.hom S.iCycles c := by
+      rw [hBsub, hcycleSub]
+    _ = z := by
+      exact K.i_cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz
+
+/--
+Early local bridge from the degree-one short-complex boundary object
+to the displayed degree-two singular-chain differential.
+-/
+theorem hurewicz_singularBoundary_eq_sc_f_early
+    (X : Type) [TopologicalSpace X] :
+    let K := singularChainComplexZ X
+    let S := K.sc 1
+    ∀ (s : S.X₁), ∃ s' : (singularChainComplexZ X).X 2,
+      S.f.hom s = ((singularChainComplexZ X).d 2 1).hom s' := by
+  unfold singularChainComplexZ Polygon4gSingularC1.singularChainComplexZ
+  simp +decide [AlgebraicTopology.singularChainComplexFunctor]
+  unfold AlgebraicTopology.SSet.singularChainComplexFunctor
+  simp +decide
+  unfold AlgebraicTopology.alternatingFaceMapComplex
+  unfold AlgebraicTopology.AlternatingFaceMapComplex.obj
+  simp +decide [ComplexShape.down]
+  unfold ChainComplex.of
+  simp +decide [ComplexShape.down']
+  split_ifs <;> simp_all +decide [ComplexShape.prev]
+  exact fun s => ⟨_, rfl⟩
+
 
 structure SingularOneSimplexSubdivisionData
     (n : ℕ)
@@ -1373,6 +1462,100 @@ structure SingularOneSimplexSubdivisionData
     ∀ (i j : Fin n), i.1 + 1 = j.1 →
       subSimplex i (stdSimplexVertex 1) =
         subSimplex j (stdSimplexVertex 0)
+
+instance stdSimplex_fin_two_contractibleSpace :
+    ContractibleSpace (stdSimplex ℝ (Fin 2)) :=
+  (convex_stdSimplex (𝕜 := ℝ) (ι := Fin 2)).contractibleSpace
+    ⟨stdSimplexVertex 0, (stdSimplexVertex 0).2⟩
+
+noncomputable def subdivisionVertexChain
+    (n : ℕ)
+    (subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2)))
+    (k : ℕ) : SingularChainCoproduct (stdSimplex ℝ (Fin 2)) 0 :=
+  if h : k < n then
+    pointChain (stdSimplex ℝ (Fin 2))
+      (subSimplex ⟨k, h⟩ (stdSimplexVertex 0))
+  else
+    pointChain (stdSimplex ℝ (Fin 2)) (stdSimplexVertex 1)
+
+lemma subdivisionVertexChain_zero
+    (n : ℕ) (hn : 0 < n)
+    (subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2)))
+    (subdivision_valid : SingularOneSimplexSubdivisionData n subSimplex) :
+    subdivisionVertexChain n subSimplex 0 =
+      pointChain (stdSimplex ℝ (Fin 2)) (stdSimplexVertex 0) := by
+  simp [subdivisionVertexChain, hn, subdivision_valid.first_endpoint]
+
+lemma subdivisionVertexChain_last
+    (n : ℕ)
+    (subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2))) :
+    subdivisionVertexChain n subSimplex n =
+      pointChain (stdSimplex ℝ (Fin 2)) (stdSimplexVertex 1) := by
+  simp [subdivisionVertexChain]
+
+lemma subdivisionVertexChain_succ
+    (n : ℕ) (hn : 0 < n)
+    (subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2)))
+    (subdivision_valid : SingularOneSimplexSubdivisionData n subSimplex)
+    (i : Fin n) :
+    subdivisionVertexChain n subSimplex (i.1 + 1) =
+      pointChain (stdSimplex ℝ (Fin 2))
+        (subSimplex i (stdSimplexVertex 1)) := by
+  by_cases hsucc : i.1 + 1 < n
+  · have hadj :
+        subSimplex i (stdSimplexVertex 1) =
+          subSimplex ⟨i.1 + 1, hsucc⟩ (stdSimplexVertex 0) :=
+      subdivision_valid.adjacent_endpoints i ⟨i.1 + 1, hsucc⟩ rfl
+    simp [subdivisionVertexChain, hsucc, hadj]
+  · have hi_last : i.1 = n - 1 := by omega
+    have hi_eq : i = ⟨n - 1, Nat.sub_lt hn zero_lt_one⟩ := by
+      ext
+      exact hi_last
+    rw [hi_eq]
+    have hlast := subdivision_valid.last_endpoint
+    have hnsub : n - 1 + 1 = n := Nat.sub_add_cancel hn
+    simp [subdivisionVertexChain, hnsub, hlast]
+
+lemma subdivision_boundary_cycle
+    (n : ℕ) (hn : 0 < n)
+    (subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2)))
+    (subdivision_valid : SingularOneSimplexSubdivisionData n subSimplex) :
+    (singularChainComplexZ (stdSimplex ℝ (Fin 2))).d 1 0
+        ((∑ i : Fin n, singularChainElement (subSimplex i)) -
+          singularChainElement (ContinuousMap.id (stdSimplex ℝ (Fin 2)))) =
+      0 := by
+  let v := subdivisionVertexChain n subSimplex
+  have hpieces :
+      (singularChainComplexZ (stdSimplex ℝ (Fin 2))).d 1 0
+          (∑ i : Fin n, singularChainElement (subSimplex i)) =
+        ∑ i : Fin n, (v (i.1 + 1) - v i.1) := by
+    rw [map_sum]
+    refine Finset.sum_congr rfl ?_
+    intro i _hi
+    rw [singularChainElement_boundary_one_simplex
+      (stdSimplex ℝ (Fin 2)) (subSimplex i)]
+    change pointChain (stdSimplex ℝ (Fin 2))
+        (subSimplex i (stdSimplexVertex 1)) -
+        pointChain (stdSimplex ℝ (Fin 2))
+          (subSimplex i (stdSimplexVertex 0)) =
+      subdivisionVertexChain n subSimplex (i.1 + 1) -
+        subdivisionVertexChain n subSimplex i.1
+    rw [subdivisionVertexChain_succ n hn subSimplex subdivision_valid i]
+    simp [subdivisionVertexChain, i.2]
+  have htel :
+      (∑ i : Fin n, (v (i.1 + 1) - v i.1)) =
+        pointChain (stdSimplex ℝ (Fin 2)) (stdSimplexVertex 1) -
+          pointChain (stdSimplex ℝ (Fin 2)) (stdSimplexVertex 0) := by
+    rw [Finset.sum_sub_distrib]
+    rw [Fin.sum_univ_eq_sum_range (fun k => v (k + 1))]
+    rw [Fin.sum_univ_eq_sum_range (fun k => v k)]
+    simpa [v, subdivisionVertexChain_last,
+      subdivisionVertexChain_zero n hn subSimplex subdivision_valid] using
+      (Finset.sum_range_sub v n)
+  rw [map_sub, hpieces, htel]
+  rw [singularChainElement_boundary_one_simplex
+    (stdSimplex ℝ (Fin 2)) (ContinuousMap.id (stdSimplex ℝ (Fin 2)))]
+  simp
 
 /--
 Finite local lifting data for a singular one-simplex in the polygon
@@ -1459,9 +1642,48 @@ theorem singular_one_simplex_subdivision_prism_homologous
         (∑ i : Fin n,
           singularChainElement (σ.comp (subSimplex i))) -
             singularChainElement σ := by
-  -- Missing singular-chain prism construction for a valid ordered
-  -- subdivision of one simplex.
-  sorry
+  let domainCycle : SingularChainCoproduct (stdSimplex ℝ (Fin 2)) 1 :=
+    (∑ i : Fin n, singularChainElement (subSimplex i)) -
+      singularChainElement (ContinuousMap.id (stdSimplex ℝ (Fin 2)))
+  have hdomainCycle :
+      (singularChainComplexZ (stdSimplex ℝ (Fin 2))).d 1 0 domainCycle = 0 := by
+    dsimp [domainCycle]
+    exact subdivision_boundary_cycle n _n_pos subSimplex _subdivision_valid
+  have hclass :
+      singularH1ClassOfCycle (stdSimplex ℝ (Fin 2)) domainCycle hdomainCycle = 0 := by
+    haveI : Subsingleton (singularH1 (stdSimplex ℝ (Fin 2))) :=
+      singularH1_subsingleton_of_contractibleSpace
+    exact Subsingleton.elim _ _
+  obtain ⟨Bsc, hBsc⟩ :=
+    singularH1ClassOfCycle_eq_zero_sc_boundary
+      (stdSimplex ℝ (Fin 2)) domainCycle hdomainCycle hclass
+  obtain ⟨Bdomain, hBdomain⟩ :=
+    hurewicz_singularBoundary_eq_sc_f_early (stdSimplex ℝ (Fin 2)) Bsc
+  let F :=
+    (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+      (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom σ))
+  refine ⟨ModuleCat.Hom.hom (F.f 2) Bdomain, ?_⟩
+  have hcomm :
+      ModuleCat.Hom.hom (F.f 1)
+          ((singularChainComplexZ (stdSimplex ℝ (Fin 2))).d 2 1 Bdomain) =
+        (singularChainComplexZ X).d 2 1
+          (ModuleCat.Hom.hom (F.f 2) Bdomain) := by
+    rw [← ModuleCat.comp_apply
+      ((singularChainComplexZ (stdSimplex ℝ (Fin 2))).d 2 1) (F.f 1)]
+    rw [← ModuleCat.comp_apply (F.f 2) ((singularChainComplexZ X).d 2 1)]
+    exact congrArg
+      (fun φ => ModuleCat.Hom.hom φ Bdomain)
+      (F.comm 2 1).symm
+  rw [← hcomm, ← hBdomain, hBsc]
+  dsimp [domainCycle]
+  rw [map_sub, map_sum]
+  congr 1
+  · refine Finset.sum_congr rfl ?_
+    intro i _hi
+    exact singularChainElement_map σ 1 (subSimplex i)
+  · simpa using
+      singularChainElement_map σ 1
+        (ContinuousMap.id (stdSimplex ℝ (Fin 2)))
 
 /--
 Singular-chain subdivision algebra for one-simplices.  Given the
