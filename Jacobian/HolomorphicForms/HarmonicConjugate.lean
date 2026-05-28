@@ -1025,6 +1025,49 @@ theorem existence_of_dipole_harmonic_on_X
     dipole_pullback_at_pos hPQ hP_in_Q,
     dipole_pullback_at_neg hPQ hQ_in_P⟩
 
+/-- Chart-pullback bridge for `IsHarmonicConjugateAtReal` (basepoint
+version). Given a charted-space `X`, a point `P : X`, and a ℂ-side
+conjugate pair `(u_ℂ, v_ℂ)` at `(chartAt ℂ P) P`, the pulled-back
+pair `(u_ℂ ∘ chartAt ℂ P, v_ℂ ∘ chartAt ℂ P)` is a conjugate pair
+at `P` in `X`.
+
+Mirrors `HasLogarithmicSingularityAtReal.chart_pullback_lift`
+(9172ad3f). Proof: unfold both predicates' `HasFDerivAt`-on-ℂ
+bodies, use `right_inv` on `chart.target` to show the integrands
+are eventually-equal, transport via
+`HasFDerivAt.congr_of_eventuallyEq`. -/
+theorem IsHarmonicConjugateAtReal.chart_pullback_lift_at_basepoint
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {P : X} {u_ℂ v_ℂ : ℂ → ℝ}
+    (h : IsHarmonicConjugateAtReal ℂ u_ℂ v_ℂ ((chartAt ℂ P) P)) :
+    IsHarmonicConjugateAtReal X
+      (u_ℂ ∘ chartAt ℂ P) (v_ℂ ∘ chartAt ℂ P) P := by
+  obtain ⟨f', hf⟩ := h
+  refine ⟨f', ?_⟩
+  have hp_target : (chartAt ℂ P) P ∈ (chartAt ℂ P).target :=
+    (chartAt ℂ P).map_source (mem_chart_source ℂ P)
+  have htgt_nhds : (chartAt ℂ P).target ∈ nhds ((chartAt ℂ P) P) :=
+    (chartAt ℂ P).open_target.mem_nhds hp_target
+  have heq : (fun z : ℂ =>
+      ((u_ℂ ∘ chartAt ℂ P) ((chartAt ℂ P).symm z) : ℂ)
+        + Complex.I * ((v_ℂ ∘ chartAt ℂ P) ((chartAt ℂ P).symm z) : ℂ))
+    =ᶠ[nhds ((chartAt ℂ P) P)]
+    (fun z : ℂ => (u_ℂ z : ℂ) + Complex.I * (v_ℂ z : ℂ)) := by
+    filter_upwards [htgt_nhds] with z hz
+    show ((u_ℂ ((chartAt ℂ P) ((chartAt ℂ P).symm z))) : ℂ)
+          + Complex.I * ((v_ℂ ((chartAt ℂ P) ((chartAt ℂ P).symm z))) : ℂ)
+        = (u_ℂ z : ℂ) + Complex.I * (v_ℂ z : ℂ)
+    rw [(chartAt ℂ P).right_inv hz]
+  -- ℂ-predicate `hf` already gives the simplified form (chart on ℂ is identity).
+  have hf' : HasFDerivAt (fun z : ℂ => (u_ℂ z : ℂ) + Complex.I * (v_ℂ z : ℂ))
+      f' ((chartAt ℂ P) P) := by
+    have hchart_self_id : ∀ z : ℂ, (chartAt ℂ ((chartAt ℂ P) P)).symm z = z :=
+      fun z => rfl
+    have hchart_self_pt :
+        (chartAt ℂ ((chartAt ℂ P) P)) ((chartAt ℂ P) P) = (chartAt ℂ P) P := rfl
+    simpa [hchart_self_id, hchart_self_pt] using hf
+  exact hf'.congr_of_eventuallyEq heq
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
