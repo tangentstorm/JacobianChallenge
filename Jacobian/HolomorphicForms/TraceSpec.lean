@@ -1366,6 +1366,42 @@ private theorem globalHolomorphicFunction_from_local_extensions
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
   [StableChartAt ℂ X] in
 /--
+**Manifold-level `ContMDiff` from pointwise `IsHolomorphicAt`
+(scaffolding helper).**
+
+Given a function `g_ext : Y → CotangentModelFiber ℂ` with pointwise
+`IsHolomorphicAt`, this packages the project-local chart-local
+analyticity into Mathlib's manifold-level `ContMDiff` formalism via:
+
+* `IsHolomorphicAt.continuousAt_cotangentModelFiber` (already in this
+  file) — pointwise continuity at each `y`, which assembles to global
+  `Continuous g_ext` via `continuous_iff_continuousAt`;
+* `ContMDiff.of_isHolomorphic_and_continuous` (in `HolomorphicMap.lean`)
+  — promotes `∀ p, IsHolomorphicAt f p` + `Continuous f` to
+  `ContMDiff 𝓘(ℂ) 𝓘(ℂ) ⊤ f`.
+
+Note: the result type is `ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ g_ext`, not
+`ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, CotangentModelFiber ℂ) ⊤`, because
+`CotangentModelFiber ℂ` is charted on `ℂ` via the singleton chart
+`cotangentFiberIso : (ℂ →L[ℂ] ℂ) ≃L[ℂ] ℂ`, so its manifold model is
+`ℂ` (not `ℂ →L[ℂ] ℂ`).
+
+This isolates the clean Mathlib-shape composition as a reusable
+named lemma, in preparation for the bundle-section
+`ContMDiff` proof.
+-/
+private theorem contMDiff_of_pointwiseHolomorphic
+    (g_ext : Y → CotangentModelFiber ℂ)
+    (hg_ext_hol : ∀ y : Y, IsHolomorphicAt g_ext y) :
+    ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) g_ext := by
+  have hcont : Continuous g_ext :=
+    continuous_iff_continuousAt.mpr fun y =>
+      (hg_ext_hol y).continuousAt_cotangentModelFiber
+  exact ContMDiff.of_isHolomorphic_and_continuous hg_ext_hol hcont
+
+omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
+  [StableChartAt ℂ X] in
+/--
 **Bundle-section `ContMDiff` from pointwise holomorphicity (strictly
 narrower sub-helper).**
 
