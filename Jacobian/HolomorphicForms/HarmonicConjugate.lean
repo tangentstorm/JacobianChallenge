@@ -251,6 +251,34 @@ theorem IsHarmonicConjugateAtReal.log_arg_at_slitPlane
   rw [hfun]
   exact (Complex.hasDerivAt_log hx).hasFDerivAt
 
+/-- Translated version of `log_arg_at_slitPlane`: on `X = ℂ` at
+any `x` with `x - P ∈ Complex.slitPlane`, the function
+`fun z => Complex.arg (z - P)` is a harmonic conjugate of
+`fun z => Real.log ‖z - P‖`. The combined function is
+`fun z => Complex.log (z - P)`, ℂ-differentiable at `x` by the
+chain rule (translation has derivative 1, `Complex.log` has
+derivative `(x - P)⁻¹` on the translated slit plane).
+
+Building block toward the canonical dipole's `+1` pole part. -/
+theorem IsHarmonicConjugateAtReal.log_arg_sub_at_slitPlane
+    {x P : ℂ} (hx : x - P ∈ Complex.slitPlane) :
+    IsHarmonicConjugateAtReal ℂ
+      (fun z : ℂ => Real.log ‖z - P‖)
+      (fun z : ℂ => Complex.arg (z - P)) x := by
+  refine ⟨ContinuousLinearMap.smulRight (1 : ℂ →L[ℂ] ℂ) (1 / (x - P)), ?_⟩
+  have hfun :
+      (fun z : ℂ =>
+          (Real.log ‖(chartAt ℂ x).symm z - P‖ : ℂ)
+            + Complex.I * (Complex.arg ((chartAt ℂ x).symm z - P) : ℂ))
+        = fun z : ℂ => Complex.log (z - P) := by
+    funext z
+    show (Real.log ‖z - P‖ : ℂ) + Complex.I * (Complex.arg (z - P) : ℂ)
+        = Complex.log (z - P)
+    rw [mul_comm]
+    rfl
+  rw [hfun]
+  exact (((hasDerivAt_id x).sub_const P).clog hx).hasFDerivAt
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
