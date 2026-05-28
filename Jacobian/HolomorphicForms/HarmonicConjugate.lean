@@ -758,6 +758,21 @@ theorem dipole_conjugate_exists_at_off_PQ
     IsHarmonicConjugateAtReal.dipole_conjugate_at_common_rotation
       hxP hxQ⟩
 
+/-- Honest `IsHarmonicOffReal` witness for the canonical dipole on
+`X = ℂ`. For any `P, Q : ℂ`, the canonical real dipole
+`fun z => log ‖z - P‖ - log ‖z - Q‖` is harmonic on `ℂ \ {P, Q}`
+in the contentful sense: at every point off `{P, Q}` it admits a
+local harmonic conjugate.
+
+Proof is the direct discharge: `IsHarmonicOffReal` is exactly
+`∀ x ≠ P, x ≠ Q, ∃ v, IsHarmonicConjugateAtReal ℂ _ v x`, and
+`dipole_conjugate_exists_at_off_PQ` provides this existential. -/
+theorem dipole_isHarmonicOffReal_on_complex (P Q : ℂ) :
+    IsHarmonicOffReal ℂ P Q
+      (fun z : ℂ => Real.log ‖z - P‖ - Real.log ‖z - Q‖) := by
+  intro x hxP hxQ
+  exact dipole_conjugate_exists_at_off_PQ hxP hxQ
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
