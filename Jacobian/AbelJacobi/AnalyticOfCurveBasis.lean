@@ -713,10 +713,13 @@ theorem constant_in_RR_space_for_effective
       f.MemRiemannRochSpace
         (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂) := by
   classical
-  refine ⟨HolomorphicForms.singlePoleMeromorphicMap Q₁, ?_⟩
+  refine ⟨HolomorphicForms.constMeromorphicMap (1 : ℂ), ?_⟩
   show HolomorphicForms.Divisor.Effective _
-  simp [HolomorphicForms.singlePoleMeromorphicMap]
-  exact HolomorphicForms.Divisor.effective_point Q₂
+  simp [HolomorphicForms.constMeromorphicMap]
+  intro P
+  exact add_nonneg
+    (HolomorphicForms.Divisor.effective_point Q₁ P)
+    (HolomorphicForms.Divisor.effective_point Q₂ P)
 
 /-!
 Standard linear algebra: if `dim V ≥ 2` and `W ⊆ V` is 1-dim, then
