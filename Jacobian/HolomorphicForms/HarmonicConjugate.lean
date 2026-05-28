@@ -736,6 +736,28 @@ lemma exists_rotation_to_slitPlane {x P Q : ℂ} (hP : x ≠ P) (hQ : x ≠ Q) :
              ∧ c * (x - Q) ∈ Complex.slitPlane :=
   slit_rotation_for_two_nonzero (sub_ne_zero.mpr hP) (sub_ne_zero.mpr hQ)
 
+/-- Full-coverage canonical dipole conjugate existence. For any
+`x ∉ {P, Q}` in ℂ, there exists a `v : ℂ → ℝ` that is a harmonic
+conjugate of the canonical real dipole
+`fun z => log ‖z - P‖ - log ‖z - Q‖` at `x`.
+
+Composes `exists_rotation_to_slitPlane` (which produces a single
+rotation `c` putting both `x - P` and `x - Q` into the slit plane)
+with `dipole_conjugate_at_common_rotation` (which exhibits the
+rotated `arg`-based conjugate using that `c`). The exhibited `v`
+is `fun z => arg (c * (z - P)) - arg (c * (z - Q))` for the chosen
+rotation `c`. -/
+theorem dipole_conjugate_exists_at_off_PQ
+    {x P Q : ℂ} (hP : x ≠ P) (hQ : x ≠ Q) :
+    ∃ v : ℂ → ℝ,
+      IsHarmonicConjugateAtReal ℂ
+        (fun z : ℂ => Real.log ‖z - P‖ - Real.log ‖z - Q‖) v x := by
+  obtain ⟨c, hxP, hxQ⟩ := exists_rotation_to_slitPlane hP hQ
+  exact ⟨fun z : ℂ =>
+    Complex.arg (c * (z - P)) - Complex.arg (c * (z - Q)),
+    IsHarmonicConjugateAtReal.dipole_conjugate_at_common_rotation
+      hxP hxQ⟩
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
