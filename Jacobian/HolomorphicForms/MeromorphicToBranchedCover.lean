@@ -1368,14 +1368,12 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
         exact (d.getD_toMap_off_pole htne).symm
     · -- `simple_pole_order_one`: given hpole, P' = P, then use d.simple_pole_order.
       intro P' hpole
-      have hpoint : (Divisor.point P : Divisor X) = Divisor.point P' := by
-        -- hpole : (constructedMap).poles = Divisor.point P'
-        -- unfold poles → poleDivisor (definitional via dot notation)
-        have hpoles : (Divisor.point P : Divisor X) = Divisor.point P' := hpole
-        exact hpoles
-      have hP'P : P' = P :=
-        (Finsupp.single_left_injective (M := ℤ) (α := X)
-          (one_ne_zero) hpoint).symm
+      -- hpole : (constructedMap).poles = Divisor.point P'
+      -- unfold poles → poleDivisor (definitional via dot notation); chain with the
+      -- surrounding `poleDivisor = Divisor.point P` to get `point P = point P'`,
+      -- then `Divisor.point_inj` gives `P = P'`.
+      have hpoint : (Divisor.point P : Divisor X) = Divisor.point P' := hpole
+      have hP'P : P' = P := (Divisor.point_inj.mp hpoint).symm
       subst hP'P
       exact d.simple_pole_order
 
@@ -1806,12 +1804,10 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
         filter_upwards [h_nhd] with t htne
         exact (d.getD_toMap_off_pole htne).symm
     · intro P' hpole
-      have hpoint : (Divisor.point P : Divisor X) = Divisor.point P' := by
-        have hpoles : (Divisor.point P : Divisor X) = Divisor.point P' := hpole
-        exact hpoles
-      have hP'P : P' = P :=
-        (Finsupp.single_left_injective (M := ℤ) (α := X)
-          (one_ne_zero) hpoint).symm
+      -- `point P = point P'` (chained via the surrounding `poleDivisor = point P`),
+      -- then `Divisor.point_inj` gives `P = P'`.
+      have hpoint : (Divisor.point P : Divisor X) = Divisor.point P' := hpole
+      have hP'P : P' = P := (Divisor.point_inj.mp hpoint).symm
       subst hP'P
       exact d.simple_pole_order
   -- `poleModulusData`. Same proof as in the constructor.

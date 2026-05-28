@@ -54,6 +54,20 @@ def Effective {X : Type*} (D : Divisor X) : Prop :=
     point P Q = 0 := by
   simp [point, h]
 
+/-- Point divisors are injective in their basepoint: two point divisors are
+equal iff their underlying points agree. -/
+@[simp] theorem point_inj {X : Type*} [DecidableEq X] {P Q : X} :
+    (point P : Divisor X) = point Q ↔ P = Q := by
+  refine ⟨fun h => ?_, fun h => by rw [h]⟩
+  -- Evaluate both sides at `P`: LHS = 1, RHS = (Divisor.point Q) P.
+  have h_P : (point P : Divisor X) P = (point Q : Divisor X) P :=
+    congr_arg (fun D => (D : Divisor X) P) h
+  rw [point_apply_self] at h_P
+  -- h_P : 1 = (point Q) P. If P ≠ Q, RHS = 0, contradicting 1 = 0.
+  by_contra hne
+  rw [point_apply_ne hne] at h_P
+  exact one_ne_zero h_P
+
 theorem effective_point {X : Type*} [DecidableEq X] (P : X) :
     Effective (point P : Divisor X) := by
   intro Q
