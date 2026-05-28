@@ -1185,6 +1185,12 @@ structure PointRiemannRochSection
   meromorphic_everywhere :
     ∀ p : X,
       JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX finiteLift p
+  /--
+Off the prescribed pole, the literal point values of `finiteLift` agree
+  with their removable holomorphic germs, so the finite lift is continuous.
+-/
+  finiteLift_continuous_off_P :
+    ∀ p : X, p ≠ P → ContinuousAt finiteLift p
   /-- Divisor bound at `P`: `orderAt P finiteLift ≥ -1`. -/
   order_ge_neg_one_at_P :
     ((-1 : ℤ) : WithTop ℤ) ≤
@@ -1238,36 +1244,6 @@ theorem meromorphic_no_poles_constant
       (0 : WithTop ℤ) ≤
         JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F) :
     ∃ c : ℂ, ∀ p : X, ∀ᶠ z in 𝓝[≠] p, F z = c := by
-  sorry
-
-/--
-**Provider (local Laurent → continuous extension).** If `F` is
-meromorphic everywhere on `X`, has no poles off `P`, and has chart-local
-order `-1` at `P`, then the one-point extension `onePointExtend F P` is
-continuous on `X`.
-
-Proof idea: off `P`, the extension is `((F · : ℂ) : OnePoint ℂ)`, which
-is continuous because `F` is locally holomorphic (no poles). At `P`,
-order `-1` gives a chart-local Laurent expansion
-`F ∘ chart.symm = c₋₁ · z⁻¹ + holomorphic`, so the inversion chart on
-`OnePoint ℂ` sees `F` as a function tending to `0`, hence the extension
-is continuous at `P` too.
--/
-theorem continuous_onePointExtend_of_meromorphic_order_neg_one
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (F : X → ℂ) (P : X)
-    (hmer : ∀ p : X,
-      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p)
-    (hnoPoleOff : ∀ p : X, p ≠ P →
-      (0 : WithTop ℤ) ≤
-        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F)
-    (horder :
-      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
-        ((-1 : ℤ) : WithTop ℤ)) :
-    Continuous (onePointExtend F P) := by
   sorry
 
 /--
@@ -1375,6 +1351,54 @@ theorem tendsto_norm_atTop_of_order_neg_one
   show F (e.symm (e x)) = F x
   rw [e.left_inv hx_src]
 
+/--
+**Provider (local Laurent plus honest off-pole values → continuous extension).**
+If `F` is meromorphic everywhere on `X`, has no poles off `P`, is
+literally continuous off `P`, and has chart-local order `-1` at `P`,
+then the one-point extension `onePointExtend F P` is continuous on `X`.
+-/
+theorem continuous_onePointExtend_of_meromorphic_order_neg_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (F : X → ℂ) (P : X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p)
+    (_hnoPoleOff : ∀ p : X, p ≠ P →
+      (0 : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F)
+    (hcontOff : ∀ p : X, p ≠ P → ContinuousAt F p)
+    (horder :
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+        ((-1 : ℤ) : WithTop ℤ)) :
+    Continuous (onePointExtend F P) := by
+  rw [continuous_iff_continuousAt]
+  intro x
+  by_cases hxP : x = P
+  · rw [hxP]
+    have hpunctured :
+        Filter.Tendsto (onePointExtend F P) (nhdsWithin P {P}ᶜ)
+          (nhds (OnePoint.infty : OnePoint ℂ)) := by
+      refine (OnePoint.tendsto_infty_of_modulus_diverges P F
+        (tendsto_norm_atTop_of_order_neg_one F P hmer horder)).congr' ?_
+      filter_upwards [self_mem_nhdsWithin] with y hy
+      exact (onePointExtend_off (F := F) (P := P) hy).symm
+    have hdecomp : nhds P = nhdsWithin P {P} ⊔ nhdsWithin P {P}ᶜ :=
+      nhds_eq_nhdsWithin_sup_nhdsWithin P (by simp)
+    rw [ContinuousAt, onePointExtend_at, hdecomp, Filter.tendsto_sup]
+    refine ⟨?_, hpunctured⟩
+    rw [nhdsWithin_singleton]
+    simpa [onePointExtend_at] using tendsto_pure_nhds (onePointExtend F P) P
+  · have hcoe :
+        ContinuousAt (fun x : X => ((F x : ℂ) : OnePoint ℂ)) x :=
+      OnePoint.continuous_coe.continuousAt.comp (hcontOff x hxP)
+    refine hcoe.congr_of_eventuallyEq ?_
+    have hne_nhds : {P}ᶜ ∈ 𝓝 x :=
+      isClosed_singleton.isOpen_compl.mem_nhds hxP
+    filter_upwards [hne_nhds] with y hy
+    exact onePointExtend_off (F := F) (P := P) hy
+
 namespace PointRiemannRochSection
 
 variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1459,7 +1483,8 @@ noncomputable def toRiemannRochSectionAtPoint
   orderAt_P_eq_neg_one := s.orderAt_P_eq_neg_one
   continuous_extension :=
     continuous_onePointExtend_of_meromorphic_order_neg_one
-      s.finiteLift P s.meromorphic_everywhere s.noPoleOff_P s.orderAt_P_eq_neg_one
+      s.finiteLift P s.meromorphic_everywhere s.noPoleOff_P
+      s.finiteLift_continuous_off_P s.orderAt_P_eq_neg_one
   orderAt_pole_in_extension :=
     mapAnalyticOrderAt_onePointExtend_of_order_neg_one
       s.finiteLift P s.meromorphic_everywhere s.orderAt_P_eq_neg_one
