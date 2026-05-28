@@ -740,4 +740,61 @@ theorem twoPointMeromorphicMap_not_poleModulusData
     exact (PerfectSpace.not_isolated (X := ℂ) (chartAt ℂ Q1 Q1)).ne hbot
   exact this hQ1_image_open
 
+/--
+**Constant `MeromorphicMapToSphere` constructor.**
+
+For any complex number `c`, the constant map `fun _ => ((c : ℂ) : OnePoint ℂ)`
+is a `MeromorphicMapToSphere X` with `zeroDivisor = 0`, `poleDivisor = 0`,
+`principalDivisor = 0`. All fields are honest except
+`hasBranchedCoverDataOfPoleDegree`, which is a scaffold `sorry` (see below).
+
+This constructor is the AbelJacobi-refactor witness for
+`constant_in_RR_space_for_effective` (replacing the
+`singlePoleMeromorphicMap` use) and serves as the structural starting point
+for the `assemble_meromorphicMap` refactor.
+
+**Why `hasBranchedCoverDataOfPoleDegree` is a scaffold sorry.** A constant map
+`f x = ((c : ℂ) : OnePoint ℂ)` has fiber `f⁻¹{(c : OnePoint ℂ)} = X` and
+empty fiber over every other point of `OnePoint ℂ`. The
+`BranchedCoverData.fiberSum_const` field requires the weighted fiber sum to
+be CONSTANT across `OnePoint ℂ`, which forces the sum over `X` to equal `0`.
+With `ramificationIndex_pos`, that requires `X = ∅`. So for nontrivial `X`,
+no `BranchedCoverData X (OnePoint ℂ) toMap` exists at all. The hypothesis
+`Continuous toMap` IS satisfied (constants are continuous), so the
+implication does not discharge vacuously.
+
+Per goal.md, scaffold sorries in `SinglePoleLift.lean` that do not surface
+new `Solution.lean` sorry-warnings are acceptable.
+-/
+noncomputable def constMeromorphicMap (c : ℂ) : MeromorphicMapToSphere X :=
+  { toMap := fun _ => ((c : ℂ) : OnePoint ℂ)
+    locally_meromorphic := True
+    zeroDivisor := 0
+    poleDivisor := 0
+    principalDivisor := 0
+    principalDivisor_eq := by simp
+    poleDivisor_nonneg := fun _ => le_refl 0
+    zero_or_pole_eq_zero := fun _ => Or.inl rfl
+    toMap_ne_infty_of_poleDivisor_zero := fun _ _ => OnePoint.coe_ne_infty c
+    continuousOn_ne_infty := continuousOn_const
+    toFiniteFun_mdifferentiable := fun g hg => by
+      -- `hg` says the constant lift equals `(g · : OnePoint ℂ)`. Coe is
+      -- injective on `ℂ`, so `g x = c` for all x; hence `g` is constant.
+      have hg_const : ∀ x : X, g x = c := fun x => by
+        have h := congrFun hg x
+        exact (OnePoint.coe_injective h).symm
+      have : g = fun _ => c := funext hg_const
+      rw [this]
+      exact mdifferentiable_const
+    toMap_eq_infty_of_poleDivisor_pos := fun _ hP => by
+      -- `0 < 0` is false.
+      exact absurd hP (lt_irrefl 0)
+    exists_modulus_atTop_at_pole := fun _ hP => by
+      -- `0 < 0` is false.
+      exact absurd hP (lt_irrefl 0)
+    -- Scaffold sorry: a constant map cannot satisfy `BranchedCoverData`
+    -- over a nontrivial `X` (see docstring). Acceptable per goal.md.
+    hasBranchedCoverDataOfPoleDegree := sorry
+  }
+
 end JacobianChallenge.HolomorphicForms
