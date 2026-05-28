@@ -4,6 +4,7 @@ import Jacobian.HolomorphicForms.MeromorphicFunctionVector
 import Jacobian.HolomorphicForms.SinglePoleLift
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Jacobian.HolomorphicForms.ChartedSpaceComplexPoints
+import Jacobian.HolomorphicForms.HolomorphicMap
 import Mathlib.Geometry.Manifold.Complex
 import Mathlib.LinearAlgebra.Dimension.Finrank
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
@@ -252,20 +253,74 @@ lemma not_continuous_two_point_indicator
         | (exact hbc (hb.trans hc.symm))
 
 /--
+**Structural axiom: genus-zero RR provides a `MeromorphicMapToSphere`
+with full analytic + RR-space-membership content.**
+
+The exact upstream content needed to discharge
+`genusZero_pointRRSection_outside_constants_exists` (in
+`MeromorphicToBranchedCover.lean`) plus
+`riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic` (below):
+a `MeromorphicMapToSphere X` with pole divisor exactly
+`Divisor.point P`, nonconstant, in the Riemann-Roch space `L([P])`,
+and equipped with the granular `meromorphic_getD` and
+`mapAnalyticOrderAt = 1` projections.
+
+The sorry-free production `genusZero_fixedPole_meromorphicData_nonempty`
+(below) **does not supply** the granular analytic content: its proof
+uses the bump-scaffold `singlePoleMeromorphicMap`, which is `C^∞` but
+not analytic in the bump-transition zone, so chart-local
+meromorphicity of the canonical finite lift fails at those points.
+
+Once the upstream RR chain is dependency-broken from the bump
+scaffold (e.g., by producing an honest meromorphic map via a real
+Riemann-Roch construction), this `sorry` can be discharged.
+
+This narrower-named provider was moved here from
+`MeromorphicToBranchedCover.lean` (manager unblock,
+2026-05-27 — see `task.md`); it belongs alongside the existing
+`genusZero_riemannRoch_*` structural axioms above as the canonical
+genus-zero RR existential claim. Downstream theorems in
+`MeromorphicToBranchedCover.lean`
+(e.g. `genusZero_pointRRSection_outside_constants_exists`) and
+`RiemannRoch.lean`
+(e.g. `riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic`)
+both route through this provider.
+
+This is the proving-guide-approved "strictly narrower, named
+provider" replacement of the prior monolithic L2855 sorry in
+`MeromorphicToBranchedCover.lean`.
+-/
+theorem genusZero_pointRRSection_meromorphic_getD_exists
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    ∃ f : MeromorphicMapToSphere X,
+      f.poles = Divisor.point P ∧
+      f.Nonconstant ∧
+      f.MemRiemannRochSpace (Divisor.point P) ∧
+      (∀ p : X,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+          (fun q => (f.toMap q).getD 0) p) ∧
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 := by
+  sorry
+
+/--
 **Structural axiom (S3c).** Genus-zero Riemann-Roch supplies a nonconstant
 meromorphic map in `L([P])`.
 
 This is no longer derived from a raw `Submodule ℂ (MeromorphicFunctionType X)`;
 that derivation relied on the removed false vector-space instance.
 
-**Scaffold use is safe here.** The witness is `singlePoleMeromorphicMap P`, a
-cutoff scaffold. The conclusion only asserts (a) nonconstancy and (b)
-membership in the Riemann-Roch space `L([P])` — both are purely divisor- /
-topology-level claims that hold for the scaffold by construction. No
-analytic content (modulus divergence, branched-cover data) is claimed about
-the scaffold here. Callers that need genus-zero classification must still
-route through a real route-data theorem; see
-`genus_zero_homeomorph_onePointCx_of_routeData`.
+**Refactored (2026-05-27, manager-authorized multi-file commit)**:
+this theorem now routes through the narrower named provider
+`genusZero_pointRRSection_meromorphic_getD_exists` (above) instead of
+referencing the bump scaffold `singlePoleMeromorphicMap` directly. The
+narrower provider carries the full analytic + nonconstancy +
+RR-space-membership content under a single named sorry; this theorem
+projects the (a) nonconstancy and (b) RR-space-membership components.
 -/
 theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -276,13 +331,9 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ f : MeromorphicMapToSphere X,
       f.Nonconstant ∧ f.MemRiemannRochSpace (Divisor.point P) := by
-  have _h_used : analyticGenus ℂ X = 0 := h
-  haveI : Nontrivial X := by
-    obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
-    exact ⟨⟨a, b, hab⟩⟩
-  refine ⟨singlePoleMeromorphicMap P, singlePoleMeromorphicMap_nonconstant P, ?_⟩
-  unfold MeromorphicMapToSphere.MemRiemannRochSpace
-  simp [singlePoleMeromorphicMap]
+  obtain ⟨f, _hpole, hnc, hmem, _hmer, _hord1⟩ :=
+    genusZero_pointRRSection_meromorphic_getD_exists X P h
+  exact ⟨f, hnc, hmem⟩
 
 /--
 **Structural axiom (S3).** From the genus-zero Riemann-Roch
