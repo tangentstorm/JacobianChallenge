@@ -1,6 +1,7 @@
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
+import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.HolomorphicForms.HarmonicDipole
 
@@ -1067,6 +1068,47 @@ theorem IsHarmonicConjugateAtReal.chart_pullback_lift_at_basepoint
         (chartAt ℂ ((chartAt ℂ P) P)) ((chartAt ℂ P) P) = (chartAt ℂ P) P := rfl
     simpa [hchart_self_id, hchart_self_pt] using hf
   exact hf'.congr_of_eventuallyEq heq
+
+/-- Chart-transition holomorphy on overlap. For an `IsManifold`
+structure with model `modelWithCornersSelf ℂ ℂ` and smoothness
+`⊤`, the transition `chartAt ℂ x ∘ (chartAt ℂ P).symm` is
+`ContDiffOn ℂ ⊤` (and hence ℂ-analytic) on the overlap of chart
+sources, viewed in ℂ via
+`(chartAt ℂ P).target ∩ (chartAt ℂ P).symm ⁻¹' (chartAt ℂ x).source`.
+
+Foundational lemma for the multi-commit `IsHarmonicOffReal` lift
+on general `X`. Step 1 of a 5-step sequence. No immediate
+consumer until Steps 2-4 land. -/
+lemma chart_transition_contDiffOn
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (P x : X) :
+    ContDiffOn ℂ ⊤ (chartAt ℂ x ∘ (chartAt ℂ P).symm)
+      ((chartAt ℂ P).target ∩ (chartAt ℂ P).symm ⁻¹' (chartAt ℂ x).source) := by
+  have h1 : chartAt ℂ P ∈ IsManifold.maximalAtlas
+      (modelWithCornersSelf ℂ ℂ) ⊤ X :=
+    IsManifold.chart_mem_maximalAtlas P
+  have h2 : chartAt ℂ x ∈ IsManifold.maximalAtlas
+      (modelWithCornersSelf ℂ ℂ) ⊤ X :=
+    IsManifold.chart_mem_maximalAtlas x
+  have hcompat : (chartAt ℂ P).symm.trans (chartAt ℂ x)
+      ∈ contDiffGroupoid (⊤ : WithTop ℕ∞) (modelWithCornersSelf ℂ ℂ) :=
+    IsManifold.compatible_of_mem_maximalAtlas h1 h2
+  rw [contDiffGroupoid, mem_groupoid_of_pregroupoid] at hcompat
+  -- hcompat.left has shape:
+  --   ContDiffOn ℂ ⊤ (I ∘ (chart_P.symm.trans chart_x) ∘ I.symm)
+  --     (I.symm ⁻¹' (chart_P.symm.trans chart_x).source ∩ range I)
+  -- For I = modelWithCornersSelf ℂ ℂ, I = id and I.symm = id.
+  -- Unfold trans via coe_trans + trans_source.
+  have h := hcompat.left
+  simp only [contDiffPregroupoid, modelWithCornersSelf_coe,
+             modelWithCornersSelf_coe_symm,
+             OpenPartialHomeomorph.coe_trans,
+             OpenPartialHomeomorph.trans_source,
+             OpenPartialHomeomorph.symm_source,
+             Set.preimage_id, Set.range_id, Set.inter_univ,
+             Function.id_comp, Function.comp_id] at h
+  exact h
 
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
