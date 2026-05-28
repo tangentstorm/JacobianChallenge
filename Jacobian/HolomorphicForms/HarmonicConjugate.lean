@@ -859,6 +859,19 @@ theorem HasLogarithmicSingularityAtReal.log_pullback_at_pos
   HasLogarithmicSingularityAtReal.chart_pullback_lift
     (HasLogarithmicSingularityAtReal.log_abs_at ((chartAt ℂ P) P))
 
+/-- Single-pole `-1` log function on a general charted-space `X`.
+Symmetric `-1` counterpart to `log_pullback_at_pos`. For any
+`Q : X`, the chart-pulled-back negative log function
+`fun x => -log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖` has a logarithmic
+singularity at `Q` with sign `-1`. Proof: `chart_pullback_lift`
+applied to `neg_log_abs_at ((chartAt ℂ Q) Q)`. -/
+theorem HasLogarithmicSingularityAtReal.log_pullback_at_neg
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X] (Q : X) :
+    HasLogarithmicSingularityAtReal X Q
+      (fun x : X => -Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖) (-1) :=
+  HasLogarithmicSingularityAtReal.chart_pullback_lift
+    (HasLogarithmicSingularityAtReal.neg_log_abs_at ((chartAt ℂ Q) Q))
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
