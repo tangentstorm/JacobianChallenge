@@ -132,6 +132,31 @@ theorem IsHolomorphicInChartReal.id_at (x : ℂ) :
   -- The integrand is then literally fun z : ℂ => z.
   exact (ContinuousLinearMap.id ℂ ℂ).hasFDerivAt
 
+/-- Honest existence theorem for the CR-to-holomorphic bridge,
+specialized to `u = Complex.re`, `v = Complex.im` on `X = ℂ`.
+Exhibits `f := id : ℂ → ℂ` satisfying both the equation
+`f x = ↑x.re + I * ↑x.im` (by `Complex.re_add_im` + `mul_comm`)
+and `IsHolomorphicInChartReal ℂ f x` at every point (by `id_at`).
+
+Narrowed to the canonical `re/im` pair because that is the only
+case our witness library covers; a generic version covering
+arbitrary `(u, v)` with the right CR data would need a much
+richer witness library. Companion to the still-cheating generic
+`continuous_cr_to_holomorphic_bridge`; analogous in role to
+`existence_of_harmonic_conjugate_for_re_on_complex` and to
+`existence_of_dipole_harmonic_on_complex`. -/
+theorem existence_of_continuous_cr_to_holomorphic_for_re_im_on_complex :
+    ∃ f : ℂ → ℂ,
+      (∀ x : ℂ, f x = ↑(Complex.re x) + Complex.I * ↑(Complex.im x)) ∧
+      ∀ x : ℂ, IsHolomorphicInChartReal ℂ f x := by
+  refine ⟨id, ?_, ?_⟩
+  · intro x
+    show x = (Complex.re x : ℂ) + Complex.I * (Complex.im x : ℂ)
+    rw [mul_comm]
+    exact (Complex.re_add_im x).symm
+  · intro x
+    exact IsHolomorphicInChartReal.id_at x
+
 /-- The Cauchy-Riemann to holomorphic bridge.
 Real differentiability plus Cauchy-Riemann equations implies complex differentiability.
 We stub the continuous bridge since we bypass the general complex manifold exterior algebra. -/
