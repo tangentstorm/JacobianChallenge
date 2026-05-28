@@ -872,6 +872,73 @@ theorem HasLogarithmicSingularityAtReal.log_pullback_at_neg
   HasLogarithmicSingularityAtReal.chart_pullback_lift
     (HasLogarithmicSingularityAtReal.neg_log_abs_at ((chartAt ℂ Q) Q))
 
+/-- General-X dipole `+1` pole at `P`, under the same-chart hypothesis
+`P ∈ (chartAt ℂ Q).source`. Subtracting the `+1`-pole function
+`log ‖chartAt ℂ P x - (chartAt ℂ P) P‖` and the function
+`log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖` gives a dipole. The `+1`
+pole at `P` is preserved because `f_Q` is continuous at `P` (it
+would only blow up at `Q`, and `P ≠ Q`), so `add_tendsto` keeps
+the pole.
+
+The same-chart hypothesis is mild: it's automatic on `X = ℂ`
+(chart source is all of ℂ) and on connected compact Riemann
+surfaces it can typically be arranged. -/
+theorem dipole_pullback_at_pos
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {P Q : X} (hPQ : P ≠ Q) (hP_in_Q : P ∈ (chartAt ℂ Q).source) :
+    HasLogarithmicSingularityAtReal X P
+      (fun x : X =>
+        Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖
+        - Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖) 1 := by
+  have hP := HasLogarithmicSingularityAtReal.log_pullback_at_pos (X := X) P
+  set g : X → ℝ :=
+    fun x : X => -Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖ with hg_def
+  have hg_cont_at_P : Filter.Tendsto (fun z : ℂ => g ((chartAt ℂ P).symm z))
+      (nhds ((chartAt ℂ P) P))
+      (nhds (-Real.log ‖chartAt ℂ Q P - (chartAt ℂ Q) Q‖)) := by
+    have hsymm_to_P : Filter.Tendsto (fun z : ℂ => (chartAt ℂ P).symm z)
+        (nhds ((chartAt ℂ P) P)) (nhds P) := by
+      have hcont : ContinuousAt (chartAt ℂ P).symm ((chartAt ℂ P) P) :=
+        (chartAt ℂ P).continuousAt_symm
+          ((chartAt ℂ P).map_source (mem_chart_source ℂ P))
+      have hinv : (chartAt ℂ P).symm ((chartAt ℂ P) P) = P :=
+        (chartAt ℂ P).left_inv (mem_chart_source ℂ P)
+      simpa [ContinuousAt, hinv] using hcont.tendsto
+    have hQ_cont_at_P : ContinuousAt (chartAt ℂ Q) P :=
+      (chartAt ℂ Q).continuousAt hP_in_Q
+    have hsub_cont : ContinuousAt (fun x : X => chartAt ℂ Q x - (chartAt ℂ Q) Q) P :=
+      hQ_cont_at_P.sub continuousAt_const
+    have hnorm_cont :
+        ContinuousAt (fun x : X => ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖) P :=
+      continuous_norm.continuousAt.comp hsub_cont
+    have hne_at_P : chartAt ℂ Q P - (chartAt ℂ Q) Q ≠ 0 := by
+      intro h
+      apply hPQ
+      have heq := sub_eq_zero.mp h
+      exact (chartAt ℂ Q).injOn hP_in_Q (mem_chart_source ℂ Q) heq
+    have hnorm_ne : ‖chartAt ℂ Q P - (chartAt ℂ Q) Q‖ ≠ 0 :=
+      norm_ne_zero_iff.mpr hne_at_P
+    -- Build the composite continuity explicitly via ContinuousAt.log on ℝ.
+    have hlog_cont : ContinuousAt
+        (fun x : X => Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖) P :=
+      hnorm_cont.log hnorm_ne
+    have hg_cont : ContinuousAt g P := hlog_cont.neg
+    exact hg_cont.tendsto.comp hsymm_to_P
+  have hsum := HasLogarithmicSingularityAtReal.add_tendsto hP hg_cont_at_P
+  have hfun :
+      (fun x : X => Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖) + g
+        = fun x : X =>
+            Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖
+            - Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖ := by
+    funext x
+    show Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖ + g x
+        = Real.log ‖chartAt ℂ P x - (chartAt ℂ P) P‖
+          - Real.log ‖chartAt ℂ Q x - (chartAt ℂ Q) Q‖
+    simp [hg_def]
+    ring
+  rw [hfun] at hsum
+  exact hsum
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
