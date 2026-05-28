@@ -368,6 +368,46 @@ lemma IsHarmonicConjugateAtReal.add
   rw [hfun]
   exact hf₁.add hf₂
 
+/-- Generic constant-shift closure for `IsHarmonicConjugateAtReal`:
+if `v` is a harmonic conjugate of `u` at `x`, then `v + β` is a
+harmonic conjugate of `u + α` at `x` for any real constants
+`α, β : ℝ`. Adding a real constant to `u` corresponds to adding
+the complex constant `α + I * β` to `f := u + iv`, which
+preserves ℂ-Fréchet-differentiability via `HasFDerivAt.add_const`.
+
+Generic structural lemma — companion to `.neg` and `.add`. Needed
+by the branch-rotation work: the rotated witness
+`IsHarmonicConjugateAtReal ℂ (log ‖c (· - P)‖) (arg (c (· - P))) x`
+produces an integrand whose real part is `log ‖c‖ + log ‖z - P‖`,
+differing from the desired `log ‖z - P‖` by the constant `log ‖c‖`. -/
+lemma IsHarmonicConjugateAtReal.add_const_const
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {u v : X → ℝ} {x : X}
+    (h : IsHarmonicConjugateAtReal X u v x) (α β : ℝ) :
+    IsHarmonicConjugateAtReal X
+      (fun z : X => u z + α) (fun z : X => v z + β) x := by
+  obtain ⟨f', hf⟩ := h
+  refine ⟨f', ?_⟩
+  have hfun :
+      (fun z : ℂ =>
+          ((u ((chartAt ℂ x).symm z) + α : ℝ) : ℂ)
+            + Complex.I * ((v ((chartAt ℂ x).symm z) + β : ℝ) : ℂ))
+        = (fun z : ℂ =>
+            ((u ((chartAt ℂ x).symm z) : ℂ)
+              + Complex.I * (v ((chartAt ℂ x).symm z) : ℂ))
+            + ((α : ℂ) + Complex.I * (β : ℂ))) := by
+    funext z
+    show (((u ((chartAt ℂ x).symm z) + α) : ℝ) : ℂ)
+          + Complex.I
+            * (((v ((chartAt ℂ x).symm z) + β) : ℝ) : ℂ)
+        = ((u ((chartAt ℂ x).symm z) : ℂ)
+            + Complex.I * (v ((chartAt ℂ x).symm z) : ℂ))
+          + ((α : ℂ) + Complex.I * (β : ℂ))
+    push_cast
+    ring
+  rw [hfun]
+  exact hf.add_const _
+
 /-- Combined conjugate witness for the canonical dipole at the
 slit-intersection. For any `x` with `x - P ∈ Complex.slitPlane`
 AND `x - Q ∈ Complex.slitPlane`, the function
