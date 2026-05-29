@@ -713,10 +713,13 @@ theorem constant_in_RR_space_for_effective
       f.MemRiemannRochSpace
         (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂) := by
   classical
-  refine ⟨HolomorphicForms.singlePoleMeromorphicMap Q₁, ?_⟩
+  refine ⟨HolomorphicForms.constMeromorphicMap (1 : ℂ), ?_⟩
   show HolomorphicForms.Divisor.Effective _
-  simp [HolomorphicForms.singlePoleMeromorphicMap]
-  exact HolomorphicForms.Divisor.effective_point Q₂
+  simp [HolomorphicForms.constMeromorphicMap]
+  intro P
+  exact add_nonneg
+    (HolomorphicForms.Divisor.effective_point Q₁ P)
+    (HolomorphicForms.Divisor.effective_point Q₂ P)
 
 /-!
 Standard linear algebra: if `dim V ≥ 2` and `W ⊆ V` is 1-dim, then
@@ -1349,22 +1352,8 @@ theorem assemble_meromorphicMap
       f.zeroDivisor = HolomorphicForms.Divisor.point Q₁ ∧
       f.poleDivisor = HolomorphicForms.Divisor.point Q₂ ∧
       f.principalDivisor =
-        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
-  classical
-  let f_base := HolomorphicForms.singlePoleMeromorphicMap Q₂
-  refine ⟨{ f_base with
-    zeroDivisor := HolomorphicForms.Divisor.point Q₁
-    principalDivisor :=
-      HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂
-    principalDivisor_eq := rfl
-    zero_or_pole_eq_zero := by
-      intro Q
-      by_cases hQ : Q = Q₁
-      · subst hQ
-        right
-        exact HolomorphicForms.Divisor.point_apply_ne hne
-      · left
-        exact HolomorphicForms.Divisor.point_apply_ne hQ }, ⟨rfl, rfl, rfl⟩⟩
+        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ :=
+  ⟨HolomorphicForms.singleZeroSinglePoleMap Q₁ Q₂ hne, rfl, rfl, rfl⟩
 
 
 theorem build_meromorphicMap_from_global_extension
@@ -1595,11 +1584,15 @@ that would derive genus-zero classification for arbitrary `X`.
 theorem degree_one_meromorphicMap_implies_analyticGenus_zero
     (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
     (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂) :
-    analyticGenus ℂ X = 0 := by
-  -- declaration's docstring for why. The route-data form
-  -- `..._with_meromorphicData` (also exposed as `..._of_routeData`) is the
-  -- honest theorem.
-  sorry
+    analyticGenus ℂ X = 0 :=
+  -- Structural strengthening (2026-05-25): `MeromorphicMapToSphere` now
+  -- structurally carries `exists_modulus_atTop_at_pole` and
+  -- `hasBranchedCoverDataOfPoleDegree` as fields (inlined from the
+  -- previously-separate `PoleModulusData` / `BranchedCoverDataOfPoleDegree`
+  -- records). We extract them via the canonical accessors and delegate to
+  -- the route-data form.
+  degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData X f Q₂
+    hpole f.toPoleModulusData f.toBranchedCoverDataOfPoleDegree
 
 
 theorem degree_one_meromorphicMap_implies_analyticGenus_zero_of_routeData

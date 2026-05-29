@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.MeromorphicToCp1
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Jacobian.HolomorphicForms.SinglePoleLift
 import Mathlib.Analysis.Meromorphic.NormalForm
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
@@ -166,7 +167,552 @@ theorem MeromorphicMapToSphere.preimage_infty_eq_singleton_of_poleDivisor_point
     rw [h, hx, Divisor.point_apply_self]
     decide
 
-/-! ### Branched-cover-data assembly from `AnalyticData` -/
+omit [CompactSpace X] [ConnectedSpace X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**`noPoleOff_P` provider for a `MeromorphicMapToSphere` with a single
+simple pole.**
+
+Given `f : MeromorphicMapToSphere X` whose pole divisor is exactly
+`Divisor.point P`, together with a hypothesis `hmer` supplying
+chart-local meromorphicity of the canonical finite lift at every
+point, the chart-local meromorphic order of the finite lift
+`(f.toMap ·).getD 0` is non-negative at every point `p ≠ P`.
+
+Proof strategy: at any `p ≠ P`, the pole divisor at `p` is zero, so
+`f.toMap p ≠ ∞`. By `continuousOn_ne_infty`, `f.toMap` is continuous
+at `p`, hence `(f.toMap ·).getD 0` is continuous at `p` (composing
+the continuous `f.toMap` with the continuous `getD 0 : OnePoint ℂ → ℂ`
+on the non-∞ image). Continuity at `p` gives a limit in `𝓝[≠] p`,
+which pulls back through the chart to a limit in `𝓝[≠] (chartAt ℂ p p)`.
+By Mathlib's `tendsto_nhds_iff_meromorphicOrderAt_nonneg`, the
+chart-pulled meromorphic order is non-negative; `orderAt_eq_chartAt`
+translates this back to `orderAt p` in the project's vanishing-order
+API.
+
+This is the structural-field bridge for the `noPoleOff_P` field of
+`PointRiemannRochSection`. The granular `hmer` hypothesis (rather than
+a full `AnalyticData`) lets call sites pass only the precise content
+the proof needs — typically derived from `f.AnalyticData.meromorphic_getD`
+or, once promoted, from a structural `meromorphic_getD` field on
+`MeromorphicMapToSphere`.
+-/
+theorem MeromorphicMapToSphere.noPoleOff_P_of_poleDivisor_point
+    (f : MeromorphicMapToSphere X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p)
+    (P : X) (hpole : f.poles = Divisor.point P) :
+    ∀ p : X, p ≠ P →
+      (0 : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p
+          (fun q => (f.toMap q).getD 0) := by
+  classical
+  intro p hpne
+  -- Set up the canonical chart at `p`.
+  set e := chartAt ℂ p with he_def
+  set x₀ : ℂ := e p with hx₀_def
+  -- The finite lift, abbreviated.
+  set F : X → ℂ := fun q => (f.toMap q).getD 0 with hF_def
+  -- Chart-pulled meromorphicity of `F` at `x₀`.
+  have hFmer : MeromorphicAt (F ∘ e.symm) x₀ := by
+    have h := hmer p
+    -- `MeromorphicAtX F p := MeromorphicAt (F ∘ (extChartAt 𝓘(ℂ) p).symm) (extChartAt 𝓘(ℂ) p p)`
+    unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at h
+    rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt] at h
+    exact h
+  -- It suffices to show the chart-pulled `meromorphicOrderAt` is non-negative.
+  rw [JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt]
+  -- Apply Mathlib's iff via the converging-limit witness.
+  rw [← tendsto_nhds_iff_meromorphicOrderAt_nonneg hFmer]
+  -- Witness: the value of `F` at `p`, i.e. `(f.toMap p).getD 0`.
+  refine ⟨F p, ?_⟩
+  -- We need: `Tendsto (F ∘ e.symm) (𝓝[≠] x₀) (𝓝 (F p))`.
+  -- Step A: `f.toMap p ≠ ∞` (since pole divisor at `p` is `0`).
+  have hP_zero : f.poleDivisor p = 0 := by
+    change f.poles p = 0
+    rw [hpole]
+    exact Divisor.point_apply_ne hpne
+  have hp_ne_infty : f.toMap p ≠ (OnePoint.infty : OnePoint ℂ) :=
+    f.toMap_ne_infty_of_poleDivisor_zero p hP_zero
+  -- Step B: `f.toMap` is continuous at `p` (via `continuousOn_ne_infty` and the
+  -- fact that `{x | f.toMap x ≠ ∞}` is open — it's the complement of a closed
+  -- set, since `{∞}` is closed in `OnePoint ℂ` and `f.toMap` is continuous on
+  -- its complement open).
+  -- Note: `continuousOn_ne_infty` only gives continuity on the set; we need
+  -- continuity at the point `p`, using that the set is a neighborhood of `p`.
+  have hopenSet : IsOpen {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} := by
+    -- The complement is the preimage of `{∞}` under a function that is continuous
+    -- on the set itself; this requires a bit more work. Use that the pole set
+    -- is closed via `preimage_infty_eq_singleton_of_poleDivisor_point` and
+    -- singleton-closedness in `T2Space X`.
+    have hpoleSet :
+        {x : X | f.toMap x = (OnePoint.infty : OnePoint ℂ)} = ({P} : Set X) := by
+      ext x
+      constructor
+      · intro hx
+        have : x ∈ f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} := hx
+        rw [f.preimage_infty_eq_singleton_of_poleDivisor_point P hpole] at this
+        exact this
+      · intro hx
+        have hx' : x ∈ ({P} : Set X) := hx
+        have : x ∈ f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} := by
+          rw [f.preimage_infty_eq_singleton_of_poleDivisor_point P hpole]
+          exact hx'
+        exact this
+    -- The complement of `{x | f.toMap x = ∞} = {P}` is open.
+    have h_compl :
+        {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} =
+          ({P} : Set X)ᶜ := by
+      ext x
+      constructor
+      · intro hx
+        have : x ∉ {y : X | f.toMap y = (OnePoint.infty : OnePoint ℂ)} := hx
+        rw [hpoleSet] at this
+        exact this
+      · intro hx
+        have : x ∉ ({P} : Set X) := hx
+        rw [← hpoleSet] at this
+        exact this
+    rw [h_compl]
+    exact isOpen_compl_singleton
+  have h_nbhd : {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} ∈ 𝓝 p :=
+    hopenSet.mem_nhds hp_ne_infty
+  have hfcont : ContinuousAt f.toMap p :=
+    f.continuousOn_ne_infty.continuousAt h_nbhd
+  -- Step C: `(F ·) = (fun q => (f.toMap q).getD 0)` is continuous at `p`.
+  -- Eventually in `𝓝 p`, `f.toMap x ≠ ∞`, so `(f.toMap x).getD 0` equals the
+  -- unique `y ∈ ℂ` with `f.toMap x = ↑y`. We use the open embedding
+  -- `(↑ : ℂ → OnePoint ℂ)`'s `nhds_eq` to lift continuity of `f.toMap` at `p`
+  -- to continuity of `F` at `p`.
+  have h_open_embed :
+      Topology.IsOpenEmbedding ((↑) : ℂ → OnePoint ℂ) :=
+    OnePoint.isOpenEmbedding_coe
+  -- On the nbhd `{x | f.toMap x ≠ ∞}` of `p`, `f.toMap x = ↑(F x)`.
+  have h_eventually : ∀ᶠ x in 𝓝 p, f.toMap x = ((F x : ℂ) : OnePoint ℂ) := by
+    filter_upwards [h_nbhd] with x hx
+    cases h_case : f.toMap x with
+    | infty => exact absurd h_case hx
+    | coe y =>
+      -- Both LHS and RHS contain `f.toMap x`-derived data; identify `F x = y`.
+      -- After `cases h_case`, the goal already substitutes `f.toMap x` with `↑y`.
+      have hFx_eq : F x = y := by
+        show (f.toMap x).getD 0 = y
+        rw [h_case]; rfl
+      -- Goal is `↑y = ↑(F x)`. Use hFx_eq to bridge.
+      rw [hFx_eq]
+  have h_eq_pt : f.toMap p = ((F p : ℂ) : OnePoint ℂ) :=
+    h_eventually.self_of_nhds
+  -- Tendsto of `f.toMap` at `p`: `f.toMap → ↑(F p)`.
+  have hT : Filter.Tendsto f.toMap (𝓝 p) (𝓝 (((F p : ℂ) : OnePoint ℂ))) := by
+    have h := hfcont.tendsto
+    rwa [h_eq_pt] at h
+  -- Use `h_eventually` to replace `f.toMap` by `((↑) ∘ F)` eventually.
+  have hT' : Filter.Tendsto (fun x => ((F x : ℂ) : OnePoint ℂ)) (𝓝 p)
+      (𝓝 (((F p : ℂ) : OnePoint ℂ))) :=
+    hT.congr' h_eventually
+  -- `(↑ : ℂ → OnePoint ℂ)` is an open embedding; lift continuity of
+  -- `(↑) ∘ F` at `p` to continuity of `F` at `p` via
+  -- `IsOpenEmbedding.tendsto_nhds_iff`.
+  have hF_at : ContinuousAt F p :=
+    (h_open_embed.tendsto_nhds_iff (f := F) (l := 𝓝 p)).mpr hT'
+  -- Step D: pull back through `e.symm`.
+  -- `e.symm` is continuous at `x₀ = e p` and sends `x₀ ↦ p`, so
+  -- `Tendsto (F ∘ e.symm) (𝓝 x₀) (𝓝 (F p))`. Restrict to `𝓝[≠] x₀`.
+  have hp_src : p ∈ e.source := mem_chart_source ℂ p
+  have hsymm_x₀ : e.symm x₀ = p := e.left_inv hp_src
+  have hsymm_cont : Filter.Tendsto e.symm (𝓝 x₀) (𝓝 p) := by
+    have h : ContinuousAt e.symm (e p) := e.continuousAt_symm (e.map_source hp_src)
+    have h' : Filter.Tendsto e.symm (𝓝 (e p)) (𝓝 (e.symm (e p))) := h.tendsto
+    rw [e.left_inv hp_src] at h'
+    exact h'
+  have hFsymm : Filter.Tendsto (F ∘ e.symm) (𝓝 x₀) (𝓝 (F p)) :=
+    hF_at.tendsto.comp hsymm_cont
+  exact hFsymm.mono_left nhdsWithin_le_nhds
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**`order_ge_neg_one_at_P` provider (reverse of `8418d4ec`).**
+
+Given `f : MeromorphicMapToSphere X` with `f.poles = Divisor.point P`,
+a hypothesis `hmer` supplying chart-local meromorphicity of the
+canonical finite lift at every point, and a hypothesis `hord1`
+supplying `mapAnalyticOrderAt f.toMap P = 1` (the analytic
+"simple pole" content for the extension), the chart-local meromorphic
+order of the canonical finite lift `(f.toMap ·).getD 0` at the
+simple pole `P` equals `-1`.
+
+This is the reverse direction of commit `8418d4ec`'s
+`mapAnalyticOrderAt_onePointExtend_of_order_neg_one`: that lemma went
+from finite-lift order `-1` to extension order `1`; this lemma goes
+from extension order `1` (supplied by the `hord1` hypothesis) to
+finite-lift order `-1`.
+
+The proof uses the inversion-chart reciprocal-Laurent computation:
+on a punctured neighborhood of `P`, the chart-pulled extension
+`chartLocalAt f.toMap P` equals `(F ∘ chart.symm)⁻¹` where `F` is
+the finite lift, so chart-local analytic order `1` for the extension
+corresponds to chart-local meromorphic order `-1 = -(1)` for the
+finite lift, via `meromorphicOrderAt_inv`.
+
+The structural-field bridge for the `order_ge_neg_one_at_P` field of
+`PointRiemannRochSection`; downstream consumers may weaken the
+equality to `≤ -1` via `Eq.le` (or its symmetric variants). The
+granular `hmer` / `hord1` hypotheses (rather than a full
+`AnalyticData`) let call sites pass only the precise content the
+proof needs — typically derived from `f.AnalyticData.meromorphic_getD`
++ `f.AnalyticData.simple_pole_order_one P hpole`, or from analogous
+structural-field projections once promoted.
+-/
+theorem MeromorphicMapToSphere.orderAt_getD_eq_neg_one_of_simple_pole
+    (f : MeromorphicMapToSphere X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p)
+    (P : X) (hpole : f.poles = Divisor.point P)
+    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1) :
+    JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
+      (fun q => (f.toMap q).getD 0) = ((-1 : ℤ) : WithTop ℤ) := by
+  classical
+  -- Setup the canonical chart at `P` and its image.
+  set e := chartAt ℂ P with he_def
+  set x₀ : ℂ := e P with hx₀_def
+  have hP_src : P ∈ e.source := mem_chart_source ℂ P
+  have hsymm_eP : e.symm x₀ = P := e.left_inv hP_src
+  -- The finite lift, abbreviated.
+  set F : X → ℂ := fun q => (f.toMap q).getD 0 with hF_def
+  -- Chart-pulled finite lift.
+  set Fc : ℂ → ℂ := F ∘ e.symm with hFc_def
+  -- Chart-pulled meromorphicity of `F` at `x₀`.
+  have hFc_mer : MeromorphicAt Fc x₀ := by
+    have h := hmer P
+    unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at h
+    rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt] at h
+    exact h
+  -- The extension's chart-local function (same `h_ext` as in `8418d4ec`).
+  set h_ext : ℂ → ℂ :=
+    JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P with hh_ext_def
+  -- `f.toMap P = ∞` (from the pole at `P`).
+  have hfP_infty : f.toMap P = (OnePoint.infty : OnePoint ℂ) := by
+    refine f.toMap_eq_infty_of_poleDivisor_pos P ?_
+    have h1 : f.poleDivisor P = (Divisor.point P : Divisor X) P := by
+      change f.poles P = _
+      rw [hpole]
+    rw [h1, Divisor.point_apply_self]
+    decide
+  -- `h_ext x₀ = 0` (same as `hh_at_x₀` in `8418d4ec`).
+  have hh_at_x₀ : h_ext x₀ = 0 := by
+    show JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P x₀ = 0
+    unfold JacobianChallenge.HolomorphicForms.chartLocalAt
+    show chartAt ℂ (f.toMap P) (f.toMap (e.symm x₀)) = 0
+    rw [hsymm_eP, hfP_infty]
+    show invFwd (OnePoint.infty : OnePoint ℂ) = 0
+    exact invFwd_infty
+  -- The punctured agreement: `h_ext =ᶠ[𝓝[≠] x₀] Fc⁻¹`. Same shape as `8418d4ec`.
+  have hh_punctured : h_ext =ᶠ[𝓝[≠] x₀] Fc⁻¹ := by
+    have htgt_nhds : e.target ∈ 𝓝 x₀ :=
+      e.open_target.mem_nhds (e.map_source hP_src)
+    have htgt_nhdsW : e.target ∈ 𝓝[≠] x₀ := mem_nhdsWithin_of_mem_nhds htgt_nhds
+    have hself : {x₀}ᶜ ∈ 𝓝[≠] x₀ := self_mem_nhdsWithin
+    filter_upwards [htgt_nhdsW, hself] with z hz_tgt hz_ne
+    have hesymm_src : e.symm z ∈ e.source := e.map_target hz_tgt
+    have he_round : e (e.symm z) = z := e.right_inv hz_tgt
+    have hsymm_ne_P : e.symm z ≠ P := by
+      intro hcontra
+      apply hz_ne
+      have := congrArg (fun y : X => e y) hcontra
+      simp only at this
+      rw [he_round] at this
+      exact this
+    -- `f.toMap (e.symm z) ≠ ∞` (since `e.symm z ≠ P`).
+    have hP_zero_symm : f.poleDivisor (e.symm z) = 0 := by
+      change f.poles (e.symm z) = 0
+      rw [hpole]
+      exact Divisor.point_apply_ne hsymm_ne_P
+    have hne_infty : f.toMap (e.symm z) ≠ (OnePoint.infty : OnePoint ℂ) :=
+      f.toMap_ne_infty_of_poleDivisor_zero (e.symm z) hP_zero_symm
+    -- Now evaluate `h_ext z` step by step.
+    show JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P z = Fc⁻¹ z
+    unfold JacobianChallenge.HolomorphicForms.chartLocalAt
+    show chartAt ℂ (f.toMap P) (f.toMap (e.symm z)) = (Fc z)⁻¹
+    rw [hfP_infty]
+    -- Now LHS is `invFwd (f.toMap (e.symm z))`.
+    -- `f.toMap (e.symm z) = ↑((f.toMap (e.symm z)).getD 0) = ↑(Fc z)`.
+    -- (Case-split on `f.toMap (e.symm z)`.)
+    cases h_case : f.toMap (e.symm z) with
+    | infty => exact absurd h_case hne_infty
+    | coe y =>
+      -- `f.toMap (e.symm z) = ↑y`, so `(f.toMap (e.symm z)).getD 0 = y`, hence `Fc z = y`.
+      have hFc_z : Fc z = y := by
+        show (f.toMap (e.symm z)).getD 0 = y
+        rw [h_case]; rfl
+      show invFwd ((y : ℂ) : OnePoint ℂ) = (Fc z)⁻¹
+      rw [hFc_z]
+      exact invFwd_coe _
+  -- `h_ext` is meromorphic at `x₀` (via the punctured agreement and `Fc⁻¹` meromorphic).
+  have hh_ext_mer : MeromorphicAt h_ext x₀ :=
+    hFc_mer.inv.congr hh_punctured.symm
+  -- From the `hord1` hypothesis, get `mapAnalyticOrderAt f.toMap P = 1`,
+  -- i.e. `analyticOrderNatAt (fun t => h_ext t - h_ext x₀) x₀ = 1`.
+  have hmAOA_eq_1 :
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 :=
+    hord1
+  -- Unfold `mapAnalyticOrderAt` and simplify using `hh_at_x₀ = 0`.
+  have hnat_ord_h_ext :
+      analyticOrderNatAt h_ext x₀ = 1 := by
+    have hraw : analyticOrderNatAt
+        (fun t => JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P t -
+          JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P (e P)) (e P) = 1 := by
+      have := hmAOA_eq_1
+      unfold JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt at this
+      exact this
+    -- Rewrite via `h_ext` and `x₀` definitions, then via `h_ext x₀ = 0`.
+    have hsub : (fun t => JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P t -
+        JacobianChallenge.HolomorphicForms.chartLocalAt f.toMap P (e P)) = h_ext := by
+      funext t
+      change h_ext t - h_ext x₀ = h_ext t
+      rw [hh_at_x₀, sub_zero]
+    rw [hsub] at hraw
+    -- `hraw : analyticOrderNatAt h_ext (e P) = 1`. Note `e P = x₀`.
+    exact hraw
+  -- `analyticOrderNatAt h_ext x₀ = 1` implies `analyticOrderAt h_ext x₀ = (1 : ℕ∞)`
+  -- (since `.toNat = 1` is only possible when the underlying value is exactly `(1 : ℕ)`).
+  have h_an_h_ext : AnalyticAt ℂ h_ext x₀ := by
+    -- If `h_ext` weren't `AnalyticAt`, `analyticOrderAt = 0` (junk), so `analyticOrderNatAt = 0`,
+    -- contradicting `= 1`.
+    by_contra hcontra
+    have : analyticOrderAt h_ext x₀ = 0 := analyticOrderAt_of_not_analyticAt hcontra
+    have h0 : analyticOrderNatAt h_ext x₀ = 0 := by
+      unfold analyticOrderNatAt; rw [this]; rfl
+    rw [hnat_ord_h_ext] at h0
+    exact one_ne_zero h0
+  have h_an_ord_h_ext_ne_top : analyticOrderAt h_ext x₀ ≠ ⊤ := by
+    intro hcontra
+    have h0 : analyticOrderNatAt h_ext x₀ = 0 := by
+      unfold analyticOrderNatAt; rw [hcontra]; rfl
+    rw [hnat_ord_h_ext] at h0
+    exact one_ne_zero h0
+  have h_an_ord_h_ext : analyticOrderAt h_ext x₀ = (1 : ℕ∞) := by
+    have hcoe := Nat.cast_analyticOrderNatAt h_an_ord_h_ext_ne_top
+    rw [hnat_ord_h_ext] at hcoe
+    exact hcoe.symm
+  -- Convert `analyticOrderAt h_ext x₀ = 1` into `meromorphicOrderAt h_ext x₀ = (1 : ℤ)`.
+  have h_mero_ord_h_ext :
+      meromorphicOrderAt h_ext x₀ = ((1 : ℤ) : WithTop ℤ) := by
+    have hmap : meromorphicOrderAt h_ext x₀ = (analyticOrderAt h_ext x₀).map (↑) :=
+      h_an_h_ext.meromorphicOrderAt_eq
+    rw [hmap, h_an_ord_h_ext]
+    rfl
+  -- Apply `meromorphicOrderAt_inv` via the punctured agreement.
+  -- `meromorphicOrderAt h_ext x₀ = meromorphicOrderAt (Fc⁻¹) x₀ = -meromorphicOrderAt Fc x₀`.
+  have h_mero_ord_Fc :
+      meromorphicOrderAt Fc x₀ = ((-1 : ℤ) : WithTop ℤ) := by
+    have step1 :
+        meromorphicOrderAt h_ext x₀ = meromorphicOrderAt (Fc⁻¹) x₀ :=
+      meromorphicOrderAt_congr hh_punctured
+    have step2 :
+        meromorphicOrderAt (Fc⁻¹) x₀ = -meromorphicOrderAt Fc x₀ :=
+      meromorphicOrderAt_inv
+    rw [step1, step2] at h_mero_ord_h_ext
+    -- `h_mero_ord_h_ext : -meromorphicOrderAt Fc x₀ = (1 : ℤ)` (coerced)
+    have := h_mero_ord_h_ext
+    -- Negate both sides.
+    have hneg : meromorphicOrderAt Fc x₀ = -((1 : ℤ) : WithTop ℤ) := by
+      have := congrArg Neg.neg this
+      simp only [neg_neg] at this
+      exact this
+    rw [hneg]
+    rfl
+  -- Translate back via `orderAt_eq_chartAt`.
+  rw [JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt]
+  exact h_mero_ord_Fc
+
+omit [CompactSpace X] [ConnectedSpace X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**`continuous_finiteLift_off` provider for a `MeromorphicMapToSphere`
+with a single simple pole.**
+
+Given `f : MeromorphicMapToSphere X` with `f.poles = Divisor.point P`,
+the canonical finite lift `(f.toMap ·).getD 0` is continuous on the
+punctured space `({P}ᶜ : Set X)`.
+
+Proof strategy: on `{P}ᶜ`, `f.toMap x ≠ ∞` (since
+`preimage_infty_eq_singleton_of_poleDivisor_point` identifies the
+pole locus with `{P}`), so `f.toMap` is continuous on this open set
+via the structural `continuousOn_ne_infty` field. At each `p ∈ {P}ᶜ`,
+`{P}ᶜ` is a neighborhood of `p` (open), giving `ContinuousAt f.toMap p`.
+Composition with the `OnePoint`-coercion inverse via
+`OnePoint.isOpenEmbedding_coe` + `IsOpenEmbedding.tendsto_nhds_iff`
+yields `ContinuousAt ((f.toMap ·).getD 0) p`. Pointwise `ContinuousAt`
+on the open `{P}ᶜ` gives `ContinuousOn`.
+
+The structural-field bridge for the `continuous_finiteLift_off` field
+of `PointRiemannRochSection`. Unlike the `order` and `meromorphic`
+bridges, this bridge requires no `AnalyticData` hypothesis — it is
+derivable purely from the structural fields of `MeromorphicMapToSphere`,
+so it is maximally consumable.
+-/
+theorem MeromorphicMapToSphere.continuousOn_getD_off_pole_of_poleDivisor_point
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    ContinuousOn (fun q => (f.toMap q).getD 0) (({P}ᶜ : Set X)) := by
+  classical
+  -- Establish the open set `{P}ᶜ` is exactly the non-pole locus.
+  have hpoleSet :
+      {x : X | f.toMap x = (OnePoint.infty : OnePoint ℂ)} = ({P} : Set X) := by
+    ext x
+    constructor
+    · intro hx
+      have : x ∈ f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} := hx
+      rw [f.preimage_infty_eq_singleton_of_poleDivisor_point P hpole] at this
+      exact this
+    · intro hx
+      have hx' : x ∈ ({P} : Set X) := hx
+      have : x ∈ f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} := by
+        rw [f.preimage_infty_eq_singleton_of_poleDivisor_point P hpole]
+        exact hx'
+      exact this
+  have h_loci_eq :
+      {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} = ({P} : Set X)ᶜ := by
+    ext x
+    constructor
+    · intro hx
+      have : x ∉ {y : X | f.toMap y = (OnePoint.infty : OnePoint ℂ)} := hx
+      rw [hpoleSet] at this
+      exact this
+    · intro hx
+      have : x ∉ ({P} : Set X) := hx
+      rw [← hpoleSet] at this
+      exact this
+  have hopen_compl : IsOpen (({P}ᶜ : Set X)) := isOpen_compl_singleton
+  -- Pointwise continuity on `{P}ᶜ`.
+  intro p hp_mem
+  -- `hp_mem : p ∈ ({P}ᶜ : Set X)`, i.e. `p ≠ P`.
+  have hp_ne_P : p ≠ P := hp_mem
+  -- `f.toMap p ≠ ∞`.
+  have hP_zero : f.poleDivisor p = 0 := by
+    change f.poles p = 0
+    rw [hpole]
+    exact Divisor.point_apply_ne hp_ne_P
+  have hp_ne_infty : f.toMap p ≠ (OnePoint.infty : OnePoint ℂ) :=
+    f.toMap_ne_infty_of_poleDivisor_zero p hP_zero
+  -- `{P}ᶜ` is a neighborhood of `p`.
+  have h_nbhd : ({P}ᶜ : Set X) ∈ 𝓝 p := hopen_compl.mem_nhds hp_mem
+  -- And so is the non-pole locus (they're equal).
+  have h_nbhd' :
+      {x : X | f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)} ∈ 𝓝 p := by
+    rw [h_loci_eq]; exact h_nbhd
+  -- `ContinuousAt f.toMap p` from `continuousOn_ne_infty`.
+  have hfcont : ContinuousAt f.toMap p :=
+    f.continuousOn_ne_infty.continuousAt h_nbhd'
+  -- The finite lift abbreviated.
+  set F : X → ℂ := fun q => (f.toMap q).getD 0 with hF_def
+  -- On `{P}ᶜ ∈ 𝓝 p`, `f.toMap x = ↑(F x)`.
+  have h_eventually : ∀ᶠ x in 𝓝 p, f.toMap x = ((F x : ℂ) : OnePoint ℂ) := by
+    filter_upwards [h_nbhd'] with x hx
+    cases h_case : f.toMap x with
+    | infty => exact absurd h_case hx
+    | coe y =>
+      have hFx_eq : F x = y := by
+        show (f.toMap x).getD 0 = y
+        rw [h_case]; rfl
+      rw [hFx_eq]
+  have h_eq_pt : f.toMap p = ((F p : ℂ) : OnePoint ℂ) := h_eventually.self_of_nhds
+  -- Tendsto of `f.toMap` at `p` is `↑(F p)`.
+  have hT : Filter.Tendsto f.toMap (𝓝 p) (𝓝 (((F p : ℂ) : OnePoint ℂ))) := by
+    have h := hfcont.tendsto
+    rwa [h_eq_pt] at h
+  have hT' : Filter.Tendsto (fun x => ((F x : ℂ) : OnePoint ℂ)) (𝓝 p)
+      (𝓝 (((F p : ℂ) : OnePoint ℂ))) :=
+    hT.congr' h_eventually
+  -- Lift through the open embedding `(↑) : ℂ → OnePoint ℂ`.
+  have h_open_embed :
+      Topology.IsOpenEmbedding ((↑) : ℂ → OnePoint ℂ) :=
+    OnePoint.isOpenEmbedding_coe
+  have hF_at : ContinuousAt F p :=
+    (h_open_embed.tendsto_nhds_iff (f := F) (l := 𝓝 p)).mpr hT'
+  -- Restrict `ContinuousAt` to `ContinuousWithinAt {P}ᶜ`.
+  exact hF_at.continuousWithinAt
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/--
+**`outside_constants` provider for a `MeromorphicMapToSphere` with a
+single simple pole.**
+
+Given `f : MeromorphicMapToSphere X` with `f.poles = Divisor.point P`,
+the canonical finite lift `(f.toMap ·).getD 0` is not eventually
+constant on a punctured neighborhood of `P`.
+
+Proof strategy: the structural field `exists_modulus_atTop_at_pole`
+yields a local representative `g : X → ℂ` with off-pole agreement
+`f.toMap x = ↑(g x)` (for `x` with `f.poleDivisor x = 0`) and
+`‖g x‖ → ∞` along `𝓝[≠] P`. Since `f.poles = Divisor.point P`, the
+off-pole agreement holds for every `x ≠ P`, hence
+`(f.toMap x).getD 0 = g x` eventually in `𝓝[≠] P`. If the finite lift
+were eventually equal to a constant `c`, then `g` would be eventually
+equal to `c`, hence `‖g x‖ = ‖c‖` eventually — contradicting the
+modulus-divergence content of `exists_modulus_atTop_at_pole`. The
+contradiction extracts a single witness via the project's
+`punctured_nhds_neBot_of_chartedSpaceComplex` (which gives
+`(𝓝[≠] P).NeBot` for any complex-charted space).
+
+The structural-field bridge for the `outside_constants` field of
+`PointRiemannRochSection`. Like the field-6 bridge in commit
+`d9670683`, this bridge requires no `AnalyticData` hypothesis.
+-/
+theorem MeromorphicMapToSphere.outside_constants_of_poleDivisor_point
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    ¬ ∃ c : ℂ, ∀ᶠ z in 𝓝[≠] P, (f.toMap z).getD 0 = c := by
+  classical
+  -- Pole divisor at `P` is positive: equal to 1 in fact.
+  have hposP : 0 < f.poleDivisor P := by
+    have h : f.poleDivisor P = (Divisor.point P : Divisor X) P := by
+      change f.poles P = _
+      rw [hpole]
+    rw [h, Divisor.point_apply_self]; decide
+  -- Extract the modulus-divergence witness.
+  obtain ⟨g, hg_eq, hg_div⟩ := f.exists_modulus_atTop_at_pole P hposP
+  -- Off-pole agreement gives `(f.toMap z).getD 0 = g z` eventually in `𝓝[≠] P`.
+  have hF_eq_g : ∀ᶠ z in 𝓝[≠] P, (f.toMap z).getD 0 = g z := by
+    filter_upwards [self_mem_nhdsWithin] with z hz_ne
+    -- `hz_ne : z ∈ {P}ᶜ`, i.e. `z ≠ P`.
+    have hz_neP : z ≠ P := hz_ne
+    have hP_zero : f.poleDivisor z = 0 := by
+      change f.poles z = 0
+      rw [hpole]
+      exact Divisor.point_apply_ne hz_neP
+    have hagree : f.toMap z = ((g z : ℂ) : OnePoint ℂ) := hg_eq z hP_zero
+    rw [hagree]; rfl
+  -- Punctured neighborhood NeBot via complex charts.
+  haveI : Filter.NeBot (𝓝[≠] P) :=
+    JacobianChallenge.HolomorphicForms.punctured_nhds_neBot_of_chartedSpaceComplex P
+  intro ⟨c, hc⟩
+  -- Combine: `g z = c` eventually in `𝓝[≠] P`.
+  have hg_eq_c : ∀ᶠ z in 𝓝[≠] P, g z = c := by
+    filter_upwards [hF_eq_g, hc] with z hz1 hz2
+    -- `hz1 : (f.toMap z).getD 0 = g z`, `hz2 : (f.toMap z).getD 0 = c`.
+    -- So `g z = c`.
+    rw [← hz1]; exact hz2
+  -- Hence `‖g z‖ = ‖c‖` eventually.
+  have hnorm_eq : ∀ᶠ z in 𝓝[≠] P, ‖g z‖ = ‖c‖ := by
+    filter_upwards [hg_eq_c] with z hz
+    rw [hz]
+  -- But `Tendsto ‖g·‖ (𝓝[≠] P) atTop` means `‖g z‖ > ‖c‖ + 1` eventually,
+  -- contradicting `‖g z‖ = ‖c‖`.
+  have hlarge : ∀ᶠ z in 𝓝[≠] P, ‖c‖ + 1 < ‖g z‖ :=
+    hg_div (Filter.eventually_gt_atTop (‖c‖ + 1))
+  -- Combine `hnorm_eq` and `hlarge` to derive `False`.
+  have hcontra : ∀ᶠ z in 𝓝[≠] P, False := by
+    filter_upwards [hnorm_eq, hlarge] with z h_eq h_lt
+    rw [h_eq] at h_lt
+    linarith
+  exact hcontra.exists.elim (fun _ hf => hf)
 
 /--
 Given a `MeromorphicMapToSphere f` on a compact connected complex
@@ -418,7 +964,209 @@ noncomputable def SimplePoleToSphereData.of_complexPrincipalPart
   simple_pole_order := hF.orderAt_pole
   pole_modulus := hF.modulus_tendsto
 
+/-! ### `d`-keyed branched-cover data for a `SimplePoleToSphereData` -/
+
 omit [CompactSpace X] [ConnectedSpace X] in
+/--
+**`d`-keyed `MeromorphicAtX` lift.** Given a `SimplePoleToSphereData X P`,
+the canonical finite lift `(d.toMap ·).getD 0` is `MeromorphicAtX` at every
+point. This is the `meromorphic_getD` content of `AnalyticData`, factored
+out as a `d`-keyed helper so that one can build a `MeromorphicFunctionType`
+from `d` *before* a `MeromorphicMapToSphere` shell exists.
+-/
+theorem meromorphicAt_getD_of_simplePoleToSphereData
+    (P : X) (d : SimplePoleToSphereData X P) :
+    ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (d.toMap q).getD 0) p := by
+  classical
+  intro p
+  have hmer := d.meromorphic_finiteLift p
+  unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at hmer ⊢
+  refine hmer.congr ?_
+  rw [show ⇑(extChartAt 𝓘(ℂ) p) = chartAt ℂ p from
+    JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt p]
+  rw [show ⇑(extChartAt 𝓘(ℂ) p).symm = (chartAt ℂ p).symm from
+    JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm p]
+  show (d.finiteLift ∘ (chartAt ℂ p).symm)
+      =ᶠ[𝓝[≠] (chartAt ℂ p p)] (fun q => (d.toMap q).getD 0) ∘ (chartAt ℂ p).symm
+  by_cases hpP : p = P
+  · subst hpP
+    rw [Filter.EventuallyEq, eventually_nhdsWithin_iff]
+    have htarget : (chartAt ℂ p).target ∈ 𝓝 (chartAt ℂ p p) :=
+      (chartAt ℂ p).open_target.mem_nhds
+        ((chartAt ℂ p).map_source (mem_chart_source ℂ p))
+    filter_upwards [htarget] with t ht ht_ne
+    have ht_ne' : t ≠ chartAt ℂ p p := by
+      intro heq
+      apply ht_ne
+      show t ∈ ({chartAt ℂ p p} : Set ℂ)
+      rw [heq]
+      exact Set.mem_singleton _
+    have hsymm_ne : (chartAt ℂ p).symm t ≠ p := by
+      intro heq
+      have h1 : (chartAt ℂ p) ((chartAt ℂ p).symm t) = t :=
+        (chartAt ℂ p).right_inv ht
+      rw [heq] at h1
+      exact ht_ne' h1.symm
+    exact (d.getD_toMap_off_pole hsymm_ne).symm
+  · have h_sym_eq :
+        (chartAt ℂ p).symm (chartAt ℂ p p) = p :=
+      (chartAt ℂ p).left_inv (mem_chart_source ℂ p)
+    have h_cont : ContinuousAt (chartAt ℂ p).symm (chartAt ℂ p p) := by
+      have hsrc : chartAt ℂ p p ∈ (chartAt ℂ p).target :=
+        (chartAt ℂ p).map_source (mem_chart_source ℂ p)
+      exact (chartAt ℂ p).continuousAt_symm hsrc
+    have hP_compl_nhd_p : ({P}ᶜ : Set X) ∈ 𝓝 p :=
+      isOpen_compl_singleton.mem_nhds hpP
+    have hP_compl_nhd_sym : ({P}ᶜ : Set X) ∈ 𝓝 ((chartAt ℂ p).symm (chartAt ℂ p p)) := by
+      rw [h_sym_eq]; exact hP_compl_nhd_p
+    have h_nhd : ∀ᶠ t in 𝓝 (chartAt ℂ p p),
+        (chartAt ℂ p).symm t ∈ ({P}ᶜ : Set X) :=
+      h_cont.preimage_mem_nhds hP_compl_nhd_sym
+    rw [Filter.EventuallyEq]
+    refine Filter.Eventually.filter_mono nhdsWithin_le_nhds ?_
+    filter_upwards [h_nhd] with t htne
+    exact (d.getD_toMap_off_pole htne).symm
+
+omit [ConnectedSpace X] in
+/--
+Package a `SimplePoleToSphereData` as a `MeromorphicFunctionType`, so
+that `liftToCp1_*` infrastructure of `MeromorphicToCp1.lean` can be
+applied to its underlying `toMap` without needing a surrounding
+`MeromorphicMapToSphere` shell.
+-/
+noncomputable def SimplePoleToSphereData.toMeromorphicFunctionType
+    (P : X) (d : SimplePoleToSphereData X P) :
+    MeromorphicFunctionType X where
+  toFun := d.toMap
+  toFun_continuous := d.continuous_toMap
+  isMeromorphic := meromorphicAt_getD_of_simplePoleToSphereData P d
+
+omit [CompactSpace X] [ConnectedSpace X] in
+@[simp] theorem SimplePoleToSphereData.toMeromorphicFunctionType_toFun
+    (P : X) (d : SimplePoleToSphereData X P) :
+    (d.toMeromorphicFunctionType P).toFun = d.toMap := rfl
+
+omit [CompactSpace X] [ConnectedSpace X] in
+/--
+**`d`-keyed nonconstancy.** The `toMap` of a `SimplePoleToSphereData` is
+not constant: it is `∞` at `P` and finite off `P` (and there are at
+least two distinct points on a complex 1-manifold).
+-/
+theorem nonconstant_toMap_of_simplePoleToSphereData
+    (P : X) (d : SimplePoleToSphereData X P) :
+    ¬ ∃ y₀ : OnePoint ℂ, ∀ x : X, d.toMap x = y₀ := by
+  classical
+  haveI : Nonempty X := ⟨P⟩
+  obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
+  intro ⟨c, hc⟩
+  by_cases haP : a = P
+  · have hbP : b ≠ P := by intro hbP; exact hab (haP.trans hbP.symm)
+    have hcP : c = OnePoint.infty := by
+      rw [← hc a, haP]; exact d.toMap_at_pole
+    have hb : d.toMap b = c := hc b
+    rw [hcP] at hb
+    exact d.toMap_ne_infty_off_pole hbP hb
+  · have hcP : c = OnePoint.infty := by
+      rw [← hc P]
+      exact d.toMap_at_pole
+    have ha : d.toMap a = c := hc a
+    rw [hcP] at ha
+    exact d.toMap_ne_infty_off_pole haP ha
+
+omit [CompactSpace X] [ConnectedSpace X] in
+/--
+**`d`-keyed fiber identification.** The fiber `d.toMap ⁻¹' {∞}` is the
+singleton `{P}`: the value `∞` is taken only at `P`.
+-/
+theorem preimage_infty_eq_singleton_of_simplePoleToSphereData
+    (P : X) (d : SimplePoleToSphereData X P) :
+    d.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} = {P} := by
+  classical
+  ext x
+  constructor
+  · intro hx
+    have hxinfty : d.toMap x = (OnePoint.infty : OnePoint ℂ) := hx
+    by_contra hne
+    exact d.toMap_ne_infty_off_pole hne hxinfty
+  · intro hxP
+    have hx : x = P := hxP
+    subst hx
+    exact d.toMap_at_pole
+
+/--
+**`d`-keyed branched-cover data for a `SimplePoleToSphereData`.**
+
+Given a `SimplePoleToSphereData X P`, the map `d.toMap : X → OnePoint ℂ`
+admits `BranchedCoverData` whose branched degree over `∞` is `1` (the
+degree of the simple pole at `P`).
+
+This is the chicken-and-egg-free analogue of
+`MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole`,
+used to fill the structural `hasBranchedCoverDataOfPoleDegree` field of
+the inline `MeromorphicMapToSphere` being constructed in
+`singlePoleAnalyticData_of_simplePoleToSphereData` and
+`toGenusZeroFixedPoleAnalyticRRWitness`.
+-/
+theorem branchedCoverData_of_simplePoleToSphereData
+    (P : X) (d : SimplePoleToSphereData X P) :
+    ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) d.toMap),
+      JacobianChallenge.HolomorphicForms.branchedDegree h = 1 := by
+  classical
+  -- Step A. Package `d` as a `MeromorphicFunctionType` and obtain
+  -- holomorphicity + weighted-fiber conservation of `d.toMap`.
+  set mft : MeromorphicFunctionType X :=
+    d.toMeromorphicFunctionType P with hmft
+  have hfHol : JacobianChallenge.HolomorphicForms.IsHolomorphic d.toMap := by
+    have := liftToCp1_isHolomorphic X mft True.intro
+    simpa [hmft] using this
+  have hWeighted :
+      JacobianChallenge.HolomorphicForms.HasWeightedFiberConservation d.toMap := by
+    have := liftToCp1_hasWeightedFiberConservation X mft True.intro
+    simpa [hmft] using this
+  -- Step B. Nonconstancy of `d.toMap`.
+  have hnc' : ¬ ∃ y₀ : OnePoint ℂ, ∀ x : X, d.toMap x = y₀ :=
+    nonconstant_toMap_of_simplePoleToSphereData P d
+  -- Step C. Build the branched-cover datum via the analytic constructor.
+  set hbc :
+      JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) d.toMap :=
+    JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+      hfHol hWeighted hnc' with hbc_def
+  refine ⟨hbc, ?_⟩
+  -- Step D. Compute the branched degree over ∞.
+  rw [JacobianChallenge.HolomorphicForms.branchedDegree_eq_weightedFiberCard hbc
+      (OnePoint.infty : OnePoint ℂ)]
+  have hfib_eq : d.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} = ({P} : Set X) :=
+    preimage_infty_eq_singleton_of_simplePoleToSphereData P d
+  have hfib_finite :
+      hbc.finite_fiber (OnePoint.infty : OnePoint ℂ) =
+        (by exact hfib_eq ▸ Set.finite_singleton P :
+          (d.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)}).Finite) := by
+    apply Subsingleton.elim
+  show ((hbc.finite_fiber (OnePoint.infty : OnePoint ℂ)).toFinset).sum
+        hbc.ramificationIndex = 1
+  have hto : (hbc.finite_fiber (OnePoint.infty : OnePoint ℂ)).toFinset = {P} := by
+    rw [hfib_finite]
+    rw [show (hfib_eq ▸ Set.finite_singleton P :
+                (d.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)}).Finite).toFinset =
+              (Set.finite_singleton P).toFinset from by
+      ext x
+      simp [hfib_eq]]
+    ext x
+    simp
+  rw [hto]
+  rw [Finset.sum_singleton]
+  -- Step E. Identify the ramification index with `mapAnalyticOrderAt`, then with `1`.
+  have hcompat :
+      hbc.RamificationIndexCompatible :=
+    JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
+      hfHol hWeighted hnc'
+  have hrami :
+      hbc.ramificationIndex P =
+        JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt d.toMap P :=
+    hcompat P (hfHol.holomorphicAt P)
+  rw [hrami, d.simple_pole_order]
 
 theorem singlePoleAnalyticData_of_simplePoleToSphereData
     (P : X) (d : SimplePoleToSphereData X P) :
@@ -438,7 +1186,10 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
         toMap_ne_infty_of_poleDivisor_zero := ?_
         continuousOn_ne_infty := ?_
         toFiniteFun_mdifferentiable := ?_
-        toMap_eq_infty_of_poleDivisor_pos := ?_ }
+        toMap_eq_infty_of_poleDivisor_pos := ?_
+        -- Structural strengthening (2026-05-25): new inlined fields.
+        exists_modulus_atTop_at_pole := ?_
+        hasBranchedCoverDataOfPoleDegree := ?_ }
     poleDivisor_eq := rfl
     nonconstant := ?_
     poleModulusData := ?_
@@ -469,6 +1220,35 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
       rw [this] at hx; exact (lt_irrefl _) hx
     subst hxP
     exact d.toMap_at_pole
+  -- (Structural strengthening 2026-05-25) `exists_modulus_atTop_at_pole`:
+  -- same content as the `PoleModulusData` case below, now inlined.
+  · intro Q hQ
+    have hQP : Q = P := by
+      by_contra hne
+      have : (Divisor.point P : Divisor X) Q = 0 := Divisor.point_apply_ne hne
+      change (Divisor.point P : Divisor X) Q > 0 at hQ
+      rw [this] at hQ; exact (lt_irrefl _) hQ
+    subst hQP
+    refine ⟨d.finiteLift, ?_, d.pole_modulus⟩
+    intro x hx
+    have hxP : x ≠ Q := by
+      intro hxQ
+      rw [hxQ, Divisor.point_apply_self] at hx
+      exact one_ne_zero hx
+    exact d.toMap_off_pole x hxP
+  -- (Structural strengthening 2026-05-25) `hasBranchedCoverDataOfPoleDegree`:
+  -- discharged via the `d`-keyed helper `branchedCoverData_of_simplePoleToSphereData`,
+  -- which avoids the chicken-and-egg dependence on the surrounding
+  -- `MeromorphicMapToSphere` shell. The helper produces an `∃ h, branchedDegree h = 1`;
+  -- the field signature wants `branchedDegree h = (Divisor.point P).degree.toNat`,
+  -- which equals `1` via `Divisor.degree_point`.
+  · intro _hcont
+    obtain ⟨h, hdeg⟩ := branchedCoverData_of_simplePoleToSphereData P d
+    refine ⟨h, ?_⟩
+    rw [hdeg]
+    show (1 : ℕ) = (Divisor.point P : Divisor X).degree.toNat
+    rw [Divisor.degree_point]
+    rfl
   -- `nonconstant`: pick Q ≠ P; d.toMap Q ≠ d.toMap P = ∞.
   · -- The compact connected Riemann surface has Nonempty X (because P : X), so
     -- there is at least one other point.
@@ -589,14 +1369,12 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
         exact (d.getD_toMap_off_pole htne).symm
     · -- `simple_pole_order_one`: given hpole, P' = P, then use d.simple_pole_order.
       intro P' hpole
-      have hpoint : (Divisor.point P : Divisor X) = Divisor.point P' := by
-        -- hpole : (constructedMap).poles = Divisor.point P'
-        -- unfold poles → poleDivisor (definitional via dot notation)
-        have hpoles : (Divisor.point P : Divisor X) = Divisor.point P' := hpole
-        exact hpoles
-      have hP'P : P' = P :=
-        (Finsupp.single_left_injective (M := ℤ) (α := X)
-          (one_ne_zero) hpoint).symm
+      -- hpole : (constructedMap).poles = Divisor.point P'
+      -- unfold poles → poleDivisor (definitional via dot notation); chain with the
+      -- surrounding `poleDivisor = Divisor.point P` to get `point P = point P'`,
+      -- then `Divisor.point_inj` gives `P = P'`.
+      have hpoint : (Divisor.point P : Divisor X) = Divisor.point P' := hpole
+      have hP'P : P' = P := (Divisor.point_inj.mp hpoint).symm
       subst hP'P
       exact d.simple_pole_order
 
@@ -848,7 +1626,7 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
   [FiniteDimensionalHolomorphicOneForms ℂ X]
 
-omit [ConnectedSpace X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
+omit [FiniteDimensionalHolomorphicOneForms ℂ X] in
 
 theorem toSinglePoleMeromorphicAnalyticData
     {P : X} (s : SimplePoleRRSection X P) :
@@ -886,7 +1664,10 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
           toMap_ne_infty_of_poleDivisor_zero := ?_
           continuousOn_ne_infty := ?_
           toFiniteFun_mdifferentiable := ?_
-          toMap_eq_infty_of_poleDivisor_pos := ?_ }
+          toMap_eq_infty_of_poleDivisor_pos := ?_
+          -- Structural strengthening (2026-05-25): new inlined fields.
+          exists_modulus_atTop_at_pole := ?_
+          hasBranchedCoverDataOfPoleDegree := ?_ }
       poleDivisor_eq := rfl
       nonconstant := ?_
       mem_L_point := ?_
@@ -917,6 +1698,31 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
       rw [h0] at hx; exact (lt_irrefl _) hx
     subst hxP
     exact d.toMap_at_pole
+  -- (Structural strengthening 2026-05-25) `exists_modulus_atTop_at_pole`.
+  · intro Q hQ
+    have hQP : Q = P := by
+      by_contra hne
+      have h0 : (Divisor.point P : Divisor X) Q = 0 := Divisor.point_apply_ne hne
+      change (Divisor.point P : Divisor X) Q > 0 at hQ
+      rw [h0] at hQ; exact (lt_irrefl _) hQ
+    subst hQP
+    refine ⟨d.finiteLift, ?_, d.pole_modulus⟩
+    intro x hx
+    have hxP : x ≠ Q := by
+      intro hxQ
+      rw [hxQ, Divisor.point_apply_self] at hx
+      exact one_ne_zero hx
+    exact d.toMap_off_pole x hxP
+  -- (Structural strengthening 2026-05-25) `hasBranchedCoverDataOfPoleDegree`:
+  -- discharged via the `d`-keyed helper `branchedCoverData_of_simplePoleToSphereData`
+  -- (same content as in `singlePoleAnalyticData_of_simplePoleToSphereData`).
+  · intro _hcont
+    obtain ⟨h, hdeg⟩ := branchedCoverData_of_simplePoleToSphereData P d
+    refine ⟨h, ?_⟩
+    rw [hdeg]
+    show (1 : ℕ) = (Divisor.point P : Divisor X).degree.toNat
+    rw [Divisor.degree_point]
+    rfl
   -- `nonconstant`. Same proof as in `singlePoleAnalyticData_of_simplePoleToSphereData`.
   · haveI : Nonempty X := ⟨P⟩
     obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
@@ -999,12 +1805,10 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
         filter_upwards [h_nhd] with t htne
         exact (d.getD_toMap_off_pole htne).symm
     · intro P' hpole
-      have hpoint : (Divisor.point P : Divisor X) = Divisor.point P' := by
-        have hpoles : (Divisor.point P : Divisor X) = Divisor.point P' := hpole
-        exact hpoles
-      have hP'P : P' = P :=
-        (Finsupp.single_left_injective (M := ℤ) (α := X)
-          (one_ne_zero) hpoint).symm
+      -- `point P = point P'` (chained via the surrounding `poleDivisor = point P`),
+      -- then `Divisor.point_inj` gives `P = P'`.
+      have hpoint : (Divisor.point P : Divisor X) = Divisor.point P' := hpole
+      have hP'P : P' = P := (Divisor.point_inj.mp hpoint).symm
       subst hP'P
       exact d.simple_pole_order
   -- `poleModulusData`. Same proof as in the constructor.
@@ -2020,6 +2824,86 @@ noncomputable def toRiemannRochSectionAtPoint
     tendsto_norm_atTop_of_order_neg_one
       s.finiteLift P s.meromorphic_everywhere s.orderAt_P_eq_neg_one
 
+/--
+**Canonical assembly primitive: build a `PointRiemannRochSection X P`
+from `MeromorphicMapToSphere + granular meromorphic / pole-order
+hypotheses + (poles = Divisor.point P)` data.**
+
+This is the canonical single entry point for assembling a
+`PointRiemannRochSection X P` from analytic data. It takes the
+granular hypotheses
+
+* `hmer : ∀ p, MeromorphicAtX ((f.toMap ·).getD 0) p` — chart-local
+  meromorphicity of the canonical finite lift at every point;
+* `hord1 : mapAnalyticOrderAt f.toMap P = 1` — the chart-local
+  analytic-order-one condition for the extension at the simple pole;
+
+and consumes the existing sorry-free field bridges:
+
+* `meromorphic_everywhere := hmer` (direct).
+* `order_ge_neg_one_at_P` — from
+  `orderAt_getD_eq_neg_one_of_simple_pole` (equality `-1` weakened
+  to `≤ -1` via `Eq.le`).
+* `noPoleOff_P` — from `noPoleOff_P_of_poleDivisor_point`.
+* `outside_constants` — from `outside_constants_of_poleDivisor_point`
+  (structural-only).
+* `continuous_finiteLift_off` — from
+  `continuousOn_getD_off_pole_of_poleDivisor_point` (structural-only).
+
+The convenience wrapper `of_meromorphicMap_analyticData_simple_pole`
+below takes a full `AnalyticData` record instead and delegates here.
+
+This assembly is **independent of the L2779 sorry**: it consumes only
+sorry-free bridges and the explicit input hypotheses. Future
+consumers with granular hypotheses (or a full `AnalyticData` record,
+via the wrapper) in hand can call this to obtain a
+`PointRiemannRochSection X P` directly.
+-/
+noncomputable def of_meromorphicMap_meromorphic_getD_simple_pole
+    (f : MeromorphicMapToSphere X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p)
+    (P : X) (hpole : f.poles = Divisor.point P)
+    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1) :
+    PointRiemannRochSection X P where
+  finiteLift := fun q => (f.toMap q).getD 0
+  meromorphic_everywhere := hmer
+  order_ge_neg_one_at_P := by
+    have h_eq : JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
+        (fun q => (f.toMap q).getD 0) = ((-1 : ℤ) : WithTop ℤ) :=
+      f.orderAt_getD_eq_neg_one_of_simple_pole hmer P hpole hord1
+    rw [h_eq]
+  noPoleOff_P := f.noPoleOff_P_of_poleDivisor_point hmer P hpole
+  outside_constants := f.outside_constants_of_poleDivisor_point P hpole
+  finiteLift_continuous_off_P := fun p hp => by
+    have hcompl : p ∈ ({P}ᶜ : Set X) := hp
+    have hopen : IsOpen ({P}ᶜ : Set X) := isOpen_compl_singleton
+    have hcontOn :=
+      f.continuousOn_getD_off_pole_of_poleDivisor_point P hpole
+    exact (hcontOn.continuousAt (hopen.mem_nhds hcompl))
+
+/--
+**Assembly convenience wrapper (delegates to the canonical granular
+primitive `of_meromorphicMap_meromorphic_getD_simple_pole`).**
+
+Convenience form taking a full `AnalyticData` record `han` instead of
+the granular projections. The body is a one-line delegation: project
+`han.meromorphic_getD` and `han.simple_pole_order_one P hpole` and
+forward to the canonical granular primitive
+`of_meromorphicMap_meromorphic_getD_simple_pole` (commit `38662ec3`).
+
+The granular primitive (which consumes the bridges directly) is the
+single canonical assembly entry point; this wrapper exists for
+ergonomics when the caller has a full `AnalyticData` record in hand.
+-/
+noncomputable def of_meromorphicMap_analyticData_simple_pole
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    PointRiemannRochSection X P :=
+  of_meromorphicMap_meromorphic_getD_simple_pole
+    f han.meromorphic_getD P hpole (han.simple_pole_order_one P hpole)
+
 end PointRiemannRochSection
 
 
@@ -2176,6 +3060,75 @@ theorem genusZero_pointRRSection_outside_constants_exists
     Nonempty (PointRiemannRochSection X P) :=
   genusZero_pointRRSection_outside_constants_of_analyticData X P h
     (genusZero_singlePoleMeromorphicAnalyticData_nonempty X P h)
+
+/--
+**Canonical explicit-input form of L2779 (granular).**
+
+Given a `MeromorphicMapToSphere X` `f`, the granular projections
+`hmer` (chart-local meromorphicity of the canonical finite lift) and
+`hord1` (chart-local analytic-order-one for the extension at `P`),
+and the pole-divisor equation `f.poles = Divisor.point P`, the
+`PointRiemannRochSection X P` carrier is inhabited — discharged
+sorry-free by the canonical granular assembly primitive
+`PointRiemannRochSection.of_meromorphicMap_meromorphic_getD_simple_pole`
+(commit `38662ec3`).
+
+The convenience wrapper
+`genusZero_pointRRSection_outside_constants_exists_with_analyticData`
+below takes a full `AnalyticData` record instead and delegates here.
+
+The bare form `genusZero_pointRRSection_outside_constants_exists`
+(above) remains as `sorry` until the upstream genus-zero RR chain is
+dependency-broken to produce `MeromorphicMapToSphere` plus granular
+analytic content honestly.
+-/
+theorem genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (_h : analyticGenus ℂ X = 0)
+    (f : MeromorphicMapToSphere X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p)
+    (hpole : f.poles = Divisor.point P)
+    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1) :
+    Nonempty (PointRiemannRochSection X P) :=
+  ⟨PointRiemannRochSection.of_meromorphicMap_meromorphic_getD_simple_pole
+    f hmer P hpole hord1⟩
+
+/--
+**Explicit-input convenience wrapper of L2779
+(delegates to the canonical granular form
+`genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD`).**
+
+Convenience form taking a full `AnalyticData` record `han` instead of
+the granular projections. The body is a one-line delegation: project
+`han.meromorphic_getD` and `han.simple_pole_order_one P hpole` and
+forward to the canonical granular form
+`genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD`
+(commit `4a675e96`).
+
+Pattern-aligned with the established `*_with_meromorphicData` /
+`*_with_analyticData` variants throughout the codebase
+(see e.g. `ofCurve_inj_with_meromorphicData` in `Solution.lean` and
+`nonconstant_single_pole_implies_genus_zero_with_meromorphicData`
+in `AnalyticOfCurveBasis.lean`).
+-/
+theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData)
+    (hpole : f.poles = Divisor.point P) :
+    Nonempty (PointRiemannRochSection X P) :=
+  genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
+    X P h f han.meromorphic_getD hpole (han.simple_pole_order_one P hpole)
 
 
 theorem genusZero_fixedPole_rrSection_nonempty
