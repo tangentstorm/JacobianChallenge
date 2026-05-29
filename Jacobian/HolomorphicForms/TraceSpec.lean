@@ -6,6 +6,7 @@ import Jacobian.HolomorphicForms.HolomorphicMap
 import Jacobian.HolomorphicForms.BranchedCover
 import Jacobian.HolomorphicForms.ToFunApplyVec
 import Jacobian.HolomorphicForms.PullbackBundled
+import Jacobian.HolomorphicForms.TangentSpaceComplexBridge
 import Jacobian.TraceDegree.TraceDefinition
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
