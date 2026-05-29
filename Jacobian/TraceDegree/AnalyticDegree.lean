@@ -170,9 +170,9 @@ noncomputable def traceFormsRegularSpec_provider (f : X → Y)
     change (traceFormsConstructionData_provider f hf 0).traceForm = 0
     exact (traceFormsConstructionData_provider f hf 0).map_zero_spec rfl
   apply_fun_regular := by
-    intro hbc η y hy
+    intro hbc hcompat η y hy
     change (traceFormsConstructionData_provider f hf η).traceForm.toFun y = _
-    exact (traceFormsConstructionData_provider f hf η).regular_spec hbc y hy
+    exact (traceFormsConstructionData_provider f hf η).regular_spec hbc hcompat y hy
 
 /--
 Assembled here from four narrow inputs, the same shape as
@@ -225,7 +225,7 @@ noncomputable def trace_pullback_provider (f : X → Y)
     apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
     intro y hy
     rw [branchedDegree_eq_weightedFiberCard hbc y,
-        htrace.apply_fun_regular hbc (pullbackFormsBundled f hf η) y hy]
+        htrace.apply_fun_regular hbc hcompat (pullbackFormsBundled f hf η) y hy]
     exact trace_pullback_at_regular_value hbc hcompat hf hHol η y hy
 
 /--
