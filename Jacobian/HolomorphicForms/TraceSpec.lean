@@ -821,6 +821,211 @@ private theorem mfderiv_eq_toSpanSingleton_chartLocal_deriv
   --   toSpanSingleton ℂ (deriv (chartLocalAt f x) (chart x x)).
   exact toSpanSingleton_deriv.symm
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Inverse uniqueness for `IsIso` (Commit C2 — local helper).**
+
+Two `IsIso` witnesses for the same continuous linear map have equal
+`inv` fields. Re-proved locally so the C2/C3/C4 cancellation chain
+does not have to import `Jacobian.TraceDegree.PullbackBasis`.
+-/
+private theorem IsIso.inv_unique_local
+    {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    [NormedAddCommGroup F] [NormedSpace ℂ F]
+    {φ : E →L[ℂ] F} (h₁ h₂ : IsIso φ) : h₁.inv = h₂.inv := by
+  calc h₁.inv
+      = h₁.inv.comp (ContinuousLinearMap.id ℂ F) := by ext x; simp
+    _ = h₁.inv.comp (φ.comp h₂.inv) := by rw [h₂.right_inv]
+    _ = (h₁.inv.comp φ).comp h₂.inv := by
+        ext x; simp [ContinuousLinearMap.comp_apply]
+    _ = (ContinuousLinearMap.id ℂ E).comp h₂.inv := by rw [h₁.left_inv]
+    _ = h₂.inv := by ext x; simp
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Explicit form of the `mfderiv` inverse at any holomorphic point
+(Commit C2 — sorry-free helper).**
+
+For any `IsIso` witness `hiso` of `mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x` where
+`f` is holomorphic, the inverse equals the explicit
+`toSpanSingleton ℂ ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹)`.
+This combines the `mfderiv = toSpanSingleton ℂ a` identity (always
+holds for holomorphic `f`) with the `inv_unique_local` lemma and the
+explicit `IsIso` witness whose `inv` field is precisely the
+`toSpanSingleton ℂ a⁻¹` form. The non-vanishing of `a` is derived from
+the existence of `hiso` itself (a zero CLM has no inverse).
+
+This is **Commit C2** in the 4-commit C-sub-split discharge of
+`ramifiedKfoldSum_locally_bounded`. It is the explicit chart-local
+inverse, which feeds the explicit single-summand formula in C2.1
+(`cotangentPushforward_eq_comp_toSpanSingleton_inv`).
+-/
+private theorem mfderiv_isIso_inv_eq_toSpanSingleton_inv
+    {f : X → Y} (hHol : IsHolomorphic f) (x : X)
+    (hiso : IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)) :
+    hiso.inv =
+      (ContinuousLinearMap.toSpanSingleton ℂ
+        ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) :
+        TangentSpace 𝓘(ℂ, ℂ) (f x) →L[ℂ] TangentSpace 𝓘(ℂ, ℂ) x) := by
+  -- Replicate the explicit IsIso construction from
+  -- `mfderiv_isIso_of_ramificationIndex_one`, then apply
+  -- `inv_unique_local` to identify the two `.inv`s.
+  -- Derive `a ≠ 0` from the existence of an IsIso witness for `mfderiv f x`:
+  -- since `mfderiv f x = toSpanSingleton ℂ a`, the iso forces `a ≠ 0`
+  -- (else `toSpanSingleton ℂ 0 = 0` has no inverse).
+  -- First, the mfderiv ↔ toSpanSingleton identity (always holds, ramification-free).
+  set a : ℂ := deriv (chartLocalAt f x) (chartAt ℂ x x) with ha_def
+  have hFD : HasFDerivAt (chartLocalAt f x)
+      (ContinuousLinearMap.toSpanSingleton ℂ a) (chartAt ℂ x x) :=
+    (hHol.holomorphicAt x).hasStrictDerivAt.hasStrictFDerivAt.hasFDerivAt
+  have hMF : HasMFDerivAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x
+      (ContinuousLinearMap.toSpanSingleton ℂ a) := by
+    refine ⟨hHol.continuous.continuousAt, ?_⟩
+    have hFD' : HasFDerivWithinAt (chartLocalAt f x)
+        (ContinuousLinearMap.toSpanSingleton ℂ a) Set.univ (chartAt ℂ x x) :=
+      hFD.hasFDerivWithinAt
+    simpa [writtenInExtChartAt, chartLocalAt, Function.comp_def] using hFD'
+  have hmFD : mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x =
+      ContinuousLinearMap.toSpanSingleton ℂ a := hMF.mfderiv
+  -- `a ≠ 0`: from `hiso.right_inv`, applied to `(1 : TangentSpace ... (f x))`,
+  -- and `hmFD : mfderiv f x = toSpanSingleton ℂ a`, we derive
+  -- `a • (hiso.inv 1) = 1`. If `a = 0` this gives `0 = 1`, contradiction.
+  have hderiv : a ≠ 0 := by
+    intro ha0
+    have hright := hiso.right_inv
+    -- Apply `hright` at `(1 : TangentSpace 𝓘(ℂ, ℂ) (f x))`, treating the codomain
+    -- side as ℂ (which it is, definitionally). The `set w := hiso.inv 1` abbreviation
+    -- keeps the dependent `mfderiv` reference out of the `rw [hmFD]` motive.
+    have happ := congr_arg (fun (m : TangentSpace 𝓘(ℂ, ℂ) (f x) →L[ℂ]
+      TangentSpace 𝓘(ℂ, ℂ) (f x)) => m (1 : TangentSpace 𝓘(ℂ, ℂ) (f x))) hright
+    simp only [ContinuousLinearMap.coe_comp', Function.comp_apply,
+      ContinuousLinearMap.id_apply] at happ
+    -- happ : (mfderiv f x) (hiso.inv 1) = 1.
+    set w : ℂ := (hiso.inv (1 : TangentSpace 𝓘(ℂ, ℂ) (f x)) : ℂ) with hw_def
+    -- happ : (mfderiv f x) w = 1, with w : ℂ; rewrite mfderiv f x = toSpanSingleton ℂ a.
+    rw [hmFD] at happ
+    -- happ : (toSpanSingleton ℂ a) w = 1, which is `w • a = 1` in ℂ by rfl.
+    have happ' : w • a = (1 : ℂ) := happ
+    rw [ha0, smul_zero] at happ'
+    exact one_ne_zero happ'.symm
+  -- Build the explicit IsIso witness whose .inv is `toSpanSingleton ℂ a⁻¹`.
+  let isoExplicit : IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x) :=
+  { inv := (ContinuousLinearMap.toSpanSingleton ℂ (a⁻¹ : ℂ) :
+      TangentSpace 𝓘(ℂ, ℂ) (f x) →L[ℂ] TangentSpace 𝓘(ℂ, ℂ) x),
+    left_inv := by
+      rw [hmFD]
+      show ((ContinuousLinearMap.toSpanSingleton ℂ (a⁻¹ : ℂ)).comp
+              (ContinuousLinearMap.toSpanSingleton ℂ a) :
+              ℂ →L[ℂ] ℂ) = ContinuousLinearMap.id ℂ ℂ
+      refine ContinuousLinearMap.ext fun r => ?_
+      simp only [ContinuousLinearMap.comp_apply,
+                 ContinuousLinearMap.toSpanSingleton_apply, smul_eq_mul,
+                 ContinuousLinearMap.id_apply]
+      rw [mul_assoc, mul_inv_cancel₀ hderiv, mul_one]
+    right_inv := by
+      rw [hmFD]
+      show ((ContinuousLinearMap.toSpanSingleton ℂ a).comp
+              (ContinuousLinearMap.toSpanSingleton ℂ (a⁻¹ : ℂ)) :
+              ℂ →L[ℂ] ℂ) = ContinuousLinearMap.id ℂ ℂ
+      refine ContinuousLinearMap.ext fun r => ?_
+      simp only [ContinuousLinearMap.comp_apply,
+                 ContinuousLinearMap.toSpanSingleton_apply, smul_eq_mul,
+                 ContinuousLinearMap.id_apply]
+      rw [mul_assoc, inv_mul_cancel₀ hderiv, mul_one] }
+  -- Both `hiso` and `isoExplicit` are IsIso witnesses for the same CLM;
+  -- their `.inv` fields agree.
+  exact IsIso.inv_unique_local hiso isoExplicit
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**Explicit chart-local form of `cotangentPushforward` at an unramified
+preimage (Commit C2.1 — sorry-free helper).**
+
+At a point `x` of ramification index `1`, the cotangent pushforward
+of any cotangent vector `ωx ∈ T_x^* X` is the explicit composition
+of `ωx` with `toSpanSingleton ℂ ((deriv (chartLocalAt f x) (chart x x))⁻¹)`:
+
+```
+cotangentPushforward f x ωx =
+  ωx.comp (toSpanSingleton ℂ ((deriv (chartLocalAt f x) (chart x x))⁻¹))
+```
+
+This is the per-preimage chart-local representation that the C3 step
+sums over the `k` roots-of-unity preimages `z_j = w^{1/k} ζ^j` of `y`
+near `y₀`.
+-/
+private theorem cotangentPushforward_eq_comp_toSpanSingleton_inv
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    {x : X} (hx_unram : hbc.ramificationIndex x = 1)
+    (ωx : CotangentSpace ℂ X x) :
+    cotangentPushforward f x ωx =
+      ωx.comp
+        (ContinuousLinearMap.toSpanSingleton ℂ
+          ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) :
+          TangentSpace 𝓘(ℂ, ℂ) (f x) →L[ℂ] TangentSpace 𝓘(ℂ, ℂ) x) := by
+  classical
+  have hiso : Nonempty (IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)) :=
+    mfderiv_isIso_of_ramificationIndex_one hbc hcompat hHol hx_unram
+  unfold cotangentPushforward
+  simp only [dif_pos hiso]
+  rw [mfderiv_isIso_inv_eq_toSpanSingleton_inv hHol x (Classical.choice hiso)]
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**Single-summand explicit ℂ-scalar form (Commit C2.2 — sorry-free
+corollary of C2.1).**
+
+Evaluating `cotangentPushforward f x ωx` at `(1 : TangentSpace 𝓘(ℂ, ℂ) (f x))`
+yields the explicit ℂ-scalar
+`((deriv (chartLocalAt f x) (chart x x))⁻¹) • ωx 1`, i.e. the inverse of
+the chart-local derivative scaling the cotangent vector's value at `1`.
+
+This is the "single summand evaluated as a scalar" form that C3 will
+sum over the `k` roots-of-unity preimages and apply the
+`∑_j ζ^{jℓ} = 0` cancellation to.
+
+Uses Milestone 1's scoped `Inv` / `Field` instances on
+`TangentSpace 𝓘(ℂ, ℂ) (f x)` (= `ℂ` definitionally) so that the smul
+chain `(toSpanSingleton ℂ a) 1 = a • 1 = a` typechecks transparently.
+-/
+private theorem cotangentPushforward_apply_one
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    {x : X} (hx_unram : hbc.ramificationIndex x = 1)
+    (ωx : CotangentSpace ℂ X x) :
+    (cotangentPushforward f x ωx) (1 : TangentSpace 𝓘(ℂ, ℂ) (f x)) =
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) •
+        ωx (1 : TangentSpace 𝓘(ℂ, ℂ) x) := by
+  rw [cotangentPushforward_eq_comp_toSpanSingleton_inv hbc hcompat hHol hx_unram ωx]
+  -- Goal: (ωx.comp (toSpanSingleton ℂ a⁻¹)) 1 = a⁻¹ • ωx 1.
+  -- Unfold via `toSpanSingleton_apply`: `(toSpanSingleton ℂ a⁻¹) 1 = 1 • a⁻¹`.
+  -- Then CLM-linearity: `ωx (1 • a⁻¹) = ωx ((a⁻¹ : ℂ) • (1 : TangentSpace …)) = a⁻¹ • ωx 1`.
+  show ωx ((ContinuousLinearMap.toSpanSingleton ℂ
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹))
+      (1 : TangentSpace 𝓘(ℂ, ℂ) (f x))) =
+    ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) •
+      ωx (1 : TangentSpace 𝓘(ℂ, ℂ) x)
+  rw [ContinuousLinearMap.toSpanSingleton_apply, one_smul]
+  -- Goal: ωx a⁻¹ = a⁻¹ • ωx 1, where `a⁻¹ : ℂ = TangentSpace 𝓘(ℂ,ℂ) x` definitionally.
+  -- Rewrite the argument `a⁻¹` as `a⁻¹ • (1 : TangentSpace 𝓘(ℂ,ℂ) x)`, then apply map_smul.
+  conv_lhs => rw [show ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ :
+      TangentSpace 𝓘(ℂ, ℂ) x) =
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) •
+        (1 : TangentSpace 𝓘(ℂ, ℂ) x) from by
+    show ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) =
+        ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) * (1 : ℂ)
+    rw [mul_one]]
+  rw [ContinuousLinearMap.map_smul]
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
