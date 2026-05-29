@@ -6,6 +6,7 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.HolomorphicForms.GenusZeroClassification
 import Jacobian.Periods.PeriodLattice
+import Jacobian.Periods.PeriodFullComplexLatticeU
 import Jacobian.ComplexTorus.ULiftTransport
 import Jacobian.AbelJacobi.AnalyticOfCurveBasis
 import Jacobian.TraceDegree.PullbackBasis
@@ -197,7 +198,9 @@ lemma genus_eq_zero_iff_homeo :
 universe u in
 /-- The Jacobian of a compact Riemann surface. -/
 def Jacobian (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-  [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : Type u := sorry
+  [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : Type u :=
+  ULift.{u} (JacobianChallenge.ComplexTorus.quotient (Fin (genus X) → ℂ)
+    (JacobianChallenge.Periods.periodFullComplexLatticeU X))
 
 namespace Jacobian
 
@@ -205,13 +208,16 @@ namespace Jacobian
 variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
 
-instance : AddCommGroup (Jacobian X) := sorry
-instance : TopologicalSpace (Jacobian X) := sorry
-instance : T2Space (Jacobian X) := sorry
-instance : CompactSpace (Jacobian X) := sorry
-noncomputable instance : ChartedSpace (Fin (genus X) → ℂ) (Jacobian X) := sorry
-noncomputable instance : IsManifold (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (Jacobian X) := sorry
-noncomputable instance : LieAddGroup (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (Jacobian X) := sorry
+noncomputable instance : AddCommGroup (Jacobian X) := inferInstanceAs (AddCommGroup (ULift _))
+noncomputable instance : TopologicalSpace (Jacobian X) := inferInstanceAs (TopologicalSpace (ULift _))
+instance : T2Space (Jacobian X) := inferInstanceAs (T2Space (ULift _))
+instance : CompactSpace (Jacobian X) := inferInstanceAs (CompactSpace (ULift _))
+noncomputable instance : ChartedSpace (Fin (genus X) → ℂ) (Jacobian X) :=
+  inferInstanceAs (ChartedSpace (Fin (genus X) → ℂ) (ULift _))
+noncomputable instance : IsManifold (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (Jacobian X) :=
+  inferInstanceAs (IsManifold (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (ULift _))
+noncomputable instance : LieAddGroup (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (Jacobian X) :=
+  inferInstanceAs (LieAddGroup (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (ULift _))
 
 /-- The Abel-Jacobi map from a compact Riemann surface to its Jacobian. -/
 def ofCurve (P : X) : X → Jacobian X := sorry
