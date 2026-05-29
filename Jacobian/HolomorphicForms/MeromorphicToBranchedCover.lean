@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.MeromorphicToCp1
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Jacobian.HolomorphicForms.SinglePoleLift
 import Mathlib.Analysis.Meromorphic.NormalForm
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
@@ -2875,8 +2876,12 @@ noncomputable def of_meromorphicMap_meromorphic_getD_simple_pole
     rw [h_eq]
   noPoleOff_P := f.noPoleOff_P_of_poleDivisor_point hmer P hpole
   outside_constants := f.outside_constants_of_poleDivisor_point P hpole
-  continuous_finiteLift_off :=
-    f.continuousOn_getD_off_pole_of_poleDivisor_point P hpole
+  finiteLift_continuous_off_P := fun p hp => by
+    have hcompl : p ∈ ({P}ᶜ : Set X) := hp
+    have hopen : IsOpen ({P}ᶜ : Set X) := isOpen_compl_singleton
+    have hcontOn :=
+      f.continuousOn_getD_off_pole_of_poleDivisor_point P hpole
+    exact (hcontOn.continuousAt (hopen.mem_nhds hcompl))
 
 /--
 **Assembly convenience wrapper (delegates to the canonical granular
