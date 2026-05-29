@@ -268,28 +268,64 @@ theorem wordQuotient_homeomorph_of_rotate
       intro x y; exact sidePairingRel_rotate_iff w k hL_pos x y
     exact ⟨(Quotient.homeo' f h_resp).symm⟩
 
-/-- Rotating the tail of a handle-prefixed word preserves the quotient. -/
-theorem handlePrefix_tailRotate_homeomorph
-    {g : ℕ} (i : Fin g) (u : List (Letter g)) (m : ℕ) :
+/--
+Base case of the tail-rotate homeomorphism: rotating by `m = 0` leaves
+the tail unchanged, so the homeomorphism is the identity.
+-/
+theorem handlePrefix_tailRotate_homeomorph_zero
+    {g : ℕ} (i : Fin g) (u : List (Letter g)) :
+    Nonempty (EdgeWord.wordQuotient g
+                ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u) ≃ₜ
+              EdgeWord.wordQuotient g
+                ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate 0)) := by
+  rw [List.rotate_zero]
+  exact ⟨Homeomorph.refl _⟩
+
+/--
+Nontrivial case of the tail-rotate homeomorphism: residual disk-geometry
+content for `m ≠ 0`. Currently a strictly narrower named provider —
+the parent statement plus the extra hypothesis `m ≠ 0` — to be discharged
+by the tail-shift disk homeomorphism (analogous to `diskRotateBySide`,
+restricted to the `u`-arc sector and fixing the five handle vertices that
+collapse to a single point in the quotient).
+-/
+theorem handlePrefix_tailRotate_homeomorph_nonzero
+    {g : ℕ} (i : Fin g) (u : List (Letter g)) (m : ℕ) (_h_m : m ≠ 0) :
     Nonempty (EdgeWord.wordQuotient g
                 ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u) ≃ₜ
               EdgeWord.wordQuotient g
                 ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate m)) := by
-  -- Geometric strategy:
+  -- Geometric strategy (carried over from the original parent):
   -- 1. Let hd := [a, b, a⁻¹, b⁻¹]. The word is hd ++ u.
   -- 2. In the quotient, the boundary arcs corresponding to hd form a handle
   --    glued at a single base vertex v.
   -- 3. The arcs corresponding to u form a loop starting and ending at v.
   -- 4. Rotating u cyclically by m positions corresponds to a continuous
   --    reparametrisation of this tail loop which fixes v.
-  -- 5. Since the handle part is unchanged and the tail loop is only 
-  --    reparametrised fixing the glue point, the global quotient spaces are 
+  -- 5. Since the handle part is unchanged and the tail loop is only
+  --    reparametrised fixing the glue point, the global quotient spaces are
   --    homeomorphic.
-  -- 6. This can be formalized by showing that the side-pairing relations 
-  --    are transformed into each other by a piecewise-defined homeomorphism 
-  --    of the disk which is the identity on the handle arcs and a shift 
+  -- 6. This can be formalized by showing that the side-pairing relations
+  --    are transformed into each other by a piecewise-defined homeomorphism
+  --    of the disk which is the identity on the handle arcs and a shift
   --    on the tail arcs.
   sorry
+
+/--
+Rotating the tail of a handle-prefixed word preserves the quotient.
+Dispatches on `m = 0` (handled by `handlePrefix_tailRotate_homeomorph_zero`)
+vs `m ≠ 0` (handled by the residual `handlePrefix_tailRotate_homeomorph_nonzero`).
+-/
+theorem handlePrefix_tailRotate_homeomorph
+    {g : ℕ} (i : Fin g) (u : List (Letter g)) (m : ℕ) :
+    Nonempty (EdgeWord.wordQuotient g
+                ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u) ≃ₜ
+              EdgeWord.wordQuotient g
+                ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate m)) := by
+  by_cases h_m : m = 0
+  · subst h_m
+    exact handlePrefix_tailRotate_homeomorph_zero i u
+  · exact handlePrefix_tailRotate_homeomorph_nonzero i u m h_m
 
 /-! ### Assembly -/
 
