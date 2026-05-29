@@ -41,6 +41,26 @@ noncomputable def harmonicProjection1
   LinearMap.id
 
 /--
+Design-stage harmonic projection for the period-aware smooth-form substrate.
+It records the intended re-based signature: harmonic projection reads the
+coefficient part and ignores the period payload.  Existing consumers stay on
+`harmonicProjection1` until the substrate migration is performed.
+-/
+noncomputable def harmonicProjection1WithPeriods
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    SmoothDiffFormWithPeriods 1 X →ₗ[ℂ] HarmonicOneForm X where
+  toFun ω := ω.1
+  map_add' := by
+    intro ω η
+    rfl
+  map_smul' := by
+    intro c ω
+    rfl
+
+/--
 **Current-model Hodge representatives.** Every harmonic 1-form is
 the harmonic projection of a closed 1-form.
 

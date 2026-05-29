@@ -1,6 +1,7 @@
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.Complex.Basic
 import Jacobian.HolomorphicForms.Defs
+import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
@@ -17,7 +18,36 @@ forms type and `d` are named, the comparison map to singular cochains
 
 namespace JacobianChallenge.HolomorphicForms
 
+open JacobianChallenge.Periods
+
 open scoped Manifold
+
+/--
+Period payload for the next de Rham comparison substrate.  It is kept
+separate from the current coefficient-only `SmoothDiffForm` during the
+design-only migration step, so existing Hodge and de Rham lemmas continue to
+compile while downstream files are rebased deliberately.
+-/
+abbrev SmoothDiffFormPeriodPayload
+    (_n : ℕ) (X : Type) [TopologicalSpace X] : Type :=
+  IntegralOneCycle X →ₗ[ℤ] ℂ
+
+/-- The current holomorphic-coefficient component of the smooth-form model. -/
+abbrev SmoothDiffFormCoeff
+    (n : ℕ) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : Type _ :=
+  Fin n.succ → HolomorphicOneForm ℂ X
+
+/--
+Period-aware smooth-form substrate for the authorized de Rham redesign.
+The first component preserves the current coefficient model; the second
+component carries the period data that `deRhamComparisonMap1` must eventually
+read.  This type is introduced before replacing public `SmoothDiffForm`.
+-/
+abbrev SmoothDiffFormWithPeriods
+    (n : ℕ) (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : Type _ :=
+  SmoothDiffFormCoeff n X × SmoothDiffFormPeriodPayload n X
 
 
 abbrev SmoothDiffForm
