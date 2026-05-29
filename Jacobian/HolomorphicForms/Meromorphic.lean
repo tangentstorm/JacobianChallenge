@@ -73,33 +73,6 @@ At a (positive-order) pole of a meromorphic-map-to-sphere, the map
 -/
   toMap_eq_infty_of_poleDivisor_pos :
     ∀ P : X, 0 < poleDivisor P → toMap P = (OnePoint.infty : OnePoint ℂ)
-  /--
-**Pole-modulus data.** Near a pole, the map admits a finite lift on
-  the non-pole locus whose modulus tends to infinity. This is an
-  inlined version of the previously-separate `PoleModulusData` record;
-  bundling it as a field is part of the structural strengthening
-  required to make `degree_one_meromorphicMap_implies_analyticGenus_zero`
-  honestly provable.
--/
-  exists_modulus_atTop_at_pole :
-    ∀ P : X, 0 < poleDivisor P →
-      ∃ g : X → ℂ,
-        (∀ x : X, poleDivisor x = 0 →
-          toMap x = ((g x : ℂ) : OnePoint ℂ)) ∧
-        Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop
-  /--
-**Branched-cover data of pole degree.** Conditional on continuity,
-  the map has branched-cover data whose degree is the degree of the
-  pole divisor. Inlined version of the previously-separate
-  `BranchedCoverDataOfPoleDegree` record; bundling it as a field is
-  part of the structural strengthening required to make
-  `degree_one_meromorphicMap_implies_analyticGenus_zero` honestly
-  provable.
--/
-  hasBranchedCoverDataOfPoleDegree :
-    Continuous toMap →
-    ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) toMap),
-      JacobianChallenge.HolomorphicForms.branchedDegree h = poleDivisor.degree.toNat
 
 namespace MeromorphicMapToSphere
 
@@ -151,12 +124,14 @@ Additional analytic data for an honest meromorphic map: near a pole,
 the map admits a finite lift on the non-pole locus whose modulus tends to
 infinity.
 
-**Structural strengthening (2026-05-25):** This was previously a
-parameterised record carrying separate analytic content. The content is
-now inlined into `MeromorphicMapToSphere` itself (field
-`exists_modulus_atTop_at_pole`); we keep this structure as a *trivial
-wrapper* extracted from the underlying structure so that downstream
-theorems consuming `f.PoleModulusData` continue to compile.
+**Un-bundling (2026-05-29):** This record is now the *sole carrier* of the
+pole-modulus content. The corresponding inlined field on
+`MeromorphicMapToSphere` was removed because mandatory analytic fields
+forced scaffold constructors (`twoPointMeromorphicMap`, `constMeromorphicMap`,
+`singleZeroSinglePoleMap`) to fill provably-impossible obligations with
+`sorry`. Honest meromorphic-map constructors now build a `PoleModulusData`
+value alongside the map; downstream consumers take it as an explicit
+hypothesis.
 -/
 structure PoleModulusData (f : MeromorphicMapToSphere X) where
   exists_modulus_atTop_at_pole :
@@ -171,29 +146,18 @@ Additional analytic data for an honest nonconstant meromorphic map:
 conditional on continuity, it has branched-cover data whose degree is the
 degree of the pole divisor.
 
-**Structural strengthening (2026-05-25):** This was previously a
-parameterised record. The content is now inlined into
-`MeromorphicMapToSphere` (field `hasBranchedCoverDataOfPoleDegree`);
-we keep this structure as a *trivial wrapper* extracted from the
-underlying structure so that downstream theorems consuming
-`f.BranchedCoverDataOfPoleDegree` continue to compile.
+**Un-bundling (2026-05-29):** This record is now the *sole carrier* of the
+branched-cover data. The corresponding inlined field on
+`MeromorphicMapToSphere` was removed; see the note on `PoleModulusData`
+for the rationale. Honest meromorphic-map constructors now build a
+`BranchedCoverDataOfPoleDegree` value alongside the map; downstream
+consumers take it as an explicit hypothesis.
 -/
 structure BranchedCoverDataOfPoleDegree (f : MeromorphicMapToSphere X) where
   hasBranchedCoverDataOfPoleDegree :
     Continuous f.toMap →
     ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) f.toMap),
       JacobianChallenge.HolomorphicForms.branchedDegree h = f.poleDivisor.degree.toNat
-
-/-- Every `MeromorphicMapToSphere` now carries `PoleModulusData` by construction. -/
-def toPoleModulusData
-    (f : MeromorphicMapToSphere X) : PoleModulusData f :=
-  ⟨f.exists_modulus_atTop_at_pole⟩
-
-/-- Every `MeromorphicMapToSphere` now carries `BranchedCoverDataOfPoleDegree`
-by construction. -/
-def toBranchedCoverDataOfPoleDegree
-    (f : MeromorphicMapToSphere X) : BranchedCoverDataOfPoleDegree f :=
-  ⟨f.hasBranchedCoverDataOfPoleDegree⟩
 
 /--
 **Honest analytic data for a `MeromorphicMapToSphere`.**
@@ -309,9 +273,17 @@ theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivi
   rw [hfx]; rfl
 
 /--
-For any `MeromorphicMapToSphere X` with pole divisor `Divisor.point P`,
-the norm of the canonical finite lift `x ↦ (f.toMap x).getD 0` tends to
-`+∞` along the punctured neighborhood of `P`.
+For any `MeromorphicMapToSphere X` with pole divisor `Divisor.point P`
+and an explicit `PoleModulusData`, the norm of the canonical finite lift
+`x ↦ (f.toMap x).getD 0` tends to `+∞` along the punctured neighborhood
+of `P`.
+
+**Un-bundling (2026-05-29):** previously this lemma did not take an
+explicit `hmod` hypothesis because `MeromorphicMapToSphere` carried the
+pole-modulus content as an inlined field; with the field removed, the
+hypothesis is supplied explicitly, matching the sibling lemma
+`modulus_tendsto_atTop_of_poleModulusData_poleDivisor_point` it delegates
+to.
 -/
 theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -319,12 +291,13 @@ theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData) :
     Filter.Tendsto
       (fun x => ‖(f.toMap x).getD 0‖)
       (nhdsWithin P {P}ᶜ)
       Filter.atTop :=
   MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivisor_point
-    f P hpole f.toPoleModulusData
+    f P hpole hmod
 
 end JacobianChallenge.HolomorphicForms
