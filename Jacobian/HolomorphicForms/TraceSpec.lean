@@ -530,7 +530,7 @@ private theorem unramifiedFiberPoint_partialTrace_locally_bounded
     (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
     ∃ (V : Set Y) (W : Set X) (M : ℝ),
       IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
-      ∀ y ∈ V, ∀ (hy : isRegularValue hbc y),
+      ∀ y ∈ V, ∀ (_hy : isRegularValue hbc y),
         ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
             (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
               CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
@@ -633,6 +633,9 @@ private theorem unramifiedFiberPoint_partialTrace_locally_bounded
   -- Convert the goal to the v-sum form.
   convert hbound_v
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
 /--
 **Chart-local `z^k` form extraction (Commit A — sorry-free helper).**
 
@@ -705,6 +708,9 @@ private theorem chartLocal_zPow_form_of_ramified
   show chartLocalAt f x₀ z - c₀ = φ z ^ k
   exact hz
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
 /--
 **Chart-local derivative formula via chain rule (Commit B — sorry-free helper).**
 
@@ -730,7 +736,7 @@ This is **Commit B** in the 3-commit discharge of
 representation needed by Commit C.
 -/
 private theorem chartLocal_deriv_of_zPow_form
-    {f : X → Y} {x₀ : X} {k : ℕ} (hk : 0 < k)
+    {f : X → Y} {x₀ : X} {k : ℕ} (_hk : 0 < k)
     {φ : ℂ → ℂ} (hφ_an : AnalyticAt ℂ φ (chartAt ℂ x₀ x₀))
     (hφ_eq : ∀ᶠ z in 𝓝 (chartAt ℂ x₀ x₀),
       chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀) = φ z ^ k) :
@@ -760,6 +766,9 @@ private theorem chartLocal_deriv_of_zPow_form
   have hφ_diff : DifferentiableAt ℂ φ z := hz_an.differentiableAt
   rw [deriv_const_add, deriv_fun_pow hφ_diff k]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
 /--
 **Manifold derivative ↔ chart-local derivative bridge (Commit C1 —
 sorry-free helper).**
@@ -889,11 +898,11 @@ private theorem ramifiedNonY₀FiberPoint_partialTrace_locally_bounded
     (hbc : BranchedCoverData X Y f)
     (hcompat : hbc.RamificationIndexCompatible)
     (y₀ : Y) (x₀ : X) (hx₀_fiber : f x₀ = y₀)
-    (hx₀_ram : hbc.ramificationIndex x₀ ≠ 1)
+    (_hx₀_ram : hbc.ramificationIndex x₀ ≠ 1)
     (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
     ∃ (V : Set Y) (W : Set X) (M : ℝ),
       IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
-      ∀ y ∈ V, y ≠ y₀ → ∀ (hy : isRegularValue hbc y),
+      ∀ y ∈ V, y ≠ y₀ → ∀ (_hy : isRegularValue hbc y),
         ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
             (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
               CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
@@ -951,7 +960,7 @@ private theorem ramifiedFiberPoint_partialTrace_locally_bounded
     (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
     ∃ (V : Set Y) (W : Set X) (M : ℝ),
       IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
-      ∀ y ∈ V, ∀ (hy : isRegularValue hbc y),
+      ∀ y ∈ V, ∀ (_hy : isRegularValue hbc y),
         ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
             (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
               CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
@@ -984,7 +993,7 @@ private theorem fiberPoint_partialTrace_locally_bounded
     (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
     ∃ (V : Set Y) (W : Set X) (M : ℝ),
       IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
-      ∀ y ∈ V, ∀ (hy : isRegularValue hbc y),
+      ∀ y ∈ V, ∀ (_hy : isRegularValue hbc y),
         ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
             (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
               CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
@@ -1212,7 +1221,8 @@ private theorem removableSingularity_oneD_punctured_disc
   exact Function.update_of_ne hz_ne _ _
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
-  [StableChartAt ℂ X] in
+  [StableChartAt ℂ X] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] in
 /--
 **Per-branch-point Riemann removable-singularity provider.**
 
@@ -1241,7 +1251,7 @@ content has been reduced to the strictly narrower 1D sub-lemma
 * `AnalyticAt.congr` / `apply_symm_apply` / `symm_apply_apply`.
 -/
 private theorem removableSingularity_at_branchPoint
-    (regular : Set Y) (hOpen : IsOpen regular)
+    (regular : Set Y) (_hOpen : IsOpen regular)
     (hFiniteCompl : regularᶜ.Finite)
     (g : Y → CotangentModelFiber ℂ)
     (hHol : ∀ y ∈ regular, IsHolomorphicAt (fun y' : Y => g y') y)
@@ -1443,7 +1453,8 @@ private theorem removableSingularity_at_branchPoint
     exact cotangentFiberIso.symm_apply_apply (g y)
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
-  [StableChartAt ℂ X] in
+  [StableChartAt ℂ X] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
 /--
 **Pointwise gluing of per-branch-point local extensions into a
 globally-holomorphic function.**
@@ -1467,7 +1478,7 @@ the per-branch-point selection via `Classical.choice` plus the local
 holomorphicity verification — deferred as a single `sorry`.
 -/
 private theorem globalHolomorphicFunction_from_local_extensions
-    (regular : Set Y) (hOpen : IsOpen regular) (hDense : Dense regular)
+    (regular : Set Y) (hOpen : IsOpen regular) (_hDense : Dense regular)
     (hFiniteCompl : regularᶜ.Finite)
     (g : Y → CotangentModelFiber ℂ)
     (hHol : ∀ y ∈ regular, IsHolomorphicAt (fun y' : Y => g y') y)
@@ -1547,7 +1558,8 @@ private theorem globalHolomorphicFunction_from_local_extensions
     simp [g_ext, hy_reg]
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
-  [StableChartAt ℂ X] in
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [StableChartAt ℂ Y] in
 /--
 **Manifold-level `ContMDiff` from pointwise `IsHolomorphicAt`
 (scaffolding helper).**
@@ -1583,7 +1595,8 @@ private theorem contMDiff_of_pointwiseHolomorphic
   exact ContMDiff.of_isHolomorphic_and_continuous hg_ext_hol hcont
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
-  [StableChartAt ℂ X] in
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [StableChartAt ℂ Y] in
 /--
 **Model-shift bridge (sorry-free helper).**
 
@@ -1655,7 +1668,7 @@ private theorem contMDiff_normedClm_of_contMDiff_singletonChart
   rw [cotangentFiberIso.symm_apply_apply]
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
-  [StableChartAt ℂ X] in
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Bundle-section `ContMDiff` from pointwise holomorphicity (strictly
 narrower sub-helper).**
@@ -1777,7 +1790,7 @@ private theorem bundleSection_contMDiff_of_pointwiseHolomorphic
   exact h_goal
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
-  [StableChartAt ℂ X] in
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Bundle-section packaging: pointwise holomorphicity → `HolomorphicOneForm`.**
 
@@ -1804,7 +1817,7 @@ private theorem holomorphicOneForm_of_pointwiseHolomorphic
     fun _ => rfl⟩
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
-  [StableChartAt ℂ X] in
+  [StableChartAt ℂ X] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Global assembly of a holomorphic 1-form from per-branch-point
 local extensions.**
@@ -1846,7 +1859,7 @@ private theorem assemble_holomorphicOneForm_from_local_extensions
   exact hg_ext_eq y hy_reg
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
-  [StableChartAt ℂ X] in
+  [StableChartAt ℂ X] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Provider (3).** *Generic removable-singularity provider for
 holomorphic 1-forms.*
@@ -1929,6 +1942,7 @@ theorem traceAtRegularValue_BCD_invariance
     Subsingleton.elim _ _
   congr 1
 
+omit [StableChartAt ℂ X] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
 /--
 **Trace-locus pointwise holomorphic auxiliary for Provider (3).**
 
