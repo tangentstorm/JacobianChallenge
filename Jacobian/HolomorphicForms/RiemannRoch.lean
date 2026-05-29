@@ -4,6 +4,7 @@ import Jacobian.HolomorphicForms.MeromorphicFunctionVector
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Jacobian.HolomorphicForms.ChartedSpaceComplexPoints
 import Jacobian.HolomorphicForms.HolomorphicMap
+import Jacobian.HolomorphicForms.MeromorphicToBranchedCover
 import Mathlib.Geometry.Manifold.Complex
 import Mathlib.LinearAlgebra.Dimension.Finrank
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
@@ -45,18 +46,6 @@ structure GenusZeroPointRiemannRochElement
   meromorphicMap : MeromorphicMapToSphere X
   nonconstant : meromorphicMap.Nonconstant
   mem_L_point : meromorphicMap.MemRiemannRochSpace (Divisor.point P)
-
-/-- Fixed-pole Riemann-Roch output in genus zero. -/
-structure GenusZeroFixedPoleMeromorphicData
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X)
-    (h : analyticGenus ℂ X = 0) where
-  meromorphicMap : MeromorphicMapToSphere X
-  poleDivisor_eq_point : meromorphicMap.poles = Divisor.point P
 
 /-! ### Structural companions on `MeromorphicMapToSphere` -/
 
@@ -304,7 +293,11 @@ theorem genusZero_pointRRSection_meromorphic_getD_exists
         JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
           (fun q => (f.toMap q).getD 0) p) ∧
       JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 := by
-  sorry
+  obtain ⟨w⟩ := genusZero_fixedPole_analyticRRWitness_nonempty X P h
+  refine
+    ⟨w.map, w.poleDivisor_eq, w.nonconstant, w.mem_L_point,
+      w.analyticData.meromorphic_getD, ?_⟩
+  exact w.analyticData.simple_pole_order_one P w.poleDivisor_eq
 
 /--
 **Structural axiom (S3c).** Genus-zero Riemann-Roch supplies a nonconstant

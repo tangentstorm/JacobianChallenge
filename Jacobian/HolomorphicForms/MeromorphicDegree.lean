@@ -1,4 +1,5 @@
-import Jacobian.HolomorphicForms.RiemannRoch
+import Jacobian.HolomorphicForms.AnalyticGenus
+import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.BranchedCover
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
@@ -19,6 +20,18 @@ classification`).
 namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
+
+/-- Fixed-pole Riemann-Roch output in genus zero. -/
+structure GenusZeroFixedPoleMeromorphicData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X)
+    (h : analyticGenus ℂ X = 0) where
+  meromorphicMap : MeromorphicMapToSphere X
+  poleDivisor_eq_point : meromorphicMap.poles = Divisor.point P
 
 /--
 Degree data for a meromorphic map to the Riemann sphere.
