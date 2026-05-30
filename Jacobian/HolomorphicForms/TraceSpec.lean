@@ -1026,6 +1026,143 @@ private theorem cotangentPushforward_apply_one
     rw [mul_one]]
   rw [ContinuousLinearMap.map_smul]
 
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**Single-summand `toSpanSingleton ℂ`-form (Commit C3a — sorry-free
+helper).** Combining C2.1's `cotangentPushforward` formula with the
+`ωx.comp (toSpanSingleton ℂ b) = toSpanSingleton ℂ (ωx (b • 1))`
+identity, the cotangent pushforward at an unramified preimage `x` is
+itself a `toSpanSingleton ℂ` CLM whose underlying ℂ-scalar is the
+chart-local product `(deriv(chartLocalAt f x)(chart x x))⁻¹ * (η.toFun x) 1`.
+
+After the `CotangentModelFiber ℂ = ℂ →L[ℂ] ℂ` identification (via the
+trivial bundle and the Milestone-1 `TangentSpace` bridge), this lets
+the C3a sum reduction push `toSpanSingleton ℂ` outside the Finset sum.
+-/
+private theorem cotangentPushforward_eq_toSpanSingleton_scalar
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    (η : HolomorphicOneForm ℂ X)
+    {x : X} (hx_unram : hbc.ramificationIndex x = 1) :
+    (cotangentPushforward f x (η.toFun x) : CotangentModelFiber ℂ) =
+      ContinuousLinearMap.toSpanSingleton ℂ
+        (((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) •
+          (η.toFun x) (1 : TangentSpace 𝓘(ℂ, ℂ) x)) := by
+  -- C2.1: cotangentPushforward = ωx.comp (toSpanSingleton ℂ a⁻¹).
+  rw [cotangentPushforward_eq_comp_toSpanSingleton_inv hbc hcompat hHol hx_unram
+        (η.toFun x)]
+  -- Show ωx.comp (toSpanSingleton ℂ b) = toSpanSingleton ℂ (ωx (b • 1))
+  -- where ωx = η.toFun x, b = a⁻¹. Both CLMs ℂ →L[ℂ] ℂ; check at any v : ℂ.
+  refine ContinuousLinearMap.ext fun v => ?_
+  -- LHS at v: ωx ((toSpanSingleton ℂ b) v) = ωx (v • b).
+  -- RHS at v: (toSpanSingleton ℂ (b • ωx 1)) v = v • (b • ωx 1).
+  -- Rewrite ωx (v • b) = ωx (v • (b • 1)) (using b = b • 1 in ℂ)
+  --                    = v • ωx (b • 1) (by CLM map_smul on v)
+  --                    = v • (b • ωx 1) (by CLM map_smul on b)
+  -- which matches RHS.
+  show (η.toFun x) ((ContinuousLinearMap.toSpanSingleton ℂ
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹)) v) =
+    (ContinuousLinearMap.toSpanSingleton ℂ
+      (((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) •
+        (η.toFun x) (1 : TangentSpace 𝓘(ℂ, ℂ) x))) v
+  rw [ContinuousLinearMap.toSpanSingleton_apply,
+      ContinuousLinearMap.toSpanSingleton_apply]
+  -- Goal: ωx (v • a⁻¹) = v • (a⁻¹ • ωx 1) where the SMul on the LHS-arg
+  -- is ℂ-on-(TangentSpace 𝓘(ℂ,ℂ) x = ℂ).
+  -- Rewrite v • a⁻¹ as v • (a⁻¹ • 1) (since a⁻¹ = a⁻¹ • 1 in ℂ).
+  conv_lhs => rw [show ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ :
+      TangentSpace 𝓘(ℂ, ℂ) x) =
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) •
+        (1 : TangentSpace 𝓘(ℂ, ℂ) x) from by
+    show ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) =
+        ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) * (1 : ℂ)
+    rw [mul_one]]
+  -- Goal: ωx (v • (a⁻¹ • 1)) = v • (a⁻¹ • ωx 1).
+  rw [smul_smul, ContinuousLinearMap.map_smul, smul_smul]
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**CLM-sum reduction to `toSpanSingleton ℂ` of a scalar sum
+(Commit C3a.1 — sorry-free helper).** For any Finset `s` of unramified
+preimages of a single value `y`, the trace sum
+`∑_{x ∈ s} cotangentPushforward f x (η.toFun x)` (typed as a
+`CotangentModelFiber ℂ` CLM) equals `toSpanSingleton ℂ` of the
+explicit ℂ-scalar sum
+`∑_{x ∈ s} (deriv (chartLocalAt f x)(chart x x))⁻¹ • (η.toFun x) 1`.
+
+This is the structural step that reduces the CLM-valued boundedness
+obligation of `ramifiedKfoldSum_locally_bounded` to a complex-valued
+boundedness obligation, which C3b/C4 will discharge analytically using
+the roots-of-unity cancellation and Commit-B's chart-local derivative
+formula.
+-/
+private theorem traceSum_eq_toSpanSingleton_of_scalarSum
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    (η : HolomorphicOneForm ℂ X)
+    (s : Finset X)
+    (hs_unram : ∀ x ∈ s, hbc.ramificationIndex x = 1) :
+    (s.attach.sum (fun x =>
+        (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ) =
+      ContinuousLinearMap.toSpanSingleton ℂ
+        (s.attach.sum (fun x =>
+          ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))) := by
+  classical
+  -- Rewrite each summand using `cotangentPushforward_eq_toSpanSingleton_scalar`.
+  have hsum_congr :
+      s.attach.sum (fun x =>
+        (cotangentPushforward f x.1 (η.toFun x.1) : CotangentModelFiber ℂ)) =
+      s.attach.sum (fun x =>
+        (ContinuousLinearMap.toSpanSingleton ℂ
+          (((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) :
+          CotangentModelFiber ℂ)) := by
+    refine Finset.sum_congr rfl ?_
+    rintro ⟨x, hx_mem⟩ _
+    exact cotangentPushforward_eq_toSpanSingleton_scalar hbc hcompat hHol η
+      (hs_unram x hx_mem)
+  rw [hsum_congr]
+  -- Push `toSpanSingleton ℂ` out of the sum via `Finset.sum`-additivity of
+  -- `toSpanSingleton`. Use `ContinuousLinearMap.ext` + pointwise check.
+  refine ContinuousLinearMap.ext fun v => ?_
+  -- LHS at v: ∑ (toSpanSingleton ℂ cᵢ) v = ∑ (v • cᵢ) = v • ∑ cᵢ.
+  -- RHS at v: (toSpanSingleton ℂ (∑ cᵢ)) v = v • ∑ cᵢ.
+  rw [ContinuousLinearMap.sum_apply]
+  simp only [ContinuousLinearMap.toSpanSingleton_apply]
+  rw [Finset.smul_sum]
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**CLM-norm = scalar magnitude (Commit C3a.2 — sorry-free corollary).**
+The norm of the CLM trace sum equals the magnitude of the underlying
+ℂ-scalar sum, via Mathlib's `ContinuousLinearMap.norm_toSpanSingleton`.
+This is the last structural step before C3b/C4's analytic boundedness
+work: bounding the CLM-valued sum reduces to bounding a single complex
+number's magnitude.
+-/
+private theorem norm_traceSum_eq_abs_scalarSum
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    (η : HolomorphicOneForm ℂ X)
+    (s : Finset X)
+    (hs_unram : ∀ x ∈ s, hbc.ramificationIndex x = 1) :
+    ‖(s.attach.sum (fun x =>
+        (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ)‖ =
+      ‖s.attach.sum (fun x =>
+        ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+          (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+  rw [traceSum_eq_toSpanSingleton_of_scalarSum hbc hcompat hHol η s hs_unram]
+  exact ContinuousLinearMap.norm_toSpanSingleton _
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
