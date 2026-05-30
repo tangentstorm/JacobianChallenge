@@ -30,7 +30,7 @@ open scoped Manifold
 explicit closed-mod-exact quotient model.
 -/
 theorem complexDimDeRhamH1ℂ_eq_finrank_cocycle
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
@@ -39,7 +39,7 @@ theorem complexDimDeRhamH1ℂ_eq_finrank_cocycle
 
 
 theorem realDimDeRhamH1_eq_finrank_cocycleℝ
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :

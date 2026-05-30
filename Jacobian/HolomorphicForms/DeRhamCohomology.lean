@@ -28,21 +28,21 @@ Concrete model of `H¹_dR(X, ℂ)` as closed 1-forms modulo exact
 1-forms.
 -/
 noncomputable def deRhamH1Cocycle
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Type _ :=
   (ClosedFormSub (Nat.succ 0) X) ⧸ (ExactForm.toClosedSubmodule 0 X)
 
 noncomputable instance deRhamH1Cocycle.instAddCommGroup
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     AddCommGroup (deRhamH1Cocycle X) :=
   inferInstanceAs (AddCommGroup (_ ⧸ (ExactForm.toClosedSubmodule 0 X)))
 
 noncomputable instance deRhamH1Cocycle.instModuleℂ
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module ℂ (deRhamH1Cocycle X) :=
@@ -54,7 +54,7 @@ Complex dimension of the first de Rham cohomology group of `X` with
 quotient model.
 -/
 noncomputable def complexDimDeRhamH1ℂ
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] : ℕ :=
   Module.finrank ℂ (deRhamH1Cocycle X)
@@ -66,7 +66,7 @@ complex, the real/complex extension-of-scalars bridge is represented by
 the same closed-mod-exact quotient finrank.
 -/
 noncomputable def realDimDeRhamH1
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] : ℕ :=
   Module.finrank ℂ (deRhamH1Cocycle X)
@@ -77,7 +77,7 @@ cohomology group of `X` with ℝ-valued forms. Mathematically equals the
 number of connected components; for a connected manifold this is `1`.
 -/
 noncomputable def realDimDeRhamH0
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
   Nat.card (ConnectedComponents X)
 
@@ -87,7 +87,7 @@ cohomology group of `X` with ℂ-valued forms. Equals the ℂ-dimension of
 locally constant ℂ-valued functions; for a connected `X` this is `1`.
 -/
 noncomputable def complexDimDeRhamH0ℂ
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
   Nat.card (ConnectedComponents X)
 
@@ -106,7 +106,7 @@ project as `Jacobian.HolomorphicForms.HolomorphicCompactConstant.lean`),
 adapted to smooth ℂ-valued functions.
 -/
 theorem complexDim_deRhamH0ℂ_eq_one_of_compact_connected
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
@@ -126,7 +126,7 @@ theorem complexDim_deRhamH0ℂ_eq_one_of_compact_connected
 
 
 theorem realDim_deRhamH0_eq_one_of_compact_connected
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :

@@ -44,7 +44,7 @@ open scoped Manifold
 
 
 theorem complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
@@ -58,7 +58,7 @@ Combines `analyticHarmonicGenus_eq_analyticGenus_add_anti` and
 `analyticAntiGenus_eq_analyticGenus`. Pure `omega` after rewriting.
 -/
 theorem analyticHarmonicGenus_eq_two_analyticGenus
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
@@ -74,7 +74,7 @@ projection) and `analyticHarmonicGenus_eq_two_analyticGenus`
 (harmonic = holo + anti-holo, conjugation).
 -/
 theorem complexDimDeRhamH1ℂ_eq_two_analyticGenus
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
@@ -91,7 +91,7 @@ Combines:
   in this file).
 -/
 theorem realDimDeRhamH1_eq_two_analyticGenus
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]

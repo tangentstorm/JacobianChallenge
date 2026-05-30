@@ -36,7 +36,7 @@ tensoring with ℂ is exact, so cohomology commutes; conclude by
 `dim_ℂ (V ⊗_ℝ ℂ) = dim_ℝ V`.
 -/
 theorem complexDeRhamH1_eq_tensorℂ_realDeRhamH1
-    (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     complexDimDeRhamH1ℂ X = realDimDeRhamH1 X := by
@@ -60,7 +60,7 @@ The body is a thin `Eq.symm` — the real refinement work is in
 `complexDeRhamH1_eq_tensorℂ_realDeRhamH1`.
 -/
 theorem realDim_deRhamH1_eq_complexDim_deRhamH1ℂ
-    (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     realDimDeRhamH1 X = complexDimDeRhamH1ℂ X :=

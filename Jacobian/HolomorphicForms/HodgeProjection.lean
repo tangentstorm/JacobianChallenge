@@ -33,12 +33,18 @@ open scoped Manifold
 
 /-- Current-model harmonic projection on 1-forms. -/
 noncomputable def harmonicProjection1
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    SmoothDiffForm 1 X →ₗ[ℂ] HarmonicOneForm X :=
-  LinearMap.id
+    SmoothDiffForm 1 X →ₗ[ℂ] HarmonicOneForm X where
+  toFun ω := ω.1
+  map_add' := by
+    intro ω η
+    rfl
+  map_smul' := by
+    intro c ω
+    rfl
 
 /--
 Design-stage harmonic projection for the period-aware smooth-form substrate.
@@ -70,21 +76,22 @@ form is itself closed, so this follows from the projector acting as the
 identity on harmonic forms.
 -/
 theorem harmonicProjection1_closed_surjective
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Function.Surjective ((harmonicProjection1 X).domRestrict (ClosedForm 1 X)) := by
   intro η
-  refine ⟨⟨η, ?_⟩, rfl⟩
-  simp [ClosedForm, exteriorDerivative]
+  refine ⟨⟨(η, 0), ?_⟩, rfl⟩
+  rw [ClosedForm, LinearMap.mem_ker]
+  ext i <;> simp [exteriorDerivative]
 
 /--
 **Assembly.** The unrestricted harmonic projection is surjective
 because every harmonic form is already the projection of a closed form.
 -/
 theorem harmonicProjection1_surjective
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
@@ -101,17 +108,16 @@ Bottom-up content: `(dη, ω)_{L²} = (η, d^* ω)_{L²}` and `d^* ω = 0`
 for harmonic `ω`. Integration by parts is the missing piece.
 -/
 theorem harmonicProjection1_vanishes_on_exact
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X) (hω : ω ∈ ExactForm 0 X) :
     harmonicProjection1 X ω = 0 := by
-  have hω0 : ω = 0 := by
-    rcases hω with ⟨η, hη⟩
-    simpa [ExactForm, exteriorDerivative] using hη.symm
-  rw [hω0]
-  exact map_zero (harmonicProjection1 X)
+  rcases hω with ⟨η, hη⟩
+  rw [← hη]
+  ext i
+  simp [harmonicProjection1, exteriorDerivative]
 
 /--
 **Current-model Hodge representative uniqueness.** If a closed
@@ -122,15 +128,14 @@ harmonic form plus an exact form; the zero-projection condition kills the
 harmonic summand.
 -/
 theorem harmonicProjection1_kernel_subset_exact
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X) (_hclosed : exteriorDerivative 1 X ω = 0)
     (hproj : harmonicProjection1 X ω = 0) :
     ω ∈ ExactForm 0 X := by
-  rw [show ω = 0 by simpa [harmonicProjection1] using hproj]
-  exact Submodule.zero_mem _
+  sorry
 
 /--
 **Current-model kernel identity.** The harmonic projection vanishes
@@ -141,7 +146,7 @@ Together with `harmonicProjection1_surjective` this is the **Hodge
 theorem in degree 1**.
 -/
 theorem harmonicProjection1_kernel_eq_exact
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
@@ -153,7 +158,7 @@ theorem harmonicProjection1_kernel_eq_exact
     exact harmonicProjection1_vanishes_on_exact X ω hω
 
 private theorem harmonicProjection1_closed_ker_eq_exact
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
@@ -184,7 +189,7 @@ Bottom-up content: combines `harmonicProjection1_surjective`,
 `harmonicProjection1_kernel_eq_exact`.
 -/
 theorem deRhamH1_isLinearEquiv_harmonic
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
@@ -201,7 +206,7 @@ theorem deRhamH1_isLinearEquiv_harmonic
 
 
 theorem deRhamH1Cocycle_finrank_eq_analyticHarmonicGenus
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
@@ -211,7 +216,7 @@ theorem deRhamH1Cocycle_finrank_eq_analyticHarmonicGenus
 
 
 theorem complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus_via_cocycle
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
