@@ -492,6 +492,32 @@ theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_f
   simp
 
 /--
+**Legacy/period-aware comparison compatibility frontier.** On the specific
+closed 1-form assembled from prescribed-period local representatives, the
+legacy comparison map agrees with the period-aware migration comparison helper.
+
+This is the remaining computation rule needed because `deRhamComparisonMap1`
+is opaque while `deRhamComparisonMap1ClosedWithPeriods` explicitly reads the
+period payload.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_compat_with_periods_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1ClosedWithPeriods X
+        (deRhamComparisonMap1_closed_form_with_periods_from_local_representatives_frontier
+          X φ data localData) z := by
+  sorry
+
+/--
 **One-cycle period-realization frontier.** The smooth local-representative
 closed form assembled from prescribed-period Čech data realizes the
 prescribed period functional on the selected integral cycle.
@@ -511,7 +537,10 @@ theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_axiom_fro
     deRhamComparisonMap1 X
         (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
           X φ data localData) z = φ z := by
-  sorry
+  rw [deRhamComparisonMap1_smooth_local_representatives_compat_with_periods_frontier
+    X φ data localData z]
+  exact deRhamComparisonMap1ClosedWithPeriods_smooth_local_representatives_period_cycle_frontier
+    X φ data localData z
 
 /--
 **Smooth local-representative one-cycle period from zero values.** Once the
