@@ -1163,6 +1163,82 @@ private theorem norm_traceSum_eq_abs_scalarSum
   rw [traceSum_eq_toSpanSingleton_of_scalarSum hbc hcompat hHol η s hs_unram]
   exact ContinuousLinearMap.norm_toSpanSingleton _
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Filter-sum to `s_y`-sum reduction (Commit C3b.1 — sorry-free helper).**
+
+Given the kfold structural data `h_kfold_data` — a Finset `s` of unramified
+preimages of `y` contained in `U_kfold` and exhausting all preimages of `y`
+in `U_kfold` — and a window `W ⊆ U_kfold` containing `s`, the filter form
+`(hbc.finite_fiber y).toFinset.filter (· ∈ W)` equals `s` as Finsets.
+
+This is pure `Finset` extensionality, no analysis: the filter selects
+elements of the fiber lying in `W`, which by `s ⊆ W ⊆ U_kfold` and the
+`s`-exhausts-`U_kfold`-preimages property must be exactly `s`.
+
+After C3b.1 + C3b.2, the L1214 `ramifiedKfoldSum_locally_bounded` LHS norm
+reduces to a pure ℂ-valued Finset sum's magnitude — no more CLM / cotangent
+bundle plumbing.
+-/
+private theorem filter_fiber_eq_kfold_finset
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    {U_kfold : Set X} (W : Set X)
+    (hW_sub_U : W ⊆ U_kfold)
+    {y : Y} (s : Finset X)
+    (hs_fiber : ∀ x ∈ s, f x = y)
+    (hs_exhaust : ∀ x ∈ U_kfold, f x = y → x ∈ s)
+    (hs_sub_W : (↑s : Set X) ⊆ W) :
+    (hbc.finite_fiber y).toFinset.filter (· ∈ W) = s := by
+  classical
+  apply Finset.ext
+  intro x'
+  simp only [Finset.mem_filter, Set.Finite.mem_toFinset, Set.mem_preimage,
+    Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨hfx'y, hx'W⟩
+    -- f x' = y, x' ∈ W ⊆ U_kfold, so x' ∈ s by exhaustion.
+    exact hs_exhaust x' (hW_sub_U hx'W) hfx'y
+  · intro hx's
+    refine ⟨hs_fiber x' hx's, ?_⟩
+    -- x' ∈ s ⊆ W (as sets), so x' ∈ W.
+    exact hs_sub_W hx's
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**Bridging corollary: filter-CLM-norm = `s_y`-scalar-magnitude
+(Commit C3b.2 — sorry-free corollary).**
+
+Combines C3b.1 (`filter_fiber_eq_kfold_finset`) with C3a.2
+(`norm_traceSum_eq_abs_scalarSum`) to express the
+`ramifiedKfoldSum_locally_bounded` LHS norm directly in terms of the
+explicit chart-local complex-valued Finset sum over `s`, i.e. the
+kfold-structural Finset of `k` unramified preimages. After this corollary,
+the remaining boundedness obligation is `|complex Finset sum| ≤ M`
+— pure ℂ.
+-/
+private theorem norm_filterSum_eq_norm_kfoldScalarSum
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f) (η : HolomorphicOneForm ℂ X)
+    {U_kfold : Set X} (W : Set X) (hW_sub_U : W ⊆ U_kfold)
+    {y : Y} (s : Finset X)
+    (hs_unram : ∀ x ∈ s, hbc.ramificationIndex x = 1)
+    (hs_fiber : ∀ x ∈ s, f x = y)
+    (hs_exhaust : ∀ x ∈ U_kfold, f x = y → x ∈ s)
+    (hs_sub_W : (↑s : Set X) ⊆ W) :
+    ‖(((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+        (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ)‖ =
+      ‖s.attach.sum (fun x =>
+        ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+          (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+  rw [filter_fiber_eq_kfold_finset hbc W hW_sub_U s hs_fiber hs_exhaust hs_sub_W]
+  exact norm_traceSum_eq_abs_scalarSum hbc hcompat hHol η s hs_unram
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
