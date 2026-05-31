@@ -17,6 +17,8 @@ import Mathlib.Geometry.Manifold.VectorBundle.Tangent
 import Mathlib.Topology.VectorBundle.Constructions
 import Mathlib.Topology.VectorBundle.Hom
 import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
+import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Deriv
 
 /-!
 # Trace form specification interface
@@ -1399,6 +1401,181 @@ private theorem norm_filterSum_eq_norm_phiForm
             (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
         congr 1
         exact scalarSum_in_phi_form x₀ η k φ s h_deriv_formula
+
+/-! ### Commit C4-pre helpers: chart-local bijection `s_y ↔ Fin k` via `φ⁻¹`. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Layer-C bijection prerequisite (C4-pre.1) — local inverse of `φ` near
+`z₀` (sorry-free helper).**
+
+Given Commit A's `φ` (analytic at `z₀`, `φ z₀ = 0`, `deriv φ z₀ ≠ 0`),
+the inverse function theorem produces a local inverse
+`r : ℂ → ℂ` with `r (φ z₀) = z₀` and the right-inverse property
+`∀ᶠ ε in 𝓝 (φ z₀), φ (r ε) = ε`. Since `φ z₀ = 0`, `r 0 = z₀` and the
+right-inverse property holds eventually near `0 : ℂ`.
+
+This is **C4-pre.1**: the first ingredient of the chart-local bijection.
+C4-pre.2 (`kthRoot_branch`) provides `(·)^{1/k}` so C4-pre.3 can compose
+to get the candidate preimages `r(ζ^j · w^{1/k})`.
+-/
+private theorem phi_localInverse_exists
+    {φ : ℂ → ℂ} {z₀ : ℂ} (hφ_an : AnalyticAt ℂ φ z₀)
+    (hφ_z₀ : φ z₀ = 0)
+    (hφ_deriv : deriv φ z₀ ≠ 0) :
+    ∃ r : ℂ → ℂ, r 0 = z₀ ∧
+      (∀ᶠ ε in 𝓝 (0 : ℂ), φ (r ε) = ε) ∧
+      (∀ᶠ z in 𝓝 z₀, r (φ z) = z) := by
+  -- φ has a strict derivative at z₀, namely deriv φ z₀.
+  have hSD : HasStrictDerivAt φ (deriv φ z₀) z₀ := hφ_an.hasStrictDerivAt
+  -- Construct the local inverse via the inverse function theorem.
+  refine ⟨hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv, ?_, ?_, ?_⟩
+  · -- r 0 = z₀: rewrite via φ z₀ = 0, then `eventually_left_inverse` at z₀.
+    have hL : ∀ᶠ z in 𝓝 z₀, hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv (φ z) = z :=
+      hSD.eventually_left_inverse hφ_deriv
+    -- Specialize at z = z₀.
+    have hz₀ : hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv (φ z₀) = z₀ := hL.self_of_nhds
+    -- Substitute φ z₀ = 0.
+    rwa [hφ_z₀] at hz₀
+  · -- right inverse: φ (r ε) = ε for ε near φ z₀ = 0.
+    have hR : ∀ᶠ ε in 𝓝 (φ z₀), φ (hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv ε) = ε :=
+      hSD.eventually_right_inverse hφ_deriv
+    rwa [hφ_z₀] at hR
+  · -- left inverse: r (φ z) = z for z near z₀.
+    exact hSD.eventually_left_inverse hφ_deriv
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Layer-C bijection prerequisite (C4-pre.2) — `k`-th root branch (sorry-free
+helper).**
+
+Choose the principal `k`-th root via `Complex.cpow` with exponent `k⁻¹`:
+`kthRoot w := w ^ ((k : ℂ)⁻¹)`. For `k > 0`, this satisfies
+`(kthRoot w)^k = w` for every `w : ℂ` (a consequence of
+`Complex.cpow_nat_inv_pow`).
+
+This is **C4-pre.2**: the chosen branch of the `k`-th root. C4-pre.3 will
+compose `phi_localInverse_exists.r ∘ (ζ^j · ·) ∘ kthRoot` to produce
+the candidate chart-local preimages.
+-/
+private theorem kthRoot_branch_pow_eq
+    {k : ℕ} (hk : k ≠ 0) (w : ℂ) :
+    (w ^ ((k : ℂ)⁻¹)) ^ k = w :=
+  Complex.cpow_nat_inv_pow w hk
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Layer-C bijection prerequisite (C4-pre.3) — chart-coordinate value
+of the candidate preimage (sorry-free helper).**
+
+Let `r` be the local inverse of `φ` from `phi_localInverse_exists`,
+and `kthRoot w := w ^ ((k : ℂ)⁻¹)`. For `j ∈ Fin k`, `ζ` a primitive
+`k`-th root of unity, and `w ∈ ℂ` with `ζ^j · kthRoot w` in `r`'s
+right-inverse neighborhood, the chart-local map at `r(ζ^j · kthRoot w)`
+takes the value `chartAt ℂ (f x₀) (f x₀) + w`:
+
+  `chartLocalAt f x₀ (r (ζ^j · kthRoot w)) = c₀ + w`
+
+This uses the chart-local power form (Commit A) `chartLocalAt f x₀ z - c₀ = φ(z)^k`,
+the right-inverse property `φ(r ε) = ε`, the kth-root identity
+`(kthRoot w)^k = w`, and the primitive-root identity `ζ^(j·k) = (ζ^k)^j = 1`.
+
+This is **C4-pre.3**: the chart-level identity at the candidate preimage.
+C4-pre.4 will use this to map back through the chart, conclude
+`f (chart-preimage) = y`, and verify the bijection with `s_y`.
+-/
+private theorem chart_preimage_at_kthRoot_chart_eq
+    {f : X → Y} {x₀ : X}
+    {k : ℕ}
+    {φ r kthRoot : ℂ → ℂ}
+    (h_pow_form_at : ∀ z, chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀) = φ z ^ k)
+    (h_right_inv_at : ∀ ε, φ (r ε) = ε)
+    (h_kthRoot_pow : ∀ w, (kthRoot w) ^ k = w)
+    {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (j : ℕ) (w : ℂ) :
+    chartLocalAt f x₀ (r ((ζ ^ j) * kthRoot w)) =
+      chartAt ℂ (f x₀) (f x₀) + w := by
+  -- (LHS - c₀) = φ(r(ζ^j * kthRoot w))^k by h_pow_form_at
+  --            = (ζ^j * kthRoot w)^k by h_right_inv_at
+  --            = ζ^(jk) * (kthRoot w)^k by mul_pow
+  --            = (ζ^k)^j * w by ζ-commutativity and h_kthRoot_pow
+  --            = 1^j * w = w by hζ.pow_eq_one
+  have h_LHS_sub : chartLocalAt f x₀ (r ((ζ ^ j) * kthRoot w)) -
+      chartAt ℂ (f x₀) (f x₀) = w := by
+    rw [h_pow_form_at, h_right_inv_at, mul_pow, h_kthRoot_pow]
+    rw [show (ζ ^ j) ^ k = (ζ ^ k) ^ j from by rw [← pow_mul, ← pow_mul, Nat.mul_comm]]
+    rw [hζ.pow_eq_one, one_pow, one_mul]
+  linear_combination h_LHS_sub
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Layer-C bijection prerequisite (C4-pre.4) — chart-preimage of the
+candidate maps under `f` to the predetermined `y` (sorry-free helper).**
+
+Combining C4-pre.3's chart-coordinate identity with the assumption that
+both `f (chart-preimage)` and the predetermined `y` lie in
+`(chartAt ℂ (f x₀)).source` (so the partial chart is injective on them),
+the candidate chart-preimage `x_j(w) := (chart x₀).symm (r (ζ^j · kthRoot w))`
+satisfies `f (x_j(w)) = y` when `chart y₀ y - c₀ = w`.
+
+The hypothesis `h_chart_preim_source` (the candidate is in `(chart x₀)`'s
+source) is what `C4` will arrange by choosing `W` small enough; similarly
+`h_y_source` (y near y₀ in chart source) follows for small `V` near `y₀`.
+
+This is **C4-pre.4**: candidate preimage really IS a preimage of `y`.
+Together with C4-pre.{1,2,3}, this gives the four chart-local primitives
+the C4 cancellation argument needs.
+-/
+private theorem chart_preimage_at_kthRoot_in_fiber
+    {f : X → Y} {x₀ : X}
+    {k : ℕ}
+    {φ r kthRoot : ℂ → ℂ}
+    (h_pow_form_at : ∀ z, chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀) = φ z ^ k)
+    (h_right_inv_at : ∀ ε, φ (r ε) = ε)
+    (h_kthRoot_pow : ∀ w, (kthRoot w) ^ k = w)
+    {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (j : ℕ) {y : Y} (w : ℂ)
+    (h_y_chart_eq : chartAt ℂ (f x₀) y = chartAt ℂ (f x₀) (f x₀) + w)
+    (h_y_source : y ∈ (chartAt ℂ (f x₀)).source)
+    (h_f_chart_preim_source :
+      f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w))) ∈ (chartAt ℂ (f x₀)).source) :
+    f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w))) = y := by
+  -- Step 1: chartLocalAt f x₀ at the candidate equals c₀ + w (C4-pre.3).
+  have h_chartLocal_val := chart_preimage_at_kthRoot_chart_eq
+    (f := f) (x₀ := x₀) (k := k)
+    (φ := φ) (r := r) (kthRoot := kthRoot)
+    h_pow_form_at h_right_inv_at h_kthRoot_pow hζ j w
+  -- Step 2: unfold chartLocalAt to identify
+  --   chartAt ℂ (f x₀) (f ((chart x₀).symm (r (ζ^j · kthRoot w)))) = c₀ + w.
+  have h_chartY_val :
+      chartAt ℂ (f x₀) (f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w)))) =
+        chartAt ℂ (f x₀) (f x₀) + w := by
+    -- chartLocalAt f x₀ z = chartAt ℂ (f x₀) (f ((chart x₀).symm z)) by def.
+    have hdef : chartLocalAt f x₀ (r ((ζ ^ j) * kthRoot w)) =
+        chartAt ℂ (f x₀) (f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w)))) := by
+      unfold chartLocalAt
+      rfl
+    rw [← hdef]
+    exact h_chartLocal_val
+  -- Step 3: now `chartAt ℂ (f x₀)` is injective on its source; identify f(candidate) with y.
+  -- chartAt ℂ (f x₀) (f candidate) = c₀ + w = chartAt ℂ (f x₀) y by h_y_chart_eq.
+  have hchart_eq :
+      chartAt ℂ (f x₀) (f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w)))) =
+        chartAt ℂ (f x₀) y := by
+    rw [h_chartY_val, ← h_y_chart_eq]
+  exact (chartAt ℂ (f x₀)).injOn h_f_chart_preim_source h_y_source hchart_eq
 
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
