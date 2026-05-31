@@ -839,6 +839,25 @@ structure GenusZeroGlobalPatchFamily
     ∀ y : OnePoint ℂ, ∃ (i : PatchIndex) (z : ℂ),
       z ∈ (patch i).targetChart.target ∧ y = (patch i).targetChart.symm z
 
+/--
+Forward half of the global gluing data: a single map assembled from the local
+coordinates, together with the two chart-level facts that later smoothness and
+inverse arguments consume.
+-/
+structure GenusZeroGlobalForwardMapData
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) where
+  toMap : X → OnePoint ℂ
+  target_mem_on_patch :
+    ∀ i x, x ∈ (family.patch i).source →
+      toMap x ∈ (family.patch i).targetChart.source
+  chart_expression_on_patch :
+    ∀ i x, x ∈ (family.patch i).source →
+      (family.patch i).targetChart (toMap x) = (family.patch i).coord x
+
 namespace GenusZeroGlobalGluingData
 
 /-- The homeomorphism obtained after the global gluing data is complete. -/
@@ -901,36 +920,20 @@ theorem genusZeroGlobalPatchFamily_nonempty
   sorry
 
 /--
-Global candidate-map construction frontier: glue the compatible local chart
-coordinates into a single candidate `X → OnePoint ℂ`, at least landing in the
-chosen target chart on every patch.
+Forward-map construction frontier: glue the compatible local chart coordinates
+into a single candidate `X → OnePoint ℂ` and record its local chart
+expressions.
 -/
-theorem genusZeroGlobalGluing_toMap_exists
+theorem genusZeroGlobalForwardMapData_nonempty
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X) :
-    ∃ toMap : X → OnePoint ℂ,
-      ∀ i x, x ∈ (family.patch i).source →
-        toMap x ∈ (family.patch i).targetChart.source := by
-  -- Field-specific 2d frontier: define the global candidate from compatible
-  -- local coordinates and prove each local expression lands in its chart.
-  sorry
-
-/--
-Chart-expression frontier for the glued global map.
--/
-theorem genusZeroGlobalGluing_chart_expression_on_patch
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (family : GenusZeroGlobalPatchFamily X) (toMap : X → OnePoint ℂ) :
-    ∀ i x, x ∈ (family.patch i).source →
-      (family.patch i).targetChart (toMap x) = (family.patch i).coord x := by
-  -- Field-specific 2d frontier: identify the chart representation of the
-  -- glued map with the normalized local limit coordinate on each patch.
+    Nonempty (GenusZeroGlobalForwardMapData family) := by
+  -- Field-specific 2d frontier: construct the global candidate from
+  -- compatible local coordinates and identify its chart representation with
+  -- the normalized local limit coordinate on every patch.
   sorry
 
 /--
@@ -1050,7 +1053,9 @@ theorem genusZeroGlobalGluingData_nonempty
   classical
   let family : GenusZeroGlobalPatchFamily X :=
     Classical.choice (genusZeroGlobalPatchFamily_nonempty X _e)
-  obtain ⟨toMap, htarget⟩ := genusZeroGlobalGluing_toMap_exists _e family
+  let forward : GenusZeroGlobalForwardMapData family :=
+    Classical.choice (genusZeroGlobalForwardMapData_nonempty _e family)
+  let toMap : X → OnePoint ℂ := forward.toMap
   obtain ⟨invMap, hinv_branch⟩ := genusZeroGlobalGluing_invMap_exists _e family
   refine ⟨
     { PatchIndex := family.PatchIndex
@@ -1061,9 +1066,8 @@ theorem genusZeroGlobalGluingData_nonempty
       target_chart_cover := family.target_chart_cover
       toMap := toMap
       invMap := invMap
-      target_mem_on_patch := htarget
-      chart_expression_on_patch :=
-        genusZeroGlobalGluing_chart_expression_on_patch family toMap
+      target_mem_on_patch := forward.target_mem_on_patch
+      chart_expression_on_patch := forward.chart_expression_on_patch
       overlap_compatible :=
         genusZeroGlobalGluing_overlap_compatible family
       inverse_branch_agrees_on_patch := hinv_branch
@@ -1072,8 +1076,8 @@ theorem genusZeroGlobalGluingData_nonempty
       local_right_inverse_on_target_chart :=
         genusZeroGlobalGluing_local_right_inverse_on_target_chart family toMap
       contMDiff_toMap :=
-        genusZeroGlobalGluing_contMDiff_toMap family toMap htarget
-          (genusZeroGlobalGluing_chart_expression_on_patch family toMap)
+        genusZeroGlobalGluing_contMDiff_toMap family toMap
+          forward.target_mem_on_patch forward.chart_expression_on_patch
       contMDiff_invMap :=
         genusZeroGlobalGluing_contMDiff_invMap family invMap hinv_branch }⟩
 
