@@ -86,6 +86,12 @@ jobs:
           chmod +x /tmp/bin/landrun
           echo "/tmp/bin" >> "$GITHUB_PATH"
           echo "/tmp/comparator/.lake/build/bin" >> "$GITHUB_PATH"
+          # lean4export is a *dependency* of comparator, so `lake build` puts
+          # its binary under the dependency's own .lake dir — not in comparator's
+          # build/bin. The fake landrun shim resolves `lean4export` via PATH, so
+          # this dir must be on PATH or the smoketest dies with exit 127
+          # ("exec: lean4export: not found").
+          echo "/tmp/comparator/.lake/packages/lean4export/.lake/build/bin" >> "$GITHUB_PATH"
 
       - name: Run comparator smoketest with fake landrun
         run: |
