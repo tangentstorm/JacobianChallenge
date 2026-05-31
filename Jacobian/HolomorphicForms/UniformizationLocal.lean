@@ -1,3 +1,4 @@
+import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Analytic
 import Mathlib.Analysis.Complex.OpenMapping
 
 /-!
@@ -78,6 +79,51 @@ theorem hasFPowerSeriesOnBall (data : ChartBallPowerSeries) :
 theorem analyticAt_center (data : ChartBallPowerSeries) :
     AnalyticAt ℂ data.toFun data.center :=
   data.series_expansion.analyticAt
+
+/--
+The packaged function is strictly differentiable at the chart center with
+derivative `deriv data.toFun data.center`.
+-/
+theorem hasStrictDerivAt_center (data : ChartBallPowerSeries) :
+    HasStrictDerivAt data.toFun (deriv data.toFun data.center) data.center :=
+  data.analyticAt_center.hasStrictDerivAt
+
+/--
+The inverse-function-theorem local inverse of a packaged chart-ball function
+at a center where the derivative is nonzero.
+-/
+noncomputable def localInverse
+    (data : ChartBallPowerSeries)
+    (hderiv : deriv data.toFun data.center ≠ 0) : ℂ → ℂ :=
+  data.hasStrictDerivAt_center.localInverse data.toFun
+    (deriv data.toFun data.center) data.center hderiv
+
+/-- The inverse-function-theorem local inverse is eventually a left inverse. -/
+theorem eventually_left_inverse_localInverse
+    (data : ChartBallPowerSeries)
+    (hderiv : deriv data.toFun data.center ≠ 0) :
+    ∀ᶠ z in 𝓝 data.center,
+      data.localInverse hderiv (data.toFun z) = z :=
+  by
+    simpa [localInverse] using
+      data.hasStrictDerivAt_center.eventually_left_inverse hderiv
+
+/-- The inverse-function-theorem local inverse is eventually a right inverse. -/
+theorem eventually_right_inverse_localInverse
+    (data : ChartBallPowerSeries)
+    (hderiv : deriv data.toFun data.center ≠ 0) :
+    ∀ᶠ w in 𝓝 (data.toFun data.center),
+      data.toFun (data.localInverse hderiv w) = w :=
+  by
+    simpa [localInverse] using
+      data.hasStrictDerivAt_center.eventually_right_inverse hderiv
+
+/-- The packaged local inverse is analytic at the image of the chart center. -/
+theorem analyticAt_localInverse
+    (data : ChartBallPowerSeries)
+    (hderiv : deriv data.toFun data.center ≠ 0) :
+    AnalyticAt ℂ (data.localInverse hderiv) (data.toFun data.center) :=
+  data.analyticAt_center.analyticAt_localInverse hderiv
 
 /--
 Local open-image provider for a packaged chart-ball function.  If the image
