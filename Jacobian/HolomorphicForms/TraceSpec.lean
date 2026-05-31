@@ -1867,6 +1867,173 @@ private theorem ofScalars_surviving_radius_pos
   refine lt_of_lt_of_le ?_ hrk_le_q_radius
   exact_mod_cast hrk_pos
 
+/-! ### R-sub-development R4b — rotation-invariant analytic-extension theorem (R-final). -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R4b (R-final) — Rotation-invariant analytic-extension theorem
+(sorry-free helper; caps the locally-built pure-ℂ R-sub-development
+that replaces the Mathlib v4.28.0 gap).**
+
+If `F : ℂ → ℂ` is analytic at `0`, ζ is a primitive `k`-th root of unity
+(`k ≠ 0`), and `F =ᶠ[𝓝 0] (fun z => F (ζ * z))`, then there exists
+`G : ℂ → ℂ` analytic at `0` with `F z = G (z^k)` near `0`.
+
+Proof: consume R4a for convergence (`0 < q.radius`); define `G := q.sum`;
+`G` is analytic via `q.hasFPowerSeriesOnBall`; the extension identity
+`F z = G(z^k)` follows from reindexing the HasSum identity of `F`'s
+power series via `Function.Injective.hasSum_iff` plus `HasSum.unique`
+matching the LHS `HasSum` against the RHS `HasSum` (for `q` applied at `z^k`).
+
+The eball-membership step `z^k ∈ Metric.eball 0 q.radius` is established
+by an internal re-derivation of the convergence bound (using the same
+`Function.Injective.hasSum_iff` reindex as R4a, but with the explicit
+`r > 0` we choose here so we can chain strict inequalities).
+-/
+private theorem exists_analytic_extension_of_rotation_invariant
+    {F : ℂ → ℂ} (hF : AnalyticAt ℂ F 0)
+    {k : ℕ} (hk : k ≠ 0) {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (h_rot : F =ᶠ[𝓝 0] (fun z => F (ζ * z))) :
+    ∃ G : ℂ → ℂ, AnalyticAt ℂ G 0 ∧ F =ᶠ[𝓝 0] (fun z => G (z^k)) := by
+  -- Step 1: extract Taylor data via R2.
+  obtain ⟨hF_hpw, h_vanish⟩ :=
+    taylorCoeff_zero_of_eventually_rotation_invariant hF hk hζ h_rot
+  set a : ℕ → ℂ := fun n => iteratedDeriv n F 0 / (n.factorial : ℂ) with ha_def
+  set p : FormalMultilinearSeries ℂ ℂ ℂ := FormalMultilinearSeries.ofScalars ℂ a
+    with hp_def
+  set q : FormalMultilinearSeries ℂ ℂ ℂ :=
+    FormalMultilinearSeries.ofScalars ℂ (fun m => a (k * m)) with hq_def
+  -- Step 2: unpack HasFPowerSeriesAt → HasFPowerSeriesOnBall.
+  obtain ⟨rF, hF_onBall⟩ := hF_hpw
+  have hrF_pos : 0 < rF := hF_onBall.r_pos
+  have hp_radius_pos : 0 < p.radius := lt_of_lt_of_le hrF_pos hF_onBall.r_le
+  -- Step 3: pick r : ℝ≥0 with 0 < r and (r : ℝ≥0∞) < min p.radius rF.
+  obtain ⟨r, hr_pos, hr_lt_p, hr_lt_rF⟩ :
+      ∃ r : ℝ≥0, 0 < r ∧ (r : ℝ≥0∞) < p.radius ∧ (r : ℝ≥0∞) < rF := by
+    rcases ENNReal.lt_iff_exists_nnreal_btwn.mp
+      (lt_min hp_radius_pos hrF_pos) with ⟨r, hr_pos_coe, hr_lt_min⟩
+    refine ⟨r, ENNReal.coe_pos.mp hr_pos_coe, ?_, ?_⟩
+    · exact lt_of_lt_of_le hr_lt_min (min_le_left _ _)
+    · exact lt_of_lt_of_le hr_lt_min (min_le_right _ _)
+  -- Step 4: re-derive (r^k : ℝ≥0∞) ≤ q.radius (same skeleton as R4a, but
+  -- with our chosen `r` to keep the strict inequality chain explicit).
+  have hr_lt_p_radius : (r : ℝ≥0∞) < p.radius := hr_lt_p
+  have h_summable_a : Summable (fun n : ℕ => ‖p n‖₊ * r ^ n) :=
+    p.summable_nnnorm_mul_pow hr_lt_p_radius
+  have h_pnorm_eq : ∀ n, ‖p n‖₊ = ‖a n‖₊ := by
+    intro n
+    have : ‖p n‖₊ = ‖a n‖₊ * ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ n ℂ‖₊ := by
+      simp [hp_def, FormalMultilinearSeries.ofScalars, nnnorm_smul]
+    rw [this, show
+      ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ n ℂ‖₊ = 1 from
+        Subtype.ext (ContinuousMultilinearMap.norm_mkPiAlgebraFin), mul_one]
+  have h_qnorm_eq : ∀ m, ‖q m‖₊ = ‖a (k * m)‖₊ := by
+    intro m
+    have : ‖q m‖₊ = ‖a (k * m)‖₊ * ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ m ℂ‖₊ := by
+      simp [hq_def, FormalMultilinearSeries.ofScalars, nnnorm_smul]
+    rw [this, show
+      ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ m ℂ‖₊ = 1 from
+        Subtype.ext (ContinuousMultilinearMap.norm_mkPiAlgebraFin), mul_one]
+  have hp_vanish_norm : ∀ n, ¬ k ∣ n → ‖p n‖₊ * r ^ n = 0 := by
+    intro n hn
+    rw [h_pnorm_eq n,
+        show a n = 0 from (by
+          have := h_vanish n hn
+          simp_all)]
+    simp
+  have hg_inj : Function.Injective (fun m : ℕ => k * m) := fun m₁ m₂ heq =>
+    Nat.eq_of_mul_eq_mul_left (Nat.pos_of_ne_zero hk) heq
+  have h_term_eq : ∀ m : ℕ,
+      ‖q m‖₊ * (r ^ k) ^ m = ‖p (k * m)‖₊ * r ^ (k * m) := by
+    intro m
+    rw [h_qnorm_eq m, h_pnorm_eq (k * m), ← pow_mul, Nat.mul_comm k m]
+  have h_off_range : ∀ n, n ∉ Set.range (fun m : ℕ => k * m) →
+      ‖p n‖₊ * r ^ n = 0 := by
+    intro n hn_range
+    exact hp_vanish_norm n (fun ⟨m, hm⟩ => hn_range ⟨m, hm.symm⟩)
+  obtain ⟨s, hs⟩ := h_summable_a
+  have h_summable_b : Summable (fun m : ℕ => ‖q m‖₊ * (r ^ k) ^ m) := by
+    refine ⟨s, ?_⟩
+    rw [funext h_term_eq]
+    exact (hg_inj.hasSum_iff h_off_range).mpr hs
+  have hrk_le_q_radius : (r ^ k : ℝ≥0∞) ≤ q.radius := by
+    have := q.le_radius_of_summable_nnnorm h_summable_b
+    simpa using this
+  -- Step 5: q.radius positivity (follows from r^k > 0).
+  have hrk_pos : (0 : ℝ≥0) < r ^ k := pow_pos hr_pos k
+  have hq_radius_pos : 0 < q.radius :=
+    lt_of_lt_of_le (by exact_mod_cast hrk_pos) hrk_le_q_radius
+  -- Step 6: define G := q.sum; analyticity via q.hasFPowerSeriesOnBall.
+  refine ⟨q.sum, (q.hasFPowerSeriesOnBall hq_radius_pos).analyticAt, ?_⟩
+  -- Step 7: F =ᶠ[𝓝 0] (fun z => q.sum (z^k)).
+  -- Pick a ball of radius `r` (≤ rF and giving r^k ≤ q.radius for z^k).
+  filter_upwards [Metric.eball_mem_nhds (0 : ℂ) (show 0 < (r : ℝ≥0∞) from by
+    exact_mod_cast hr_pos)] with z hz_in_r_ball
+  -- ‖z‖₊ < r.
+  have h_z_nnnorm_lt : (‖z‖₊ : ℝ≥0∞) < r := by
+    simpa [Metric.mem_eball, edist_zero_right] using hz_in_r_ball
+  -- z ∈ eball 0 rF (since r < rF).
+  have hz_in_rF : z ∈ Metric.eball (0 : ℂ) rF := by
+    rw [Metric.mem_eball, edist_zero_right]
+    exact lt_of_lt_of_le (lt_trans h_z_nnnorm_lt hr_lt_rF) (le_refl _)
+  -- HasSum at z via hF_onBall.
+  have hHasSum_a : HasSum (fun n : ℕ => p n (fun _ : Fin n => z)) (F z) := by
+    have := hF_onBall.hasSum hz_in_rF
+    simpa using this
+  -- Vanishing: for n ∉ Set.range (k * ·), p n (fun _ => z) = 0.
+  have h_pn_vanish : ∀ n, n ∉ Set.range (fun m : ℕ => k * m) →
+      p n (fun _ : Fin n => z) = 0 := by
+    intro n hn_range
+    have hn_ndvd : ¬ k ∣ n := fun ⟨m, hm⟩ => hn_range ⟨m, hm.symm⟩
+    have ha_zero : a n = 0 := by
+      have := h_vanish n hn_ndvd
+      simp_all
+    simp [hp_def, ha_zero]
+  -- HasSum reindex via Function.Injective.hasSum_iff.
+  have hHasSum_b_via_z : HasSum (fun m : ℕ => p (k * m) (fun _ : Fin (k * m) => z))
+      (F z) :=
+    (hg_inj.hasSum_iff h_pn_vanish).mpr hHasSum_a
+  -- Term equality: p (k*m) (fun _ => z) = q m (fun _ => z^k).
+  have h_term_zk : ∀ m : ℕ,
+      p (k * m) (fun _ : Fin (k * m) => z) = q m (fun _ : Fin m => z^k) := by
+    intro m
+    -- p (k*m) (fun _ => z) = a (k*m) • z^(k*m) (via ofScalars_apply_eq).
+    -- q m (fun _ => z^k) = a (k*m) • (z^k)^m = a (k*m) • z^(k*m).
+    have h1 : p (k * m) (fun _ : Fin (k * m) => z) = a (k * m) • z ^ (k * m) :=
+      FormalMultilinearSeries.ofScalars_apply_eq (E := ℂ) a z (k * m)
+    have h2 : q m (fun _ : Fin m => z ^ k) = a (k * m) • (z ^ k) ^ m :=
+      FormalMultilinearSeries.ofScalars_apply_eq (E := ℂ) (fun m => a (k * m))
+        (z ^ k) m
+    rw [h1, h2, ← pow_mul, Nat.mul_comm k m]
+  have hHasSum_q_at_zk : HasSum (fun m : ℕ => q m (fun _ : Fin m => z ^ k)) (F z) :=
+    hHasSum_b_via_z.congr_fun (fun m => (h_term_zk m).symm)
+  -- z^k ∈ eball 0 q.radius (strict).
+  have hzk_in_q_eball : z ^ k ∈ Metric.eball (0 : ℂ) q.radius := by
+    rw [Metric.mem_eball, edist_zero_right]
+    rw [enorm_pow]
+    -- Goal: ‖z‖ₑ ^ k < q.radius.
+    -- ‖z‖ₑ = (‖z‖₊ : ℝ≥0∞), so this is the same as (‖z‖₊ : ℝ≥0∞)^k < q.radius.
+    -- We have h_z_nnnorm_lt : (‖z‖₊ : ℝ≥0∞) < (r : ℝ≥0∞), and hrk_le_q_radius.
+    have h_strict : ‖z‖ₑ ^ k < (r : ℝ≥0∞) ^ k := by
+      have h_enorm_eq : ‖z‖ₑ = (‖z‖₊ : ℝ≥0∞) := rfl
+      rw [h_enorm_eq]
+      exact (ENNReal.pow_lt_pow_left_iff hk).mpr h_z_nnnorm_lt
+    refine lt_of_lt_of_le h_strict ?_
+    -- (r : ℝ≥0∞)^k = ((r^k : ℝ≥0) : ℝ≥0∞) ≤ q.radius.
+    rw [show (r : ℝ≥0∞) ^ k = ((r ^ k : ℝ≥0) : ℝ≥0∞) from by push_cast; ring]
+    exact hrk_le_q_radius
+  -- HasSum from q.hasFPowerSeriesOnBall at z^k.
+  have hHasSum_qsum : HasSum (fun m : ℕ => q m (fun _ : Fin m => z ^ k))
+      (q.sum (z ^ k)) := by
+    have hball : z ^ k ∈ Metric.eball (0 : ℂ) q.radius := hzk_in_q_eball
+    have := (q.hasFPowerSeriesOnBall hq_radius_pos).hasSum hball
+    simpa using this
+  -- Conclude F z = q.sum (z^k) by HasSum.unique.
+  exact (hHasSum_q_at_zk.unique hHasSum_qsum)
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
