@@ -409,6 +409,54 @@ theorem exists_subseq_tendstoUniformlyOn_closedBall
   exact tendstoUniformlyOn_of_tendsto_boundedContinuousOnClosedBall
     (fun k => data (φ k)) (fun k => hclosed (φ k)) hlimit hφ_tendsto
 
+/--
+Weierstrass upgrade for chart-ball families: a locally uniform limit of
+packaged holomorphic chart-ball functions is differentiable on the common
+open chart ball.
+-/
+theorem differentiableOn_limit_of_tendstoLocallyUniformlyOn_chartBall
+    (data : ℕ → ChartBallPowerSeries) {center : ℂ} {radius : NNReal}
+    {limit : ℂ → ℂ}
+    (hcenter : ∀ n, (data n).center = center)
+    (hradius : ∀ n, (data n).radius = radius)
+    (hlim :
+      TendstoLocallyUniformlyOn
+        (fun n z => (data n).toFun z)
+        limit atTop (Metric.ball center (radius : ℝ))) :
+    DifferentiableOn ℂ limit (Metric.ball center (radius : ℝ)) := by
+  have hdiff :
+      ∀ᶠ n in atTop,
+        DifferentiableOn ℂ (fun z => (data n).toFun z)
+          (Metric.ball center (radius : ℝ)) := by
+    exact Eventually.of_forall fun n => by
+      simpa [hcenter n, hradius n] using (data n).diffContOnCl.differentiableOn
+  exact hlim.differentiableOn hdiff Metric.isOpen_ball
+
+/--
+Under the same hypotheses, derivatives of the packaged chart-ball family
+converge locally uniformly to the derivative of the limit on the common chart
+ball.
+-/
+theorem tendstoLocallyUniformlyOn_deriv_of_chartBall_limit
+    (data : ℕ → ChartBallPowerSeries) {center : ℂ} {radius : NNReal}
+    {limit : ℂ → ℂ}
+    (hcenter : ∀ n, (data n).center = center)
+    (hradius : ∀ n, (data n).radius = radius)
+    (hlim :
+      TendstoLocallyUniformlyOn
+        (fun n z => (data n).toFun z)
+        limit atTop (Metric.ball center (radius : ℝ))) :
+    TendstoLocallyUniformlyOn
+      (fun n z => deriv (data n).toFun z)
+      (deriv limit) atTop (Metric.ball center (radius : ℝ)) := by
+  have hdiff :
+      ∀ᶠ n in atTop,
+        DifferentiableOn ℂ (fun z => (data n).toFun z)
+          (Metric.ball center (radius : ℝ)) := by
+    exact Eventually.of_forall fun n => by
+      simpa [hcenter n, hradius n] using (data n).diffContOnCl.differentiableOn
+  simpa [Function.comp_def] using hlim.deriv hdiff Metric.isOpen_ball
+
 /-- The packaged function is analytic at the center of its chart ball. -/
 theorem analyticAt_center (data : ChartBallPowerSeries) :
     AnalyticAt ℂ data.toFun data.center :=
