@@ -202,7 +202,7 @@ private lemma cotangent_triv_inversion_snd
         (OnePoint.infty : OnePoint ℂ)).continuousLinearMap (RingHom.id ℂ)
         (trivializationAt ℂ (Bundle.Trivial (OnePoint ℂ) ℂ)
           (OnePoint.infty : OnePoint ℂ)) from rfl,
-    Trivialization.continuousLinearMap_apply]
+    Bundle.Trivialization.continuousLinearMap_apply]
   have hTrivial :
       (trivializationAt ℂ (Bundle.Trivial (OnePoint ℂ) ℂ)
           (OnePoint.infty : OnePoint ℂ)).continuousLinearMapAt ℂ b =
@@ -348,7 +348,7 @@ theorem identityChartCoeff_tendsto_zero (ω : HolomorphicOneForm ℂ (OnePoint �
               (OnePoint.infty : OnePoint ℂ)).continuousLinearMapAt ℂ
                 (OnePoint.some (w⁻¹) : OnePoint ℂ) (-(w⁻¹) ^ 2 : ℂ)) =
             (-(w⁻¹) ^ 2 : ℂ) :=
-        Trivialization.symmL_continuousLinearMapAt
+        Bundle.Trivialization.symmL_continuousLinearMapAt
           (trivializationAt ℂ (TangentSpace (modelWithCornersSelf ℂ ℂ))
             (OnePoint.infty : OnePoint ℂ)) htan_mem (-(w⁻¹) ^ 2)
       rw [hcLMA_apply] at hround
@@ -375,7 +375,7 @@ theorem identityChartCoeff_tendsto_zero (ω : HolomorphicOneForm ℂ (OnePoint �
   have hsq_tendsto :
       Tendsto (fun w : ℂ => -w ^ 2 * H (invBwd w) (1 : ℂ)) (nhds (0 : ℂ)) (nhds 0) := by
     have hsq : Tendsto (fun w : ℂ => -w ^ 2) (nhds (0 : ℂ)) (nhds 0) := by
-      simpa using (continuous_neg.comp (continuous_pow 2)).tendsto (0 : ℂ)
+      simpa only [Function.comp_def] using (continuous_neg.comp (continuous_pow 2)).tendsto (0 : ℂ)
     refine Filter.Tendsto.zero_mul_isBoundedUnder_le hsq ?_
     refine ⟨M, Filter.eventually_map.mpr ?_⟩
     filter_upwards [hM] with w hw using hw
@@ -479,7 +479,7 @@ theorem section_infty_eq_zero' (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
         exact ⟨ fun h => fun _ => Prod.ext rfl h, fun h => h ( by simp [ e ] ) |> congr_arg Prod.snd ⟩;
       exact Prod.ext ( by aesop ) hω_infty;
     have := e.injOn ( show { proj := OnePoint.infty, snd := ω.toFun OnePoint.infty } ∈ e.source from ?_ ) ( show { proj := OnePoint.infty, snd := 0 } ∈ e.source from ?_ ) hω_infty ; aesop;
-    · simp [ e, Trivialization.source_eq ];
+    · simp [ e, Bundle.Trivialization.source_eq ];
     · simp [ e.mem_source ];
       exact FiberBundle.mem_baseSet_trivializationAt' OnePoint.infty
   exact h_nonzero hω_infty;
