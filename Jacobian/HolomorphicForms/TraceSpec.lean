@@ -1671,6 +1671,47 @@ private theorem iteratedDeriv_zero_of_eventually_rotation_invariant
   have h_sub_ne : (1 - ζ ^ n) ≠ 0 := sub_ne_zero_of_ne (Ne.symm hζ_pow_ne_one)
   exact (smul_eq_zero.mp h_sub).resolve_left h_sub_ne
 
+/-! ### R-sub-development R2 — Taylor-coefficient vanishing bundled with the canonical Taylor power series. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R2 — Taylor-coefficient vanishing bundled with the canonical Taylor
+power series (sorry-free helper; second R-leaf of the locally-built
+rotation-invariant analytic-extension theorem).**
+
+Combining R1 with Mathlib's `AnalyticAt.hasFPowerSeriesAt`, the canonical
+Taylor coefficient function `a n := iteratedDeriv n F 0 / n.factorial` of
+a ζ-rotation-invariant analytic function `F` near `0` both (i) provides
+the formal power series witness `HasFPowerSeriesAt F (ofScalars ℂ a) 0`,
+and (ii) vanishes for every `n` with `¬ k ∣ n`.
+
+This bundles everything R3 needs to define the surviving-coefficient
+function `b m := a (k * m)` and to prove the convergence of the
+corresponding formal series `ofScalars ℂ b`.
+
+Mathlib primitives:
+- `AnalyticAt.hasFPowerSeriesAt` (in `IteratedDeriv.Defs`, requires
+  `[RCLike 𝕜]` or `[NontriviallyNormedField + CompleteSpace + CharZero]`
+  — ℂ satisfies both via `RCLike`).
+- R1 (`iteratedDeriv_zero_of_eventually_rotation_invariant`) — the
+  iteratedDeriv vanishing this lemma divides by `n!`.
+-/
+private theorem taylorCoeff_zero_of_eventually_rotation_invariant
+    {F : ℂ → ℂ} (hF : AnalyticAt ℂ F 0)
+    {k : ℕ} (hk : k ≠ 0) {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (h_rot : F =ᶠ[𝓝 0] (fun z => F (ζ * z))) :
+    HasFPowerSeriesAt F
+      (FormalMultilinearSeries.ofScalars ℂ
+        (fun n => iteratedDeriv n F 0 / (n.factorial : ℂ))) 0 ∧
+    ∀ n, ¬ k ∣ n → iteratedDeriv n F 0 / (n.factorial : ℂ) = 0 := by
+  refine ⟨hF.hasFPowerSeriesAt, ?_⟩
+  intro n hn
+  rw [iteratedDeriv_zero_of_eventually_rotation_invariant hF hk hζ h_rot hn,
+      zero_div]
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
