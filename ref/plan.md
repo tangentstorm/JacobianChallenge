@@ -263,9 +263,16 @@ Needed API:
 The project has officially adopted an **analytic shortcut** for finite-dimensionality
 and the genus-zero classification (`genus_eq_zero_iff_homeo`). 
 
-- **Riemann-Roch & Serre Duality:** The full Riemann-Roch machinery and its
+- **Riemann-Roch & Serre Duality:** The *full* Riemann-Roch machinery and its
   prerequisite Serre duality subsystems have been **deprioritized** and marked
-  as `wontdo` in the project ledger (`sorries.jsonl`).
+  as `wontdo` in the project ledger (`sorries.jsonl`). What survives is a
+  **genus-zero-restricted** Riemann-Roch leaf only: the live frontier still
+  carries `genusZero_pointRRSection_meromorphic_getD_exists`
+  (`Jacobian/HolomorphicForms/RiemannRoch.lean`) and the single-pole existence
+  inputs it feeds — not the general \(\ell(D)-\ell(K-D)\) formula. The
+  general-RR "Forster decomposition" tree once drafted for Abel existence has
+  been retired from the blueprint (see Section 08); Abel injectivity is now a
+  single named obligation (below), not a Riemann-Roch sub-tree.
 - **Analytic Path:** We rely on Cartan–Serre and direct analytic methods (e.g.,
   Cauchy estimates and Arzelà–Ascoli via Montel's theorem) to establish
   finite-dimensionality.
@@ -275,6 +282,42 @@ and the genus-zero classification (`genus_eq_zero_iff_homeo`).
 
 This ensures the project remains focused on the critical path: the
 period-lattice construction and the Abel-Jacobi map.
+
+## Current Frontier (2026-05-31)
+
+Authoritative status comes from `scripts/list-sorries.py --text`, which builds
+`Jacobian.Solution` and reports the **reachable** sorries (those the public
+target actually depends on). As of 2026-05-31 there are **40 reachable sorries
+across 12 files**. The phase-status sub-notes scattered below (Phase 1.5*,
+Phase 2 5-step plan, etc.) are historical and may lag; treat `list-sorries`
+output as the source of truth. The live frontier clusters are:
+
+1. **Public API wiring — `Jacobian/Solution.lean` (23 sorries).** The
+   `Jacobian` type, its group/topology/compact/manifold/Lie instances,
+   `ofCurve`/`ofCurve_self`/`ofCurve_inj`, and the `pushforward`/`pullback`/
+   `pushforward_pullback` API are still delegate-stubs. The underlying
+   production decls largely exist under `Jacobian/<Layer>/`; the gap is
+   *wiring*, not missing mathematics (cf. the "universe gap is a false wall"
+   note).
+2. **Genus-zero classification & genus-0 Riemann-Roch —
+   `HolomorphicForms/{GenusZeroClassification, RiemannRoch,
+   MeromorphicToBranchedCover, SinglePoleLift}`.** Uniformization of a
+   topological 2-sphere to \(\widehat{\C}\), the genus-0 RR section, and
+   single-pole meromorphic existence. This is the *only* surviving Riemann-Roch
+   content (genus-0 case).
+3. **Trace / degree — `HolomorphicForms/TraceSpec.lean`.** Roots-of-unity
+   cancellation in the ramified k-fold fiber sum (`ramifiedKfoldSum_locally_bounded`).
+4. **Periods — polygonal-model homology — `Periods/{Hurewicz (3),
+   DualGraphCut, HandleSwapHomeo, TietzeReduction (2)}`.** The \(\Polygon_{4g}\)
+   H₁ basis, dual-graph-cut-to-disk, and Brahana normal-form reduction. This is
+   the current heavy edge.
+5. **Periods — de Rham / period pairing — `Periods/{DeRhamComparisonMap (2),
+   PeriodFunctional}`.** Closed-form integration over cycles, zero-period ⇒
+   exact, and ℝ-linear independence of the period functionals.
+
+Layers with **no reachable sorries** (done or fully off-path): `ComplexTorus`,
+`AbelJacobi` (the Abel construction is sorry-free and isolated behind the named
+separation obligation), `TraceDegree`, `Blueprint`.
 
 ### Phase 2 — Blocker 5 (resolved 2026-04-28)
 
@@ -444,6 +487,15 @@ Likely prerequisites:
 
 This theorem is one of the challenge's anti-hack checks. A fake zero Jacobian or
 constant Abel-Jacobi map cannot satisfy it when `0 < genus X`.
+
+**Status (2026-05-31).** Following the analytic shortcut, the general
+Riemann-Roch "Forster decomposition" once drafted for this proof has been
+retired. Injectivity is now isolated as a single named obligation,
+`pathIntegralFunctional_separates_points` (period-congruent integrals at
+distinct points force the points equal), consumed by `Solution.ofCurve_inj`.
+The Abel two-point construction feeding it is sorry-free in
+`Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`; the remaining work is the
+separation obligation itself plus wiring `ofCurve_inj` in `Solution.lean`.
 
 ## Phase 6: Trace, Pushforward, and Degree
 
