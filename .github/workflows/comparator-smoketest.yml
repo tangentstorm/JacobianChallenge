@@ -41,7 +41,7 @@ jobs:
 
       - name: Build comparator
         run: |
-          git clone --depth 1 --branch v4.28.0 https://github.com/leanprover/comparator.git /tmp/comparator
+          git clone --depth 1 https://github.com/leanprover/comparator.git /tmp/comparator
           cd /tmp/comparator
           lake build lean4export comparator
 
