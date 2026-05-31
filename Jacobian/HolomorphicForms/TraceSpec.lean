@@ -34,7 +34,7 @@ cycle.
 
 namespace JacobianChallenge.HolomorphicForms
 
-open scoped Manifold ContDiff Topology Classical
+open scoped Manifold ContDiff Topology Classical NNReal ENNReal
 open JacobianChallenge.HolomorphicForms
 open JacobianChallenge.HolomorphicForms.SectionFiberNorm
 open JacobianChallenge.Periods
@@ -1767,6 +1767,105 @@ private theorem tsum_pow_eq_tsum_pow_of_zero_off_dvd
     exact ⟨m, hm.symm⟩
   -- Step 3: apply Function.Injective.tsum_eq.
   exact (hg_inj.tsum_eq h_supp).symm
+
+/-! ### R-sub-development R4a — convergence of the surviving-coefficient series. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R4a — Convergence of the surviving-coefficient series (sorry-free
+helper; fourth R-leaf of the locally-built rotation-invariant
+analytic-extension theorem).**
+
+Given a sequence `a : ℕ → ℂ` whose Taylor series
+`p := FormalMultilinearSeries.ofScalars ℂ a` has positive radius, and
+which vanishes off multiples of `k` (`k ≠ 0`), the formal power series
+of the surviving coefficients
+`q := FormalMultilinearSeries.ofScalars ℂ (fun m => a (k * m))`
+also has positive radius.
+
+Proof: pick `r : ℝ≥0` with `0 < r < (ofScalars ℂ a).radius`. By
+`p.summable_nnnorm_mul_pow`, `Summable (fun n => ‖p n‖₊ * r^n)`. Using
+the vanishing hypothesis, terms outside `Set.range (k * ·)` are zero,
+so by `Function.Injective.hasSum_iff` (with the multiplication-by-k
+injection) the reindexed series
+`(fun m => ‖p (k*m)‖₊ * r^(k*m)) = (fun m => ‖q m‖₊ * (r^k)^m)`
+is also summable. Apply `q.le_radius_of_summable_nnnorm` to get
+`(r^k : ℝ≥0∞) ≤ q.radius`. Positivity follows from `r > 0` and `k ≠ 0`.
+
+This is **R4a** in the R-sub-development. R4b (R-final) consumes R4a
+to define `G := q.sum` (analytic at `0` via `q.hasFPowerSeriesOnBall`)
+and proves the extension identity `F z = G(z^k)`.
+-/
+private theorem ofScalars_surviving_radius_pos
+    {a : ℕ → ℂ} {k : ℕ} (hk : k ≠ 0)
+    (h_vanish : ∀ n, ¬ k ∣ n → a n = 0)
+    (h_pos : 0 < (FormalMultilinearSeries.ofScalars ℂ a).radius) :
+    0 < (FormalMultilinearSeries.ofScalars ℂ (fun m => a (k * m))).radius := by
+  set p : FormalMultilinearSeries ℂ ℂ ℂ := FormalMultilinearSeries.ofScalars ℂ a
+    with hp_def
+  set q : FormalMultilinearSeries ℂ ℂ ℂ :=
+    FormalMultilinearSeries.ofScalars ℂ (fun m => a (k * m)) with hq_def
+  -- Step 1: pick r : ℝ≥0 with 0 < (r : ℝ≥0∞) < p.radius.
+  obtain ⟨r, hr_pos, hr_lt⟩ : ∃ r : ℝ≥0, 0 < r ∧ (r : ℝ≥0∞) < p.radius := by
+    rcases ENNReal.lt_iff_exists_nnreal_btwn.mp h_pos with ⟨r, hr_pos, hr_lt⟩
+    exact ⟨r, ENNReal.coe_pos.mp hr_pos, hr_lt⟩
+  -- Step 2: summability of (fun n => ‖p n‖₊ * r^n).
+  have h_summable_a : Summable (fun n : ℕ => ‖p n‖₊ * r ^ n) :=
+    p.summable_nnnorm_mul_pow hr_lt
+  -- Step 3: for each n, ‖p n‖₊ = ‖a n‖₊. So the vanishing-off-multiples-of-k
+  -- carries over: ‖p n‖₊ * r^n = 0 when ¬ k ∣ n.
+  have h_pnorm_eq : ∀ n, ‖p n‖₊ = ‖a n‖₊ := by
+    intro n
+    have : ‖p n‖₊ = ‖a n‖₊ * ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ n ℂ‖₊ := by
+      simp [hp_def, FormalMultilinearSeries.ofScalars, nnnorm_smul]
+    rw [this, show
+      ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ n ℂ‖₊ = 1 from
+        Subtype.ext (ContinuousMultilinearMap.norm_mkPiAlgebraFin), mul_one]
+  -- Similarly for q.
+  have h_qnorm_eq : ∀ m, ‖q m‖₊ = ‖a (k * m)‖₊ := by
+    intro m
+    have : ‖q m‖₊ = ‖a (k * m)‖₊ * ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ m ℂ‖₊ := by
+      simp [hq_def, FormalMultilinearSeries.ofScalars, nnnorm_smul]
+    rw [this, show
+      ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ m ℂ‖₊ = 1 from
+        Subtype.ext (ContinuousMultilinearMap.norm_mkPiAlgebraFin), mul_one]
+  -- Step 4: vanishing.
+  have hp_vanish : ∀ n, ¬ k ∣ n → ‖p n‖₊ * r ^ n = 0 := by
+    intro n hn
+    rw [h_pnorm_eq n, h_vanish n hn]
+    simp
+  -- Step 5: reindex via Function.Injective.hasSum_iff.
+  have hg_inj : Function.Injective (fun m : ℕ => k * m) := fun m₁ m₂ heq =>
+    Nat.eq_of_mul_eq_mul_left (Nat.pos_of_ne_zero hk) heq
+  -- Term equality: (fun m => ‖q m‖₊ * (r^k)^m) = (fun n => ‖p n‖₊ * r^n) ∘ (fun m => k*m).
+  have h_term_eq : ∀ m : ℕ,
+      ‖q m‖₊ * (r ^ k) ^ m = ‖p (k * m)‖₊ * r ^ (k * m) := by
+    intro m
+    rw [h_qnorm_eq m, h_pnorm_eq (k * m), ← pow_mul, Nat.mul_comm k m]
+  -- Off-range vanishing for the composition.
+  have h_off_range : ∀ n, n ∉ Set.range (fun m : ℕ => k * m) →
+      ‖p n‖₊ * r ^ n = 0 := by
+    intro n hn_range
+    have hn_ndvd : ¬ k ∣ n := fun ⟨m, hm⟩ => hn_range ⟨m, hm.symm⟩
+    exact hp_vanish n hn_ndvd
+  -- Apply Function.Injective.hasSum_iff to lift summability through the injection.
+  obtain ⟨s, hs⟩ := h_summable_a
+  have h_summable_b : Summable (fun m : ℕ => ‖q m‖₊ * (r ^ k) ^ m) := by
+    refine ⟨s, ?_⟩
+    rw [funext h_term_eq]
+    exact (hg_inj.hasSum_iff h_off_range).mpr hs
+  -- Step 6: apply le_radius_of_summable_nnnorm.
+  have hrk_le_q_radius : (r ^ k : ℝ≥0∞) ≤ q.radius := by
+    have := q.le_radius_of_summable_nnnorm h_summable_b
+    -- The lemma gives ↑(r ^ k) ≤ q.radius; coerce.
+    simpa using this
+  -- Step 7: r^k > 0.
+  have hrk_pos : (0 : ℝ≥0) < r ^ k := pow_pos hr_pos k
+  refine lt_of_lt_of_le ?_ hrk_le_q_radius
+  exact_mod_cast hrk_pos
 
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
