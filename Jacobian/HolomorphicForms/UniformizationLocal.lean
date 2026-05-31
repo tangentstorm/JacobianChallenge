@@ -85,6 +85,18 @@ theorem tendstoLocallyUniformlyOn_partialSum (data : ChartBallPowerSeries) :
       data.toFun atTop (Metric.eball data.center data.radius) :=
   data.series_expansion.tendstoLocallyUniformlyOn'
 
+/--
+On every strict subdisk of the chart disk, the packaged Cauchy power-series
+partial sums converge uniformly to the packaged function.
+-/
+theorem tendstoUniformlyOn_partialSum_of_lt
+    (data : ChartBallPowerSeries) {r : NNReal}
+    (hr : (r : ENNReal) < data.radius) :
+    TendstoUniformlyOn
+      (fun n z => data.series.partialSum n (z - data.center))
+      data.toFun atTop (Metric.ball data.center r) :=
+  data.series_expansion.tendstoUniformlyOn' hr
+
 /-- The packaged function is analytic at the center of its chart ball. -/
 theorem analyticAt_center (data : ChartBallPowerSeries) :
     AnalyticAt ℂ data.toFun data.center :=
