@@ -1,4 +1,5 @@
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Analytic
+import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Complex.LocallyUniformLimit
 import Mathlib.Analysis.Complex.OpenMapping
 
@@ -129,6 +130,95 @@ theorem norm_deriv_le_of_sphere_bound
     ‖deriv data.toFun z‖ ≤ M / r := by
   rw [← data.cderiv_eq_deriv hr hclosed]
   exact data.norm_cderiv_le_of_sphere_bound hr hbound
+
+/--
+Cauchy derivative estimates give a Lipschitz bound on a smaller convex chart
+ball, provided every point of the smaller ball admits a Cauchy circle of
+radius `cauchyRadius` still inside the chart ball.
+-/
+theorem norm_image_sub_le_of_cauchy_bound
+    (data : ChartBallPowerSeries) {innerRadius cauchyRadius M : ℝ}
+    (hcauchy_pos : 0 < cauchyRadius)
+    (hclosed :
+      ∀ z ∈ Metric.ball data.center innerRadius,
+        Metric.closedBall z cauchyRadius ⊆
+          Metric.ball data.center (data.radius : ℝ))
+    (hbound :
+      ∀ z ∈ Metric.ball data.center innerRadius,
+        ∀ w ∈ Metric.sphere z cauchyRadius, ‖data.toFun w‖ ≤ M)
+    {z w : ℂ}
+    (hz : z ∈ Metric.ball data.center innerRadius)
+    (hw : w ∈ Metric.ball data.center innerRadius) :
+    ‖data.toFun w - data.toFun z‖ ≤ (M / cauchyRadius) * ‖w - z‖ := by
+  have hdifferentiable :
+      ∀ x ∈ Metric.ball data.center innerRadius,
+        DifferentiableAt ℂ data.toFun x := by
+    intro x hx
+    have hx_chart :
+        x ∈ Metric.ball data.center (data.radius : ℝ) :=
+      hclosed x hx (Metric.mem_closedBall_self hcauchy_pos.le)
+    exact data.diffContOnCl.differentiableOn.differentiableAt
+      (Metric.isOpen_ball.mem_nhds hx_chart)
+  have hderiv_bound :
+      ∀ x ∈ Metric.ball data.center innerRadius,
+        ‖deriv data.toFun x‖ ≤ M / cauchyRadius := by
+    intro x hx
+    exact data.norm_deriv_le_of_sphere_bound hcauchy_pos (hclosed x hx)
+      (hbound x hx)
+  exact (convex_ball data.center innerRadius).norm_image_sub_le_of_norm_deriv_le
+    hdifferentiable hderiv_bound hz hw
+
+/--
+Uniform Cauchy bounds on a family of packaged chart-ball functions give a
+uniform epsilon-delta equicontinuity estimate on the smaller chart ball.
+-/
+theorem family_uniform_equicontinuousOn_of_cauchy_bound
+    {ι : Type*} (data : ι → ChartBallPowerSeries)
+    {center : ℂ} {innerRadius cauchyRadius M : ℝ}
+    (hcauchy_pos : 0 < cauchyRadius)
+    (hM_nonneg : 0 ≤ M)
+    (hcenter : ∀ i, (data i).center = center)
+    (hclosed :
+      ∀ i z, z ∈ Metric.ball center innerRadius →
+        Metric.closedBall z cauchyRadius ⊆
+          Metric.ball (data i).center ((data i).radius : ℝ))
+    (hbound :
+      ∀ i z, z ∈ Metric.ball center innerRadius →
+        ∀ w ∈ Metric.sphere z cauchyRadius, ‖(data i).toFun w‖ ≤ M) :
+    ∀ ε : ℝ, 0 < ε →
+      ∃ η : ℝ, 0 < η ∧
+        ∀ i z, z ∈ Metric.ball center innerRadius →
+          ∀ w, w ∈ Metric.ball center innerRadius →
+            dist w z < η → dist ((data i).toFun w) ((data i).toFun z) < ε := by
+  intro ε hε
+  let K : ℝ := M / cauchyRadius
+  have hK_nonneg : 0 ≤ K := div_nonneg hM_nonneg hcauchy_pos.le
+  refine ⟨ε / (K + 1), div_pos hε (by linarith), ?_⟩
+  intro i z hz w hw hdist
+  have hz_i : z ∈ Metric.ball (data i).center innerRadius := by
+    simpa [hcenter i] using hz
+  have hw_i : w ∈ Metric.ball (data i).center innerRadius := by
+    simpa [hcenter i] using hw
+  have hdist_norm : ‖w - z‖ < ε / (K + 1) := by
+    simpa [dist_eq_norm] using hdist
+  have hLip :
+      ‖(data i).toFun w - (data i).toFun z‖ ≤ K * ‖w - z‖ := by
+    simpa [K] using
+      (data i).norm_image_sub_le_of_cauchy_bound hcauchy_pos
+        (fun x hx => hclosed i x (by simpa [hcenter i] using hx))
+        (fun x hx => hbound i x (by simpa [hcenter i] using hx))
+        hz_i hw_i
+  have hmul_lt : K * ‖w - z‖ < ε := by
+    calc
+      K * ‖w - z‖ ≤ (K + 1) * ‖w - z‖ := by
+        nlinarith [hK_nonneg, norm_nonneg (w - z)]
+      _ < (K + 1) * (ε / (K + 1)) := by
+        exact mul_lt_mul_of_pos_left hdist_norm (by linarith)
+      _ = ε := by
+        field_simp [show K + 1 ≠ 0 by linarith]
+  have hnorm_lt : ‖(data i).toFun w - (data i).toFun z‖ < ε :=
+    lt_of_le_of_lt hLip hmul_lt
+  simpa [dist_eq_norm] using hnorm_lt
 
 /-- The packaged function is analytic at the center of its chart ball. -/
 theorem analyticAt_center (data : ChartBallPowerSeries) :
