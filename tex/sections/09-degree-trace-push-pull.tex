@@ -98,7 +98,7 @@ For nonconstant \(f\), there is a complex-linear trace map
 \[
   \tr_f:\HX\to\HY.
 \]
-\lean{JacobianChallenge.TraceDegree.analyticPushforward,traceFormsBundled_apply_fun_regular,traceFormsBundled_zero}
+\lean{JacobianChallenge.TraceDegree.analyticPushforward,JacobianChallenge.HolomorphicForms.trace_pullback_at_regular_value,JacobianChallenge.HolomorphicForms.traceFormsBundled_eq_zero_of_constant}
 \leanok
 \end{lemma}
 
@@ -143,7 +143,7 @@ Away from the branch locus, choose local inverse branches
   =
   d\,\eta.
 \]
-\lean{JacobianChallenge.HolomorphicForms.trace_pullback_identity_regular}
+\lean{JacobianChallenge.TraceDegree.traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smul}
 Both sides are holomorphic one-forms on \(Y\), so equality on the complement
 of the finite branch locus extends across the branch locus via the identity principle.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_ext_on}
