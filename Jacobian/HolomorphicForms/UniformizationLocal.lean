@@ -282,6 +282,115 @@ theorem exists_localNormalizedBallData
   exact hsmall.ball_subset_image_closedBall hr_pos hlower_bound hcenter_freq
 
 /--
+The inverse-function-theorem open partial homeomorphism attached to a
+packaged chart-ball function with nonzero center derivative.
+-/
+noncomputable def localOpenPartialHomeomorph
+    (data : ChartBallPowerSeries)
+    (hderiv : deriv data.toFun data.center ≠ 0) :
+    OpenPartialHomeomorph ℂ ℂ :=
+  (data.hasStrictDerivAt_center.hasStrictFDerivAt_equiv hderiv).toOpenPartialHomeomorph
+    data.toFun
+
+/--
+Local chart-homeomorphism data around the chart center.  The homeomorphism is
+Mathlib's inverse-function-theorem homeomorphism between open source/target
+neighborhoods, together with explicit source and target balls contained in
+those neighborhoods.
+-/
+structure LocalNormalizedChartHomeomorphData (data : ChartBallPowerSeries) where
+  domainRadius : ℝ
+  imageRadius : ℝ
+  domainRadius_pos : 0 < domainRadius
+  imageRadius_pos : 0 < imageRadius
+  domainRadius_lt_chart : domainRadius < (data.radius : ℝ)
+  localOpen : OpenPartialHomeomorph ℂ ℂ
+  center_mem_source : data.center ∈ localOpen.source
+  imageCenter_mem_target : data.toFun data.center ∈ localOpen.target
+  source_ball_subset : Metric.ball data.center domainRadius ⊆ localOpen.source
+  target_ball_subset : Metric.ball (data.toFun data.center) imageRadius ⊆ localOpen.target
+  homeomorph : localOpen.source ≃ₜ localOpen.target
+  homeomorph_eq : homeomorph = localOpen.toHomeomorphSourceTarget
+  toFun_eq_on_source : ∀ z : localOpen.source, (homeomorph z : ℂ) = data.toFun z
+  sourceImageHomeomorph :
+    Metric.ball data.center domainRadius ≃ₜ
+      (data.toFun '' Metric.ball data.center domainRadius)
+  sourceImageHomeomorph_toFun_eq :
+    ∀ z : Metric.ball data.center domainRadius,
+      (sourceImageHomeomorph z : ℂ) = data.toFun z
+
+/--
+Local normalized chart-homeomorphism provider: at a nonzero center derivative,
+the inverse function theorem supplies a homeomorphism between open source and
+target neighborhoods, and both neighborhoods contain positive metric balls
+around the center and center value.
+-/
+theorem exists_localNormalizedChartHomeomorphData
+    (data : ChartBallPowerSeries)
+    (hderiv : deriv data.toFun data.center ≠ 0) :
+    Nonempty (LocalNormalizedChartHomeomorphData data) := by
+  let e := data.localOpenPartialHomeomorph hderiv
+  have hsource : data.center ∈ e.source := by
+    simpa [e, localOpenPartialHomeomorph] using
+      (data.hasStrictDerivAt_center.hasStrictFDerivAt_equiv hderiv).mem_toOpenPartialHomeomorph_source
+  have htarget : data.toFun data.center ∈ e.target := by
+    simpa [e, localOpenPartialHomeomorph] using
+      (data.hasStrictDerivAt_center.hasStrictFDerivAt_equiv hderiv).image_mem_toOpenPartialHomeomorph_target
+  rcases Metric.mem_nhds_iff.mp (e.open_source.mem_nhds hsource) with
+    ⟨ρ, hρ_pos, hρ_subset⟩
+  rcases Metric.mem_nhds_iff.mp (e.open_target.mem_nhds htarget) with
+    ⟨η, hη_pos, hη_subset⟩
+  let r : ℝ := min (ρ / 2) ((data.radius : ℝ) / 2)
+  let s : ℝ := η / 2
+  have hR_pos : 0 < (data.radius : ℝ) := by exact_mod_cast data.radius_pos
+  have hr_pos : 0 < r := by
+    simp [r, hρ_pos, hR_pos]
+  have hs_pos : 0 < s := by
+    simp [s, hη_pos]
+  have hr_lt_chart : r < (data.radius : ℝ) := by
+    have hr_le : r ≤ (data.radius : ℝ) / 2 := min_le_right _ _
+    linarith
+  have hr_le_ρ : r ≤ ρ := by
+    have hr_le : r ≤ ρ / 2 := min_le_left _ _
+    linarith
+  have hs_le_η : s ≤ η := by
+    dsimp [s]
+    linarith
+  have hsource_ball_subset :
+      Metric.ball data.center r ⊆ e.source :=
+    (Metric.ball_subset_ball hr_le_ρ).trans hρ_subset
+  have htarget_ball_subset :
+      Metric.ball (data.toFun data.center) s ⊆ e.target :=
+    (Metric.ball_subset_ball hs_le_η).trans hη_subset
+  have himage :
+      e '' Metric.ball data.center r =
+        data.toFun '' Metric.ball data.center r := by
+    simp [e, localOpenPartialHomeomorph]
+  refine ⟨
+    { domainRadius := r
+      imageRadius := s
+      domainRadius_pos := hr_pos
+      imageRadius_pos := hs_pos
+      domainRadius_lt_chart := hr_lt_chart
+      localOpen := e
+      center_mem_source := hsource
+      imageCenter_mem_target := htarget
+      source_ball_subset := hsource_ball_subset
+      target_ball_subset := htarget_ball_subset
+      homeomorph := e.toHomeomorphSourceTarget
+      homeomorph_eq := rfl
+      toFun_eq_on_source := ?_
+      sourceImageHomeomorph :=
+        e.homeomorphOfImageSubsetSource hsource_ball_subset himage
+      sourceImageHomeomorph_toFun_eq := ?_ }⟩
+  · intro z
+    change e z = data.toFun z
+    simp [e, localOpenPartialHomeomorph]
+  · intro z
+    change e z = data.toFun z
+    simp [e, localOpenPartialHomeomorph]
+
+/--
 Local open-image provider for a packaged chart-ball function.  If the image
 displacement is bounded below by `ε` on the boundary sphere and the function
 is frequently nonconstant at the center, then the image of the closed chart
