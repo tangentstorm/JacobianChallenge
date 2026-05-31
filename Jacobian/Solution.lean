@@ -9,6 +9,8 @@ import Jacobian.Periods.PeriodLattice
 import Jacobian.Periods.PeriodFullComplexLatticeU
 import Jacobian.ComplexTorus.ULiftTransport
 import Jacobian.AbelJacobi.AnalyticOfCurveBasis
+import Jacobian.AbelJacobi.AnalyticOfCurveU
+import Jacobian.AbelJacobi.AnalyticOfCurveInjectiveU
 import Jacobian.TraceDegree.PullbackBasis
 import Jacobian.TraceDegree.PushforwardBasis
 import Jacobian.TraceDegree.AnalyticDegree
@@ -220,14 +222,23 @@ noncomputable instance : LieAddGroup (modelWithCornersSelf ℂ (Fin (genus X) �
   inferInstanceAs (LieAddGroup (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (ULift _))
 
 /-- The Abel-Jacobi map from a compact Riemann surface to its Jacobian. -/
-def ofCurve (P : X) : X → Jacobian X := sorry
+noncomputable def ofCurve (P : X) : X → Jacobian X :=
+  fun Q => ULift.up (JacobianChallenge.AbelJacobi.analyticOfCurveU X P Q)
 
 lemma ofCurve_contMDiff (P : X) : ContMDiff 𝓘(ℂ)
-    (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (ofCurve P) := sorry
+    (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (ofCurve P) :=
+  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up
+      (Λ := JacobianChallenge.Periods.periodFullComplexLatticeU X)).comp
+    (JacobianChallenge.AbelJacobi.analyticOfCurve_contMDiffU (X := X) P)
 
-lemma ofCurve_self (P : X) : ofCurve P P = 0 := sorry
+lemma ofCurve_self (P : X) : ofCurve P P = 0 := by
+  show ULift.up (JacobianChallenge.AbelJacobi.analyticOfCurveU X P P) = 0
+  rw [JacobianChallenge.AbelJacobi.analyticOfCurve_selfU]; rfl
 
-lemma ofCurve_inj (P : X) (h : 0 < genus X) : Function.Injective (ofCurve P) := sorry
+lemma ofCurve_inj (P : X) (h : 0 < genus X) : Function.Injective (ofCurve P) := by
+  intro a b hab
+  apply JacobianChallenge.AbelJacobi.analyticOfCurve_injectiveU X P (by simpa [genus] using h)
+  exact ULift.up_injective hab
 
 variable {Y : Type*} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [ChartedSpace ℂ Y] [IsManifold 𝓘(ℂ) ω Y]
