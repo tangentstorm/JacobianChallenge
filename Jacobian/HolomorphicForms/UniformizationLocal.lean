@@ -126,6 +126,40 @@ theorem analyticAt_localInverse
   data.analyticAt_center.analyticAt_localInverse hderiv
 
 /--
+On a sufficiently small ball around the chart center, a packaged chart-ball
+function with nonzero center derivative is injective.  The radius is also
+chosen inside the packaged chart radius.
+-/
+theorem exists_ball_injOn
+    (data : ChartBallPowerSeries)
+    (hderiv : deriv data.toFun data.center ≠ 0) :
+    ∃ r : ℝ, 0 < r ∧ r < (data.radius : ℝ) ∧
+      Set.InjOn data.toFun (Metric.ball data.center r) := by
+  rcases Metric.mem_nhds_iff.mp
+      (data.eventually_left_inverse_localInverse hderiv) with
+    ⟨δ, hδ_pos, hδ_subset⟩
+  let r : ℝ := min (δ / 2) ((data.radius : ℝ) / 2)
+  have hR_pos : 0 < (data.radius : ℝ) := by exact_mod_cast data.radius_pos
+  have hr_pos : 0 < r := by
+    simp [r, hδ_pos, hR_pos]
+  have hr_lt_radius : r < (data.radius : ℝ) := by
+    have hr_le : r ≤ (data.radius : ℝ) / 2 := min_le_right _ _
+    linarith
+  have hr_le_delta : r ≤ δ := by
+    have hr_le : r ≤ δ / 2 := min_le_left _ _
+    linarith
+  refine ⟨r, hr_pos, hr_lt_radius, ?_⟩
+  intro z hz w hw hzw
+  have hz_delta : z ∈ Metric.ball data.center δ := lt_of_lt_of_le hz hr_le_delta
+  have hw_delta : w ∈ Metric.ball data.center δ := lt_of_lt_of_le hw hr_le_delta
+  have hz_inv := hδ_subset hz_delta
+  have hw_inv := hδ_subset hw_delta
+  calc
+    z = data.localInverse hderiv (data.toFun z) := hz_inv.symm
+    _ = data.localInverse hderiv (data.toFun w) := by rw [hzw]
+    _ = w := hw_inv
+
+/--
 Local open-image provider for a packaged chart-ball function.  If the image
 displacement is bounded below by `ε` on the boundary sphere and the function
 is frequently nonconstant at the center, then the image of the closed chart
