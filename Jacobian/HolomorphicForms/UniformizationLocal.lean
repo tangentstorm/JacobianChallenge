@@ -457,6 +457,92 @@ theorem tendstoLocallyUniformlyOn_deriv_of_chartBall_limit
       simpa [hcenter n, hradius n] using (data n).diffContOnCl.differentiableOn
   simpa [Function.comp_def] using hlim.deriv hdiff Metric.isOpen_ball
 
+/--
+Point-normalization is preserved by locally uniform chart-ball convergence at
+the common chart center.
+-/
+theorem limit_apply_center_of_tendstoLocallyUniformlyOn_chartBall
+    (data : ℕ → ChartBallPowerSeries) {center value : ℂ} {radius : NNReal}
+    {limit : ℂ → ℂ}
+    (_hcenter : ∀ n, (data n).center = center)
+    (hradius : ∀ n, (data n).radius = radius)
+    (hlim :
+      TendstoLocallyUniformlyOn
+        (fun n z => (data n).toFun z)
+        limit atTop (Metric.ball center (radius : ℝ)))
+    (hvalue : ∀ n, (data n).toFun center = value) :
+    limit center = value := by
+  have hradius_pos : 0 < radius := by
+    simpa [hradius 0] using (data 0).radius_pos
+  have hmem : center ∈ Metric.ball center (radius : ℝ) :=
+    Metric.mem_ball_self (by exact_mod_cast hradius_pos)
+  have hpoint :
+      Tendsto (fun n => (data n).toFun center) atTop (𝓝 (limit center)) :=
+    hlim.tendsto_at hmem
+  have hconst :
+      Tendsto (fun _ : ℕ => value) atTop (𝓝 value) :=
+    tendsto_const_nhds
+  have hpoint_const :
+      Tendsto (fun _ : ℕ => value) atTop (𝓝 (limit center)) := by
+    simpa [hvalue] using hpoint
+  exact tendsto_nhds_unique hpoint_const hconst
+
+/--
+Derivative-normalization is preserved by locally uniform chart-ball
+convergence when the family has a fixed center derivative.
+-/
+theorem deriv_limit_center_of_tendstoLocallyUniformlyOn_chartBall
+    (data : ℕ → ChartBallPowerSeries) {center slope : ℂ} {radius : NNReal}
+    {limit : ℂ → ℂ}
+    (hcenter : ∀ n, (data n).center = center)
+    (hradius : ∀ n, (data n).radius = radius)
+    (hlim :
+      TendstoLocallyUniformlyOn
+        (fun n z => (data n).toFun z)
+        limit atTop (Metric.ball center (radius : ℝ)))
+    (hderiv : ∀ n, deriv (data n).toFun center = slope) :
+    deriv limit center = slope := by
+  have hradius_pos : 0 < radius := by
+    simpa [hradius 0] using (data 0).radius_pos
+  have hmem : center ∈ Metric.ball center (radius : ℝ) :=
+    Metric.mem_ball_self (by exact_mod_cast hradius_pos)
+  have hderiv_lim :
+      TendstoLocallyUniformlyOn
+        (fun n z => deriv (data n).toFun z)
+        (deriv limit) atTop (Metric.ball center (radius : ℝ)) :=
+    tendstoLocallyUniformlyOn_deriv_of_chartBall_limit data hcenter hradius hlim
+  have hpoint :
+      Tendsto (fun n => deriv (data n).toFun center) atTop
+        (𝓝 (deriv limit center)) :=
+    hderiv_lim.tendsto_at hmem
+  have hconst :
+      Tendsto (fun _ : ℕ => slope) atTop (𝓝 slope) :=
+    tendsto_const_nhds
+  have hpoint_const :
+      Tendsto (fun _ : ℕ => slope) atTop (𝓝 (deriv limit center)) := by
+    simpa [hderiv] using hpoint
+  exact tendsto_nhds_unique hpoint_const hconst
+
+/--
+Nonzero center derivative normalization is preserved by locally uniform
+chart-ball convergence.
+-/
+theorem deriv_limit_center_ne_zero_of_tendstoLocallyUniformlyOn_chartBall
+    (data : ℕ → ChartBallPowerSeries) {center slope : ℂ} {radius : NNReal}
+    {limit : ℂ → ℂ}
+    (hcenter : ∀ n, (data n).center = center)
+    (hradius : ∀ n, (data n).radius = radius)
+    (hlim :
+      TendstoLocallyUniformlyOn
+        (fun n z => (data n).toFun z)
+        limit atTop (Metric.ball center (radius : ℝ)))
+    (hderiv : ∀ n, deriv (data n).toFun center = slope)
+    (hslope : slope ≠ 0) :
+    deriv limit center ≠ 0 := by
+  rw [deriv_limit_center_of_tendstoLocallyUniformlyOn_chartBall
+    data hcenter hradius hlim hderiv]
+  exact hslope
+
 /-- The packaged function is analytic at the center of its chart ball. -/
 theorem analyticAt_center (data : ChartBallPowerSeries) :
     AnalyticAt ℂ data.toFun data.center :=
