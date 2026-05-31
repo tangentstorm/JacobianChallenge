@@ -159,6 +159,73 @@ theorem exists_ball_injOn
     _ = data.localInverse hderiv (data.toFun w) := by rw [hzw]
     _ = w := hw_inv
 
+/-- Concrete local normalized ball data for a packaged chart-ball function. -/
+structure LocalNormalizedBallData (data : ChartBallPowerSeries) where
+  domainRadius : ℝ
+  imageRadius : ℝ
+  domainRadius_pos : 0 < domainRadius
+  domainRadius_lt_chart : domainRadius < (data.radius : ℝ)
+  injOn_ball : Set.InjOn data.toFun (Metric.ball data.center domainRadius)
+  imageRadius_pos : 0 < imageRadius
+  image_ball_subset :
+    Metric.ball (data.toFun data.center) imageRadius ⊆
+      data.toFun '' Metric.closedBall data.center domainRadius
+
+/--
+Local normalized ball provider: at a nonzero center derivative, the packaged
+chart-ball function is injective on a smaller ball and its image contains a
+positive ball around the center value.
+-/
+theorem exists_localNormalizedBallData
+    (data : ChartBallPowerSeries)
+    (hderiv : deriv data.toFun data.center ≠ 0) :
+    Nonempty (LocalNormalizedBallData data) := by
+  rcases data.exists_ball_injOn hderiv with ⟨ρ, hρ_pos, hρ_lt, hρ_inj⟩
+  let r : ℝ := ρ / 2
+  have hr_pos : 0 < r := by positivity
+  have hr_lt_ρ : r < ρ := half_lt_self hρ_pos
+  have hr_lt_chart : r < (data.radius : ℝ) := hr_lt_ρ.trans hρ_lt
+  have hr_le_ρ : r ≤ ρ := hr_lt_ρ.le
+  have hinj : Set.InjOn data.toFun (Metric.ball data.center r) :=
+    hρ_inj.mono (Metric.ball_subset_ball hr_le_ρ)
+  have hsmall : DiffContOnCl ℂ data.toFun (Metric.ball data.center r) :=
+    data.diffContOnCl.mono (Metric.ball_subset_ball hr_lt_chart.le)
+  have hboundary_ne :
+      ∀ z ∈ Metric.sphere data.center r,
+        data.toFun z ≠ data.toFun data.center := by
+    intro z hz hzeq
+    have hz_ball : z ∈ Metric.ball data.center ρ :=
+      Metric.sphere_subset_ball hr_lt_ρ hz
+    have hc_ball : data.center ∈ Metric.ball data.center ρ :=
+      Metric.mem_ball_self hρ_pos
+    have hzc : z = data.center := hρ_inj hz_ball hc_ball hzeq
+    exact (ne_of_mem_sphere hz hr_pos.ne.symm) hzc
+  have hsphere_nonempty : (Metric.sphere data.center r).Nonempty :=
+    NormedSpace.sphere_nonempty.mpr hr_pos.le
+  have hcont :
+      ContinuousOn (fun z => ‖data.toFun z - data.toFun data.center‖)
+        (Metric.sphere data.center r) :=
+    continuous_norm.comp_continuousOn
+      ((hsmall.sub_const (data.toFun data.center)).continuousOn_ball.mono
+        Metric.sphere_subset_closedBall)
+  obtain ⟨x, hx, hx_min⟩ :=
+    (isCompact_sphere data.center r).exists_isMinOn hsphere_nonempty hcont
+  let lower : ℝ := ‖data.toFun x - data.toFun data.center‖
+  have hlower_pos : 0 < lower := by
+    exact norm_sub_pos_iff.mpr (hboundary_ne x hx)
+  have hlower_bound :
+      ∀ z ∈ Metric.sphere data.center r,
+        lower ≤ ‖data.toFun z - data.toFun data.center‖ := by
+    intro z hz
+    exact hx_min hz
+  have hcenter_freq :
+      ∃ᶠ z in 𝓝 data.center, data.toFun z ≠ data.toFun data.center := by
+    exact ((data.hasStrictDerivAt_center.hasDerivAt.eventually_ne hderiv).frequently.filter_mono
+      nhdsWithin_le_nhds)
+  refine ⟨LocalNormalizedBallData.mk r (lower / 2) hr_pos hr_lt_chart hinj
+    (half_pos hlower_pos) ?_⟩
+  exact hsmall.ball_subset_image_closedBall hr_pos hlower_bound hcenter_freq
+
 /--
 Local open-image provider for a packaged chart-ball function.  If the image
 displacement is bounded below by `ε` on the boundary sphere and the function
