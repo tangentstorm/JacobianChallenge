@@ -1712,6 +1712,62 @@ private theorem taylorCoeff_zero_of_eventually_rotation_invariant
   rw [iteratedDeriv_zero_of_eventually_rotation_invariant hF hk hζ h_rot hn,
       zero_div]
 
+/-! ### R-sub-development R3 — `tsum` reindexing under `n ↦ k * n` for vanish-off-multiples-of-k sequences. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R3 — `tsum` reindexing under `n ↦ k * n` for vanish-off-multiples-of-`k`
+sequences (sorry-free helper; third R-leaf of the locally-built
+rotation-invariant analytic-extension theorem).**
+
+For any sequence `a : ℕ → ℂ` vanishing whenever `¬ k ∣ n` (and `k ≠ 0`),
+the `w`-weighted `tsum` reindexes through the surviving multiples of `k`:
+
+  `∑' n, a n * w^n = ∑' m, a (k * m) * w^(k * m)`
+
+This is the direct tsum identity R4 (R-final) will combine with R2's
+`HasFPowerSeriesAt`-summability witness to conclude
+`G(z^k) = F z` near `0`, where `G(w) := ∑' m, a (k * m) * w^m`.
+
+Mathlib primitive: `Function.Injective.tsum_eq` (in
+`Mathlib.Topology.Algebra.InfiniteSum.Basic`, via `to_additive` of
+`Function.Injective.tprod_eq` at line ~525):
+  `{g : γ → β} (hg : Injective g) {f : β → α} (hf : support f ⊆ Set.range g) :
+   ∑' c, f (g c) = ∑' b, f b`.
+
+Applied with `g := (k * ·)` (injective on `ℕ` since `k ≠ 0`),
+`f := fun n => a n * w^n`. The support condition holds: if
+`a n * w^n ≠ 0`, then `a n ≠ 0`, so `k ∣ n` (contrapositive of the
+vanishing hypothesis), so `n ∈ Set.range g`.
+-/
+private theorem tsum_pow_eq_tsum_pow_of_zero_off_dvd
+    {a : ℕ → ℂ} {k : ℕ} (hk : k ≠ 0)
+    (h_vanish : ∀ n, ¬ k ∣ n → a n = 0) (w : ℂ) :
+    ∑' n, a n * w ^ n = ∑' m, a (k * m) * w ^ (k * m) := by
+  -- Step 1: the multiplication-by-k map is injective on `ℕ` (since `k ≠ 0`).
+  have hg_inj : Function.Injective (fun m : ℕ => k * m) := by
+    intro m₁ m₂ heq
+    exact Nat.eq_of_mul_eq_mul_left (Nat.pos_of_ne_zero hk) heq
+  -- Step 2: support condition. If `a n * w^n ≠ 0`, then `a n ≠ 0`,
+  -- hence `k ∣ n` (contrapositive of `h_vanish`), hence `n = k * (n/k) ∈ range g`.
+  have h_supp : Function.support (fun n => a n * w ^ n) ⊆
+      Set.range (fun m : ℕ => k * m) := by
+    intro n hn
+    have ha_ne : a n ≠ 0 := by
+      intro ha
+      apply hn
+      simp [ha]
+    have h_dvd : k ∣ n := by
+      by_contra h
+      exact ha_ne (h_vanish n h)
+    obtain ⟨m, hm⟩ := h_dvd
+    exact ⟨m, hm.symm⟩
+  -- Step 3: apply Function.Injective.tsum_eq.
+  exact (hg_inj.tsum_eq h_supp).symm
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
