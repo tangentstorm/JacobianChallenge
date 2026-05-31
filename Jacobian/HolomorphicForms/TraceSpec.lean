@@ -1239,6 +1239,76 @@ private theorem norm_filterSum_eq_norm_kfoldScalarSum
   rw [filter_fiber_eq_kfold_finset hbc W hW_sub_U s hs_fiber hs_exhaust hs_sub_W]
   exact norm_traceSum_eq_abs_scalarSum hbc hcompat hHol η s hs_unram
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] in
+/--
+**Chart-stability rewrite of the per-summand derivative factor
+(Commit C3c.1 — sorry-free helper).**
+
+When `x` lies in the chart source of `chartAt ℂ x₀` and `f x` lies in
+the chart source of `chartAt ℂ (f x₀)`, the `StableChartAt` typeclasses
+identify both `chartAt ℂ x = chartAt ℂ x₀` (on `X`) and
+`chartAt ℂ (f x) = chartAt ℂ (f x₀)` (on `Y`). Hence
+`chartLocalAt f x = chartLocalAt f x₀` as functions `ℂ → ℂ`, and the
+chart-evaluation `chartAt ℂ x x = chartAt ℂ x₀ x`, so the per-summand
+derivative factor rewrites uniformly.
+
+After C3c every per-summand factor in the scalar Finset sum refers to
+the SAME `chartLocalAt f x₀` evaluated at chart coordinates
+`chart x₀ x_j`, which is exactly the form Commits A/B
+(`chartLocal_zPow_form_of_ramified`, `chartLocal_deriv_of_zPow_form`)
+give explicit `φ`/`φ'` formulas for. This unblocks the C3d substitution.
+-/
+private theorem chartLocalAt_deriv_eq_of_chart_source
+    {f : X → Y} {x₀ : X} {x : X}
+    (hx_source : x ∈ (chartAt ℂ x₀).source)
+    (hfx_source : f x ∈ (chartAt ℂ (f x₀)).source) :
+    deriv (chartLocalAt f x) (chartAt ℂ x x) =
+      deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x) := by
+  -- Both chart-stability identifications.
+  have hchartX : chartAt ℂ x = chartAt ℂ x₀ :=
+    JacobianChallenge.Periods.StableChartAt.chartAt_eq_of_mem_source x₀ x hx_source
+  have hchartY : chartAt ℂ (f x) = chartAt ℂ (f x₀) :=
+    JacobianChallenge.Periods.StableChartAt.chartAt_eq_of_mem_source (f x₀) (f x) hfx_source
+  -- chartLocalAt f x = chartLocalAt f x₀ as functions (both sides unfold to the same composition).
+  have hfun : chartLocalAt f x = chartLocalAt f x₀ := by
+    unfold chartLocalAt
+    rw [hchartX, hchartY]
+  -- Evaluation point: chartAt ℂ x x = chartAt ℂ x₀ x.
+  have hpt : (chartAt ℂ x) x = (chartAt ℂ x₀) x := by rw [hchartX]
+  rw [hfun, hpt]
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] in
+/--
+**Lift the chart-stability rewrite to the full scalar Finset sum
+(Commit C3c.2 — sorry-free corollary).**
+
+Under the per-summand chart-source-membership hypotheses, the explicit
+ℂ-scalar Finset sum (from C3a's `norm_traceSum_eq_abs_scalarSum`) is
+unchanged when each per-summand factor `deriv (chartLocalAt f x.1)(chart x.1 x.1)`
+is replaced by `deriv (chartLocalAt f x₀)(chart x₀ x.1)`. This puts the
+sum in the form needed to apply Commits A/B in C3d.
+-/
+private theorem scalarSum_factor_eq_x0_chart_form
+    {f : X → Y} (x₀ : X) (η : HolomorphicOneForm ℂ X)
+    (s : Finset X)
+    (hs_source : ∀ x ∈ s, x ∈ (chartAt ℂ x₀).source)
+    (hs_fsource : ∀ x ∈ s, f x ∈ (chartAt ℂ (f x₀)).source) :
+    s.attach.sum (fun x =>
+      ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) =
+    s.attach.sum (fun x =>
+      ((deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) := by
+  refine Finset.sum_congr rfl ?_
+  rintro ⟨x, hx_mem⟩ _
+  rw [chartLocalAt_deriv_eq_of_chart_source
+    (hs_source x hx_mem) (hs_fsource x hx_mem)]
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
