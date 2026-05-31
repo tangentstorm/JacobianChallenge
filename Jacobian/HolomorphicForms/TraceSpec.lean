@@ -19,6 +19,8 @@ import Mathlib.Topology.VectorBundle.Hom
 import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Deriv
+import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
+import Mathlib.RingTheory.RootsOfUnity.Complex
 
 /-!
 # Trace form specification interface
@@ -1576,6 +1578,98 @@ private theorem chart_preimage_at_kthRoot_in_fiber
         chartAt ℂ (f x₀) y := by
     rw [h_chartY_val, ← h_y_chart_eq]
   exact (chartAt ℂ (f x₀)).injOn h_f_chart_preim_source h_y_source hchart_eq
+
+/-! ### R-sub-development R1 — coefficient-vanishing for ζ-rotation-invariant analytic functions. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R1 — Coefficient-vanishing for ζ-rotation-invariant analytic functions
+(sorry-free helper; first R-leaf of the locally-built
+rotation-invariant analytic-extension theorem).**
+
+If `F : ℂ → ℂ` is analytic at `0` and satisfies the eventual rotation
+invariance `F =ᶠ[𝓝 0] (fun z => F (ζ * z))` for `ζ` a primitive `k`-th
+root of unity (`k ≠ 0`), then the `n`-th iterated derivative of `F` at
+`0` vanishes whenever `¬ k ∣ n`.
+
+Proof sketch:
+- `AnalyticAt ⇒ AnalyticOnNhd` on some open ball `B := Metric.ball 0 r`.
+- `‖ζ‖ = 1` (primitive root) ⇒ `Set.MapsTo (ζ * ·) B B`.
+- `AnalyticOnNhd ⇒ ContDiffOn ⊤` on `B`.
+- `iteratedDerivWithin_comp_const_smul` at `0`:
+  `iteratedDerivWithin n (F ∘ (ζ·)) B 0 = ζ^n • iteratedDerivWithin n F B 0`.
+- `iteratedDerivWithin_of_isOpen` to convert to `iteratedDeriv`.
+- `Filter.EventuallyEq.iteratedDeriv_eq` to get
+  `iteratedDeriv n F 0 = iteratedDeriv n (F ∘ (ζ·)) 0`.
+- Combine: `iteratedDeriv n F 0 = ζ^n • iteratedDeriv n F 0`, so
+  `(1 - ζ^n) • iteratedDeriv n F 0 = 0`.
+- `ζ^n ≠ 1` (from `¬ k ∣ n` + `IsPrimitiveRoot.dvd_of_pow_eq_one`).
+- Conclude `iteratedDeriv n F 0 = 0`.
+
+This is the algebraic engine for the rotation-invariant analytic-extension
+theorem `R-final`: the coefficient vanishing it establishes is what makes
+a `ζ`-rotation-invariant analytic function factor as `G(z^k)` for some
+analytic `G`.
+-/
+private theorem iteratedDeriv_zero_of_eventually_rotation_invariant
+    {F : ℂ → ℂ} (hF : AnalyticAt ℂ F 0)
+    {k : ℕ} (hk : k ≠ 0) {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (h_rot : F =ᶠ[𝓝 0] (fun z => F (ζ * z)))
+    {n : ℕ} (hn : ¬ k ∣ n) :
+    iteratedDeriv n F 0 = 0 := by
+  -- Step 1: Extract an open ball `B := Metric.ball 0 r` where `F` is analytic.
+  obtain ⟨r, hr_pos, hF_an⟩ := hF.exists_ball_analyticOnNhd
+  set B : Set ℂ := Metric.ball 0 r with hB_def
+  have hB_open : IsOpen B := Metric.isOpen_ball
+  have h0_mem : (0 : ℂ) ∈ B := by
+    simp [hB_def, Metric.mem_ball, hr_pos]
+  -- Step 2: `‖ζ‖ = 1` ⇒ MapsTo (ζ * ·) B B.
+  have hζ_norm : ‖ζ‖ = 1 := hζ.norm'_eq_one hk
+  have hmaps : Set.MapsTo (fun z => ζ * z) B B := by
+    intro z hz
+    simp only [hB_def, Metric.mem_ball, dist_zero_right] at hz ⊢
+    rw [norm_mul, hζ_norm, one_mul]
+    exact hz
+  -- Step 3: `AnalyticOnNhd ⇒ ContDiffOn ⊤` on `B`.
+  have hUnique : UniqueDiffOn ℂ B := hB_open.uniqueDiffOn
+  have hContDiff : ContDiffOn ℂ (n : WithTop ℕ∞) F B :=
+    (hF_an.contDiffOn hUnique).of_le (by exact_mod_cast le_top)
+  -- Step 4: Apply `iteratedDerivWithin_comp_const_smul` at `x = 0`.
+  have h_step :
+      iteratedDerivWithin n (fun x => F (ζ * x)) B 0 =
+        ζ ^ n • iteratedDerivWithin n F B (ζ * 0) :=
+    iteratedDerivWithin_comp_const_smul h0_mem hUnique hContDiff ζ hmaps
+  rw [mul_zero] at h_step
+  -- Step 5: Convert iteratedDerivWithin to iteratedDeriv on the open ball.
+  have h_within_to_full_F :
+      iteratedDerivWithin n F B 0 = iteratedDeriv n F 0 :=
+    iteratedDerivWithin_of_isOpen hB_open h0_mem
+  have h_within_to_full_Fcomp :
+      iteratedDerivWithin n (fun x => F (ζ * x)) B 0 =
+        iteratedDeriv n (fun x => F (ζ * x)) 0 :=
+    iteratedDerivWithin_of_isOpen hB_open h0_mem
+  rw [h_within_to_full_F, h_within_to_full_Fcomp] at h_step
+  -- h_step : iteratedDeriv n (fun x => F (ζ * x)) 0 = ζ^n • iteratedDeriv n F 0.
+  -- Step 6: Lift `h_rot` to iterated derivatives.
+  have h_eq_iter :
+      iteratedDeriv n F 0 = iteratedDeriv n (fun x => F (ζ * x)) 0 :=
+    Filter.EventuallyEq.iteratedDeriv_eq n h_rot
+  -- Combine: iteratedDeriv n F 0 = ζ^n • iteratedDeriv n F 0.
+  have h_fixed :
+      iteratedDeriv n F 0 = ζ ^ n • iteratedDeriv n F 0 :=
+    h_eq_iter.trans h_step
+  -- Step 7: Show ζ^n ≠ 1.
+  have hζ_pow_ne_one : ζ ^ n ≠ 1 := fun h => hn (hζ.dvd_of_pow_eq_one n h)
+  -- Step 8: From `iteratedDeriv n F 0 = ζ^n • iteratedDeriv n F 0`, deduce vanishing.
+  -- (1 - ζ^n) • iteratedDeriv n F 0 = 0; (1 - ζ^n) ≠ 0 in ℂ ⇒ smul_eq_zero gives the result.
+  have h_sub : (1 - ζ ^ n) • iteratedDeriv n F 0 = 0 := by
+    rw [sub_smul, one_smul, sub_eq_zero]
+    exact h_fixed
+  have h_sub_ne : (1 - ζ ^ n) ≠ 0 := sub_ne_zero_of_ne (Ne.symm hζ_pow_ne_one)
+  exact (smul_eq_zero.mp h_sub).resolve_left h_sub_ne
 
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
