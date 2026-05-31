@@ -332,7 +332,7 @@ theorem identityChartCoeff_tendsto_zero (ω : HolomorphicOneForm ℂ (OnePoint �
           (OnePoint.some (w⁻¹) : OnePoint ℂ) (-(w⁻¹) ^ 2) = (1 : ℂ) := by
       have hfm := tangent_continuousLinearMapAt_inversion_apply (w⁻¹) hwinv
         (-(w⁻¹) ^ 2)
-      rw [hfm]
+      simp only [hfm]
       -- Goal: -((w⁻¹)^2)⁻¹ * -(w⁻¹)^2 = 1
       have hsqne : ((w⁻¹) ^ 2 : ℂ) ≠ 0 := pow_ne_zero _ hwinv
       field_simp
@@ -351,7 +351,7 @@ theorem identityChartCoeff_tendsto_zero (ω : HolomorphicOneForm ℂ (OnePoint �
         Bundle.Trivialization.symmL_continuousLinearMapAt
           (trivializationAt ℂ (TangentSpace (modelWithCornersSelf ℂ ℂ))
             (OnePoint.infty : OnePoint ℂ)) htan_mem (-(w⁻¹) ^ 2)
-      rw [hcLMA_apply] at hround
+      simp only [hcLMA_apply] at hround
       exact hround
     rw [hH_apply, hsymmL_one]
     -- `H(↑w⁻¹)(1) = ω(↑w⁻¹)(-(w⁻¹)^2) = -(w⁻¹)^2 · f(w⁻¹)`.
@@ -359,7 +359,7 @@ theorem identityChartCoeff_tendsto_zero (ω : HolomorphicOneForm ℂ (OnePoint �
     have hlin :=
       (ω.toFun (OnePoint.some (w⁻¹) : OnePoint ℂ)).map_smul (-(w⁻¹) ^ 2 : ℂ) (1 : ℂ)
     simp only [smul_eq_mul, mul_one] at hlin
-    rw [hlin]
+    simp only [hlin]
     show f w⁻¹ = -w ^ 2 * (-(w⁻¹) ^ 2 *
       (ω.toFun (OnePoint.some (w⁻¹) : OnePoint ℂ)) (1 : ℂ))
     have hfw : (ω.toFun (OnePoint.some (w⁻¹) : OnePoint ℂ)) (1 : ℂ) = f w⁻¹ := rfl
@@ -375,7 +375,9 @@ theorem identityChartCoeff_tendsto_zero (ω : HolomorphicOneForm ℂ (OnePoint �
   have hsq_tendsto :
       Tendsto (fun w : ℂ => -w ^ 2 * H (invBwd w) (1 : ℂ)) (nhds (0 : ℂ)) (nhds 0) := by
     have hsq : Tendsto (fun w : ℂ => -w ^ 2) (nhds (0 : ℂ)) (nhds 0) := by
-      simpa only [Function.comp_def] using (continuous_neg.comp (continuous_pow 2)).tendsto (0 : ℂ)
+      have h := (continuous_neg.comp (continuous_pow 2)).tendsto (0 : ℂ)
+      have hpow : ((0 : ℂ) ^ 2) = 0 := by norm_num
+      simpa only [Function.comp_def, neg_zero, hpow] using h
     refine Filter.Tendsto.zero_mul_isBoundedUnder_le hsq ?_
     refine ⟨M, Filter.eventually_map.mpr ?_⟩
     filter_upwards [hM] with w hw using hw
