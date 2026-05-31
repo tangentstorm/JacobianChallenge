@@ -1309,6 +1309,97 @@ private theorem scalarSum_factor_eq_x0_chart_form
   rw [chartLocalAt_deriv_eq_of_chart_source
     (hs_source x hx_mem) (hs_fsource x hx_mem)]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Substitute Commit B's `k · φ^{k-1} · φ'` derivative formula into the
+scalar Finset sum (Commit C3d.1 — sorry-free helper).**
+
+After C3c the per-summand derivative factor in the scalar sum refers
+uniformly to `deriv (chartLocalAt f x₀)(chart x₀ x.1)`. Given the
+per-summand hypothesis that Commit B's `chartLocal_deriv_of_zPow_form`
+formula holds at each `chart x₀ x.1` (which C4 will arrange by picking
+`W ⊆ X` small enough that `chart x₀ x` lies in Commit B's
+eventually-neighborhood for all `x ∈ W`), substitute the formula
+into each summand via `Finset.sum_congr`.
+
+After C3d.1 each per-summand denominator has the explicit chart-local
+`k · φ(z)^{k-1} · φ'(z)` form, ready for C4's roots-of-unity cancellation.
+-/
+private theorem scalarSum_in_phi_form
+    {f : X → Y} (x₀ : X) (η : HolomorphicOneForm ℂ X)
+    (k : ℕ) (φ : ℂ → ℂ)
+    (s : Finset X)
+    (h_deriv_formula : ∀ x ∈ s,
+      deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x) =
+        (k : ℂ) * φ (chartAt ℂ x₀ x) ^ (k - 1) * deriv φ (chartAt ℂ x₀ x)) :
+    s.attach.sum (fun x =>
+      ((deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) =
+    s.attach.sum (fun x =>
+      (((k : ℂ) * φ (chartAt ℂ x₀ x.1) ^ (k - 1) *
+          deriv φ (chartAt ℂ x₀ x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) := by
+  refine Finset.sum_congr rfl ?_
+  rintro ⟨x, hx_mem⟩ _
+  rw [h_deriv_formula x hx_mem]
+
+omit [T2Space X] [CompactSpace X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] in
+/--
+**End-to-end bridging corollary: filter-CLM-norm = `φ`/`φ'`-form
+scalar magnitude (Commit C3d.2 — sorry-free corollary).**
+
+Chains C3b.2 (`norm_filterSum_eq_norm_kfoldScalarSum`) → C3c.2
+(`scalarSum_factor_eq_x0_chart_form`) → C3d.1 (`scalarSum_in_phi_form`)
+into a single norm equality. After this corollary the
+`ramifiedKfoldSum_locally_bounded` LHS norm has the literal `φ`/`φ'`
+rational form, ready for C4's analytic cancellation argument.
+-/
+private theorem norm_filterSum_eq_norm_phiForm
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f) (η : HolomorphicOneForm ℂ X)
+    (x₀ : X) (k : ℕ) (φ : ℂ → ℂ)
+    {U_kfold : Set X} (W : Set X) (hW_sub_U : W ⊆ U_kfold)
+    {y : Y} (s : Finset X)
+    (hs_unram : ∀ x ∈ s, hbc.ramificationIndex x = 1)
+    (hs_fiber : ∀ x ∈ s, f x = y)
+    (hs_exhaust : ∀ x ∈ U_kfold, f x = y → x ∈ s)
+    (hs_sub_W : (↑s : Set X) ⊆ W)
+    (hs_source : ∀ x ∈ s, x ∈ (chartAt ℂ x₀).source)
+    (hs_fsource : ∀ x ∈ s, f x ∈ (chartAt ℂ (f x₀)).source)
+    (h_deriv_formula : ∀ x ∈ s,
+      deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x) =
+        (k : ℂ) * φ (chartAt ℂ x₀ x) ^ (k - 1) * deriv φ (chartAt ℂ x₀ x)) :
+    ‖(((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+        (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ)‖ =
+    ‖s.attach.sum (fun x =>
+      (((k : ℂ) * φ (chartAt ℂ x₀ x.1) ^ (k - 1) *
+          deriv φ (chartAt ℂ x₀ x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+  -- Chain the three equalities transitively.
+  calc ‖(((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+        (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ)‖
+      = ‖s.attach.sum (fun x =>
+          ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ :=
+        norm_filterSum_eq_norm_kfoldScalarSum hbc hcompat hHol η W hW_sub_U s
+          hs_unram hs_fiber hs_exhaust hs_sub_W
+    _ = ‖s.attach.sum (fun x =>
+          ((deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+        rw [scalarSum_factor_eq_x0_chart_form x₀ η s hs_source hs_fsource]
+    _ = ‖s.attach.sum (fun x =>
+          (((k : ℂ) * φ (chartAt ℂ x₀ x.1) ^ (k - 1) *
+              deriv φ (chartAt ℂ x₀ x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+        congr 1
+        exact scalarSum_in_phi_form x₀ η k φ s h_deriv_formula
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
