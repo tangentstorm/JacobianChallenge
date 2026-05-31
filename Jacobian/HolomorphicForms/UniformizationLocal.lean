@@ -1,4 +1,4 @@
-import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.Complex.OpenMapping
 
 /-!
 # Local analytic substrate for genus-zero uniformization
@@ -13,7 +13,9 @@ The definitions here are intentionally local and do not depend on the global
 genus-zero meromorphic-data route.
 -/
 
-open Metric
+open Filter Metric
+
+open scoped Topology
 
 namespace JacobianChallenge.HolomorphicForms
 
@@ -76,6 +78,23 @@ theorem hasFPowerSeriesOnBall (data : ChartBallPowerSeries) :
 theorem analyticAt_center (data : ChartBallPowerSeries) :
     AnalyticAt ℂ data.toFun data.center :=
   data.series_expansion.analyticAt
+
+/--
+Local open-image provider for a packaged chart-ball function.  If the image
+displacement is bounded below by `ε` on the boundary sphere and the function
+is frequently nonconstant at the center, then the image of the closed chart
+ball contains the ball of radius `ε / 2` around the center value.
+-/
+theorem ball_subset_image_closedBall
+    (data : ChartBallPowerSeries) {ε : ℝ}
+    (hf :
+      ∀ z ∈ Metric.sphere data.center (data.radius : ℝ),
+        ε ≤ ‖data.toFun z - data.toFun data.center‖)
+    (hcenter : ∃ᶠ z in 𝓝 data.center, data.toFun z ≠ data.toFun data.center) :
+    Metric.ball (data.toFun data.center) (ε / 2) ⊆
+      data.toFun '' Metric.closedBall data.center (data.radius : ℝ) :=
+  data.diffContOnCl.ball_subset_image_closedBall
+    (by exact_mod_cast data.radius_pos) hf hcenter
 
 /--
 Closed-ball differentiability also supplies a chart-ball power series by
