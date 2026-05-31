@@ -1,4 +1,5 @@
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Analytic
+import Mathlib.Analysis.Complex.LocallyUniformLimit
 import Mathlib.Analysis.Complex.OpenMapping
 
 /-!
@@ -96,6 +97,38 @@ theorem tendstoUniformlyOn_partialSum_of_lt
       (fun n z => data.series.partialSum n (z - data.center))
       data.toFun atTop (Metric.ball data.center r) :=
   data.series_expansion.tendstoUniformlyOn' hr
+
+/-- Cauchy's derivative estimate for the packaged chart-ball function. -/
+theorem norm_cderiv_le_of_sphere_bound
+    (data : ChartBallPowerSeries) {z : ℂ} {r M : ℝ}
+    (hr : 0 < r)
+    (hbound : ∀ w ∈ Metric.sphere z r, ‖data.toFun w‖ ≤ M) :
+    ‖Complex.cderiv r data.toFun z‖ ≤ M / r :=
+  Complex.norm_cderiv_le hr hbound
+
+/--
+On a closed ball contained in the chart ball, Mathlib's circle-integral
+derivative agrees with the complex derivative of the packaged function.
+-/
+theorem cderiv_eq_deriv
+    (data : ChartBallPowerSeries) {z : ℂ} {r : ℝ}
+    (hr : 0 < r)
+    (hclosed :
+      Metric.closedBall z r ⊆ Metric.ball data.center (data.radius : ℝ)) :
+    Complex.cderiv r data.toFun z = deriv data.toFun z :=
+  Complex.cderiv_eq_deriv Metric.isOpen_ball data.diffContOnCl.differentiableOn
+    hr hclosed
+
+/-- Cauchy's derivative estimate, stated directly for `deriv`. -/
+theorem norm_deriv_le_of_sphere_bound
+    (data : ChartBallPowerSeries) {z : ℂ} {r M : ℝ}
+    (hr : 0 < r)
+    (hclosed :
+      Metric.closedBall z r ⊆ Metric.ball data.center (data.radius : ℝ))
+    (hbound : ∀ w ∈ Metric.sphere z r, ‖data.toFun w‖ ≤ M) :
+    ‖deriv data.toFun z‖ ≤ M / r := by
+  rw [← data.cderiv_eq_deriv hr hclosed]
+  exact data.norm_cderiv_le_of_sphere_bound hr hbound
 
 /-- The packaged function is analytic at the center of its chart ball. -/
 theorem analyticAt_center (data : ChartBallPowerSeries) :
