@@ -2,6 +2,7 @@ import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Analytic
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Complex.LocallyUniformLimit
 import Mathlib.Analysis.Complex.OpenMapping
+import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
 
 /-!
 # Local analytic substrate for genus-zero uniformization
@@ -18,7 +19,7 @@ genus-zero meromorphic-data route.
 
 open Filter Metric
 
-open scoped Topology
+open scoped Topology BoundedContinuousFunction
 
 namespace JacobianChallenge.HolomorphicForms
 
@@ -219,6 +220,62 @@ theorem family_uniform_equicontinuousOn_of_cauchy_bound
   have hnorm_lt : ‖(data i).toFun w - (data i).toFun z‖ < ε :=
     lt_of_le_of_lt hLip hmul_lt
   simpa [dist_eq_norm] using hnorm_lt
+
+/--
+Restrict a packaged chart-ball function to a compact closed ball contained in
+the chart ball, viewed as a bounded continuous function.
+-/
+noncomputable def boundedContinuousOnClosedBall
+    (data : ChartBallPowerSeries) {c : ℂ} {r : ℝ}
+    (hclosed : Metric.closedBall c r ⊆ Metric.ball data.center (data.radius : ℝ)) :
+    Metric.closedBall c r →ᵇ ℂ := by
+  letI : CompactSpace (Metric.closedBall c r) :=
+    isCompact_iff_compactSpace.mp (isCompact_closedBall c r)
+  exact BoundedContinuousFunction.mkOfCompact
+    ⟨fun z : Metric.closedBall c r => data.toFun z,
+      continuousOn_iff_continuous_restrict.mp
+        (data.diffContOnCl.continuousOn_ball.mono
+          (fun z hz => Metric.ball_subset_closedBall (hclosed hz)))⟩
+
+@[simp]
+theorem boundedContinuousOnClosedBall_apply
+    (data : ChartBallPowerSeries) {c : ℂ} {r : ℝ}
+    (hclosed : Metric.closedBall c r ⊆ Metric.ball data.center (data.radius : ℝ))
+    (z : Metric.closedBall c r) :
+    data.boundedContinuousOnClosedBall hclosed z = data.toFun z := by
+  simp [boundedContinuousOnClosedBall]
+
+/--
+Arzelà-Ascoli compact closure for a chart-ball family after restriction to a
+compact closed ball.
+-/
+theorem isCompact_closure_boundedContinuousOnClosedBall_range
+    {ι : Type*} (data : ι → ChartBallPowerSeries) {c : ℂ} {r : ℝ}
+    (hclosed :
+      ∀ i, Metric.closedBall c r ⊆
+        Metric.ball (data i).center ((data i).radius : ℝ))
+    {target : Set ℂ} (htarget : IsCompact target)
+    (hrange :
+      ∀ i (z : Metric.closedBall c r),
+        (data i).boundedContinuousOnClosedBall (hclosed i) z ∈ target)
+    (heq :
+      Equicontinuous
+        ((↑) :
+          Set.range (fun i => (data i).boundedContinuousOnClosedBall (hclosed i)) →
+            Metric.closedBall c r → ℂ)) :
+    IsCompact
+      (closure
+        (Set.range (fun i => (data i).boundedContinuousOnClosedBall (hclosed i)) :
+          Set (Metric.closedBall c r →ᵇ ℂ))) := by
+  letI : CompactSpace (Metric.closedBall c r) :=
+    isCompact_iff_compactSpace.mp (isCompact_closedBall c r)
+  exact BoundedContinuousFunction.arzela_ascoli target htarget
+    (Set.range fun i => (data i).boundedContinuousOnClosedBall (hclosed i))
+    (by
+      intro f z hf
+      rcases hf with ⟨i, rfl⟩
+      exact hrange i z)
+    heq
 
 /-- The packaged function is analytic at the center of its chart ball. -/
 theorem analyticAt_center (data : ChartBallPowerSeries) :
