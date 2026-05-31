@@ -2034,6 +2034,392 @@ private theorem exists_analytic_extension_of_rotation_invariant
   -- Conclude F z = q.sum (z^k) by HasSum.unique.
   exact (hHasSum_q_at_zk.unique hHasSum_qsum)
 
+/-! ### DA — Chart-local cancellation `H = t^(k-1) · g(t^k)` via R-final. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/-- DA Layer A — roots-of-unity sum, `k ∣ ℓ` case. -/
+private theorem rootsOfUnity_pow_sum_eq_k_of_dvd
+    {k : ℕ} {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    {ℓ : ℕ} (hℓ : k ∣ ℓ) :
+    (∑ j ∈ Finset.range k, ζ ^ (j * ℓ)) = (k : ℂ) := by
+  have h_each : ∀ j ∈ Finset.range k, ζ ^ (j * ℓ) = 1 := by
+    intro j _
+    obtain ⟨m, rfl⟩ := hℓ
+    rw [show j * (k * m) = k * (j * m) by ring, pow_mul, hζ.pow_eq_one, one_pow]
+  rw [Finset.sum_congr rfl h_each, Finset.sum_const, Finset.card_range,
+      Nat.smul_one_eq_cast]
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/-- DA Layer A — roots-of-unity sum, `k ∤ ℓ` case. -/
+private theorem rootsOfUnity_pow_sum_eq_zero_of_not_dvd
+    {k : ℕ} {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    {ℓ : ℕ} (hℓ : ¬ k ∣ ℓ) :
+    (∑ j ∈ Finset.range k, ζ ^ (j * ℓ)) = 0 := by
+  have h_each : ∀ j ∈ Finset.range k, ζ ^ (j * ℓ) = (ζ ^ ℓ) ^ j := by
+    intro j _
+    rw [← pow_mul, Nat.mul_comm j ℓ, pow_mul]
+  rw [Finset.sum_congr rfl h_each]
+  have hζℓ_ne_one : ζ ^ ℓ ≠ 1 := fun h => hℓ (hζ.dvd_of_pow_eq_one ℓ h)
+  rw [geom_sum_eq hζℓ_ne_one k]
+  have hpow_k_eq_one : (ζ ^ ℓ) ^ k = 1 := by
+    rw [← pow_mul, Nat.mul_comm, pow_mul, hζ.pow_eq_one, one_pow]
+  rw [hpow_k_eq_one, sub_self, zero_div]
+
+/--
+**DA — Chart-local cancellation `rotation_avg_eq_g_pow_k`
+(sorry-free helper; the central analytic identity behind L2085).**
+
+Given `h : ℂ → ℂ` analytic at `0`, primitive `k`-th root `ζ` (`k > 0`):
+```
+H(t) := ∑_{j ∈ Fin k} ζ^j · h(ζ^j · t) = t^(k-1) · g(t^k)
+```
+near `0` for some `g : ℂ → ℂ` analytic at `0`.
+
+Proof structure (manager's §8-internal four helpers within this one commit):
+- Step 1: `H` analytic at `0` (finite sum of compositions).
+- Step 2: `iteratedDeriv m H 0 = 0` for `m < k-1` (via R1-style
+  `iteratedDerivWithin_comp_const_smul` on an open ball + Layer A
+  roots-of-unity cancellation).
+- Step 3: Factor `H(t) = t^(k-1) · gtilde(t)` with `gtilde` analytic at `0`
+  (via `natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero` +
+  `exists_eventuallyEq_pow_smul_nonzero_iff` /
+  `analyticOrderNatAt_eq_iff` from `Analytic/IsolatedZeros.lean` /
+  `Analytic/Order.lean`).
+- Step 4: Show `gtilde` is ζ-invariant near `0` (from `H`'s ζ^(k-1)-equivariance
+  + the `(ζ·t)^(k-1) = ζ^(k-1) · t^(k-1)` cancellation); apply R-final
+  (`exists_analytic_extension_of_rotation_invariant`) to get `gtilde(t) = g(t^k)`;
+  multiply through.
+
+The weight `ζ^j` here equals `ζ^(-j(k-1))` (via `ζ^(-(k-1)) = ζ^(k-(k-1)) = ζ`),
+matching the chart-local application's `(ζ^j · kthRoot w)^(-(k-1))` factor.
+-/
+private theorem rotation_avg_eq_g_pow_k
+    {h : ℂ → ℂ} (hh : AnalyticAt ℂ h 0)
+    {k : ℕ} (hk_pos : 0 < k) {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g 0 ∧
+      ∀ᶠ t in 𝓝 (0 : ℂ),
+        (∑ j ∈ Finset.range k, ζ ^ j * h (ζ ^ j * t))
+            = t ^ (k - 1) * g (t ^ k) := by
+  -- Define H.
+  set H : ℂ → ℂ := fun t => ∑ j ∈ Finset.range k, ζ ^ j * h (ζ ^ j * t)
+    with hH_def
+  -- ============================================================
+  -- Step 1: H is analytic at 0.
+  -- ============================================================
+  have hH_an : AnalyticAt ℂ H 0 := by
+    refine (Finset.range k).analyticAt_fun_sum ?_
+    intro j _
+    have h_mul_an : AnalyticAt ℂ (fun t : ℂ => ζ ^ j * t) 0 :=
+      analyticAt_const.mul analyticAt_id
+    have h_val : (fun t : ℂ => ζ ^ j * t) 0 = 0 := by simp
+    have hh_at_shift : AnalyticAt ℂ h ((fun t : ℂ => ζ ^ j * t) 0) := by
+      rw [h_val]; exact hh
+    exact analyticAt_const.mul (hh_at_shift.comp h_mul_an)
+  -- ============================================================
+  -- Step 2: iteratedDeriv m H 0 = 0 for m < k-1.
+  -- ============================================================
+  obtain ⟨r, hr_pos, hh_an_ball⟩ := hh.exists_ball_analyticOnNhd
+  set B : Set ℂ := Metric.ball 0 r with hB_def
+  have hB_open : IsOpen B := Metric.isOpen_ball
+  have h0_mem : (0 : ℂ) ∈ B := by simp [hB_def, Metric.mem_ball, hr_pos]
+  have hUnique : UniqueDiffOn ℂ B := hB_open.uniqueDiffOn
+  have hζ_norm : ‖ζ‖ = 1 := hζ.norm'_eq_one hk_pos.ne'
+  have hζj_norm : ∀ j : ℕ, ‖(ζ ^ j : ℂ)‖ = 1 := fun j => by
+    rw [norm_pow, hζ_norm, one_pow]
+  have hmaps : ∀ j : ℕ, Set.MapsTo (fun z : ℂ => ζ ^ j * z) B B := by
+    intro j z hz
+    simp only [hB_def, Metric.mem_ball, dist_zero_right] at hz ⊢
+    rw [norm_mul, hζj_norm j, one_mul]
+    exact hz
+  have hh_contDiff_on : ContDiffOn ℂ (⊤ : WithTop ℕ∞) h B :=
+    hh_an_ball.contDiffOn hUnique
+  -- Inner derivative computation for each j.
+  have h_inDeriv : ∀ (m : ℕ) (j : ℕ),
+      iteratedDeriv m (fun t : ℂ => h (ζ ^ j * t)) 0 =
+        (ζ ^ j) ^ m • iteratedDeriv m h 0 := by
+    intro m j
+    have hh_at_m : ContDiffOn ℂ (m : WithTop ℕ∞) h B :=
+      hh_contDiff_on.of_le (by exact_mod_cast le_top)
+    have h_step_comp :
+        iteratedDerivWithin m (fun t : ℂ => h (ζ ^ j * t)) B 0 =
+          (ζ ^ j) ^ m • iteratedDerivWithin m h B (ζ ^ j * 0) :=
+      iteratedDerivWithin_comp_const_smul h0_mem hUnique hh_at_m (ζ ^ j) (hmaps j)
+    have hwithin_h : iteratedDerivWithin m h B 0 = iteratedDeriv m h 0 :=
+      iteratedDerivWithin_of_isOpen hB_open h0_mem
+    have hwithin_comp :
+        iteratedDerivWithin m (fun t : ℂ => h (ζ ^ j * t)) B 0 =
+          iteratedDeriv m (fun t : ℂ => h (ζ ^ j * t)) 0 :=
+      iteratedDerivWithin_of_isOpen hB_open h0_mem
+    rw [← hwithin_comp, h_step_comp, mul_zero, hwithin_h]
+  -- Full per-summand derivative with the ζ^j multiplicative weight.
+  have h_inDeriv_full : ∀ (m : ℕ) (j : ℕ),
+      iteratedDeriv m (fun t : ℂ => ζ ^ j * h (ζ ^ j * t)) 0 =
+        ζ ^ j * ((ζ ^ j) ^ m * iteratedDeriv m h 0) := by
+    intro m j
+    have h_smul : (fun t : ℂ => ζ ^ j * h (ζ ^ j * t)) =
+        (ζ ^ j : ℂ) • (fun t : ℂ => h (ζ ^ j * t)) := by
+      funext t; simp [Pi.smul_apply, smul_eq_mul]
+    rw [h_smul, iteratedDeriv_const_smul_field (ζ ^ j) (fun t => h (ζ ^ j * t)),
+        h_inDeriv m j, smul_eq_mul, smul_eq_mul]
+  -- The vanishing lemma.
+  have hH_vanish : ∀ m : ℕ, m < k - 1 → iteratedDeriv m H 0 = 0 := by
+    intro m hm
+    have h_iter_sum : iteratedDeriv m H 0 =
+        iteratedDeriv m h 0 * ∑ j ∈ Finset.range k, ζ ^ (j * (m + 1)) := by
+      rw [hH_def]
+      have h_summand_contDiff : ∀ j ∈ Finset.range k,
+          ContDiffAt ℂ (m : WithTop ℕ∞) (fun t : ℂ => ζ ^ j * h (ζ ^ j * t)) 0 := by
+        intro j _
+        have h_mul_an : AnalyticAt ℂ (fun t : ℂ => ζ ^ j * t) 0 :=
+          analyticAt_const.mul analyticAt_id
+        have h_val : (fun t : ℂ => ζ ^ j * t) 0 = 0 := by simp
+        have hh_at_shift : AnalyticAt ℂ h ((fun t : ℂ => ζ ^ j * t) 0) := by
+          rw [h_val]; exact hh
+        have h_comp_an : AnalyticAt ℂ (fun t : ℂ => h (ζ ^ j * t)) 0 :=
+          hh_at_shift.comp h_mul_an
+        exact (analyticAt_const.mul h_comp_an).contDiffAt
+      rw [iteratedDeriv_fun_sum h_summand_contDiff]
+      simp_rw [h_inDeriv_full]
+      have h_rearrange : ∀ j : ℕ,
+          ζ ^ j * ((ζ ^ j) ^ m * iteratedDeriv m h 0) =
+            iteratedDeriv m h 0 * ζ ^ (j * (m + 1)) := by
+        intro j
+        rw [show j * (m + 1) = j + j * m by ring, pow_add, ← pow_mul]
+        ring
+      simp_rw [h_rearrange]
+      rw [← Finset.mul_sum]
+    rw [h_iter_sum]
+    have hmp1_pos : 0 < m + 1 := Nat.succ_pos m
+    have hmp1_lt_k : m + 1 < k := by omega
+    have hk_not_dvd : ¬ k ∣ (m + 1) := fun hdvd =>
+      Nat.not_lt.mpr (Nat.le_of_dvd hmp1_pos hdvd) hmp1_lt_k
+    rw [rootsOfUnity_pow_sum_eq_zero_of_not_dvd hζ hk_not_dvd, mul_zero]
+  -- ============================================================
+  -- Step 3: H_factor — H(t) = t^(k-1) * gtilde(t), gtilde analytic at 0.
+  -- ============================================================
+  -- From Step 2 + natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero:
+  --   (k-1 : ℕ∞) ≤ analyticOrderAt H 0.
+  have h_order_ge : (↑(k - 1) : ℕ∞) ≤ analyticOrderAt H 0 := by
+    rw [natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero hH_an]
+    intro i hi
+    have hi_nat : i < k - 1 := by exact_mod_cast hi
+    exact hH_vanish i hi_nat
+  -- Split on whether H is identically zero near 0.
+  by_cases hH_zero_event : ∀ᶠ t in 𝓝 (0 : ℂ), H t = 0
+  · -- H = 0 near 0. Take g = 0; identity becomes 0 = t^(k-1) · 0 = 0.
+    refine ⟨0, analyticAt_const, ?_⟩
+    filter_upwards [hH_zero_event] with t ht
+    simp only [hH_def] at ht
+    rw [ht]
+    simp
+  · -- H ≢ 0 near 0. Extract a factorization via exists_eventuallyEq_pow_smul.
+    obtain ⟨n, g₀, hg₀_an, hg₀_ne, hH_factored_n⟩ :=
+      (hH_an.exists_eventuallyEq_pow_smul_nonzero_iff).mpr hH_zero_event
+    -- analyticOrderAt H 0 ≠ ⊤ since H is not eventually 0.
+    have h_order_ne_top : analyticOrderAt H 0 ≠ ⊤ := by
+      intro h_eq_top
+      exact hH_zero_event (analyticOrderAt_eq_top.mp h_eq_top)
+    -- analyticOrderNatAt H 0 = n by uniqueness of factorization.
+    have h_n_eq : analyticOrderNatAt H 0 = n :=
+      (hH_an.analyticOrderNatAt_eq_iff h_order_ne_top).mpr
+        ⟨g₀, hg₀_an, hg₀_ne, hH_factored_n⟩
+    -- n ≥ k - 1 from h_order_ge.
+    have hn_ge : n ≥ k - 1 := by
+      have h_nat_eq : analyticOrderAt H 0 = (n : ℕ∞) := by
+        rw [← h_n_eq]
+        exact (Nat.cast_analyticOrderNatAt h_order_ne_top).symm
+      rw [h_nat_eq] at h_order_ge
+      exact_mod_cast h_order_ge
+    -- Define gtilde := fun t => t^(n - (k - 1)) * g₀ t. Analytic at 0.
+    set gtilde : ℂ → ℂ := fun t => t ^ (n - (k - 1)) * g₀ t with hgtilde_def
+    have hgtilde_an : AnalyticAt ℂ gtilde 0 := by
+      have : AnalyticAt ℂ (fun t : ℂ => t ^ (n - (k - 1))) 0 := by
+        exact analyticAt_id.pow _
+      exact this.mul hg₀_an
+    -- H(t) = t^(k-1) · gtilde(t) eventually near 0.
+    have hH_eq_factored :
+        H =ᶠ[𝓝 (0 : ℂ)] fun t => t ^ (k - 1) * gtilde t := by
+      filter_upwards [hH_factored_n] with t ht
+      rw [ht]
+      simp only [sub_zero, smul_eq_mul, hgtilde_def]
+      rw [← mul_assoc, ← pow_add]
+      congr 2
+      omega
+    -- ============================================================
+    -- Step 4: gtilde ζ-invariance + R-final + final identity.
+    -- ============================================================
+    -- Show gtilde is ζ-invariant near 0 (i.e., gtilde(ζ·t) = gtilde(t) eventually).
+    -- This uses: H(ζ·t) = ζ^(k-1) · H(t) (computed from H's definition),
+    -- combined with H = t^(k-1) · gtilde via hH_eq_factored.
+    -- From hH_eq_factored at ζ·t: H(ζ·t) = (ζ·t)^(k-1) · gtilde(ζ·t) = ζ^(k-1) · t^(k-1) · gtilde(ζ·t).
+    -- And: ζ^(k-1) · H(t) = ζ^(k-1) · t^(k-1) · gtilde(t).
+    -- Equating: gtilde(ζ·t) = gtilde(t).
+    -- First: H(ζ·t) = ζ^(k-1) · H(t) (a direct calculation, no extra hypothesis needed).
+    have hH_equivariant : ∀ t : ℂ, H (ζ * t) = ζ ^ (k - 1) * H t := by
+      intro t
+      simp only [hH_def, Finset.mul_sum]
+      -- We use Finset.sum_bij with the cyclic shift σ : j ↦ (j+1) % k.
+      classical
+      -- σ : range k → range k, σ i = (i + k - 1) % k (cyclic shift by -1).
+      let σ : ℕ → ℕ := fun i => (i + k - 1) % k
+      have hσ_mem : ∀ i ∈ Finset.range k, σ i ∈ Finset.range k := fun i _ => by
+        refine Finset.mem_range.mpr ?_
+        exact Nat.mod_lt _ hk_pos
+      have hσ_inj : Set.InjOn σ (Finset.range k : Set ℕ) := by
+        intro i hi i' hi' h_eq
+        simp only [Finset.mem_coe, Finset.mem_range] at hi hi'
+        simp only [σ] at h_eq
+        -- (i+k-1) % k = (i'+k-1) % k.
+        -- Case i = 0: σ i = (k-1) % k = k-1. Case i ≥ 1: σ i = i - 1.
+        rcases Nat.eq_zero_or_pos i with hi0 | hi_pos
+        · rcases Nat.eq_zero_or_pos i' with hi'0 | hi'_pos
+          · omega
+          · subst hi0
+            rw [show (0 + k - 1) % k = k - 1 from by
+                  rw [Nat.zero_add, Nat.mod_eq_of_lt (by omega : k - 1 < k)]] at h_eq
+            rw [show (i' + k - 1) % k = i' - 1 from by
+                  rw [show i' + k - 1 = (i' - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]] at h_eq
+            omega
+        · rcases Nat.eq_zero_or_pos i' with hi'0 | hi'_pos
+          · subst hi'0
+            rw [show (0 + k - 1) % k = k - 1 from by
+                  rw [Nat.zero_add, Nat.mod_eq_of_lt (by omega : k - 1 < k)]] at h_eq
+            rw [show (i + k - 1) % k = i - 1 from by
+                  rw [show i + k - 1 = (i - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]] at h_eq
+            omega
+          · rw [show (i + k - 1) % k = i - 1 from by
+                  rw [show i + k - 1 = (i - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]] at h_eq
+            rw [show (i' + k - 1) % k = i' - 1 from by
+                  rw [show i' + k - 1 = (i' - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]] at h_eq
+            omega
+      have hσ_surj : Set.SurjOn σ (Finset.range k : Set ℕ) (Finset.range k : Set ℕ) := by
+        intro j hj
+        rw [Finset.mem_coe, Finset.mem_range] at hj
+        -- Need: ∃ i ∈ range k, σ i = j. Take i = (j + 1) % k.
+        refine ⟨(j + 1) % k, ?_, ?_⟩
+        · rw [Finset.mem_coe, Finset.mem_range]
+          exact Nat.mod_lt _ hk_pos
+        · simp only [σ]
+          by_cases hjk : j + 1 = k
+          · rw [hjk, Nat.mod_self]
+            rw [show (0 + k - 1) % k = k - 1 from by
+                  rw [Nat.zero_add, Nat.mod_eq_of_lt (by omega : k - 1 < k)]]
+            omega
+          · have hjk_lt : j + 1 < k := by omega
+            rw [Nat.mod_eq_of_lt hjk_lt]
+            rw [show (j + 1 + k - 1) % k = (j + k) % k from by
+                  congr 1; omega]
+            rw [Nat.add_mod_right]
+            exact Nat.mod_eq_of_lt hj
+      -- Apply Finset.sum_nbij with σ.
+      rw [show (∑ j ∈ Finset.range k, ζ ^ j * h (ζ ^ j * (ζ * t)))
+          = ∑ i ∈ Finset.range k, ζ ^ ((i + k - 1) % k) * h (ζ ^ i * t)
+          from ?_]
+      · -- Show RHS = ∑_i ζ^(k-1) * (ζ^i * h(ζ^i * t)).
+        refine Finset.sum_congr rfl ?_
+        intros i hi
+        have hi_lt : i < k := Finset.mem_range.mp hi
+        -- ζ^((i+k-1) % k) = ζ^(i+k-1) = ζ^(k-1+i) = ζ^(k-1) * ζ^i.
+        have h_pow_eq : ζ ^ ((i + k - 1) % k) = ζ ^ (k - 1) * ζ ^ i := by
+          have h_idx_eq : (i + k - 1) % k + k * ((i + k - 1) / k) = i + k - 1 :=
+            Nat.mod_add_div _ _
+          have h_mod_eq : (i + k - 1) % k = i + k - 1 - k * ((i + k - 1) / k) := by omega
+          -- Use ζ^k = 1 to absorb the k * (i+k-1)/k part.
+          conv_lhs => rw [show ζ ^ ((i + k - 1) % k)
+                            = ζ ^ ((i + k - 1) % k) * (ζ ^ k) ^ ((i + k - 1) / k)
+                          from by rw [hζ.pow_eq_one, one_pow, mul_one]]
+          rw [← pow_mul, ← pow_add, show (i + k - 1) % k + k * ((i + k - 1) / k)
+                                       = i + k - 1 from h_idx_eq]
+          rw [show i + k - 1 = (k - 1) + i from by omega, pow_add]
+        rw [h_pow_eq]
+        ring
+      · -- Reindex via Finset.sum_nbij.
+        symm
+        refine Finset.sum_nbij σ hσ_mem hσ_inj hσ_surj ?_
+        intros i hi
+        have hi_lt : i < k := Finset.mem_range.mp hi
+        -- Goal: ζ^((i+k-1)%k) * h(ζ^i * t) = ζ^(σ i) * h(ζ^(σ i) * (ζ * t)).
+        -- σ i = (i+k-1)%k, so the LHS power = ζ^(σ i) (definitionally).
+        -- For the h-arguments: need h(ζ^i * t) = h(ζ^(σ i) * (ζ * t)),
+        -- i.e., ζ^i * t = ζ^(σ i + 1) * t (after pow_succ), so ζ^i = ζ^(σ i + 1).
+        have h_σi_succ_eq : ζ ^ (σ i + 1) = ζ ^ i := by
+          simp only [σ]
+          rcases Nat.eq_zero_or_pos i with hi0 | hi_pos
+          · subst hi0
+            rw [show (0 + k - 1) % k = k - 1 from by
+                  rw [Nat.zero_add, Nat.mod_eq_of_lt (by omega : k - 1 < k)]]
+            rw [show k - 1 + 1 = k from by omega, hζ.pow_eq_one, pow_zero]
+          · rw [show (i + k - 1) % k = i - 1 from by
+                  rw [show i + k - 1 = (i - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]]
+            rw [show i - 1 + 1 = i from by omega]
+        -- Note: σ i = (i+k-1)%k matches the LHS-exponent literally.
+        -- So the goal is `ζ^(σ i) * h(ζ^i * t) = ζ^(σ i) * h(ζ^(σ i) * (ζ*t))`.
+        congr 1
+        rw [show ζ ^ σ i * (ζ * t) = ζ ^ (σ i + 1) * t from by
+              rw [pow_succ]; ring]
+        rw [h_σi_succ_eq]
+    -- gtilde ζ-invariance via hH_equivariant + hH_eq_factored.
+    have hgtilde_inv : ∀ᶠ t in 𝓝 (0 : ℂ), gtilde (ζ * t) = gtilde t := by
+      -- We have hH_eq_factored : H =ᶠ[𝓝 0] fun t => t^(k-1) · gtilde t.
+      -- Apply at t and at ζ·t: need ζ·t also in the eventuality nhd.
+      -- Use that multiplication by ζ is continuous at 0 (sends 0 to 0).
+      have h_mul_cont : Filter.Tendsto (fun t : ℂ => ζ * t) (𝓝 0) (𝓝 0) := by
+        have : Filter.Tendsto (fun t : ℂ => ζ * t) (𝓝 0) (𝓝 (ζ * 0)) :=
+          (continuous_const.mul continuous_id).tendsto 0
+        simpa using this
+      have hH_eq_at_ζt : ∀ᶠ t in 𝓝 (0 : ℂ),
+          H (ζ * t) = (ζ * t) ^ (k - 1) * gtilde (ζ * t) :=
+        h_mul_cont.eventually hH_eq_factored
+      filter_upwards [hH_eq_factored, hH_eq_at_ζt] with t hHt hHζt
+      -- We have:
+      --   hHt : H t = t^(k-1) · gtilde t
+      --   hHζt : H (ζ·t) = (ζ·t)^(k-1) · gtilde(ζ·t)
+      --   hH_equivariant t : H(ζ·t) = ζ^(k-1) · H t = ζ^(k-1) · t^(k-1) · gtilde t.
+      -- So (ζ·t)^(k-1) · gtilde(ζ·t) = ζ^(k-1) · t^(k-1) · gtilde t.
+      -- (ζ·t)^(k-1) = ζ^(k-1) · t^(k-1). Cancel (when t ≠ 0).
+      -- But we want eventually equality, INCLUDING t = 0 if it lands there.
+      -- At t = 0: both sides of `gtilde(ζ·0) = gtilde(0)` reduce to `gtilde 0 = gtilde 0`. ✓
+      -- For t ≠ 0: cancel t^(k-1) · ζ^(k-1) (both non-zero).
+      by_cases ht0 : t = 0
+      · subst ht0; simp
+      · -- t ≠ 0. Then t^(k-1) ≠ 0 and ζ^(k-1) ≠ 0.
+        have h1 : (ζ * t) ^ (k - 1) * gtilde (ζ * t) = ζ ^ (k - 1) * t ^ (k - 1) * gtilde t := by
+          rw [← hHζt, hH_equivariant t, hHt]
+          ring
+        have h_zt : (ζ * t) ^ (k - 1) = ζ ^ (k - 1) * t ^ (k - 1) := by ring
+        rw [h_zt] at h1
+        have hζkm1_ne : ζ ^ (k - 1) ≠ 0 := pow_ne_zero _ (hζ.ne_zero hk_pos.ne')
+        have htkm1_ne : t ^ (k - 1) ≠ 0 := pow_ne_zero _ ht0
+        have hmul_ne : ζ ^ (k - 1) * t ^ (k - 1) ≠ 0 := mul_ne_zero hζkm1_ne htkm1_ne
+        exact mul_left_cancel₀ hmul_ne h1
+    -- Apply R-final to gtilde.
+    obtain ⟨g, hg_an, hgtilde_extension⟩ :=
+      exists_analytic_extension_of_rotation_invariant hgtilde_an hk_pos.ne' hζ
+        (by
+          -- Need: gtilde =ᶠ[𝓝 0] fun z => gtilde (ζ * z). Equivalent to hgtilde_inv (swap symm).
+          filter_upwards [hgtilde_inv] with t ht
+          exact ht.symm)
+    refine ⟨g, hg_an, ?_⟩
+    -- ∀ᶠ t, H(t) = t^(k-1) · g(t^k).
+    filter_upwards [hH_eq_factored, hgtilde_extension] with t hHt hgt
+    -- hHt : H t = t^(k-1) · gtilde t   (from hH_eq_factored, where H is unfolded).
+    -- hgt : gtilde t = g (t^k).
+    -- Goal: ∑_j ζ^j * h(ζ^j * t) = t^(k-1) * g (t^k).
+    -- This equals H t = t^(k-1) * gtilde t = t^(k-1) * g(t^k).
+    show H t = t ^ (k - 1) * g (t ^ k)
+    rw [hHt, hgt]
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
