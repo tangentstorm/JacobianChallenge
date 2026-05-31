@@ -334,6 +334,81 @@ theorem tendsto_eval_of_tendsto_boundedContinuousOnClosedBall
     Tendsto (fun n => Fseq n z) atTop (𝓝 (F z)) :=
   (ContinuousEvalConst.continuous_eval_const z).tendsto F |>.comp hF
 
+/--
+Convergence of bounded-continuous closed-ball restrictions is uniform
+convergence of the original chart functions on that closed ball.
+-/
+theorem tendstoUniformlyOn_of_tendsto_boundedContinuousOnClosedBall
+    (data : ℕ → ChartBallPowerSeries) {c : ℂ} {r : ℝ}
+    (hclosed :
+      ∀ n, Metric.closedBall c r ⊆
+        Metric.ball (data n).center ((data n).radius : ℝ))
+    {F : Metric.closedBall c r →ᵇ ℂ}
+    {limit : ℂ → ℂ}
+    (hlimit : ∀ z hz, limit z = F ⟨z, hz⟩)
+    (hF :
+      Tendsto
+        (fun n => (data n).boundedContinuousOnClosedBall (hclosed n))
+        atTop (𝓝 F)) :
+    TendstoUniformlyOn
+      (fun n z => (data n).toFun z)
+      limit
+      atTop (Metric.closedBall c r) := by
+  have hU :
+      TendstoUniformly
+        (fun n => (data n).boundedContinuousOnClosedBall (hclosed n))
+        F atTop :=
+    BoundedContinuousFunction.tendsto_iff_tendstoUniformly.mp hF
+  intro u hu
+  filter_upwards [hU u hu] with n hn z hz
+  simpa [hlimit z hz] using hn ⟨z, hz⟩
+
+/--
+Montel-style subsequence extraction, projected to uniform convergence of the
+original chart functions on one compact closed ball.
+-/
+theorem exists_subseq_tendstoUniformlyOn_closedBall
+    (data : ℕ → ChartBallPowerSeries) {c : ℂ} {r : ℝ}
+    (hclosed :
+      ∀ n, Metric.closedBall c r ⊆
+        Metric.ball (data n).center ((data n).radius : ℝ))
+    {target : Set ℂ} (htarget : IsCompact target)
+    (hrange :
+      ∀ n (z : Metric.closedBall c r),
+        (data n).boundedContinuousOnClosedBall (hclosed n) z ∈ target)
+    (heq :
+      Equicontinuous
+        ((↑) :
+          Set.range (fun n => (data n).boundedContinuousOnClosedBall (hclosed n)) →
+            Metric.closedBall c r → ℂ)) :
+    ∃ F ∈
+        closure
+          (Set.range (fun n => (data n).boundedContinuousOnClosedBall (hclosed n)) :
+            Set (Metric.closedBall c r →ᵇ ℂ)),
+      ∃ φ : ℕ → ℕ, StrictMono φ ∧
+        Tendsto
+          (fun k => (data (φ k)).boundedContinuousOnClosedBall (hclosed (φ k)))
+          atTop (𝓝 F) ∧
+        ∃ limit : ℂ → ℂ,
+          (∀ z hz, limit z = F ⟨z, hz⟩) ∧
+          TendstoUniformlyOn
+            (fun k z => (data (φ k)).toFun z)
+            limit atTop (Metric.closedBall c r) := by
+  rcases exists_tendsto_subseq_boundedContinuousOnClosedBall data hclosed htarget
+      hrange heq with
+    ⟨F, hF_mem, φ, hφ_mono, hφ_tendsto⟩
+  classical
+  let limit : ℂ → ℂ :=
+    fun z => if hz : z ∈ Metric.closedBall c r then F ⟨z, hz⟩ else 0
+  have hlimit : ∀ z hz, limit z = F ⟨z, hz⟩ := by
+    intro z hz
+    have hz' : dist z c ≤ r := by
+      simpa [Metric.mem_closedBall] using hz
+    simp [limit, Metric.mem_closedBall, hz']
+  refine ⟨F, hF_mem, φ, hφ_mono, hφ_tendsto, limit, hlimit, ?_⟩
+  exact tendstoUniformlyOn_of_tendsto_boundedContinuousOnClosedBall
+    (fun k => data (φ k)) (fun k => hclosed (φ k)) hlimit hφ_tendsto
+
 /-- The packaged function is analytic at the center of its chart ball. -/
 theorem analyticAt_center (data : ChartBallPowerSeries) :
     AnalyticAt ℂ data.toFun data.center :=
