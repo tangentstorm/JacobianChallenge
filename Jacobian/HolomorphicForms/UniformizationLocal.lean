@@ -3,6 +3,7 @@ import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Complex.LocallyUniformLimit
 import Mathlib.Analysis.Complex.OpenMapping
 import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
+import Mathlib.Topology.Sequences
 
 /-!
 # Local analytic substrate for genus-zero uniformization
@@ -276,6 +277,62 @@ theorem isCompact_closure_boundedContinuousOnClosedBall_range
       rcases hf with ⟨i, rfl⟩
       exact hrange i z)
     heq
+
+/--
+Montel-style subsequence extraction for a chart-ball sequence after restriction
+to one compact closed ball.
+-/
+theorem exists_tendsto_subseq_boundedContinuousOnClosedBall
+    (data : ℕ → ChartBallPowerSeries) {c : ℂ} {r : ℝ}
+    (hclosed :
+      ∀ n, Metric.closedBall c r ⊆
+        Metric.ball (data n).center ((data n).radius : ℝ))
+    {target : Set ℂ} (htarget : IsCompact target)
+    (hrange :
+      ∀ n (z : Metric.closedBall c r),
+        (data n).boundedContinuousOnClosedBall (hclosed n) z ∈ target)
+    (heq :
+      Equicontinuous
+        ((↑) :
+          Set.range (fun n => (data n).boundedContinuousOnClosedBall (hclosed n)) →
+            Metric.closedBall c r → ℂ)) :
+    ∃ F ∈
+        closure
+          (Set.range (fun n => (data n).boundedContinuousOnClosedBall (hclosed n)) :
+            Set (Metric.closedBall c r →ᵇ ℂ)),
+      ∃ φ : ℕ → ℕ, StrictMono φ ∧
+        Tendsto
+          (fun k => (data (φ k)).boundedContinuousOnClosedBall (hclosed (φ k)))
+          atTop (𝓝 F) := by
+  have hcompact :
+      IsCompact
+        (closure
+          (Set.range (fun n => (data n).boundedContinuousOnClosedBall (hclosed n)) :
+            Set (Metric.closedBall c r →ᵇ ℂ))) :=
+    isCompact_closure_boundedContinuousOnClosedBall_range data hclosed htarget hrange heq
+  have hmem :
+      ∀ n,
+        (data n).boundedContinuousOnClosedBall (hclosed n) ∈
+          closure
+            (Set.range (fun n => (data n).boundedContinuousOnClosedBall (hclosed n)) :
+              Set (Metric.closedBall c r →ᵇ ℂ)) := by
+    intro n
+    exact subset_closure ⟨n, rfl⟩
+  rcases hcompact.tendsto_subseq hmem with ⟨F, hF, φ, hφ_mono, hφ_tendsto⟩
+  exact ⟨F, hF, φ, hφ_mono, hφ_tendsto⟩
+
+/--
+Convergence of bounded-continuous closed-ball restrictions implies pointwise
+convergence at each point of the closed ball.
+-/
+theorem tendsto_eval_of_tendsto_boundedContinuousOnClosedBall
+    {c : ℂ} {r : ℝ}
+    {Fseq : ℕ → Metric.closedBall c r →ᵇ ℂ}
+    {F : Metric.closedBall c r →ᵇ ℂ}
+    (hF : Tendsto Fseq atTop (𝓝 F))
+    (z : Metric.closedBall c r) :
+    Tendsto (fun n => Fseq n z) atTop (𝓝 (F z)) :=
+  (ContinuousEvalConst.continuous_eval_const z).tendsto F |>.comp hF
 
 /-- The packaged function is analytic at the center of its chart ball. -/
 theorem analyticAt_center (data : ChartBallPowerSeries) :
