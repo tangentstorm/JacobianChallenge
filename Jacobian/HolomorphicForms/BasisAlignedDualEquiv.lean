@@ -132,7 +132,6 @@ theorem holomorphicOneFormDualEquiv_apply_eq_apply_basis
       ((holomorphicOneFormFinBasis E X).dualBasis k) = φ :=
     (holomorphicOneFormFinBasis E X).dualBasis.sum_equivFun φ
   have h := congrArg (fun ψ => ψ (holomorphicOneFormFinBasis E X i)) hsum
-  simp only at h
   rw [LinearMap.coe_sum, Finset.sum_apply] at h
   simp only [LinearMap.smul_apply, smul_eq_mul,
     Module.Basis.dualBasis_apply_self] at h
