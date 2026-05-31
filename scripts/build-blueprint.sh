@@ -35,11 +35,51 @@ WEB="blueprint/web"
 if [ -d /Library/TeX/texbin ]; then
   export PATH="/Library/TeX/texbin:$PATH"
 fi
+# plastexdepgraph drives graphviz (`dot`, `tred`) for the dependency graph.
+# Homebrew installs these to /opt/homebrew/bin (Apple Silicon) or
+# /usr/local/bin (Intel), which a non-login shell may not have on PATH.
+for d in /opt/homebrew/bin /usr/local/bin; do
+  if [ -d "$d" ]; then export PATH="$d:$PATH"; fi
+done
+if ! command -v dot >/dev/null 2>&1; then
+  echo "error: graphviz 'dot'/'tred' not found — required for the dependency" >&2
+  echo "       graph. Install with: brew install graphviz" >&2
+  exit 1
+fi
 if ! command -v kpsewhich >/dev/null 2>&1; then
   echo "error: kpsewhich not found — a TeX distribution (e.g. basictex) is" >&2
   echo "       required so plasTeX can resolve \\input paths. Install with:" >&2
   echo "         brew install --cask basictex   # then restart your shell" >&2
   exit 1
+fi
+
+# --- Python with leanblueprint --------------------------------------------
+# leanblueprint is typically installed in a venv, not the system python3 that
+# /Library/TeX/texbin or /usr/bin may resolve to. Find an interpreter that can
+# actually import it so the wrapper works standalone (no manual `activate`).
+PY=python3
+if ! "$PY" -c "import leanblueprint" >/dev/null 2>&1; then
+  found=""
+  for cand in "${VIRTUAL_ENV:+$VIRTUAL_ENV/bin/python3}" \
+              "$HOME/.venv/bin/python3" \
+              "$REPO_ROOT/.venv/bin/python3"; do
+    if [ -n "$cand" ] && [ -x "$cand" ] && \
+       "$cand" -c "import leanblueprint" >/dev/null 2>&1; then
+      found="$cand"
+      break
+    fi
+  done
+  if [ -z "$found" ]; then
+    echo "error: leanblueprint not importable by '$PY' and no venv found." >&2
+    echo "       Install it, or activate the venv that has it, e.g.:" >&2
+    echo "         source ~/.venv/bin/activate" >&2
+    exit 1
+  fi
+  PY="$found"
+  # leanblueprint.client shells out to the bare `plastex` console script, so
+  # the interpreter's bin/ must be on PATH too — not just the python3 binary.
+  export PATH="$(dirname "$PY"):$PATH"
+  echo "==> using leanblueprint from: $PY"
 fi
 
 # --- 1. Build ---------------------------------------------------------------
@@ -48,7 +88,7 @@ echo "==> [1/3] Building blueprint web site (leanblueprint web)"
 # plasTeX itself exits 0 even when labels don't resolve.
 build_log="$(mktemp)"
 trap 'rm -f "$build_log"' EXIT
-( cd "$SRC" && python3 -m leanblueprint.client web ) 2>&1 | tee "$build_log"
+( cd "$SRC" && "$PY" -m leanblueprint.client web ) 2>&1 | tee "$build_log"
 
 if grep -qiE "could not be resolved" "$build_log"; then
   echo "" >&2
@@ -59,10 +99,10 @@ fi
 
 # --- 2. Inject (order matters) ---------------------------------------------
 echo "==> [2/3] Injecting post-processing extras"
-python3 "$SRC/inject-layman-toggle.py"      "$WEB"
-python3 "$SRC/inject-theme-toggle.py"       "$WEB"
-python3 "$SRC/inject-depgraph-extras.py"    "$WEB"
-python3 "$SRC/build_collapsible_dep_graph.py" "$WEB"
+"$PY" "$SRC/inject-layman-toggle.py"      "$WEB"
+"$PY" "$SRC/inject-theme-toggle.py"       "$WEB"
+"$PY" "$SRC/inject-depgraph-extras.py"    "$WEB"
+"$PY" "$SRC/build_collapsible_dep_graph.py" "$WEB"
 
 # --- 3. Verify --------------------------------------------------------------
 # A correct build injects each per-page marker into (almost) every page. If a
