@@ -79,7 +79,7 @@ theorem IsHolomorphicAt.sum {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} 
     rw [hfun]
     refine h.congr ?_
     filter_upwards with x
-    simp [Pi.add_apply, Function.comp_def]
+    rfl
 
 /-- **Holomorphic linear combination.** -/
 theorem IsHolomorphicAt.sum_smul {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} {c : ι → ℂ} {p : X}
@@ -461,9 +461,9 @@ theorem mapAnalyticOrderAt_congr_of_maximalAtlas
       analyticOrderAt G z₀ = analyticOrderAt (fun z => F z - y₀) z₀ := by
     rw [analyticOrderAt_congr hG_congr]
     have hβ_sub_an : AnalyticAt ℂ (fun y => β y - β y₀) y₀ := by
-      simpa using hβ_an.sub analyticAt_const
-    have hF_an : AnalyticAt ℂ F z₀ := by
-      simpa [F, z₀] using hf_an
+      have h := hβ_an.sub (analyticAt_const : AnalyticAt ℂ (fun _ => β y₀) y₀)
+      exact h.congr (Filter.Eventually.of_forall fun y => rfl)
+    have hF_an : AnalyticAt ℂ F z₀ := hf_an
     have hβ_sub_an_F : AnalyticAt ℂ (fun y => β y - β y₀) (F z₀) := by
       simpa [hF_at] using hβ_sub_an
     have hcomp :
@@ -939,8 +939,9 @@ theorem local_kfold_ramified_of_contMDiff_within
     refine ⟨sx.map_source (mem_chart_source ℂ x), ?_⟩
     simp [sx, sy, z₀, hxO]
   have hg : AnalyticAt ℂ g z₀ := by
-    simpa [g, z₀, c₀] using
-      (IsHolomorphicAt.of_contMDiff hf x).sub analyticAt_const
+    have h := (IsHolomorphicAt.of_contMDiff hf x).sub
+      (analyticAt_const : AnalyticAt ℂ (fun _ => c₀) (chartAt ℂ x x))
+    exact h.congr (Filter.Eventually.of_forall fun z => rfl)
   have hg0 : g z₀ = 0 := by
     simp [g, z₀, c₀, sx, sy, chartLocalAt, Function.comp_def]
   have hord : analyticOrderNatAt g z₀ = k := by
