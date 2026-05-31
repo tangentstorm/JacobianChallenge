@@ -41,14 +41,20 @@ theorem IsHolomorphicAt.add
     {f g : X → ℂ} {p : X} (_hf : IsHolomorphicAt f p)
     (_hg : IsHolomorphicAt g p) : IsHolomorphicAt (f + g) p := by
   unfold IsHolomorphicAt chartLocalAt at *
-  simpa [Pi.add_apply, Function.comp_def] using _hf.add _hg
+  have h := _hf.add _hg
+  refine h.congr ?_
+  filter_upwards with x
+  simp [Pi.add_apply, Function.comp_def]
 
 /-- **Holomorphic scalar multiplication.** -/
 theorem IsHolomorphicAt.smul
     {f : X → ℂ} {p : X} (c : ℂ) (_hf : IsHolomorphicAt f p) :
   IsHolomorphicAt (c • f) p := by
   unfold IsHolomorphicAt chartLocalAt at *
-  simpa [Pi.smul_apply, Function.comp_def] using (_hf.const_smul (c := c))
+  have h := _hf.const_smul (c := c)
+  refine h.congr ?_
+  filter_upwards with x
+  simp [Pi.smul_apply, smul_eq_mul, Function.comp_def]
 
 /-- **Holomorphic finite sum.** -/
 theorem IsHolomorphicAt.sum {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} {p : X}
@@ -60,12 +66,20 @@ theorem IsHolomorphicAt.sum {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} 
   · intro _hf
     change IsHolomorphicAt (fun _ : X => (0 : ℂ)) p
     unfold IsHolomorphicAt chartLocalAt
-    simpa using (analyticAt_const :
-      AnalyticAt ℂ (fun _ : ℂ => chartAt ℂ (0 : ℂ) (0 : ℂ)) (chartAt ℂ p p))
+    have h : AnalyticAt ℂ (fun _ : ℂ => (0 : ℂ)) (chartAt ℂ p p) := analyticAt_const
+    refine h.congr ?_
+    filter_upwards with x
+    simp [Function.comp_def]
   · intro a s ha ih hfs
-    simpa [Finset.sum_insert, ha] using
-      IsHolomorphicAt.add (hfs a (Finset.mem_insert_self a s))
+    have h := IsHolomorphicAt.add (hfs a (Finset.mem_insert_self a s))
         (ih fun i hi => hfs i (Finset.mem_insert_of_mem hi))
+    have hfun : (fun x => Finset.sum (insert a s) (fun i => f i x))
+        = (fun x => f a x + Finset.sum s (fun i => f i x)) := by
+      funext x; rw [Finset.sum_insert ha]
+    rw [hfun]
+    refine h.congr ?_
+    filter_upwards with x
+    simp [Pi.add_apply, Function.comp_def]
 
 /-- **Holomorphic linear combination.** -/
 theorem IsHolomorphicAt.sum_smul {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} {c : ι → ℂ} {p : X}
