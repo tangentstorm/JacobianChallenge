@@ -1578,21 +1578,28 @@ explicit hypotheses. The clean wrapper
 `degree_one_meromorphicMap_implies_analyticGenus_zero_of_routeData` below
 exposes it under a friendlier name.
 
+**Un-bundling (2026-05-29):** previously this declaration took only
+`hpole` and extracted the analytic content via the universal-bridge
+accessors `MeromorphicMapToSphere.toPoleModulusData` /
+`toBranchedCoverDataOfPoleDegree` (now removed; see
+`Jacobian/HolomorphicForms/Meromorphic.lean` for the un-bundling
+rationale). The bridges hid the analytic content; now it is supplied
+as the explicit `hmod` / `hbranch` hypotheses, matching the
+`_with_meromorphicData` sibling pattern used throughout the
+codebase. The conclusion `analyticGenus ℂ X = 0` is unchanged; the
+added preconditions are strengthenings, not weakenings.
+
 Do not "prove" this theorem by manufacturing route data from `hpole` alone:
 that would derive genus-zero classification for arbitrary `X`.
 -/
 theorem degree_one_meromorphicMap_implies_analyticGenus_zero
     (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
-    (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂) :
+    (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂)
+    (hmod : f.PoleModulusData)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
     analyticGenus ℂ X = 0 :=
-  -- Structural strengthening (2026-05-25): `MeromorphicMapToSphere` now
-  -- structurally carries `exists_modulus_atTop_at_pole` and
-  -- `hasBranchedCoverDataOfPoleDegree` as fields (inlined from the
-  -- previously-separate `PoleModulusData` / `BranchedCoverDataOfPoleDegree`
-  -- records). We extract them via the canonical accessors and delegate to
-  -- the route-data form.
   degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData X f Q₂
-    hpole f.toPoleModulusData f.toBranchedCoverDataOfPoleDegree
+    hpole hmod hbranch
 
 
 theorem degree_one_meromorphicMap_implies_analyticGenus_zero_of_routeData
@@ -1605,19 +1612,24 @@ theorem degree_one_meromorphicMap_implies_analyticGenus_zero_of_routeData
     hpole hmod hbranch
 
 /--
-Public assembly: a meromorphic map with a single pole forces genus zero.
+Internal assembly: a meromorphic map with a single pole forces genus zero
+(per-`f` precondition-strengthened form, mirroring the
+`_with_meromorphicData` sibling). Internal-only; no external callers.
 
-This declaration is kept only because the downstream chain into
-`Solution.ofCurve_inj` (defined by `Jacobian/Challenge.lean` without
-route-data hypotheses) eventually reaches it; do not consume it in new
-code without route data.
+**Un-bundling (2026-05-29):** previously took only `(f, Q, hpole)` and
+relied on the now-removed `MeromorphicMapToSphere` universal-bridge
+accessors via the bare
+`degree_one_meromorphicMap_implies_analyticGenus_zero`. Now takes
+`hmod` and `hbranch` explicitly.
 -/
 theorem nonconstant_single_pole_implies_genus_zero
     (f : HolomorphicForms.MeromorphicMapToSphere X)
     (Q : X)
-    (hpole : f.poles = HolomorphicForms.Divisor.point Q) :
+    (hpole : f.poles = HolomorphicForms.Divisor.point Q)
+    (hmod : f.PoleModulusData)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
     analyticGenus ℂ X = 0 := by
-  exact degree_one_meromorphicMap_implies_analyticGenus_zero X f Q hpole
+  exact degree_one_meromorphicMap_implies_analyticGenus_zero X f Q hpole hmod hbranch
 
 
 theorem nonconstant_single_pole_implies_genus_zero_of_routeData
@@ -1651,11 +1663,17 @@ theorem period_congruence_distinct_implies_genus_zero
     (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hperiod :
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
-        basisAlignedPeriodSubgroup X) :
+        basisAlignedPeriodSubgroup X)
+    (hanalytic :
+      ∀ f : HolomorphicForms.MeromorphicMapToSphere X,
+        f.poleDivisor = HolomorphicForms.Divisor.point Q₂ →
+          f.PoleModulusData ∧ f.BranchedCoverDataOfPoleDegree) :
     analyticGenus ℂ X = 0 := by
   obtain ⟨f, hpole⟩ :=
     abelJacobi_image_zero_implies_principal X P Q₁ Q₂ hne hperiod
-  exact degree_one_meromorphicMap_implies_analyticGenus_zero X f Q₂ hpole
+  obtain ⟨hmod, hbranch⟩ := hanalytic f hpole
+  exact degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData X f Q₂
+    hpole hmod hbranch
 
 
 theorem pathIntegralFunctional_separates_points_spec_with_meromorphicData
@@ -1679,10 +1697,15 @@ theorem pathIntegralFunctional_separates_points_spec
     (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
     (hperiod :
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
-        basisAlignedPeriodSubgroup X) :
+        basisAlignedPeriodSubgroup X)
+    (hanalytic :
+      ∀ f : HolomorphicForms.MeromorphicMapToSphere X,
+        f.poleDivisor = HolomorphicForms.Divisor.point Q₂ →
+          f.PoleModulusData ∧ f.BranchedCoverDataOfPoleDegree) :
     Q₁ = Q₂ := by
   by_contra hne
-  exact absurd (period_congruence_distinct_implies_genus_zero X P Q₁ Q₂ hne hperiod)
+  exact absurd
+    (period_congruence_distinct_implies_genus_zero X P Q₁ Q₂ hne hperiod hanalytic)
     (by omega)
 
 /--
@@ -1712,9 +1735,13 @@ theorem pathIntegralFunctional_separates_points
     (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
     (hperiod :
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
-        basisAlignedPeriodSubgroup X) :
+        basisAlignedPeriodSubgroup X)
+    (hanalytic :
+      ∀ f : HolomorphicForms.MeromorphicMapToSphere X,
+        f.poleDivisor = HolomorphicForms.Divisor.point Q₂ →
+          f.PoleModulusData ∧ f.BranchedCoverDataOfPoleDegree) :
     Q₁ = Q₂ :=
-  pathIntegralFunctional_separates_points_spec X P h Q₁ Q₂ hperiod
+  pathIntegralFunctional_separates_points_spec X P h Q₁ Q₂ hperiod hanalytic
 
 /--
 Abel injectivity for positive genus.
@@ -1905,12 +1932,36 @@ Abel injectivity for positive genus.
 The route-data version `analyticOfCurve_injective_with_meromorphicData` is
 the honest assembly for callers that can supply explicit meromorphic
 promotion data; new code should prefer it.
+
+**Un-bundling (2026-05-29) — honest `sorry` reinstated.** This
+declaration's signature is *frozen*: it matches the public-facing
+`Jacobian/Solution.lean Jacobian₀.ofCurve_inj` (L106) and ultimately
+the public anti-hack `Jacobian/Challenge.lean ofCurve_inj`, neither of
+which can gain an `hanalytic` parameter without breaking the frozen
+spec. Prior to the un-bundling, this proof was "sorry-free" by
+calling the bare `pathIntegralFunctional_separates_points` (which
+recursively reached `degree_one_meromorphicMap_implies_analyticGenus_zero`
+and from there to `MeromorphicMapToSphere.toPoleModulusData` /
+`toBranchedCoverDataOfPoleDegree` — the universal-bridge accessors
+removed in commit `aa00f436`). Those bridges bottomed out in
+`JacobianChallenge.HolomorphicForms.genusZero_singlePoleMeromorphicAnalyticData_nonempty`
+(jc0's "genus-zero #4" deep root), so the apparent absence of a `sorry`
+here was an *artifact* of the bridges hiding that dependency.
+
+With the bridges retired and the frozen signature preserved, the
+honest answer is to leave this body as an explicit `sorry` until jc0
+discharges the genus-zero #4 root. Once that lands, this proof
+becomes one-line forward from `analyticOfCurve_injective_with_meromorphicData`
+by manufacturing `hanalytic` from the discharged genus-zero #4 — but
+that step is jc0's work, not this milestone's.
+
+Honest callers that can supply explicit meromorphic promotion data
+should use the sibling `analyticOfCurve_injective_with_meromorphicData`
+above (L1909), which is the un-strengthened proof and remains
+sorry-free.
 -/
 lemma analyticOfCurve_injective (P : X) (h : 0 < analyticGenus ℂ X) :
     Function.Injective (analyticOfCurve X P) := by
-  intro Q₁ Q₂ heq
-  apply pathIntegralFunctional_separates_points X P h Q₁ Q₂
-  unfold analyticOfCurve at heq
-  exact QuotientAddGroup.eq.mp heq
+  sorry
 
 end JacobianChallenge.AbelJacobi

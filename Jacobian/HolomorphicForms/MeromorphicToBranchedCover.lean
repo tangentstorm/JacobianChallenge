@@ -648,7 +648,7 @@ Given `f : MeromorphicMapToSphere X` with `f.poles = Divisor.point P`,
 the canonical finite lift `(f.toMap ·).getD 0` is not eventually
 constant on a punctured neighborhood of `P`.
 
-Proof strategy: the structural field `exists_modulus_atTop_at_pole`
+Proof strategy: the explicit `PoleModulusData` hypothesis `hmod`
 yields a local representative `g : X → ℂ` with off-pole agreement
 `f.toMap x = ↑(g x)` (for `x` with `f.poleDivisor x = 0`) and
 `‖g x‖ → ∞` along `𝓝[≠] P`. Since `f.poles = Divisor.point P`, the
@@ -656,18 +656,20 @@ off-pole agreement holds for every `x ≠ P`, hence
 `(f.toMap x).getD 0 = g x` eventually in `𝓝[≠] P`. If the finite lift
 were eventually equal to a constant `c`, then `g` would be eventually
 equal to `c`, hence `‖g x‖ = ‖c‖` eventually — contradicting the
-modulus-divergence content of `exists_modulus_atTop_at_pole`. The
-contradiction extracts a single witness via the project's
+modulus-divergence content of `PoleModulusData`. The contradiction
+extracts a single witness via the project's
 `punctured_nhds_neBot_of_chartedSpaceComplex` (which gives
 `(𝓝[≠] P).NeBot` for any complex-charted space).
 
-The structural-field bridge for the `outside_constants` field of
-`PointRiemannRochSection`. Like the field-6 bridge in commit
-`d9670683`, this bridge requires no `AnalyticData` hypothesis.
+The structural bridge for the `outside_constants` field of
+`PointRiemannRochSection`. After the 2026-05-29 un-bundling, the
+pole-modulus content is supplied as the explicit hypothesis `hmod`
+rather than read off a (now-removed) field of `f`.
 -/
 theorem MeromorphicMapToSphere.outside_constants_of_poleDivisor_point
     (f : MeromorphicMapToSphere X) (P : X)
-    (hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData) :
     ¬ ∃ c : ℂ, ∀ᶠ z in 𝓝[≠] P, (f.toMap z).getD 0 = c := by
   classical
   -- Pole divisor at `P` is positive: equal to 1 in fact.
@@ -677,7 +679,7 @@ theorem MeromorphicMapToSphere.outside_constants_of_poleDivisor_point
       rw [hpole]
     rw [h, Divisor.point_apply_self]; decide
   -- Extract the modulus-divergence witness.
-  obtain ⟨g, hg_eq, hg_div⟩ := f.exists_modulus_atTop_at_pole P hposP
+  obtain ⟨g, hg_eq, hg_div⟩ := hmod.exists_modulus_atTop_at_pole P hposP
   -- Off-pole agreement gives `(f.toMap z).getD 0 = g z` eventually in `𝓝[≠] P`.
   have hF_eq_g : ∀ᶠ z in 𝓝[≠] P, (f.toMap z).getD 0 = g z := by
     filter_upwards [self_mem_nhdsWithin] with z hz_ne
@@ -1168,6 +1170,7 @@ theorem branchedCoverData_of_simplePoleToSphereData
     hcompat P (hfHol.holomorphicAt P)
   rw [hrami, d.simple_pole_order]
 
+omit [CompactSpace X] [ConnectedSpace X] in
 theorem singlePoleAnalyticData_of_simplePoleToSphereData
     (P : X) (d : SimplePoleToSphereData X P) :
     Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
@@ -1186,10 +1189,7 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
         toMap_ne_infty_of_poleDivisor_zero := ?_
         continuousOn_ne_infty := ?_
         toFiniteFun_mdifferentiable := ?_
-        toMap_eq_infty_of_poleDivisor_pos := ?_
-        -- Structural strengthening (2026-05-25): new inlined fields.
-        exists_modulus_atTop_at_pole := ?_
-        hasBranchedCoverDataOfPoleDegree := ?_ }
+        toMap_eq_infty_of_poleDivisor_pos := ?_ }
     poleDivisor_eq := rfl
     nonconstant := ?_
     poleModulusData := ?_
@@ -1220,35 +1220,6 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
       rw [this] at hx; exact (lt_irrefl _) hx
     subst hxP
     exact d.toMap_at_pole
-  -- (Structural strengthening 2026-05-25) `exists_modulus_atTop_at_pole`:
-  -- same content as the `PoleModulusData` case below, now inlined.
-  · intro Q hQ
-    have hQP : Q = P := by
-      by_contra hne
-      have : (Divisor.point P : Divisor X) Q = 0 := Divisor.point_apply_ne hne
-      change (Divisor.point P : Divisor X) Q > 0 at hQ
-      rw [this] at hQ; exact (lt_irrefl _) hQ
-    subst hQP
-    refine ⟨d.finiteLift, ?_, d.pole_modulus⟩
-    intro x hx
-    have hxP : x ≠ Q := by
-      intro hxQ
-      rw [hxQ, Divisor.point_apply_self] at hx
-      exact one_ne_zero hx
-    exact d.toMap_off_pole x hxP
-  -- (Structural strengthening 2026-05-25) `hasBranchedCoverDataOfPoleDegree`:
-  -- discharged via the `d`-keyed helper `branchedCoverData_of_simplePoleToSphereData`,
-  -- which avoids the chicken-and-egg dependence on the surrounding
-  -- `MeromorphicMapToSphere` shell. The helper produces an `∃ h, branchedDegree h = 1`;
-  -- the field signature wants `branchedDegree h = (Divisor.point P).degree.toNat`,
-  -- which equals `1` via `Divisor.degree_point`.
-  · intro _hcont
-    obtain ⟨h, hdeg⟩ := branchedCoverData_of_simplePoleToSphereData P d
-    refine ⟨h, ?_⟩
-    rw [hdeg]
-    show (1 : ℕ) = (Divisor.point P : Divisor X).degree.toNat
-    rw [Divisor.degree_point]
-    rfl
   -- `nonconstant`: pick Q ≠ P; d.toMap Q ≠ d.toMap P = ∞.
   · -- The compact connected Riemann surface has Nonempty X (because P : X), so
     -- there is at least one other point.
@@ -1626,7 +1597,7 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
   [FiniteDimensionalHolomorphicOneForms ℂ X]
 
-omit [FiniteDimensionalHolomorphicOneForms ℂ X] in
+omit [ConnectedSpace X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
 
 theorem toSinglePoleMeromorphicAnalyticData
     {P : X} (s : SimplePoleRRSection X P) :
@@ -1664,10 +1635,7 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
           toMap_ne_infty_of_poleDivisor_zero := ?_
           continuousOn_ne_infty := ?_
           toFiniteFun_mdifferentiable := ?_
-          toMap_eq_infty_of_poleDivisor_pos := ?_
-          -- Structural strengthening (2026-05-25): new inlined fields.
-          exists_modulus_atTop_at_pole := ?_
-          hasBranchedCoverDataOfPoleDegree := ?_ }
+          toMap_eq_infty_of_poleDivisor_pos := ?_ }
       poleDivisor_eq := rfl
       nonconstant := ?_
       mem_L_point := ?_
@@ -1698,31 +1666,6 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
       rw [h0] at hx; exact (lt_irrefl _) hx
     subst hxP
     exact d.toMap_at_pole
-  -- (Structural strengthening 2026-05-25) `exists_modulus_atTop_at_pole`.
-  · intro Q hQ
-    have hQP : Q = P := by
-      by_contra hne
-      have h0 : (Divisor.point P : Divisor X) Q = 0 := Divisor.point_apply_ne hne
-      change (Divisor.point P : Divisor X) Q > 0 at hQ
-      rw [h0] at hQ; exact (lt_irrefl _) hQ
-    subst hQP
-    refine ⟨d.finiteLift, ?_, d.pole_modulus⟩
-    intro x hx
-    have hxP : x ≠ Q := by
-      intro hxQ
-      rw [hxQ, Divisor.point_apply_self] at hx
-      exact one_ne_zero hx
-    exact d.toMap_off_pole x hxP
-  -- (Structural strengthening 2026-05-25) `hasBranchedCoverDataOfPoleDegree`:
-  -- discharged via the `d`-keyed helper `branchedCoverData_of_simplePoleToSphereData`
-  -- (same content as in `singlePoleAnalyticData_of_simplePoleToSphereData`).
-  · intro _hcont
-    obtain ⟨h, hdeg⟩ := branchedCoverData_of_simplePoleToSphereData P d
-    refine ⟨h, ?_⟩
-    rw [hdeg]
-    show (1 : ℕ) = (Divisor.point P : Divisor X).degree.toNat
-    rw [Divisor.degree_point]
-    rfl
   -- `nonconstant`. Same proof as in `singlePoleAnalyticData_of_simplePoleToSphereData`.
   · haveI : Nonempty X := ⟨P⟩
     obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
@@ -2865,7 +2808,8 @@ noncomputable def of_meromorphicMap_meromorphic_getD_simple_pole
       JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
         (fun q => (f.toMap q).getD 0) p)
     (P : X) (hpole : f.poles = Divisor.point P)
-    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1) :
+    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1)
+    (hmod : f.PoleModulusData) :
     PointRiemannRochSection X P where
   finiteLift := fun q => (f.toMap q).getD 0
   meromorphic_everywhere := hmer
@@ -2875,7 +2819,7 @@ noncomputable def of_meromorphicMap_meromorphic_getD_simple_pole
       f.orderAt_getD_eq_neg_one_of_simple_pole hmer P hpole hord1
     rw [h_eq]
   noPoleOff_P := f.noPoleOff_P_of_poleDivisor_point hmer P hpole
-  outside_constants := f.outside_constants_of_poleDivisor_point P hpole
+  outside_constants := f.outside_constants_of_poleDivisor_point P hpole hmod
   finiteLift_continuous_off_P := fun p hp => by
     have hcompl : p ∈ ({P}ᶜ : Set X) := hp
     have hopen : IsOpen ({P}ᶜ : Set X) := isOpen_compl_singleton
@@ -2899,10 +2843,11 @@ ergonomics when the caller has a full `AnalyticData` record in hand.
 -/
 noncomputable def of_meromorphicMap_analyticData_simple_pole
     (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
-    (hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData) :
     PointRiemannRochSection X P :=
   of_meromorphicMap_meromorphic_getD_simple_pole
-    f han.meromorphic_getD P hpole (han.simple_pole_order_one P hpole)
+    f han.meromorphic_getD P hpole (han.simple_pole_order_one P hpole) hmod
 
 end PointRiemannRochSection
 
@@ -3094,10 +3039,11 @@ theorem genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
       JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
         (fun q => (f.toMap q).getD 0) p)
     (hpole : f.poles = Divisor.point P)
-    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1) :
+    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1)
+    (hmod : f.PoleModulusData) :
     Nonempty (PointRiemannRochSection X P) :=
   ⟨PointRiemannRochSection.of_meromorphicMap_meromorphic_getD_simple_pole
-    f hmer P hpole hord1⟩
+    f hmer P hpole hord1 hmod⟩
 
 /--
 **Explicit-input convenience wrapper of L2779
@@ -3125,10 +3071,11 @@ theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0)
     (f : MeromorphicMapToSphere X) (han : f.AnalyticData)
-    (hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData) :
     Nonempty (PointRiemannRochSection X P) :=
   genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
-    X P h f han.meromorphic_getD hpole (han.simple_pole_order_one P hpole)
+    X P h f han.meromorphic_getD hpole (han.simple_pole_order_one P hpole) hmod
 
 
 theorem genusZero_fixedPole_rrSection_nonempty
