@@ -6,6 +6,7 @@ import Jacobian.HolomorphicForms.HolomorphicMap
 import Jacobian.HolomorphicForms.BranchedCover
 import Jacobian.HolomorphicForms.ToFunApplyVec
 import Jacobian.HolomorphicForms.PullbackBundled
+import Jacobian.HolomorphicForms.TangentSpaceComplexBridge
 import Jacobian.TraceDegree.TraceDefinition
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
@@ -16,6 +17,10 @@ import Mathlib.Geometry.Manifold.VectorBundle.Tangent
 import Mathlib.Topology.VectorBundle.Constructions
 import Mathlib.Topology.VectorBundle.Hom
 import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
+import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Deriv
+import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
+import Mathlib.RingTheory.RootsOfUnity.Complex
 
 /-!
 # Trace form specification interface
@@ -29,7 +34,7 @@ cycle.
 
 namespace JacobianChallenge.HolomorphicForms
 
-open scoped Manifold ContDiff Topology Classical
+open scoped Manifold ContDiff Topology Classical NNReal ENNReal
 open JacobianChallenge.HolomorphicForms
 open JacobianChallenge.HolomorphicForms.SectionFiberNorm
 open JacobianChallenge.Periods
@@ -820,6 +825,1917 @@ private theorem mfderiv_eq_toSpanSingleton_chartLocal_deriv
   --   toSpanSingleton ℂ (deriv (chartLocalAt f x) (chart x x)).
   exact toSpanSingleton_deriv.symm
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Inverse uniqueness for `IsIso` (Commit C2 — local helper).**
+
+Two `IsIso` witnesses for the same continuous linear map have equal
+`inv` fields. Re-proved locally so the C2/C3/C4 cancellation chain
+does not have to import `Jacobian.TraceDegree.PullbackBasis`.
+-/
+private theorem IsIso.inv_unique_local
+    {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    [NormedAddCommGroup F] [NormedSpace ℂ F]
+    {φ : E →L[ℂ] F} (h₁ h₂ : IsIso φ) : h₁.inv = h₂.inv := by
+  calc h₁.inv
+      = h₁.inv.comp (ContinuousLinearMap.id ℂ F) := by ext x; simp
+    _ = h₁.inv.comp (φ.comp h₂.inv) := by rw [h₂.right_inv]
+    _ = (h₁.inv.comp φ).comp h₂.inv := by
+        ext x; simp [ContinuousLinearMap.comp_apply]
+    _ = (ContinuousLinearMap.id ℂ E).comp h₂.inv := by rw [h₁.left_inv]
+    _ = h₂.inv := by ext x; simp
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [StableChartAt ℂ X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Explicit form of the `mfderiv` inverse at any holomorphic point
+(Commit C2 — sorry-free helper).**
+
+For any `IsIso` witness `hiso` of `mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x` where
+`f` is holomorphic, the inverse equals the explicit
+`toSpanSingleton ℂ ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹)`.
+This combines the `mfderiv = toSpanSingleton ℂ a` identity (always
+holds for holomorphic `f`) with the `inv_unique_local` lemma and the
+explicit `IsIso` witness whose `inv` field is precisely the
+`toSpanSingleton ℂ a⁻¹` form. The non-vanishing of `a` is derived from
+the existence of `hiso` itself (a zero CLM has no inverse).
+
+This is **Commit C2** in the 4-commit C-sub-split discharge of
+`ramifiedKfoldSum_locally_bounded`. It is the explicit chart-local
+inverse, which feeds the explicit single-summand formula in C2.1
+(`cotangentPushforward_eq_comp_toSpanSingleton_inv`).
+-/
+private theorem mfderiv_isIso_inv_eq_toSpanSingleton_inv
+    {f : X → Y} (hHol : IsHolomorphic f) (x : X)
+    (hiso : IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)) :
+    hiso.inv =
+      (ContinuousLinearMap.toSpanSingleton ℂ
+        ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) :
+        TangentSpace 𝓘(ℂ, ℂ) (f x) →L[ℂ] TangentSpace 𝓘(ℂ, ℂ) x) := by
+  -- Replicate the explicit IsIso construction from
+  -- `mfderiv_isIso_of_ramificationIndex_one`, then apply
+  -- `inv_unique_local` to identify the two `.inv`s.
+  -- Derive `a ≠ 0` from the existence of an IsIso witness for `mfderiv f x`:
+  -- since `mfderiv f x = toSpanSingleton ℂ a`, the iso forces `a ≠ 0`
+  -- (else `toSpanSingleton ℂ 0 = 0` has no inverse).
+  -- First, the mfderiv ↔ toSpanSingleton identity (always holds, ramification-free).
+  set a : ℂ := deriv (chartLocalAt f x) (chartAt ℂ x x) with ha_def
+  have hFD : HasFDerivAt (chartLocalAt f x)
+      (ContinuousLinearMap.toSpanSingleton ℂ a) (chartAt ℂ x x) :=
+    (hHol.holomorphicAt x).hasStrictDerivAt.hasStrictFDerivAt.hasFDerivAt
+  have hMF : HasMFDerivAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x
+      (ContinuousLinearMap.toSpanSingleton ℂ a) := by
+    refine ⟨hHol.continuous.continuousAt, ?_⟩
+    have hFD' : HasFDerivWithinAt (chartLocalAt f x)
+        (ContinuousLinearMap.toSpanSingleton ℂ a) Set.univ (chartAt ℂ x x) :=
+      hFD.hasFDerivWithinAt
+    simpa [writtenInExtChartAt, chartLocalAt, Function.comp_def] using hFD'
+  have hmFD : mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x =
+      ContinuousLinearMap.toSpanSingleton ℂ a := hMF.mfderiv
+  -- `a ≠ 0`: from `hiso.right_inv`, applied to `(1 : TangentSpace ... (f x))`,
+  -- and `hmFD : mfderiv f x = toSpanSingleton ℂ a`, we derive
+  -- `a • (hiso.inv 1) = 1`. If `a = 0` this gives `0 = 1`, contradiction.
+  have hderiv : a ≠ 0 := by
+    intro ha0
+    have hright := hiso.right_inv
+    -- Apply `hright` at `(1 : TangentSpace 𝓘(ℂ, ℂ) (f x))`, treating the codomain
+    -- side as ℂ (which it is, definitionally). The `set w := hiso.inv 1` abbreviation
+    -- keeps the dependent `mfderiv` reference out of the `rw [hmFD]` motive.
+    have happ := congr_arg (fun (m : TangentSpace 𝓘(ℂ, ℂ) (f x) →L[ℂ]
+      TangentSpace 𝓘(ℂ, ℂ) (f x)) => m (1 : TangentSpace 𝓘(ℂ, ℂ) (f x))) hright
+    simp only [ContinuousLinearMap.coe_comp', Function.comp_apply,
+      ContinuousLinearMap.id_apply] at happ
+    -- happ : (mfderiv f x) (hiso.inv 1) = 1.
+    set w : ℂ := (hiso.inv (1 : TangentSpace 𝓘(ℂ, ℂ) (f x)) : ℂ) with hw_def
+    -- happ : (mfderiv f x) w = 1, with w : ℂ; rewrite mfderiv f x = toSpanSingleton ℂ a.
+    rw [hmFD] at happ
+    -- happ : (toSpanSingleton ℂ a) w = 1, which is `w • a = 1` in ℂ by rfl.
+    have happ' : w • a = (1 : ℂ) := happ
+    rw [ha0, smul_zero] at happ'
+    exact one_ne_zero happ'.symm
+  -- Build the explicit IsIso witness whose .inv is `toSpanSingleton ℂ a⁻¹`.
+  let isoExplicit : IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x) :=
+  { inv := (ContinuousLinearMap.toSpanSingleton ℂ (a⁻¹ : ℂ) :
+      TangentSpace 𝓘(ℂ, ℂ) (f x) →L[ℂ] TangentSpace 𝓘(ℂ, ℂ) x),
+    left_inv := by
+      rw [hmFD]
+      show ((ContinuousLinearMap.toSpanSingleton ℂ (a⁻¹ : ℂ)).comp
+              (ContinuousLinearMap.toSpanSingleton ℂ a) :
+              ℂ →L[ℂ] ℂ) = ContinuousLinearMap.id ℂ ℂ
+      refine ContinuousLinearMap.ext fun r => ?_
+      simp only [ContinuousLinearMap.comp_apply,
+                 ContinuousLinearMap.toSpanSingleton_apply, smul_eq_mul,
+                 ContinuousLinearMap.id_apply]
+      rw [mul_assoc, mul_inv_cancel₀ hderiv, mul_one]
+    right_inv := by
+      rw [hmFD]
+      show ((ContinuousLinearMap.toSpanSingleton ℂ a).comp
+              (ContinuousLinearMap.toSpanSingleton ℂ (a⁻¹ : ℂ)) :
+              ℂ →L[ℂ] ℂ) = ContinuousLinearMap.id ℂ ℂ
+      refine ContinuousLinearMap.ext fun r => ?_
+      simp only [ContinuousLinearMap.comp_apply,
+                 ContinuousLinearMap.toSpanSingleton_apply, smul_eq_mul,
+                 ContinuousLinearMap.id_apply]
+      rw [mul_assoc, inv_mul_cancel₀ hderiv, mul_one] }
+  -- Both `hiso` and `isoExplicit` are IsIso witnesses for the same CLM;
+  -- their `.inv` fields agree.
+  exact IsIso.inv_unique_local hiso isoExplicit
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**Explicit chart-local form of `cotangentPushforward` at an unramified
+preimage (Commit C2.1 — sorry-free helper).**
+
+At a point `x` of ramification index `1`, the cotangent pushforward
+of any cotangent vector `ωx ∈ T_x^* X` is the explicit composition
+of `ωx` with `toSpanSingleton ℂ ((deriv (chartLocalAt f x) (chart x x))⁻¹)`:
+
+```
+cotangentPushforward f x ωx =
+  ωx.comp (toSpanSingleton ℂ ((deriv (chartLocalAt f x) (chart x x))⁻¹))
+```
+
+This is the per-preimage chart-local representation that the C3 step
+sums over the `k` roots-of-unity preimages `z_j = w^{1/k} ζ^j` of `y`
+near `y₀`.
+-/
+private theorem cotangentPushforward_eq_comp_toSpanSingleton_inv
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    {x : X} (hx_unram : hbc.ramificationIndex x = 1)
+    (ωx : CotangentSpace ℂ X x) :
+    cotangentPushforward f x ωx =
+      ωx.comp
+        (ContinuousLinearMap.toSpanSingleton ℂ
+          ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) :
+          TangentSpace 𝓘(ℂ, ℂ) (f x) →L[ℂ] TangentSpace 𝓘(ℂ, ℂ) x) := by
+  classical
+  have hiso : Nonempty (IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)) :=
+    mfderiv_isIso_of_ramificationIndex_one hbc hcompat hHol hx_unram
+  unfold cotangentPushforward
+  simp only [dif_pos hiso]
+  rw [mfderiv_isIso_inv_eq_toSpanSingleton_inv hHol x (Classical.choice hiso)]
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**Single-summand explicit ℂ-scalar form (Commit C2.2 — sorry-free
+corollary of C2.1).**
+
+Evaluating `cotangentPushforward f x ωx` at `(1 : TangentSpace 𝓘(ℂ, ℂ) (f x))`
+yields the explicit ℂ-scalar
+`((deriv (chartLocalAt f x) (chart x x))⁻¹) • ωx 1`, i.e. the inverse of
+the chart-local derivative scaling the cotangent vector's value at `1`.
+
+This is the "single summand evaluated as a scalar" form that C3 will
+sum over the `k` roots-of-unity preimages and apply the
+`∑_j ζ^{jℓ} = 0` cancellation to.
+
+Uses Milestone 1's scoped `Inv` / `Field` instances on
+`TangentSpace 𝓘(ℂ, ℂ) (f x)` (= `ℂ` definitionally) so that the smul
+chain `(toSpanSingleton ℂ a) 1 = a • 1 = a` typechecks transparently.
+-/
+private theorem cotangentPushforward_apply_one
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    {x : X} (hx_unram : hbc.ramificationIndex x = 1)
+    (ωx : CotangentSpace ℂ X x) :
+    (cotangentPushforward f x ωx) (1 : TangentSpace 𝓘(ℂ, ℂ) (f x)) =
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) •
+        ωx (1 : TangentSpace 𝓘(ℂ, ℂ) x) := by
+  rw [cotangentPushforward_eq_comp_toSpanSingleton_inv hbc hcompat hHol hx_unram ωx]
+  -- Goal: (ωx.comp (toSpanSingleton ℂ a⁻¹)) 1 = a⁻¹ • ωx 1.
+  -- Unfold via `toSpanSingleton_apply`: `(toSpanSingleton ℂ a⁻¹) 1 = 1 • a⁻¹`.
+  -- Then CLM-linearity: `ωx (1 • a⁻¹) = ωx ((a⁻¹ : ℂ) • (1 : TangentSpace …)) = a⁻¹ • ωx 1`.
+  show ωx ((ContinuousLinearMap.toSpanSingleton ℂ
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹))
+      (1 : TangentSpace 𝓘(ℂ, ℂ) (f x))) =
+    ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) •
+      ωx (1 : TangentSpace 𝓘(ℂ, ℂ) x)
+  rw [ContinuousLinearMap.toSpanSingleton_apply, one_smul]
+  -- Goal: ωx a⁻¹ = a⁻¹ • ωx 1, where `a⁻¹ : ℂ = TangentSpace 𝓘(ℂ,ℂ) x` definitionally.
+  -- Rewrite the argument `a⁻¹` as `a⁻¹ • (1 : TangentSpace 𝓘(ℂ,ℂ) x)`, then apply map_smul.
+  conv_lhs => rw [show ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ :
+      TangentSpace 𝓘(ℂ, ℂ) x) =
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) •
+        (1 : TangentSpace 𝓘(ℂ, ℂ) x) from by
+    show ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) =
+        ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) * (1 : ℂ)
+    rw [mul_one]]
+  rw [ContinuousLinearMap.map_smul]
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**Single-summand `toSpanSingleton ℂ`-form (Commit C3a — sorry-free
+helper).** Combining C2.1's `cotangentPushforward` formula with the
+`ωx.comp (toSpanSingleton ℂ b) = toSpanSingleton ℂ (ωx (b • 1))`
+identity, the cotangent pushforward at an unramified preimage `x` is
+itself a `toSpanSingleton ℂ` CLM whose underlying ℂ-scalar is the
+chart-local product `(deriv(chartLocalAt f x)(chart x x))⁻¹ * (η.toFun x) 1`.
+
+After the `CotangentModelFiber ℂ = ℂ →L[ℂ] ℂ` identification (via the
+trivial bundle and the Milestone-1 `TangentSpace` bridge), this lets
+the C3a sum reduction push `toSpanSingleton ℂ` outside the Finset sum.
+-/
+private theorem cotangentPushforward_eq_toSpanSingleton_scalar
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    (η : HolomorphicOneForm ℂ X)
+    {x : X} (hx_unram : hbc.ramificationIndex x = 1) :
+    (cotangentPushforward f x (η.toFun x) : CotangentModelFiber ℂ) =
+      ContinuousLinearMap.toSpanSingleton ℂ
+        (((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹) •
+          (η.toFun x) (1 : TangentSpace 𝓘(ℂ, ℂ) x)) := by
+  -- C2.1: cotangentPushforward = ωx.comp (toSpanSingleton ℂ a⁻¹).
+  rw [cotangentPushforward_eq_comp_toSpanSingleton_inv hbc hcompat hHol hx_unram
+        (η.toFun x)]
+  -- Show ωx.comp (toSpanSingleton ℂ b) = toSpanSingleton ℂ (ωx (b • 1))
+  -- where ωx = η.toFun x, b = a⁻¹. Both CLMs ℂ →L[ℂ] ℂ; check at any v : ℂ.
+  refine ContinuousLinearMap.ext fun v => ?_
+  -- LHS at v: ωx ((toSpanSingleton ℂ b) v) = ωx (v • b).
+  -- RHS at v: (toSpanSingleton ℂ (b • ωx 1)) v = v • (b • ωx 1).
+  -- Rewrite ωx (v • b) = ωx (v • (b • 1)) (using b = b • 1 in ℂ)
+  --                    = v • ωx (b • 1) (by CLM map_smul on v)
+  --                    = v • (b • ωx 1) (by CLM map_smul on b)
+  -- which matches RHS.
+  show (η.toFun x) ((ContinuousLinearMap.toSpanSingleton ℂ
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹)) v) =
+    (ContinuousLinearMap.toSpanSingleton ℂ
+      (((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) •
+        (η.toFun x) (1 : TangentSpace 𝓘(ℂ, ℂ) x))) v
+  rw [ContinuousLinearMap.toSpanSingleton_apply,
+      ContinuousLinearMap.toSpanSingleton_apply]
+  -- Goal: ωx (v • a⁻¹) = v • (a⁻¹ • ωx 1) where the SMul on the LHS-arg
+  -- is ℂ-on-(TangentSpace 𝓘(ℂ,ℂ) x = ℂ).
+  -- Rewrite v • a⁻¹ as v • (a⁻¹ • 1) (since a⁻¹ = a⁻¹ • 1 in ℂ).
+  conv_lhs => rw [show ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ :
+      TangentSpace 𝓘(ℂ, ℂ) x) =
+      ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) •
+        (1 : TangentSpace 𝓘(ℂ, ℂ) x) from by
+    show ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) =
+        ((deriv (chartLocalAt f x) (chartAt ℂ x x))⁻¹ : ℂ) * (1 : ℂ)
+    rw [mul_one]]
+  -- Goal: ωx (v • (a⁻¹ • 1)) = v • (a⁻¹ • ωx 1).
+  rw [smul_smul, ContinuousLinearMap.map_smul, smul_smul]
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**CLM-sum reduction to `toSpanSingleton ℂ` of a scalar sum
+(Commit C3a.1 — sorry-free helper).** For any Finset `s` of unramified
+preimages of a single value `y`, the trace sum
+`∑_{x ∈ s} cotangentPushforward f x (η.toFun x)` (typed as a
+`CotangentModelFiber ℂ` CLM) equals `toSpanSingleton ℂ` of the
+explicit ℂ-scalar sum
+`∑_{x ∈ s} (deriv (chartLocalAt f x)(chart x x))⁻¹ • (η.toFun x) 1`.
+
+This is the structural step that reduces the CLM-valued boundedness
+obligation of `ramifiedKfoldSum_locally_bounded` to a complex-valued
+boundedness obligation, which C3b/C4 will discharge analytically using
+the roots-of-unity cancellation and Commit-B's chart-local derivative
+formula.
+-/
+private theorem traceSum_eq_toSpanSingleton_of_scalarSum
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    (η : HolomorphicOneForm ℂ X)
+    (s : Finset X)
+    (hs_unram : ∀ x ∈ s, hbc.ramificationIndex x = 1) :
+    (s.attach.sum (fun x =>
+        (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ) =
+      ContinuousLinearMap.toSpanSingleton ℂ
+        (s.attach.sum (fun x =>
+          ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))) := by
+  classical
+  -- Rewrite each summand using `cotangentPushforward_eq_toSpanSingleton_scalar`.
+  have hsum_congr :
+      s.attach.sum (fun x =>
+        (cotangentPushforward f x.1 (η.toFun x.1) : CotangentModelFiber ℂ)) =
+      s.attach.sum (fun x =>
+        (ContinuousLinearMap.toSpanSingleton ℂ
+          (((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) :
+          CotangentModelFiber ℂ)) := by
+    refine Finset.sum_congr rfl ?_
+    rintro ⟨x, hx_mem⟩ _
+    exact cotangentPushforward_eq_toSpanSingleton_scalar hbc hcompat hHol η
+      (hs_unram x hx_mem)
+  rw [hsum_congr]
+  -- Push `toSpanSingleton ℂ` out of the sum via `Finset.sum`-additivity of
+  -- `toSpanSingleton`. Use `ContinuousLinearMap.ext` + pointwise check.
+  refine ContinuousLinearMap.ext fun v => ?_
+  -- LHS at v: ∑ (toSpanSingleton ℂ cᵢ) v = ∑ (v • cᵢ) = v • ∑ cᵢ.
+  -- RHS at v: (toSpanSingleton ℂ (∑ cᵢ)) v = v • ∑ cᵢ.
+  rw [ContinuousLinearMap.sum_apply]
+  simp only [ContinuousLinearMap.toSpanSingleton_apply]
+  rw [Finset.smul_sum]
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**CLM-norm = scalar magnitude (Commit C3a.2 — sorry-free corollary).**
+The norm of the CLM trace sum equals the magnitude of the underlying
+ℂ-scalar sum, via Mathlib's `ContinuousLinearMap.norm_toSpanSingleton`.
+This is the last structural step before C3b/C4's analytic boundedness
+work: bounding the CLM-valued sum reduces to bounding a single complex
+number's magnitude.
+-/
+private theorem norm_traceSum_eq_abs_scalarSum
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f)
+    (η : HolomorphicOneForm ℂ X)
+    (s : Finset X)
+    (hs_unram : ∀ x ∈ s, hbc.ramificationIndex x = 1) :
+    ‖(s.attach.sum (fun x =>
+        (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ)‖ =
+      ‖s.attach.sum (fun x =>
+        ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+          (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+  rw [traceSum_eq_toSpanSingleton_of_scalarSum hbc hcompat hHol η s hs_unram]
+  exact ContinuousLinearMap.norm_toSpanSingleton _
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Filter-sum to `s_y`-sum reduction (Commit C3b.1 — sorry-free helper).**
+
+Given the kfold structural data `h_kfold_data` — a Finset `s` of unramified
+preimages of `y` contained in `U_kfold` and exhausting all preimages of `y`
+in `U_kfold` — and a window `W ⊆ U_kfold` containing `s`, the filter form
+`(hbc.finite_fiber y).toFinset.filter (· ∈ W)` equals `s` as Finsets.
+
+This is pure `Finset` extensionality, no analysis: the filter selects
+elements of the fiber lying in `W`, which by `s ⊆ W ⊆ U_kfold` and the
+`s`-exhausts-`U_kfold`-preimages property must be exactly `s`.
+
+After C3b.1 + C3b.2, the L1214 `ramifiedKfoldSum_locally_bounded` LHS norm
+reduces to a pure ℂ-valued Finset sum's magnitude — no more CLM / cotangent
+bundle plumbing.
+-/
+private theorem filter_fiber_eq_kfold_finset
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    {U_kfold : Set X} (W : Set X)
+    (hW_sub_U : W ⊆ U_kfold)
+    {y : Y} (s : Finset X)
+    (hs_fiber : ∀ x ∈ s, f x = y)
+    (hs_exhaust : ∀ x ∈ U_kfold, f x = y → x ∈ s)
+    (hs_sub_W : (↑s : Set X) ⊆ W) :
+    (hbc.finite_fiber y).toFinset.filter (· ∈ W) = s := by
+  classical
+  apply Finset.ext
+  intro x'
+  simp only [Finset.mem_filter, Set.Finite.mem_toFinset, Set.mem_preimage,
+    Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨hfx'y, hx'W⟩
+    -- f x' = y, x' ∈ W ⊆ U_kfold, so x' ∈ s by exhaustion.
+    exact hs_exhaust x' (hW_sub_U hx'W) hfx'y
+  · intro hx's
+    refine ⟨hs_fiber x' hx's, ?_⟩
+    -- x' ∈ s ⊆ W (as sets), so x' ∈ W.
+    exact hs_sub_W hx's
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**Bridging corollary: filter-CLM-norm = `s_y`-scalar-magnitude
+(Commit C3b.2 — sorry-free corollary).**
+
+Combines C3b.1 (`filter_fiber_eq_kfold_finset`) with C3a.2
+(`norm_traceSum_eq_abs_scalarSum`) to express the
+`ramifiedKfoldSum_locally_bounded` LHS norm directly in terms of the
+explicit chart-local complex-valued Finset sum over `s`, i.e. the
+kfold-structural Finset of `k` unramified preimages. After this corollary,
+the remaining boundedness obligation is `|complex Finset sum| ≤ M`
+— pure ℂ.
+-/
+private theorem norm_filterSum_eq_norm_kfoldScalarSum
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f) (η : HolomorphicOneForm ℂ X)
+    {U_kfold : Set X} (W : Set X) (hW_sub_U : W ⊆ U_kfold)
+    {y : Y} (s : Finset X)
+    (hs_unram : ∀ x ∈ s, hbc.ramificationIndex x = 1)
+    (hs_fiber : ∀ x ∈ s, f x = y)
+    (hs_exhaust : ∀ x ∈ U_kfold, f x = y → x ∈ s)
+    (hs_sub_W : (↑s : Set X) ⊆ W) :
+    ‖(((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+        (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ)‖ =
+      ‖s.attach.sum (fun x =>
+        ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+          (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+  rw [filter_fiber_eq_kfold_finset hbc W hW_sub_U s hs_fiber hs_exhaust hs_sub_W]
+  exact norm_traceSum_eq_abs_scalarSum hbc hcompat hHol η s hs_unram
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] in
+/--
+**Chart-stability rewrite of the per-summand derivative factor
+(Commit C3c.1 — sorry-free helper).**
+
+When `x` lies in the chart source of `chartAt ℂ x₀` and `f x` lies in
+the chart source of `chartAt ℂ (f x₀)`, the `StableChartAt` typeclasses
+identify both `chartAt ℂ x = chartAt ℂ x₀` (on `X`) and
+`chartAt ℂ (f x) = chartAt ℂ (f x₀)` (on `Y`). Hence
+`chartLocalAt f x = chartLocalAt f x₀` as functions `ℂ → ℂ`, and the
+chart-evaluation `chartAt ℂ x x = chartAt ℂ x₀ x`, so the per-summand
+derivative factor rewrites uniformly.
+
+After C3c every per-summand factor in the scalar Finset sum refers to
+the SAME `chartLocalAt f x₀` evaluated at chart coordinates
+`chart x₀ x_j`, which is exactly the form Commits A/B
+(`chartLocal_zPow_form_of_ramified`, `chartLocal_deriv_of_zPow_form`)
+give explicit `φ`/`φ'` formulas for. This unblocks the C3d substitution.
+-/
+private theorem chartLocalAt_deriv_eq_of_chart_source
+    {f : X → Y} {x₀ : X} {x : X}
+    (hx_source : x ∈ (chartAt ℂ x₀).source)
+    (hfx_source : f x ∈ (chartAt ℂ (f x₀)).source) :
+    deriv (chartLocalAt f x) (chartAt ℂ x x) =
+      deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x) := by
+  -- Both chart-stability identifications.
+  have hchartX : chartAt ℂ x = chartAt ℂ x₀ :=
+    JacobianChallenge.Periods.StableChartAt.chartAt_eq_of_mem_source x₀ x hx_source
+  have hchartY : chartAt ℂ (f x) = chartAt ℂ (f x₀) :=
+    JacobianChallenge.Periods.StableChartAt.chartAt_eq_of_mem_source (f x₀) (f x) hfx_source
+  -- chartLocalAt f x = chartLocalAt f x₀ as functions (both sides unfold to the same composition).
+  have hfun : chartLocalAt f x = chartLocalAt f x₀ := by
+    unfold chartLocalAt
+    rw [hchartX, hchartY]
+  -- Evaluation point: chartAt ℂ x x = chartAt ℂ x₀ x.
+  have hpt : (chartAt ℂ x) x = (chartAt ℂ x₀) x := by rw [hchartX]
+  rw [hfun, hpt]
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] in
+/--
+**Lift the chart-stability rewrite to the full scalar Finset sum
+(Commit C3c.2 — sorry-free corollary).**
+
+Under the per-summand chart-source-membership hypotheses, the explicit
+ℂ-scalar Finset sum (from C3a's `norm_traceSum_eq_abs_scalarSum`) is
+unchanged when each per-summand factor `deriv (chartLocalAt f x.1)(chart x.1 x.1)`
+is replaced by `deriv (chartLocalAt f x₀)(chart x₀ x.1)`. This puts the
+sum in the form needed to apply Commits A/B in C3d.
+-/
+private theorem scalarSum_factor_eq_x0_chart_form
+    {f : X → Y} (x₀ : X) (η : HolomorphicOneForm ℂ X)
+    (s : Finset X)
+    (hs_source : ∀ x ∈ s, x ∈ (chartAt ℂ x₀).source)
+    (hs_fsource : ∀ x ∈ s, f x ∈ (chartAt ℂ (f x₀)).source) :
+    s.attach.sum (fun x =>
+      ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) =
+    s.attach.sum (fun x =>
+      ((deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) := by
+  refine Finset.sum_congr rfl ?_
+  rintro ⟨x, hx_mem⟩ _
+  rw [chartLocalAt_deriv_eq_of_chart_source
+    (hs_source x hx_mem) (hs_fsource x hx_mem)]
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Substitute Commit B's `k · φ^{k-1} · φ'` derivative formula into the
+scalar Finset sum (Commit C3d.1 — sorry-free helper).**
+
+After C3c the per-summand derivative factor in the scalar sum refers
+uniformly to `deriv (chartLocalAt f x₀)(chart x₀ x.1)`. Given the
+per-summand hypothesis that Commit B's `chartLocal_deriv_of_zPow_form`
+formula holds at each `chart x₀ x.1` (which C4 will arrange by picking
+`W ⊆ X` small enough that `chart x₀ x` lies in Commit B's
+eventually-neighborhood for all `x ∈ W`), substitute the formula
+into each summand via `Finset.sum_congr`.
+
+After C3d.1 each per-summand denominator has the explicit chart-local
+`k · φ(z)^{k-1} · φ'(z)` form, ready for C4's roots-of-unity cancellation.
+-/
+private theorem scalarSum_in_phi_form
+    {f : X → Y} (x₀ : X) (η : HolomorphicOneForm ℂ X)
+    (k : ℕ) (φ : ℂ → ℂ)
+    (s : Finset X)
+    (h_deriv_formula : ∀ x ∈ s,
+      deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x) =
+        (k : ℂ) * φ (chartAt ℂ x₀ x) ^ (k - 1) * deriv φ (chartAt ℂ x₀ x)) :
+    s.attach.sum (fun x =>
+      ((deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) =
+    s.attach.sum (fun x =>
+      (((k : ℂ) * φ (chartAt ℂ x₀ x.1) ^ (k - 1) *
+          deriv φ (chartAt ℂ x₀ x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1)) := by
+  refine Finset.sum_congr rfl ?_
+  rintro ⟨x, hx_mem⟩ _
+  rw [h_deriv_formula x hx_mem]
+
+omit [T2Space X] [CompactSpace X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] in
+/--
+**End-to-end bridging corollary: filter-CLM-norm = `φ`/`φ'`-form
+scalar magnitude (Commit C3d.2 — sorry-free corollary).**
+
+Chains C3b.2 (`norm_filterSum_eq_norm_kfoldScalarSum`) → C3c.2
+(`scalarSum_factor_eq_x0_chart_form`) → C3d.1 (`scalarSum_in_phi_form`)
+into a single norm equality. After this corollary the
+`ramifiedKfoldSum_locally_bounded` LHS norm has the literal `φ`/`φ'`
+rational form, ready for C4's analytic cancellation argument.
+-/
+private theorem norm_filterSum_eq_norm_phiForm
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (hHol : IsHolomorphic f) (η : HolomorphicOneForm ℂ X)
+    (x₀ : X) (k : ℕ) (φ : ℂ → ℂ)
+    {U_kfold : Set X} (W : Set X) (hW_sub_U : W ⊆ U_kfold)
+    {y : Y} (s : Finset X)
+    (hs_unram : ∀ x ∈ s, hbc.ramificationIndex x = 1)
+    (hs_fiber : ∀ x ∈ s, f x = y)
+    (hs_exhaust : ∀ x ∈ U_kfold, f x = y → x ∈ s)
+    (hs_sub_W : (↑s : Set X) ⊆ W)
+    (hs_source : ∀ x ∈ s, x ∈ (chartAt ℂ x₀).source)
+    (hs_fsource : ∀ x ∈ s, f x ∈ (chartAt ℂ (f x₀)).source)
+    (h_deriv_formula : ∀ x ∈ s,
+      deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x) =
+        (k : ℂ) * φ (chartAt ℂ x₀ x) ^ (k - 1) * deriv φ (chartAt ℂ x₀ x)) :
+    ‖(((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+        (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ)‖ =
+    ‖s.attach.sum (fun x =>
+      (((k : ℂ) * φ (chartAt ℂ x₀ x.1) ^ (k - 1) *
+          deriv φ (chartAt ℂ x₀ x.1))⁻¹) •
+        (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+  -- Chain the three equalities transitively.
+  calc ‖(((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+        (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+          CotangentModelFiber ℂ)) : CotangentModelFiber ℂ)‖
+      = ‖s.attach.sum (fun x =>
+          ((deriv (chartLocalAt f x.1) (chartAt ℂ x.1 x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ :=
+        norm_filterSum_eq_norm_kfoldScalarSum hbc hcompat hHol η W hW_sub_U s
+          hs_unram hs_fiber hs_exhaust hs_sub_W
+    _ = ‖s.attach.sum (fun x =>
+          ((deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+        rw [scalarSum_factor_eq_x0_chart_form x₀ η s hs_source hs_fsource]
+    _ = ‖s.attach.sum (fun x =>
+          (((k : ℂ) * φ (chartAt ℂ x₀ x.1) ^ (k - 1) *
+              deriv φ (chartAt ℂ x₀ x.1))⁻¹) •
+            (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))‖ := by
+        congr 1
+        exact scalarSum_in_phi_form x₀ η k φ s h_deriv_formula
+
+/-! ### Commit C4-pre helpers: chart-local bijection `s_y ↔ Fin k` via `φ⁻¹`. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Layer-C bijection prerequisite (C4-pre.1) — local inverse of `φ` near
+`z₀` (sorry-free helper).**
+
+Given Commit A's `φ` (analytic at `z₀`, `φ z₀ = 0`, `deriv φ z₀ ≠ 0`),
+the inverse function theorem produces a local inverse
+`r : ℂ → ℂ` with `r (φ z₀) = z₀` and the right-inverse property
+`∀ᶠ ε in 𝓝 (φ z₀), φ (r ε) = ε`. Since `φ z₀ = 0`, `r 0 = z₀` and the
+right-inverse property holds eventually near `0 : ℂ`.
+
+This is **C4-pre.1**: the first ingredient of the chart-local bijection.
+C4-pre.2 (`kthRoot_branch`) provides `(·)^{1/k}` so C4-pre.3 can compose
+to get the candidate preimages `r(ζ^j · w^{1/k})`.
+-/
+private theorem phi_localInverse_exists
+    {φ : ℂ → ℂ} {z₀ : ℂ} (hφ_an : AnalyticAt ℂ φ z₀)
+    (hφ_z₀ : φ z₀ = 0)
+    (hφ_deriv : deriv φ z₀ ≠ 0) :
+    ∃ r : ℂ → ℂ, r 0 = z₀ ∧
+      (∀ᶠ ε in 𝓝 (0 : ℂ), φ (r ε) = ε) ∧
+      (∀ᶠ z in 𝓝 z₀, r (φ z) = z) := by
+  -- φ has a strict derivative at z₀, namely deriv φ z₀.
+  have hSD : HasStrictDerivAt φ (deriv φ z₀) z₀ := hφ_an.hasStrictDerivAt
+  -- Construct the local inverse via the inverse function theorem.
+  refine ⟨hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv, ?_, ?_, ?_⟩
+  · -- r 0 = z₀: rewrite via φ z₀ = 0, then `eventually_left_inverse` at z₀.
+    have hL : ∀ᶠ z in 𝓝 z₀, hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv (φ z) = z :=
+      hSD.eventually_left_inverse hφ_deriv
+    -- Specialize at z = z₀.
+    have hz₀ : hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv (φ z₀) = z₀ := hL.self_of_nhds
+    -- Substitute φ z₀ = 0.
+    rwa [hφ_z₀] at hz₀
+  · -- right inverse: φ (r ε) = ε for ε near φ z₀ = 0.
+    have hR : ∀ᶠ ε in 𝓝 (φ z₀), φ (hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv ε) = ε :=
+      hSD.eventually_right_inverse hφ_deriv
+    rwa [hφ_z₀] at hR
+  · -- left inverse: r (φ z) = z for z near z₀.
+    exact hSD.eventually_left_inverse hφ_deriv
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Layer-C bijection prerequisite (C4-pre.2) — `k`-th root branch (sorry-free
+helper).**
+
+Choose the principal `k`-th root via `Complex.cpow` with exponent `k⁻¹`:
+`kthRoot w := w ^ ((k : ℂ)⁻¹)`. For `k > 0`, this satisfies
+`(kthRoot w)^k = w` for every `w : ℂ` (a consequence of
+`Complex.cpow_nat_inv_pow`).
+
+This is **C4-pre.2**: the chosen branch of the `k`-th root. C4-pre.3 will
+compose `phi_localInverse_exists.r ∘ (ζ^j · ·) ∘ kthRoot` to produce
+the candidate chart-local preimages.
+-/
+private theorem kthRoot_branch_pow_eq
+    {k : ℕ} (hk : k ≠ 0) (w : ℂ) :
+    (w ^ ((k : ℂ)⁻¹)) ^ k = w :=
+  Complex.cpow_nat_inv_pow w hk
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Layer-C bijection prerequisite (C4-pre.3) — chart-coordinate value
+of the candidate preimage (sorry-free helper).**
+
+Let `r` be the local inverse of `φ` from `phi_localInverse_exists`,
+and `kthRoot w := w ^ ((k : ℂ)⁻¹)`. For `j ∈ Fin k`, `ζ` a primitive
+`k`-th root of unity, and `w ∈ ℂ` with `ζ^j · kthRoot w` in `r`'s
+right-inverse neighborhood, the chart-local map at `r(ζ^j · kthRoot w)`
+takes the value `chartAt ℂ (f x₀) (f x₀) + w`:
+
+  `chartLocalAt f x₀ (r (ζ^j · kthRoot w)) = c₀ + w`
+
+This uses the chart-local power form (Commit A) `chartLocalAt f x₀ z - c₀ = φ(z)^k`,
+the right-inverse property `φ(r ε) = ε`, the kth-root identity
+`(kthRoot w)^k = w`, and the primitive-root identity `ζ^(j·k) = (ζ^k)^j = 1`.
+
+This is **C4-pre.3**: the chart-level identity at the candidate preimage.
+C4-pre.4 will use this to map back through the chart, conclude
+`f (chart-preimage) = y`, and verify the bijection with `s_y`.
+-/
+private theorem chart_preimage_at_kthRoot_chart_eq
+    {f : X → Y} {x₀ : X}
+    {k : ℕ}
+    {φ r kthRoot : ℂ → ℂ}
+    (h_pow_form_at : ∀ z, chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀) = φ z ^ k)
+    (h_right_inv_at : ∀ ε, φ (r ε) = ε)
+    (h_kthRoot_pow : ∀ w, (kthRoot w) ^ k = w)
+    {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (j : ℕ) (w : ℂ) :
+    chartLocalAt f x₀ (r ((ζ ^ j) * kthRoot w)) =
+      chartAt ℂ (f x₀) (f x₀) + w := by
+  -- (LHS - c₀) = φ(r(ζ^j * kthRoot w))^k by h_pow_form_at
+  --            = (ζ^j * kthRoot w)^k by h_right_inv_at
+  --            = ζ^(jk) * (kthRoot w)^k by mul_pow
+  --            = (ζ^k)^j * w by ζ-commutativity and h_kthRoot_pow
+  --            = 1^j * w = w by hζ.pow_eq_one
+  have h_LHS_sub : chartLocalAt f x₀ (r ((ζ ^ j) * kthRoot w)) -
+      chartAt ℂ (f x₀) (f x₀) = w := by
+    rw [h_pow_form_at, h_right_inv_at, mul_pow, h_kthRoot_pow]
+    rw [show (ζ ^ j) ^ k = (ζ ^ k) ^ j from by rw [← pow_mul, ← pow_mul, Nat.mul_comm]]
+    rw [hζ.pow_eq_one, one_pow, one_mul]
+  linear_combination h_LHS_sub
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**Layer-C bijection prerequisite (C4-pre.4) — chart-preimage of the
+candidate maps under `f` to the predetermined `y` (sorry-free helper).**
+
+Combining C4-pre.3's chart-coordinate identity with the assumption that
+both `f (chart-preimage)` and the predetermined `y` lie in
+`(chartAt ℂ (f x₀)).source` (so the partial chart is injective on them),
+the candidate chart-preimage `x_j(w) := (chart x₀).symm (r (ζ^j · kthRoot w))`
+satisfies `f (x_j(w)) = y` when `chart y₀ y - c₀ = w`.
+
+The hypothesis `h_chart_preim_source` (the candidate is in `(chart x₀)`'s
+source) is what `C4` will arrange by choosing `W` small enough; similarly
+`h_y_source` (y near y₀ in chart source) follows for small `V` near `y₀`.
+
+This is **C4-pre.4**: candidate preimage really IS a preimage of `y`.
+Together with C4-pre.{1,2,3}, this gives the four chart-local primitives
+the C4 cancellation argument needs.
+-/
+private theorem chart_preimage_at_kthRoot_in_fiber
+    {f : X → Y} {x₀ : X}
+    {k : ℕ}
+    {φ r kthRoot : ℂ → ℂ}
+    (h_pow_form_at : ∀ z, chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀) = φ z ^ k)
+    (h_right_inv_at : ∀ ε, φ (r ε) = ε)
+    (h_kthRoot_pow : ∀ w, (kthRoot w) ^ k = w)
+    {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (j : ℕ) {y : Y} (w : ℂ)
+    (h_y_chart_eq : chartAt ℂ (f x₀) y = chartAt ℂ (f x₀) (f x₀) + w)
+    (h_y_source : y ∈ (chartAt ℂ (f x₀)).source)
+    (h_f_chart_preim_source :
+      f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w))) ∈ (chartAt ℂ (f x₀)).source) :
+    f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w))) = y := by
+  -- Step 1: chartLocalAt f x₀ at the candidate equals c₀ + w (C4-pre.3).
+  have h_chartLocal_val := chart_preimage_at_kthRoot_chart_eq
+    (f := f) (x₀ := x₀) (k := k)
+    (φ := φ) (r := r) (kthRoot := kthRoot)
+    h_pow_form_at h_right_inv_at h_kthRoot_pow hζ j w
+  -- Step 2: unfold chartLocalAt to identify
+  --   chartAt ℂ (f x₀) (f ((chart x₀).symm (r (ζ^j · kthRoot w)))) = c₀ + w.
+  have h_chartY_val :
+      chartAt ℂ (f x₀) (f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w)))) =
+        chartAt ℂ (f x₀) (f x₀) + w := by
+    -- chartLocalAt f x₀ z = chartAt ℂ (f x₀) (f ((chart x₀).symm z)) by def.
+    have hdef : chartLocalAt f x₀ (r ((ζ ^ j) * kthRoot w)) =
+        chartAt ℂ (f x₀) (f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w)))) := by
+      unfold chartLocalAt
+      rfl
+    rw [← hdef]
+    exact h_chartLocal_val
+  -- Step 3: now `chartAt ℂ (f x₀)` is injective on its source; identify f(candidate) with y.
+  -- chartAt ℂ (f x₀) (f candidate) = c₀ + w = chartAt ℂ (f x₀) y by h_y_chart_eq.
+  have hchart_eq :
+      chartAt ℂ (f x₀) (f ((chartAt ℂ x₀).symm (r ((ζ ^ j) * kthRoot w)))) =
+        chartAt ℂ (f x₀) y := by
+    rw [h_chartY_val, ← h_y_chart_eq]
+  exact (chartAt ℂ (f x₀)).injOn h_f_chart_preim_source h_y_source hchart_eq
+
+/-! ### R-sub-development R1 — coefficient-vanishing for ζ-rotation-invariant analytic functions. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R1 — Coefficient-vanishing for ζ-rotation-invariant analytic functions
+(sorry-free helper; first R-leaf of the locally-built
+rotation-invariant analytic-extension theorem).**
+
+If `F : ℂ → ℂ` is analytic at `0` and satisfies the eventual rotation
+invariance `F =ᶠ[𝓝 0] (fun z => F (ζ * z))` for `ζ` a primitive `k`-th
+root of unity (`k ≠ 0`), then the `n`-th iterated derivative of `F` at
+`0` vanishes whenever `¬ k ∣ n`.
+
+Proof sketch:
+- `AnalyticAt ⇒ AnalyticOnNhd` on some open ball `B := Metric.ball 0 r`.
+- `‖ζ‖ = 1` (primitive root) ⇒ `Set.MapsTo (ζ * ·) B B`.
+- `AnalyticOnNhd ⇒ ContDiffOn ⊤` on `B`.
+- `iteratedDerivWithin_comp_const_smul` at `0`:
+  `iteratedDerivWithin n (F ∘ (ζ·)) B 0 = ζ^n • iteratedDerivWithin n F B 0`.
+- `iteratedDerivWithin_of_isOpen` to convert to `iteratedDeriv`.
+- `Filter.EventuallyEq.iteratedDeriv_eq` to get
+  `iteratedDeriv n F 0 = iteratedDeriv n (F ∘ (ζ·)) 0`.
+- Combine: `iteratedDeriv n F 0 = ζ^n • iteratedDeriv n F 0`, so
+  `(1 - ζ^n) • iteratedDeriv n F 0 = 0`.
+- `ζ^n ≠ 1` (from `¬ k ∣ n` + `IsPrimitiveRoot.dvd_of_pow_eq_one`).
+- Conclude `iteratedDeriv n F 0 = 0`.
+
+This is the algebraic engine for the rotation-invariant analytic-extension
+theorem `R-final`: the coefficient vanishing it establishes is what makes
+a `ζ`-rotation-invariant analytic function factor as `G(z^k)` for some
+analytic `G`.
+-/
+private theorem iteratedDeriv_zero_of_eventually_rotation_invariant
+    {F : ℂ → ℂ} (hF : AnalyticAt ℂ F 0)
+    {k : ℕ} (hk : k ≠ 0) {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (h_rot : F =ᶠ[𝓝 0] (fun z => F (ζ * z)))
+    {n : ℕ} (hn : ¬ k ∣ n) :
+    iteratedDeriv n F 0 = 0 := by
+  -- Step 1: Extract an open ball `B := Metric.ball 0 r` where `F` is analytic.
+  obtain ⟨r, hr_pos, hF_an⟩ := hF.exists_ball_analyticOnNhd
+  set B : Set ℂ := Metric.ball 0 r with hB_def
+  have hB_open : IsOpen B := Metric.isOpen_ball
+  have h0_mem : (0 : ℂ) ∈ B := by
+    simp [hB_def, Metric.mem_ball, hr_pos]
+  -- Step 2: `‖ζ‖ = 1` ⇒ MapsTo (ζ * ·) B B.
+  have hζ_norm : ‖ζ‖ = 1 := hζ.norm'_eq_one hk
+  have hmaps : Set.MapsTo (fun z => ζ * z) B B := by
+    intro z hz
+    simp only [hB_def, Metric.mem_ball, dist_zero_right] at hz ⊢
+    rw [norm_mul, hζ_norm, one_mul]
+    exact hz
+  -- Step 3: `AnalyticOnNhd ⇒ ContDiffOn ⊤` on `B`.
+  have hUnique : UniqueDiffOn ℂ B := hB_open.uniqueDiffOn
+  have hContDiff : ContDiffOn ℂ (n : WithTop ℕ∞) F B :=
+    (hF_an.contDiffOn hUnique).of_le (by exact_mod_cast le_top)
+  -- Step 4: Apply `iteratedDerivWithin_comp_const_smul` at `x = 0`.
+  have h_step :
+      iteratedDerivWithin n (fun x => F (ζ * x)) B 0 =
+        ζ ^ n • iteratedDerivWithin n F B (ζ * 0) :=
+    iteratedDerivWithin_comp_const_smul h0_mem hUnique hContDiff ζ hmaps
+  rw [mul_zero] at h_step
+  -- Step 5: Convert iteratedDerivWithin to iteratedDeriv on the open ball.
+  have h_within_to_full_F :
+      iteratedDerivWithin n F B 0 = iteratedDeriv n F 0 :=
+    iteratedDerivWithin_of_isOpen hB_open h0_mem
+  have h_within_to_full_Fcomp :
+      iteratedDerivWithin n (fun x => F (ζ * x)) B 0 =
+        iteratedDeriv n (fun x => F (ζ * x)) 0 :=
+    iteratedDerivWithin_of_isOpen hB_open h0_mem
+  rw [h_within_to_full_F, h_within_to_full_Fcomp] at h_step
+  -- h_step : iteratedDeriv n (fun x => F (ζ * x)) 0 = ζ^n • iteratedDeriv n F 0.
+  -- Step 6: Lift `h_rot` to iterated derivatives.
+  have h_eq_iter :
+      iteratedDeriv n F 0 = iteratedDeriv n (fun x => F (ζ * x)) 0 :=
+    Filter.EventuallyEq.iteratedDeriv_eq n h_rot
+  -- Combine: iteratedDeriv n F 0 = ζ^n • iteratedDeriv n F 0.
+  have h_fixed :
+      iteratedDeriv n F 0 = ζ ^ n • iteratedDeriv n F 0 :=
+    h_eq_iter.trans h_step
+  -- Step 7: Show ζ^n ≠ 1.
+  have hζ_pow_ne_one : ζ ^ n ≠ 1 := fun h => hn (hζ.dvd_of_pow_eq_one n h)
+  -- Step 8: From `iteratedDeriv n F 0 = ζ^n • iteratedDeriv n F 0`, deduce vanishing.
+  -- (1 - ζ^n) • iteratedDeriv n F 0 = 0; (1 - ζ^n) ≠ 0 in ℂ ⇒ smul_eq_zero gives the result.
+  have h_sub : (1 - ζ ^ n) • iteratedDeriv n F 0 = 0 := by
+    rw [sub_smul, one_smul, sub_eq_zero]
+    exact h_fixed
+  have h_sub_ne : (1 - ζ ^ n) ≠ 0 := sub_ne_zero_of_ne (Ne.symm hζ_pow_ne_one)
+  exact (smul_eq_zero.mp h_sub).resolve_left h_sub_ne
+
+/-! ### R-sub-development R2 — Taylor-coefficient vanishing bundled with the canonical Taylor power series. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R2 — Taylor-coefficient vanishing bundled with the canonical Taylor
+power series (sorry-free helper; second R-leaf of the locally-built
+rotation-invariant analytic-extension theorem).**
+
+Combining R1 with Mathlib's `AnalyticAt.hasFPowerSeriesAt`, the canonical
+Taylor coefficient function `a n := iteratedDeriv n F 0 / n.factorial` of
+a ζ-rotation-invariant analytic function `F` near `0` both (i) provides
+the formal power series witness `HasFPowerSeriesAt F (ofScalars ℂ a) 0`,
+and (ii) vanishes for every `n` with `¬ k ∣ n`.
+
+This bundles everything R3 needs to define the surviving-coefficient
+function `b m := a (k * m)` and to prove the convergence of the
+corresponding formal series `ofScalars ℂ b`.
+
+Mathlib primitives:
+- `AnalyticAt.hasFPowerSeriesAt` (in `IteratedDeriv.Defs`, requires
+  `[RCLike 𝕜]` or `[NontriviallyNormedField + CompleteSpace + CharZero]`
+  — ℂ satisfies both via `RCLike`).
+- R1 (`iteratedDeriv_zero_of_eventually_rotation_invariant`) — the
+  iteratedDeriv vanishing this lemma divides by `n!`.
+-/
+private theorem taylorCoeff_zero_of_eventually_rotation_invariant
+    {F : ℂ → ℂ} (hF : AnalyticAt ℂ F 0)
+    {k : ℕ} (hk : k ≠ 0) {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (h_rot : F =ᶠ[𝓝 0] (fun z => F (ζ * z))) :
+    HasFPowerSeriesAt F
+      (FormalMultilinearSeries.ofScalars ℂ
+        (fun n => iteratedDeriv n F 0 / (n.factorial : ℂ))) 0 ∧
+    ∀ n, ¬ k ∣ n → iteratedDeriv n F 0 / (n.factorial : ℂ) = 0 := by
+  refine ⟨hF.hasFPowerSeriesAt, ?_⟩
+  intro n hn
+  rw [iteratedDeriv_zero_of_eventually_rotation_invariant hF hk hζ h_rot hn,
+      zero_div]
+
+/-! ### R-sub-development R3 — `tsum` reindexing under `n ↦ k * n` for vanish-off-multiples-of-k sequences. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R3 — `tsum` reindexing under `n ↦ k * n` for vanish-off-multiples-of-`k`
+sequences (sorry-free helper; third R-leaf of the locally-built
+rotation-invariant analytic-extension theorem).**
+
+For any sequence `a : ℕ → ℂ` vanishing whenever `¬ k ∣ n` (and `k ≠ 0`),
+the `w`-weighted `tsum` reindexes through the surviving multiples of `k`:
+
+  `∑' n, a n * w^n = ∑' m, a (k * m) * w^(k * m)`
+
+This is the direct tsum identity R4 (R-final) will combine with R2's
+`HasFPowerSeriesAt`-summability witness to conclude
+`G(z^k) = F z` near `0`, where `G(w) := ∑' m, a (k * m) * w^m`.
+
+Mathlib primitive: `Function.Injective.tsum_eq` (in
+`Mathlib.Topology.Algebra.InfiniteSum.Basic`, via `to_additive` of
+`Function.Injective.tprod_eq` at line ~525):
+  `{g : γ → β} (hg : Injective g) {f : β → α} (hf : support f ⊆ Set.range g) :
+   ∑' c, f (g c) = ∑' b, f b`.
+
+Applied with `g := (k * ·)` (injective on `ℕ` since `k ≠ 0`),
+`f := fun n => a n * w^n`. The support condition holds: if
+`a n * w^n ≠ 0`, then `a n ≠ 0`, so `k ∣ n` (contrapositive of the
+vanishing hypothesis), so `n ∈ Set.range g`.
+-/
+private theorem tsum_pow_eq_tsum_pow_of_zero_off_dvd
+    {a : ℕ → ℂ} {k : ℕ} (hk : k ≠ 0)
+    (h_vanish : ∀ n, ¬ k ∣ n → a n = 0) (w : ℂ) :
+    ∑' n, a n * w ^ n = ∑' m, a (k * m) * w ^ (k * m) := by
+  -- Step 1: the multiplication-by-k map is injective on `ℕ` (since `k ≠ 0`).
+  have hg_inj : Function.Injective (fun m : ℕ => k * m) := by
+    intro m₁ m₂ heq
+    exact Nat.eq_of_mul_eq_mul_left (Nat.pos_of_ne_zero hk) heq
+  -- Step 2: support condition. If `a n * w^n ≠ 0`, then `a n ≠ 0`,
+  -- hence `k ∣ n` (contrapositive of `h_vanish`), hence `n = k * (n/k) ∈ range g`.
+  have h_supp : Function.support (fun n => a n * w ^ n) ⊆
+      Set.range (fun m : ℕ => k * m) := by
+    intro n hn
+    have ha_ne : a n ≠ 0 := by
+      intro ha
+      apply hn
+      simp [ha]
+    have h_dvd : k ∣ n := by
+      by_contra h
+      exact ha_ne (h_vanish n h)
+    obtain ⟨m, hm⟩ := h_dvd
+    exact ⟨m, hm.symm⟩
+  -- Step 3: apply Function.Injective.tsum_eq.
+  exact (hg_inj.tsum_eq h_supp).symm
+
+/-! ### R-sub-development R4a — convergence of the surviving-coefficient series. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R4a — Convergence of the surviving-coefficient series (sorry-free
+helper; fourth R-leaf of the locally-built rotation-invariant
+analytic-extension theorem).**
+
+Given a sequence `a : ℕ → ℂ` whose Taylor series
+`p := FormalMultilinearSeries.ofScalars ℂ a` has positive radius, and
+which vanishes off multiples of `k` (`k ≠ 0`), the formal power series
+of the surviving coefficients
+`q := FormalMultilinearSeries.ofScalars ℂ (fun m => a (k * m))`
+also has positive radius.
+
+Proof: pick `r : ℝ≥0` with `0 < r < (ofScalars ℂ a).radius`. By
+`p.summable_nnnorm_mul_pow`, `Summable (fun n => ‖p n‖₊ * r^n)`. Using
+the vanishing hypothesis, terms outside `Set.range (k * ·)` are zero,
+so by `Function.Injective.hasSum_iff` (with the multiplication-by-k
+injection) the reindexed series
+`(fun m => ‖p (k*m)‖₊ * r^(k*m)) = (fun m => ‖q m‖₊ * (r^k)^m)`
+is also summable. Apply `q.le_radius_of_summable_nnnorm` to get
+`(r^k : ℝ≥0∞) ≤ q.radius`. Positivity follows from `r > 0` and `k ≠ 0`.
+
+This is **R4a** in the R-sub-development. R4b (R-final) consumes R4a
+to define `G := q.sum` (analytic at `0` via `q.hasFPowerSeriesOnBall`)
+and proves the extension identity `F z = G(z^k)`.
+-/
+private theorem ofScalars_surviving_radius_pos
+    {a : ℕ → ℂ} {k : ℕ} (hk : k ≠ 0)
+    (h_vanish : ∀ n, ¬ k ∣ n → a n = 0)
+    (h_pos : 0 < (FormalMultilinearSeries.ofScalars ℂ a).radius) :
+    0 < (FormalMultilinearSeries.ofScalars ℂ (fun m => a (k * m))).radius := by
+  set p : FormalMultilinearSeries ℂ ℂ ℂ := FormalMultilinearSeries.ofScalars ℂ a
+    with hp_def
+  set q : FormalMultilinearSeries ℂ ℂ ℂ :=
+    FormalMultilinearSeries.ofScalars ℂ (fun m => a (k * m)) with hq_def
+  -- Step 1: pick r : ℝ≥0 with 0 < (r : ℝ≥0∞) < p.radius.
+  obtain ⟨r, hr_pos, hr_lt⟩ : ∃ r : ℝ≥0, 0 < r ∧ (r : ℝ≥0∞) < p.radius := by
+    rcases ENNReal.lt_iff_exists_nnreal_btwn.mp h_pos with ⟨r, hr_pos, hr_lt⟩
+    exact ⟨r, ENNReal.coe_pos.mp hr_pos, hr_lt⟩
+  -- Step 2: summability of (fun n => ‖p n‖₊ * r^n).
+  have h_summable_a : Summable (fun n : ℕ => ‖p n‖₊ * r ^ n) :=
+    p.summable_nnnorm_mul_pow hr_lt
+  -- Step 3: for each n, ‖p n‖₊ = ‖a n‖₊. So the vanishing-off-multiples-of-k
+  -- carries over: ‖p n‖₊ * r^n = 0 when ¬ k ∣ n.
+  have h_pnorm_eq : ∀ n, ‖p n‖₊ = ‖a n‖₊ := by
+    intro n
+    have : ‖p n‖₊ = ‖a n‖₊ * ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ n ℂ‖₊ := by
+      simp [hp_def, FormalMultilinearSeries.ofScalars, nnnorm_smul]
+    rw [this, show
+      ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ n ℂ‖₊ = 1 from
+        Subtype.ext (ContinuousMultilinearMap.norm_mkPiAlgebraFin), mul_one]
+  -- Similarly for q.
+  have h_qnorm_eq : ∀ m, ‖q m‖₊ = ‖a (k * m)‖₊ := by
+    intro m
+    have : ‖q m‖₊ = ‖a (k * m)‖₊ * ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ m ℂ‖₊ := by
+      simp [hq_def, FormalMultilinearSeries.ofScalars, nnnorm_smul]
+    rw [this, show
+      ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ m ℂ‖₊ = 1 from
+        Subtype.ext (ContinuousMultilinearMap.norm_mkPiAlgebraFin), mul_one]
+  -- Step 4: vanishing.
+  have hp_vanish : ∀ n, ¬ k ∣ n → ‖p n‖₊ * r ^ n = 0 := by
+    intro n hn
+    rw [h_pnorm_eq n, h_vanish n hn]
+    simp
+  -- Step 5: reindex via Function.Injective.hasSum_iff.
+  have hg_inj : Function.Injective (fun m : ℕ => k * m) := fun m₁ m₂ heq =>
+    Nat.eq_of_mul_eq_mul_left (Nat.pos_of_ne_zero hk) heq
+  -- Term equality: (fun m => ‖q m‖₊ * (r^k)^m) = (fun n => ‖p n‖₊ * r^n) ∘ (fun m => k*m).
+  have h_term_eq : ∀ m : ℕ,
+      ‖q m‖₊ * (r ^ k) ^ m = ‖p (k * m)‖₊ * r ^ (k * m) := by
+    intro m
+    rw [h_qnorm_eq m, h_pnorm_eq (k * m), ← pow_mul, Nat.mul_comm k m]
+  -- Off-range vanishing for the composition.
+  have h_off_range : ∀ n, n ∉ Set.range (fun m : ℕ => k * m) →
+      ‖p n‖₊ * r ^ n = 0 := by
+    intro n hn_range
+    have hn_ndvd : ¬ k ∣ n := fun ⟨m, hm⟩ => hn_range ⟨m, hm.symm⟩
+    exact hp_vanish n hn_ndvd
+  -- Apply Function.Injective.hasSum_iff to lift summability through the injection.
+  obtain ⟨s, hs⟩ := h_summable_a
+  have h_summable_b : Summable (fun m : ℕ => ‖q m‖₊ * (r ^ k) ^ m) := by
+    refine ⟨s, ?_⟩
+    rw [funext h_term_eq]
+    exact (hg_inj.hasSum_iff h_off_range).mpr hs
+  -- Step 6: apply le_radius_of_summable_nnnorm.
+  have hrk_le_q_radius : (r ^ k : ℝ≥0∞) ≤ q.radius := by
+    have := q.le_radius_of_summable_nnnorm h_summable_b
+    -- The lemma gives ↑(r ^ k) ≤ q.radius; coerce.
+    simpa using this
+  -- Step 7: r^k > 0.
+  have hrk_pos : (0 : ℝ≥0) < r ^ k := pow_pos hr_pos k
+  refine lt_of_lt_of_le ?_ hrk_le_q_radius
+  exact_mod_cast hrk_pos
+
+/-! ### R-sub-development R4b — rotation-invariant analytic-extension theorem (R-final). -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/--
+**R4b (R-final) — Rotation-invariant analytic-extension theorem
+(sorry-free helper; caps the locally-built pure-ℂ R-sub-development
+that replaces the Mathlib v4.28.0 gap).**
+
+If `F : ℂ → ℂ` is analytic at `0`, ζ is a primitive `k`-th root of unity
+(`k ≠ 0`), and `F =ᶠ[𝓝 0] (fun z => F (ζ * z))`, then there exists
+`G : ℂ → ℂ` analytic at `0` with `F z = G (z^k)` near `0`.
+
+Proof: consume R4a for convergence (`0 < q.radius`); define `G := q.sum`;
+`G` is analytic via `q.hasFPowerSeriesOnBall`; the extension identity
+`F z = G(z^k)` follows from reindexing the HasSum identity of `F`'s
+power series via `Function.Injective.hasSum_iff` plus `HasSum.unique`
+matching the LHS `HasSum` against the RHS `HasSum` (for `q` applied at `z^k`).
+
+The eball-membership step `z^k ∈ Metric.eball 0 q.radius` is established
+by an internal re-derivation of the convergence bound (using the same
+`Function.Injective.hasSum_iff` reindex as R4a, but with the explicit
+`r > 0` we choose here so we can chain strict inequalities).
+-/
+private theorem exists_analytic_extension_of_rotation_invariant
+    {F : ℂ → ℂ} (hF : AnalyticAt ℂ F 0)
+    {k : ℕ} (hk : k ≠ 0) {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    (h_rot : F =ᶠ[𝓝 0] (fun z => F (ζ * z))) :
+    ∃ G : ℂ → ℂ, AnalyticAt ℂ G 0 ∧ F =ᶠ[𝓝 0] (fun z => G (z^k)) := by
+  -- Step 1: extract Taylor data via R2.
+  obtain ⟨hF_hpw, h_vanish⟩ :=
+    taylorCoeff_zero_of_eventually_rotation_invariant hF hk hζ h_rot
+  set a : ℕ → ℂ := fun n => iteratedDeriv n F 0 / (n.factorial : ℂ) with ha_def
+  set p : FormalMultilinearSeries ℂ ℂ ℂ := FormalMultilinearSeries.ofScalars ℂ a
+    with hp_def
+  set q : FormalMultilinearSeries ℂ ℂ ℂ :=
+    FormalMultilinearSeries.ofScalars ℂ (fun m => a (k * m)) with hq_def
+  -- Step 2: unpack HasFPowerSeriesAt → HasFPowerSeriesOnBall.
+  obtain ⟨rF, hF_onBall⟩ := hF_hpw
+  have hrF_pos : 0 < rF := hF_onBall.r_pos
+  have hp_radius_pos : 0 < p.radius := lt_of_lt_of_le hrF_pos hF_onBall.r_le
+  -- Step 3: pick r : ℝ≥0 with 0 < r and (r : ℝ≥0∞) < min p.radius rF.
+  obtain ⟨r, hr_pos, hr_lt_p, hr_lt_rF⟩ :
+      ∃ r : ℝ≥0, 0 < r ∧ (r : ℝ≥0∞) < p.radius ∧ (r : ℝ≥0∞) < rF := by
+    rcases ENNReal.lt_iff_exists_nnreal_btwn.mp
+      (lt_min hp_radius_pos hrF_pos) with ⟨r, hr_pos_coe, hr_lt_min⟩
+    refine ⟨r, ENNReal.coe_pos.mp hr_pos_coe, ?_, ?_⟩
+    · exact lt_of_lt_of_le hr_lt_min (min_le_left _ _)
+    · exact lt_of_lt_of_le hr_lt_min (min_le_right _ _)
+  -- Step 4: re-derive (r^k : ℝ≥0∞) ≤ q.radius (same skeleton as R4a, but
+  -- with our chosen `r` to keep the strict inequality chain explicit).
+  have hr_lt_p_radius : (r : ℝ≥0∞) < p.radius := hr_lt_p
+  have h_summable_a : Summable (fun n : ℕ => ‖p n‖₊ * r ^ n) :=
+    p.summable_nnnorm_mul_pow hr_lt_p_radius
+  have h_pnorm_eq : ∀ n, ‖p n‖₊ = ‖a n‖₊ := by
+    intro n
+    have : ‖p n‖₊ = ‖a n‖₊ * ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ n ℂ‖₊ := by
+      simp [hp_def, FormalMultilinearSeries.ofScalars, nnnorm_smul]
+    rw [this, show
+      ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ n ℂ‖₊ = 1 from
+        Subtype.ext (ContinuousMultilinearMap.norm_mkPiAlgebraFin), mul_one]
+  have h_qnorm_eq : ∀ m, ‖q m‖₊ = ‖a (k * m)‖₊ := by
+    intro m
+    have : ‖q m‖₊ = ‖a (k * m)‖₊ * ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ m ℂ‖₊ := by
+      simp [hq_def, FormalMultilinearSeries.ofScalars, nnnorm_smul]
+    rw [this, show
+      ‖ContinuousMultilinearMap.mkPiAlgebraFin ℂ m ℂ‖₊ = 1 from
+        Subtype.ext (ContinuousMultilinearMap.norm_mkPiAlgebraFin), mul_one]
+  have hp_vanish_norm : ∀ n, ¬ k ∣ n → ‖p n‖₊ * r ^ n = 0 := by
+    intro n hn
+    rw [h_pnorm_eq n,
+        show a n = 0 from (by
+          have := h_vanish n hn
+          simp_all)]
+    simp
+  have hg_inj : Function.Injective (fun m : ℕ => k * m) := fun m₁ m₂ heq =>
+    Nat.eq_of_mul_eq_mul_left (Nat.pos_of_ne_zero hk) heq
+  have h_term_eq : ∀ m : ℕ,
+      ‖q m‖₊ * (r ^ k) ^ m = ‖p (k * m)‖₊ * r ^ (k * m) := by
+    intro m
+    rw [h_qnorm_eq m, h_pnorm_eq (k * m), ← pow_mul, Nat.mul_comm k m]
+  have h_off_range : ∀ n, n ∉ Set.range (fun m : ℕ => k * m) →
+      ‖p n‖₊ * r ^ n = 0 := by
+    intro n hn_range
+    exact hp_vanish_norm n (fun ⟨m, hm⟩ => hn_range ⟨m, hm.symm⟩)
+  obtain ⟨s, hs⟩ := h_summable_a
+  have h_summable_b : Summable (fun m : ℕ => ‖q m‖₊ * (r ^ k) ^ m) := by
+    refine ⟨s, ?_⟩
+    rw [funext h_term_eq]
+    exact (hg_inj.hasSum_iff h_off_range).mpr hs
+  have hrk_le_q_radius : (r ^ k : ℝ≥0∞) ≤ q.radius := by
+    have := q.le_radius_of_summable_nnnorm h_summable_b
+    simpa using this
+  -- Step 5: q.radius positivity (follows from r^k > 0).
+  have hrk_pos : (0 : ℝ≥0) < r ^ k := pow_pos hr_pos k
+  have hq_radius_pos : 0 < q.radius :=
+    lt_of_lt_of_le (by exact_mod_cast hrk_pos) hrk_le_q_radius
+  -- Step 6: define G := q.sum; analyticity via q.hasFPowerSeriesOnBall.
+  refine ⟨q.sum, (q.hasFPowerSeriesOnBall hq_radius_pos).analyticAt, ?_⟩
+  -- Step 7: F =ᶠ[𝓝 0] (fun z => q.sum (z^k)).
+  -- Pick a ball of radius `r` (≤ rF and giving r^k ≤ q.radius for z^k).
+  filter_upwards [Metric.eball_mem_nhds (0 : ℂ) (show 0 < (r : ℝ≥0∞) from by
+    exact_mod_cast hr_pos)] with z hz_in_r_ball
+  -- ‖z‖₊ < r.
+  have h_z_nnnorm_lt : (‖z‖₊ : ℝ≥0∞) < r := by
+    simpa [Metric.mem_eball, edist_zero_right] using hz_in_r_ball
+  -- z ∈ eball 0 rF (since r < rF).
+  have hz_in_rF : z ∈ Metric.eball (0 : ℂ) rF := by
+    rw [Metric.mem_eball, edist_zero_right]
+    exact lt_of_lt_of_le (lt_trans h_z_nnnorm_lt hr_lt_rF) (le_refl _)
+  -- HasSum at z via hF_onBall.
+  have hHasSum_a : HasSum (fun n : ℕ => p n (fun _ : Fin n => z)) (F z) := by
+    have := hF_onBall.hasSum hz_in_rF
+    simpa using this
+  -- Vanishing: for n ∉ Set.range (k * ·), p n (fun _ => z) = 0.
+  have h_pn_vanish : ∀ n, n ∉ Set.range (fun m : ℕ => k * m) →
+      p n (fun _ : Fin n => z) = 0 := by
+    intro n hn_range
+    have hn_ndvd : ¬ k ∣ n := fun ⟨m, hm⟩ => hn_range ⟨m, hm.symm⟩
+    have ha_zero : a n = 0 := by
+      have := h_vanish n hn_ndvd
+      simp_all
+    simp [hp_def, ha_zero]
+  -- HasSum reindex via Function.Injective.hasSum_iff.
+  have hHasSum_b_via_z : HasSum (fun m : ℕ => p (k * m) (fun _ : Fin (k * m) => z))
+      (F z) :=
+    (hg_inj.hasSum_iff h_pn_vanish).mpr hHasSum_a
+  -- Term equality: p (k*m) (fun _ => z) = q m (fun _ => z^k).
+  have h_term_zk : ∀ m : ℕ,
+      p (k * m) (fun _ : Fin (k * m) => z) = q m (fun _ : Fin m => z^k) := by
+    intro m
+    -- p (k*m) (fun _ => z) = a (k*m) • z^(k*m) (via ofScalars_apply_eq).
+    -- q m (fun _ => z^k) = a (k*m) • (z^k)^m = a (k*m) • z^(k*m).
+    have h1 : p (k * m) (fun _ : Fin (k * m) => z) = a (k * m) • z ^ (k * m) :=
+      FormalMultilinearSeries.ofScalars_apply_eq (E := ℂ) a z (k * m)
+    have h2 : q m (fun _ : Fin m => z ^ k) = a (k * m) • (z ^ k) ^ m :=
+      FormalMultilinearSeries.ofScalars_apply_eq (E := ℂ) (fun m => a (k * m))
+        (z ^ k) m
+    rw [h1, h2, ← pow_mul, Nat.mul_comm k m]
+  have hHasSum_q_at_zk : HasSum (fun m : ℕ => q m (fun _ : Fin m => z ^ k)) (F z) :=
+    hHasSum_b_via_z.congr_fun (fun m => (h_term_zk m).symm)
+  -- z^k ∈ eball 0 q.radius (strict).
+  have hzk_in_q_eball : z ^ k ∈ Metric.eball (0 : ℂ) q.radius := by
+    rw [Metric.mem_eball, edist_zero_right]
+    rw [enorm_pow]
+    -- Goal: ‖z‖ₑ ^ k < q.radius.
+    -- ‖z‖ₑ = (‖z‖₊ : ℝ≥0∞), so this is the same as (‖z‖₊ : ℝ≥0∞)^k < q.radius.
+    -- We have h_z_nnnorm_lt : (‖z‖₊ : ℝ≥0∞) < (r : ℝ≥0∞), and hrk_le_q_radius.
+    have h_strict : ‖z‖ₑ ^ k < (r : ℝ≥0∞) ^ k := by
+      have h_enorm_eq : ‖z‖ₑ = (‖z‖₊ : ℝ≥0∞) := rfl
+      rw [h_enorm_eq]
+      exact (ENNReal.pow_lt_pow_left_iff hk).mpr h_z_nnnorm_lt
+    refine lt_of_lt_of_le h_strict ?_
+    -- (r : ℝ≥0∞)^k = ((r^k : ℝ≥0) : ℝ≥0∞) ≤ q.radius.
+    rw [show (r : ℝ≥0∞) ^ k = ((r ^ k : ℝ≥0) : ℝ≥0∞) from by push_cast; ring]
+    exact hrk_le_q_radius
+  -- HasSum from q.hasFPowerSeriesOnBall at z^k.
+  have hHasSum_qsum : HasSum (fun m : ℕ => q m (fun _ : Fin m => z ^ k))
+      (q.sum (z ^ k)) := by
+    have hball : z ^ k ∈ Metric.eball (0 : ℂ) q.radius := hzk_in_q_eball
+    have := (q.hasFPowerSeriesOnBall hq_radius_pos).hasSum hball
+    simpa using this
+  -- Conclude F z = q.sum (z^k) by HasSum.unique.
+  exact (hHasSum_q_at_zk.unique hHasSum_qsum)
+
+/-! ### DA — Chart-local cancellation `H = t^(k-1) · g(t^k)` via R-final. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/-- DA Layer A — roots-of-unity sum, `k ∣ ℓ` case. -/
+private theorem rootsOfUnity_pow_sum_eq_k_of_dvd
+    {k : ℕ} {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    {ℓ : ℕ} (hℓ : k ∣ ℓ) :
+    (∑ j ∈ Finset.range k, ζ ^ (j * ℓ)) = (k : ℂ) := by
+  have h_each : ∀ j ∈ Finset.range k, ζ ^ (j * ℓ) = 1 := by
+    intro j _
+    obtain ⟨m, rfl⟩ := hℓ
+    rw [show j * (k * m) = k * (j * m) by ring, pow_mul, hζ.pow_eq_one, one_pow]
+  rw [Finset.sum_congr rfl h_each, Finset.sum_const, Finset.card_range,
+      Nat.smul_one_eq_cast]
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/-- DA Layer A — roots-of-unity sum, `k ∤ ℓ` case. -/
+private theorem rootsOfUnity_pow_sum_eq_zero_of_not_dvd
+    {k : ℕ} {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k)
+    {ℓ : ℕ} (hℓ : ¬ k ∣ ℓ) :
+    (∑ j ∈ Finset.range k, ζ ^ (j * ℓ)) = 0 := by
+  have h_each : ∀ j ∈ Finset.range k, ζ ^ (j * ℓ) = (ζ ^ ℓ) ^ j := by
+    intro j _
+    rw [← pow_mul, Nat.mul_comm j ℓ, pow_mul]
+  rw [Finset.sum_congr rfl h_each]
+  have hζℓ_ne_one : ζ ^ ℓ ≠ 1 := fun h => hℓ (hζ.dvd_of_pow_eq_one ℓ h)
+  rw [geom_sum_eq hζℓ_ne_one k]
+  have hpow_k_eq_one : (ζ ^ ℓ) ^ k = 1 := by
+    rw [← pow_mul, Nat.mul_comm, pow_mul, hζ.pow_eq_one, one_pow]
+  rw [hpow_k_eq_one, sub_self, zero_div]
+
+/--
+**DA — Chart-local cancellation `rotation_avg_eq_g_pow_k`
+(sorry-free helper; the central analytic identity behind L2085).**
+
+Given `h : ℂ → ℂ` analytic at `0`, primitive `k`-th root `ζ` (`k > 0`):
+```
+H(t) := ∑_{j ∈ Fin k} ζ^j · h(ζ^j · t) = t^(k-1) · g(t^k)
+```
+near `0` for some `g : ℂ → ℂ` analytic at `0`.
+
+Proof structure (manager's §8-internal four helpers within this one commit):
+- Step 1: `H` analytic at `0` (finite sum of compositions).
+- Step 2: `iteratedDeriv m H 0 = 0` for `m < k-1` (via R1-style
+  `iteratedDerivWithin_comp_const_smul` on an open ball + Layer A
+  roots-of-unity cancellation).
+- Step 3: Factor `H(t) = t^(k-1) · gtilde(t)` with `gtilde` analytic at `0`
+  (via `natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero` +
+  `exists_eventuallyEq_pow_smul_nonzero_iff` /
+  `analyticOrderNatAt_eq_iff` from `Analytic/IsolatedZeros.lean` /
+  `Analytic/Order.lean`).
+- Step 4: Show `gtilde` is ζ-invariant near `0` (from `H`'s ζ^(k-1)-equivariance
+  + the `(ζ·t)^(k-1) = ζ^(k-1) · t^(k-1)` cancellation); apply R-final
+  (`exists_analytic_extension_of_rotation_invariant`) to get `gtilde(t) = g(t^k)`;
+  multiply through.
+
+The weight `ζ^j` here equals `ζ^(-j(k-1))` (via `ζ^(-(k-1)) = ζ^(k-(k-1)) = ζ`),
+matching the chart-local application's `(ζ^j · kthRoot w)^(-(k-1))` factor.
+-/
+private theorem rotation_avg_eq_g_pow_k
+    {h : ℂ → ℂ} (hh : AnalyticAt ℂ h 0)
+    {k : ℕ} (hk_pos : 0 < k) {ζ : ℂ} (hζ : IsPrimitiveRoot ζ k) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g 0 ∧
+      ∀ᶠ t in 𝓝 (0 : ℂ),
+        (∑ j ∈ Finset.range k, ζ ^ j * h (ζ ^ j * t))
+            = t ^ (k - 1) * g (t ^ k) := by
+  -- Define H.
+  set H : ℂ → ℂ := fun t => ∑ j ∈ Finset.range k, ζ ^ j * h (ζ ^ j * t)
+    with hH_def
+  -- ============================================================
+  -- Step 1: H is analytic at 0.
+  -- ============================================================
+  have hH_an : AnalyticAt ℂ H 0 := by
+    refine (Finset.range k).analyticAt_fun_sum ?_
+    intro j _
+    have h_mul_an : AnalyticAt ℂ (fun t : ℂ => ζ ^ j * t) 0 :=
+      analyticAt_const.mul analyticAt_id
+    have h_val : (fun t : ℂ => ζ ^ j * t) 0 = 0 := by simp
+    have hh_at_shift : AnalyticAt ℂ h ((fun t : ℂ => ζ ^ j * t) 0) := by
+      rw [h_val]; exact hh
+    exact analyticAt_const.mul (hh_at_shift.comp h_mul_an)
+  -- ============================================================
+  -- Step 2: iteratedDeriv m H 0 = 0 for m < k-1.
+  -- ============================================================
+  obtain ⟨r, hr_pos, hh_an_ball⟩ := hh.exists_ball_analyticOnNhd
+  set B : Set ℂ := Metric.ball 0 r with hB_def
+  have hB_open : IsOpen B := Metric.isOpen_ball
+  have h0_mem : (0 : ℂ) ∈ B := by simp [hB_def, Metric.mem_ball, hr_pos]
+  have hUnique : UniqueDiffOn ℂ B := hB_open.uniqueDiffOn
+  have hζ_norm : ‖ζ‖ = 1 := hζ.norm'_eq_one hk_pos.ne'
+  have hζj_norm : ∀ j : ℕ, ‖(ζ ^ j : ℂ)‖ = 1 := fun j => by
+    rw [norm_pow, hζ_norm, one_pow]
+  have hmaps : ∀ j : ℕ, Set.MapsTo (fun z : ℂ => ζ ^ j * z) B B := by
+    intro j z hz
+    simp only [hB_def, Metric.mem_ball, dist_zero_right] at hz ⊢
+    rw [norm_mul, hζj_norm j, one_mul]
+    exact hz
+  have hh_contDiff_on : ContDiffOn ℂ (⊤ : WithTop ℕ∞) h B :=
+    hh_an_ball.contDiffOn hUnique
+  -- Inner derivative computation for each j.
+  have h_inDeriv : ∀ (m : ℕ) (j : ℕ),
+      iteratedDeriv m (fun t : ℂ => h (ζ ^ j * t)) 0 =
+        (ζ ^ j) ^ m • iteratedDeriv m h 0 := by
+    intro m j
+    have hh_at_m : ContDiffOn ℂ (m : WithTop ℕ∞) h B :=
+      hh_contDiff_on.of_le (by exact_mod_cast le_top)
+    have h_step_comp :
+        iteratedDerivWithin m (fun t : ℂ => h (ζ ^ j * t)) B 0 =
+          (ζ ^ j) ^ m • iteratedDerivWithin m h B (ζ ^ j * 0) :=
+      iteratedDerivWithin_comp_const_smul h0_mem hUnique hh_at_m (ζ ^ j) (hmaps j)
+    have hwithin_h : iteratedDerivWithin m h B 0 = iteratedDeriv m h 0 :=
+      iteratedDerivWithin_of_isOpen hB_open h0_mem
+    have hwithin_comp :
+        iteratedDerivWithin m (fun t : ℂ => h (ζ ^ j * t)) B 0 =
+          iteratedDeriv m (fun t : ℂ => h (ζ ^ j * t)) 0 :=
+      iteratedDerivWithin_of_isOpen hB_open h0_mem
+    rw [← hwithin_comp, h_step_comp, mul_zero, hwithin_h]
+  -- Full per-summand derivative with the ζ^j multiplicative weight.
+  have h_inDeriv_full : ∀ (m : ℕ) (j : ℕ),
+      iteratedDeriv m (fun t : ℂ => ζ ^ j * h (ζ ^ j * t)) 0 =
+        ζ ^ j * ((ζ ^ j) ^ m * iteratedDeriv m h 0) := by
+    intro m j
+    have h_smul : (fun t : ℂ => ζ ^ j * h (ζ ^ j * t)) =
+        (ζ ^ j : ℂ) • (fun t : ℂ => h (ζ ^ j * t)) := by
+      funext t; simp [Pi.smul_apply, smul_eq_mul]
+    rw [h_smul, iteratedDeriv_const_smul_field (ζ ^ j) (fun t => h (ζ ^ j * t)),
+        h_inDeriv m j, smul_eq_mul, smul_eq_mul]
+  -- The vanishing lemma.
+  have hH_vanish : ∀ m : ℕ, m < k - 1 → iteratedDeriv m H 0 = 0 := by
+    intro m hm
+    have h_iter_sum : iteratedDeriv m H 0 =
+        iteratedDeriv m h 0 * ∑ j ∈ Finset.range k, ζ ^ (j * (m + 1)) := by
+      rw [hH_def]
+      have h_summand_contDiff : ∀ j ∈ Finset.range k,
+          ContDiffAt ℂ (m : WithTop ℕ∞) (fun t : ℂ => ζ ^ j * h (ζ ^ j * t)) 0 := by
+        intro j _
+        have h_mul_an : AnalyticAt ℂ (fun t : ℂ => ζ ^ j * t) 0 :=
+          analyticAt_const.mul analyticAt_id
+        have h_val : (fun t : ℂ => ζ ^ j * t) 0 = 0 := by simp
+        have hh_at_shift : AnalyticAt ℂ h ((fun t : ℂ => ζ ^ j * t) 0) := by
+          rw [h_val]; exact hh
+        have h_comp_an : AnalyticAt ℂ (fun t : ℂ => h (ζ ^ j * t)) 0 :=
+          hh_at_shift.comp h_mul_an
+        exact (analyticAt_const.mul h_comp_an).contDiffAt
+      rw [iteratedDeriv_fun_sum h_summand_contDiff]
+      simp_rw [h_inDeriv_full]
+      have h_rearrange : ∀ j : ℕ,
+          ζ ^ j * ((ζ ^ j) ^ m * iteratedDeriv m h 0) =
+            iteratedDeriv m h 0 * ζ ^ (j * (m + 1)) := by
+        intro j
+        rw [show j * (m + 1) = j + j * m by ring, pow_add, ← pow_mul]
+        ring
+      simp_rw [h_rearrange]
+      rw [← Finset.mul_sum]
+    rw [h_iter_sum]
+    have hmp1_pos : 0 < m + 1 := Nat.succ_pos m
+    have hmp1_lt_k : m + 1 < k := by omega
+    have hk_not_dvd : ¬ k ∣ (m + 1) := fun hdvd =>
+      Nat.not_lt.mpr (Nat.le_of_dvd hmp1_pos hdvd) hmp1_lt_k
+    rw [rootsOfUnity_pow_sum_eq_zero_of_not_dvd hζ hk_not_dvd, mul_zero]
+  -- ============================================================
+  -- Step 3: H_factor — H(t) = t^(k-1) * gtilde(t), gtilde analytic at 0.
+  -- ============================================================
+  -- From Step 2 + natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero:
+  --   (k-1 : ℕ∞) ≤ analyticOrderAt H 0.
+  have h_order_ge : (↑(k - 1) : ℕ∞) ≤ analyticOrderAt H 0 := by
+    rw [natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero hH_an]
+    intro i hi
+    have hi_nat : i < k - 1 := by exact_mod_cast hi
+    exact hH_vanish i hi_nat
+  -- Split on whether H is identically zero near 0.
+  by_cases hH_zero_event : ∀ᶠ t in 𝓝 (0 : ℂ), H t = 0
+  · -- H = 0 near 0. Take g = 0; identity becomes 0 = t^(k-1) · 0 = 0.
+    refine ⟨0, analyticAt_const, ?_⟩
+    filter_upwards [hH_zero_event] with t ht
+    simp only [hH_def] at ht
+    rw [ht]
+    simp
+  · -- H ≢ 0 near 0. Extract a factorization via exists_eventuallyEq_pow_smul.
+    obtain ⟨n, g₀, hg₀_an, hg₀_ne, hH_factored_n⟩ :=
+      (hH_an.exists_eventuallyEq_pow_smul_nonzero_iff).mpr hH_zero_event
+    -- analyticOrderAt H 0 ≠ ⊤ since H is not eventually 0.
+    have h_order_ne_top : analyticOrderAt H 0 ≠ ⊤ := by
+      intro h_eq_top
+      exact hH_zero_event (analyticOrderAt_eq_top.mp h_eq_top)
+    -- analyticOrderNatAt H 0 = n by uniqueness of factorization.
+    have h_n_eq : analyticOrderNatAt H 0 = n :=
+      (hH_an.analyticOrderNatAt_eq_iff h_order_ne_top).mpr
+        ⟨g₀, hg₀_an, hg₀_ne, hH_factored_n⟩
+    -- n ≥ k - 1 from h_order_ge.
+    have hn_ge : n ≥ k - 1 := by
+      have h_nat_eq : analyticOrderAt H 0 = (n : ℕ∞) := by
+        rw [← h_n_eq]
+        exact (Nat.cast_analyticOrderNatAt h_order_ne_top).symm
+      rw [h_nat_eq] at h_order_ge
+      exact_mod_cast h_order_ge
+    -- Define gtilde := fun t => t^(n - (k - 1)) * g₀ t. Analytic at 0.
+    set gtilde : ℂ → ℂ := fun t => t ^ (n - (k - 1)) * g₀ t with hgtilde_def
+    have hgtilde_an : AnalyticAt ℂ gtilde 0 := by
+      have : AnalyticAt ℂ (fun t : ℂ => t ^ (n - (k - 1))) 0 := by
+        exact analyticAt_id.pow _
+      exact this.mul hg₀_an
+    -- H(t) = t^(k-1) · gtilde(t) eventually near 0.
+    have hH_eq_factored :
+        H =ᶠ[𝓝 (0 : ℂ)] fun t => t ^ (k - 1) * gtilde t := by
+      filter_upwards [hH_factored_n] with t ht
+      rw [ht]
+      simp only [sub_zero, smul_eq_mul, hgtilde_def]
+      rw [← mul_assoc, ← pow_add]
+      congr 2
+      omega
+    -- ============================================================
+    -- Step 4: gtilde ζ-invariance + R-final + final identity.
+    -- ============================================================
+    -- Show gtilde is ζ-invariant near 0 (i.e., gtilde(ζ·t) = gtilde(t) eventually).
+    -- This uses: H(ζ·t) = ζ^(k-1) · H(t) (computed from H's definition),
+    -- combined with H = t^(k-1) · gtilde via hH_eq_factored.
+    -- From hH_eq_factored at ζ·t: H(ζ·t) = (ζ·t)^(k-1) · gtilde(ζ·t) = ζ^(k-1) · t^(k-1) · gtilde(ζ·t).
+    -- And: ζ^(k-1) · H(t) = ζ^(k-1) · t^(k-1) · gtilde(t).
+    -- Equating: gtilde(ζ·t) = gtilde(t).
+    -- First: H(ζ·t) = ζ^(k-1) · H(t) (a direct calculation, no extra hypothesis needed).
+    have hH_equivariant : ∀ t : ℂ, H (ζ * t) = ζ ^ (k - 1) * H t := by
+      intro t
+      simp only [hH_def, Finset.mul_sum]
+      -- We use Finset.sum_bij with the cyclic shift σ : j ↦ (j+1) % k.
+      classical
+      -- σ : range k → range k, σ i = (i + k - 1) % k (cyclic shift by -1).
+      let σ : ℕ → ℕ := fun i => (i + k - 1) % k
+      have hσ_mem : ∀ i ∈ Finset.range k, σ i ∈ Finset.range k := fun i _ => by
+        refine Finset.mem_range.mpr ?_
+        exact Nat.mod_lt _ hk_pos
+      have hσ_inj : Set.InjOn σ (Finset.range k : Set ℕ) := by
+        intro i hi i' hi' h_eq
+        simp only [Finset.mem_coe, Finset.mem_range] at hi hi'
+        simp only [σ] at h_eq
+        -- (i+k-1) % k = (i'+k-1) % k.
+        -- Case i = 0: σ i = (k-1) % k = k-1. Case i ≥ 1: σ i = i - 1.
+        rcases Nat.eq_zero_or_pos i with hi0 | hi_pos
+        · rcases Nat.eq_zero_or_pos i' with hi'0 | hi'_pos
+          · omega
+          · subst hi0
+            rw [show (0 + k - 1) % k = k - 1 from by
+                  rw [Nat.zero_add, Nat.mod_eq_of_lt (by omega : k - 1 < k)]] at h_eq
+            rw [show (i' + k - 1) % k = i' - 1 from by
+                  rw [show i' + k - 1 = (i' - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]] at h_eq
+            omega
+        · rcases Nat.eq_zero_or_pos i' with hi'0 | hi'_pos
+          · subst hi'0
+            rw [show (0 + k - 1) % k = k - 1 from by
+                  rw [Nat.zero_add, Nat.mod_eq_of_lt (by omega : k - 1 < k)]] at h_eq
+            rw [show (i + k - 1) % k = i - 1 from by
+                  rw [show i + k - 1 = (i - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]] at h_eq
+            omega
+          · rw [show (i + k - 1) % k = i - 1 from by
+                  rw [show i + k - 1 = (i - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]] at h_eq
+            rw [show (i' + k - 1) % k = i' - 1 from by
+                  rw [show i' + k - 1 = (i' - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]] at h_eq
+            omega
+      have hσ_surj : Set.SurjOn σ (Finset.range k : Set ℕ) (Finset.range k : Set ℕ) := by
+        intro j hj
+        rw [Finset.mem_coe, Finset.mem_range] at hj
+        -- Need: ∃ i ∈ range k, σ i = j. Take i = (j + 1) % k.
+        refine ⟨(j + 1) % k, ?_, ?_⟩
+        · rw [Finset.mem_coe, Finset.mem_range]
+          exact Nat.mod_lt _ hk_pos
+        · simp only [σ]
+          by_cases hjk : j + 1 = k
+          · rw [hjk, Nat.mod_self]
+            rw [show (0 + k - 1) % k = k - 1 from by
+                  rw [Nat.zero_add, Nat.mod_eq_of_lt (by omega : k - 1 < k)]]
+            omega
+          · have hjk_lt : j + 1 < k := by omega
+            rw [Nat.mod_eq_of_lt hjk_lt]
+            rw [show (j + 1 + k - 1) % k = (j + k) % k from by
+                  congr 1; omega]
+            rw [Nat.add_mod_right]
+            exact Nat.mod_eq_of_lt hj
+      -- Apply Finset.sum_nbij with σ.
+      rw [show (∑ j ∈ Finset.range k, ζ ^ j * h (ζ ^ j * (ζ * t)))
+          = ∑ i ∈ Finset.range k, ζ ^ ((i + k - 1) % k) * h (ζ ^ i * t)
+          from ?_]
+      · -- Show RHS = ∑_i ζ^(k-1) * (ζ^i * h(ζ^i * t)).
+        refine Finset.sum_congr rfl ?_
+        intros i hi
+        have hi_lt : i < k := Finset.mem_range.mp hi
+        -- ζ^((i+k-1) % k) = ζ^(i+k-1) = ζ^(k-1+i) = ζ^(k-1) * ζ^i.
+        have h_pow_eq : ζ ^ ((i + k - 1) % k) = ζ ^ (k - 1) * ζ ^ i := by
+          have h_idx_eq : (i + k - 1) % k + k * ((i + k - 1) / k) = i + k - 1 :=
+            Nat.mod_add_div _ _
+          have h_mod_eq : (i + k - 1) % k = i + k - 1 - k * ((i + k - 1) / k) := by omega
+          -- Use ζ^k = 1 to absorb the k * (i+k-1)/k part.
+          conv_lhs => rw [show ζ ^ ((i + k - 1) % k)
+                            = ζ ^ ((i + k - 1) % k) * (ζ ^ k) ^ ((i + k - 1) / k)
+                          from by rw [hζ.pow_eq_one, one_pow, mul_one]]
+          rw [← pow_mul, ← pow_add, show (i + k - 1) % k + k * ((i + k - 1) / k)
+                                       = i + k - 1 from h_idx_eq]
+          rw [show i + k - 1 = (k - 1) + i from by omega, pow_add]
+        rw [h_pow_eq]
+        ring
+      · -- Reindex via Finset.sum_nbij.
+        symm
+        refine Finset.sum_nbij σ hσ_mem hσ_inj hσ_surj ?_
+        intros i hi
+        have hi_lt : i < k := Finset.mem_range.mp hi
+        -- Goal: ζ^((i+k-1)%k) * h(ζ^i * t) = ζ^(σ i) * h(ζ^(σ i) * (ζ * t)).
+        -- σ i = (i+k-1)%k, so the LHS power = ζ^(σ i) (definitionally).
+        -- For the h-arguments: need h(ζ^i * t) = h(ζ^(σ i) * (ζ * t)),
+        -- i.e., ζ^i * t = ζ^(σ i + 1) * t (after pow_succ), so ζ^i = ζ^(σ i + 1).
+        have h_σi_succ_eq : ζ ^ (σ i + 1) = ζ ^ i := by
+          simp only [σ]
+          rcases Nat.eq_zero_or_pos i with hi0 | hi_pos
+          · subst hi0
+            rw [show (0 + k - 1) % k = k - 1 from by
+                  rw [Nat.zero_add, Nat.mod_eq_of_lt (by omega : k - 1 < k)]]
+            rw [show k - 1 + 1 = k from by omega, hζ.pow_eq_one, pow_zero]
+          · rw [show (i + k - 1) % k = i - 1 from by
+                  rw [show i + k - 1 = (i - 1) + k from by omega,
+                      Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]]
+            rw [show i - 1 + 1 = i from by omega]
+        -- Note: σ i = (i+k-1)%k matches the LHS-exponent literally.
+        -- So the goal is `ζ^(σ i) * h(ζ^i * t) = ζ^(σ i) * h(ζ^(σ i) * (ζ*t))`.
+        congr 1
+        rw [show ζ ^ σ i * (ζ * t) = ζ ^ (σ i + 1) * t from by
+              rw [pow_succ]; ring]
+        rw [h_σi_succ_eq]
+    -- gtilde ζ-invariance via hH_equivariant + hH_eq_factored.
+    have hgtilde_inv : ∀ᶠ t in 𝓝 (0 : ℂ), gtilde (ζ * t) = gtilde t := by
+      -- We have hH_eq_factored : H =ᶠ[𝓝 0] fun t => t^(k-1) · gtilde t.
+      -- Apply at t and at ζ·t: need ζ·t also in the eventuality nhd.
+      -- Use that multiplication by ζ is continuous at 0 (sends 0 to 0).
+      have h_mul_cont : Filter.Tendsto (fun t : ℂ => ζ * t) (𝓝 0) (𝓝 0) := by
+        have : Filter.Tendsto (fun t : ℂ => ζ * t) (𝓝 0) (𝓝 (ζ * 0)) :=
+          (continuous_const.mul continuous_id).tendsto 0
+        simpa using this
+      have hH_eq_at_ζt : ∀ᶠ t in 𝓝 (0 : ℂ),
+          H (ζ * t) = (ζ * t) ^ (k - 1) * gtilde (ζ * t) :=
+        h_mul_cont.eventually hH_eq_factored
+      filter_upwards [hH_eq_factored, hH_eq_at_ζt] with t hHt hHζt
+      -- We have:
+      --   hHt : H t = t^(k-1) · gtilde t
+      --   hHζt : H (ζ·t) = (ζ·t)^(k-1) · gtilde(ζ·t)
+      --   hH_equivariant t : H(ζ·t) = ζ^(k-1) · H t = ζ^(k-1) · t^(k-1) · gtilde t.
+      -- So (ζ·t)^(k-1) · gtilde(ζ·t) = ζ^(k-1) · t^(k-1) · gtilde t.
+      -- (ζ·t)^(k-1) = ζ^(k-1) · t^(k-1). Cancel (when t ≠ 0).
+      -- But we want eventually equality, INCLUDING t = 0 if it lands there.
+      -- At t = 0: both sides of `gtilde(ζ·0) = gtilde(0)` reduce to `gtilde 0 = gtilde 0`. ✓
+      -- For t ≠ 0: cancel t^(k-1) · ζ^(k-1) (both non-zero).
+      by_cases ht0 : t = 0
+      · subst ht0; simp
+      · -- t ≠ 0. Then t^(k-1) ≠ 0 and ζ^(k-1) ≠ 0.
+        have h1 : (ζ * t) ^ (k - 1) * gtilde (ζ * t) = ζ ^ (k - 1) * t ^ (k - 1) * gtilde t := by
+          rw [← hHζt, hH_equivariant t, hHt]
+          ring
+        have h_zt : (ζ * t) ^ (k - 1) = ζ ^ (k - 1) * t ^ (k - 1) := by ring
+        rw [h_zt] at h1
+        have hζkm1_ne : ζ ^ (k - 1) ≠ 0 := pow_ne_zero _ (hζ.ne_zero hk_pos.ne')
+        have htkm1_ne : t ^ (k - 1) ≠ 0 := pow_ne_zero _ ht0
+        have hmul_ne : ζ ^ (k - 1) * t ^ (k - 1) ≠ 0 := mul_ne_zero hζkm1_ne htkm1_ne
+        exact mul_left_cancel₀ hmul_ne h1
+    -- Apply R-final to gtilde.
+    obtain ⟨g, hg_an, hgtilde_extension⟩ :=
+      exists_analytic_extension_of_rotation_invariant hgtilde_an hk_pos.ne' hζ
+        (by
+          -- Need: gtilde =ᶠ[𝓝 0] fun z => gtilde (ζ * z). Equivalent to hgtilde_inv (swap symm).
+          filter_upwards [hgtilde_inv] with t ht
+          exact ht.symm)
+    refine ⟨g, hg_an, ?_⟩
+    -- ∀ᶠ t, H(t) = t^(k-1) · g(t^k).
+    filter_upwards [hH_eq_factored, hgtilde_extension] with t hHt hgt
+    -- hHt : H t = t^(k-1) · gtilde t   (from hH_eq_factored, where H is unfolded).
+    -- hgt : gtilde t = g (t^k).
+    -- Goal: ∑_j ζ^j * h(ζ^j * t) = t^(k-1) * g (t^k).
+    -- This equals H t = t^(k-1) * gtilde t = t^(k-1) * g(t^k).
+    show H t = t ^ (k - 1) * g (t ^ k)
+    rw [hHt, hgt]
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**DB-A — Chart-local Finset bijection `Fin k ↪ s_y` (eventually-y form).**
+
+For a ramified branch point `x₀` of index `k`, the C4-pre chart-local
+primitives (`φ`, local inverse `r`, principal `k`-th root `kthRoot`,
+primitive `k`-th root `ζ`) realize the unramified `k`-element preimage
+Finset `s_y` of any nearby regular value `y` as the image of the
+explicit map `j ↦ (chartAt x₀).symm (r (ζ^j · kthRoot w_y))` where
+`w_y := chartAt (f x₀) y - chartAt (f x₀) (f x₀)`.
+
+The bijection is delivered in *eventually-y* form: for `y` in some
+neighbourhood of `y₀` with `y ≠ y₀`, an injection `e : Fin k → s` exists
+with `(e j).val = (chartAt x₀).symm (r (ζ^j · kthRoot w_y))`. DB-B
+extracts an open `V ⊆ V_kfold` from the eventually quantifier via
+`mem_nhds_iff`.
+
+Sorry-free; primitive extraction is folded in as §8-internal `have`s.
+-/
+private theorem ramified_kfold_chart_bijection
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hbc : BranchedCoverData X Y f) (hcompat : hbc.RamificationIndexCompatible)
+    (y₀ : Y) (x₀ : X) (hx₀_fiber : f x₀ = y₀)
+    (k : ℕ) (hk_pos : 0 < k) (hk_ram : k = hbc.ramificationIndex x₀)
+    (U_kfold : Set X) (hU_kfold_open : IsOpen U_kfold) (hxU_kfold : x₀ ∈ U_kfold) :
+    ∃ (φ r kthRoot : ℂ → ℂ) (ζ : ℂ),
+      AnalyticAt ℂ φ (chartAt ℂ x₀ x₀) ∧
+      φ (chartAt ℂ x₀ x₀) = 0 ∧
+      deriv φ (chartAt ℂ x₀ x₀) ≠ 0 ∧
+      (∀ᶠ z in 𝓝 (chartAt ℂ x₀ x₀),
+        chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀) = φ z ^ k) ∧
+      (∀ᶠ ε in 𝓝 (0 : ℂ), φ (r ε) = ε) ∧
+      (∀ᶠ z in 𝓝 (chartAt ℂ x₀ x₀), r (φ z) = z) ∧
+      r 0 = chartAt ℂ x₀ x₀ ∧
+      (∀ w : ℂ, (kthRoot w) ^ k = w) ∧
+      kthRoot 0 = 0 ∧
+      ContinuousAt kthRoot 0 ∧
+      IsPrimitiveRoot ζ k ∧
+      ∀ᶠ y in 𝓝 y₀, y ≠ y₀ → ∀ (s : Finset X),
+        s.card = k → (↑s : Set X) ⊆ U_kfold →
+        (∀ x' ∈ s, f x' = y ∧ hbc.ramificationIndex x' = 1) →
+        (∀ x' ∈ U_kfold, f x' = y → x' ∈ s) →
+        ∃ e : Fin k → s,
+          Function.Injective e ∧
+          ∀ j : Fin k, (e j : X) =
+            (chartAt ℂ x₀).symm
+              (r ((ζ ^ (j : ℕ)) *
+                (kthRoot (chartAt ℂ (f x₀) y - chartAt ℂ (f x₀) (f x₀))))) := by
+  classical
+  have hHol : IsHolomorphic f :=
+    isHolomorphic_of_contMDiff hf (hasLocalKfoldRamification_of_contMDiff hf)
+  have hk_ram' : mapAnalyticOrderAt f x₀ = k := by
+    rw [hk_ram]
+    exact (hbc.ramificationIndex_eq_mapAnalyticOrderAt hcompat
+      (hHol.holomorphicAt x₀)).symm
+  obtain ⟨φ, hφ_an, hφ_z₀, hφ_deriv, hφ_eq⟩ :=
+    chartLocal_zPow_form_of_ramified (hHol.holomorphicAt x₀) hk_pos hk_ram'
+  have hSD : HasStrictDerivAt φ (deriv φ (chartAt ℂ x₀ x₀)) (chartAt ℂ x₀ x₀) :=
+    hφ_an.hasStrictDerivAt
+  set z₀ : ℂ := chartAt ℂ x₀ x₀ with hz₀_def
+  set c₀ : ℂ := chartAt ℂ (f x₀) (f x₀) with hc₀_def
+  let r : ℂ → ℂ := hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv
+  have h_right_inv : ∀ᶠ ε in 𝓝 (0 : ℂ), φ (r ε) = ε := by
+    have hR : ∀ᶠ ε in 𝓝 (φ z₀), φ (r ε) = ε :=
+      hSD.eventually_right_inverse hφ_deriv
+    rwa [hφ_z₀] at hR
+  have h_left_inv : ∀ᶠ z in 𝓝 z₀, r (φ z) = z :=
+    hSD.eventually_left_inverse hφ_deriv
+  have hr_at_0 : r 0 = z₀ := by
+    have hL : r (φ z₀) = z₀ := h_left_inv.self_of_nhds
+    rwa [hφ_z₀] at hL
+  let kthRoot : ℂ → ℂ := fun w => w ^ ((k : ℂ)⁻¹)
+  have h_kthRoot_pow : ∀ w : ℂ, (kthRoot w) ^ k = w :=
+    fun w => Complex.cpow_nat_inv_pow w hk_pos.ne'
+  have h_kthRoot_zero : kthRoot 0 = 0 := by
+    show (0 : ℂ) ^ ((k : ℂ)⁻¹) = 0
+    apply Complex.zero_cpow
+    have : (k : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hk_pos.ne'
+    exact inv_ne_zero this
+  set ζ : ℂ := Complex.exp (2 * Real.pi * Complex.I / k) with hζ_def
+  have hζ_pr : IsPrimitiveRoot ζ k :=
+    Complex.isPrimitiveRoot_exp k hk_pos.ne'
+  have h_kthRoot_cont : ContinuousAt kthRoot 0 := by
+    show ContinuousAt (fun w => w ^ ((k : ℂ)⁻¹)) 0
+    have h_re_pos : 0 < ((k : ℂ)⁻¹).re := by
+      have hk_re : ((k : ℂ)⁻¹).re = ((k : ℝ)⁻¹) := by
+        simp [Complex.inv_re, Complex.natCast_re]
+      rw [hk_re]
+      exact inv_pos.mpr (Nat.cast_pos.mpr hk_pos)
+    exact Complex.continuousAt_cpow_const_of_re_pos (Or.inl (le_refl _)) h_re_pos
+  refine ⟨φ, r, kthRoot, ζ, hφ_an, hφ_z₀, hφ_deriv, hφ_eq,
+    h_right_inv, h_left_inv, hr_at_0, h_kthRoot_pow, h_kthRoot_zero,
+    h_kthRoot_cont, hζ_pr, ?_⟩
+  set w_of : Y → ℂ := fun y => chartAt ℂ (f x₀) y - c₀ with hw_of_def
+  have hw_of_at_y₀ : w_of y₀ = 0 := by
+    show chartAt ℂ (f x₀) y₀ - c₀ = 0
+    rw [show y₀ = f x₀ from hx₀_fiber.symm, hc₀_def]; ring
+  have h_chart_y₀_cont : ContinuousAt (chartAt ℂ (f x₀)) y₀ := by
+    have h_chart_src : (chartAt ℂ (f x₀)).source ∈ 𝓝 y₀ := by
+      apply (chartAt ℂ (f x₀)).open_source.mem_nhds
+      rw [show y₀ = f x₀ from hx₀_fiber.symm]
+      exact mem_chart_source ℂ (f x₀)
+    exact (chartAt ℂ (f x₀)).continuousOn.continuousAt h_chart_src
+  have hw_of_cont : ContinuousAt w_of y₀ := h_chart_y₀_cont.sub continuousAt_const
+  have h_r_cont_at_0 : ContinuousAt r 0 := by
+    have h_r_strict_at_φz₀ : HasStrictDerivAt r ((deriv φ z₀)⁻¹) (φ z₀) :=
+      hSD.to_localInverse hφ_deriv
+    have h_r_cont_at_φz₀ : ContinuousAt r (φ z₀) := h_r_strict_at_φz₀.continuousAt
+    rw [hφ_z₀] at h_r_cont_at_φz₀
+    exact h_r_cont_at_φz₀
+  have h_chart_symm_cont_at_z₀ : ContinuousAt (chartAt ℂ x₀).symm z₀ := by
+    apply (chartAt ℂ x₀).continuousAt_symm
+    show z₀ ∈ (chartAt ℂ x₀).target
+    rw [hz₀_def]
+    exact (chartAt ℂ x₀).map_source (mem_chart_source ℂ x₀)
+  set candY : Fin k → Y → X := fun j y =>
+    (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) with hcandY_def
+  have h_candY_at_y₀ : ∀ j : Fin k, candY j y₀ = x₀ := by
+    intro j
+    show (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y₀))) = x₀
+    rw [hw_of_at_y₀, h_kthRoot_zero, mul_zero, hr_at_0]
+    exact (chartAt ℂ x₀).left_inv (mem_chart_source ℂ x₀)
+  have h_ε_at_y₀ : ∀ j : Fin k, (ζ ^ (j : ℕ)) * kthRoot (w_of y₀) = 0 := by
+    intro j; rw [hw_of_at_y₀, h_kthRoot_zero, mul_zero]
+  have h_ε_cont : ∀ j : Fin k,
+      ContinuousAt (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀ := by
+    intro j
+    have h1 : ContinuousAt kthRoot (w_of y₀) := by
+      rw [hw_of_at_y₀]; exact h_kthRoot_cont
+    exact continuousAt_const.mul (h1.comp hw_of_cont)
+  have h_rε_at_y₀ : ∀ j : Fin k, r ((ζ ^ (j : ℕ)) * kthRoot (w_of y₀)) = z₀ := by
+    intro j; rw [h_ε_at_y₀ j]; exact hr_at_0
+  -- Express r ∘ ε continuity into 𝓝 z₀ directly via a Tendsto statement,
+  -- so subsequent .eventually applications match nhds-target nhds.
+  have h_rε_tendsto : ∀ j : Fin k,
+      Filter.Tendsto (fun y => r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) (𝓝 y₀) (𝓝 z₀) := by
+    intro j
+    -- Build via Tendsto.comp explicitly.
+    have h_ε_tend_to_0 : Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y))
+        (𝓝 y₀) (𝓝 0) := by
+      have h_val : (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀ = 0 := h_ε_at_y₀ j
+      have h_tend : Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y))
+          (𝓝 y₀) (𝓝 ((fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀)) :=
+        (h_ε_cont j).tendsto
+      rwa [h_val] at h_tend
+    have h_r_tend : Filter.Tendsto r (𝓝 0) (𝓝 z₀) := by
+      have h_val : r 0 = z₀ := hr_at_0
+      have h_tend : Filter.Tendsto r (𝓝 0) (𝓝 (r 0)) := h_r_cont_at_0.tendsto
+      rwa [h_val] at h_tend
+    exact h_r_tend.comp h_ε_tend_to_0
+  -- Similarly for the ε itself: Tendsto into 𝓝 0.
+  have h_ε_tendsto : ∀ j : Fin k,
+      Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) (𝓝 y₀) (𝓝 0) := by
+    intro j
+    have h_eq : (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀ = 0 := h_ε_at_y₀ j
+    have : Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) (𝓝 y₀)
+        (𝓝 ((fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀)) := (h_ε_cont j).tendsto
+    rwa [h_eq] at this
+  have h_candY_tendsto : ∀ j : Fin k,
+      Filter.Tendsto (candY j) (𝓝 y₀) (𝓝 x₀) := by
+    intro j
+    have h_symm_tendsto : Filter.Tendsto (chartAt ℂ x₀).symm (𝓝 z₀) (𝓝 x₀) := by
+      have h_chart_symm_at_z₀_val : (chartAt ℂ x₀).symm z₀ = x₀ := by
+        rw [hz₀_def]; exact (chartAt ℂ x₀).left_inv (mem_chart_source ℂ x₀)
+      have : Filter.Tendsto (chartAt ℂ x₀).symm (𝓝 z₀) (𝓝 ((chartAt ℂ x₀).symm z₀)) :=
+        h_chart_symm_cont_at_z₀.tendsto
+      rwa [h_chart_symm_at_z₀_val] at this
+    exact h_symm_tendsto.comp (h_rε_tendsto j)
+  have h_chart_x₀_src_nhd : (chartAt ℂ x₀).source ∈ 𝓝 x₀ :=
+    (chartAt ℂ x₀).open_source.mem_nhds (mem_chart_source ℂ x₀)
+  have h_U_kfold_nhd : U_kfold ∈ 𝓝 x₀ := hU_kfold_open.mem_nhds hxU_kfold
+  have h_chart_x₀_tgt_nhd : (chartAt ℂ x₀).target ∈ 𝓝 z₀ :=
+    (chartAt ℂ x₀).open_target.mem_nhds
+      (by rw [hz₀_def]; exact (chartAt ℂ x₀).map_source (mem_chart_source ℂ x₀))
+  have h_chart_y₀_src_nhd : (chartAt ℂ (f x₀)).source ∈ 𝓝 (f x₀) :=
+    (chartAt ℂ (f x₀)).open_source.mem_nhds (mem_chart_source ℂ (f x₀))
+  have h_f_cont_at_x₀ : ContinuousAt f x₀ := hf.continuous.continuousAt
+  have h_per_j_evt : ∀ j : Fin k, ∀ᶠ y in 𝓝 y₀,
+      candY j y ∈ (chartAt ℂ x₀).source ∧
+      candY j y ∈ U_kfold ∧
+      r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target ∧
+      φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+        (ζ ^ (j : ℕ)) * kthRoot (w_of y) ∧
+      (∀ᶠ z in 𝓝 (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))),
+        chartLocalAt f x₀ z - c₀ = φ z ^ k) ∧
+      f (candY j y) ∈ (chartAt ℂ (f x₀)).source := by
+    intro j
+    have h_cand_tend := h_candY_tendsto j
+    have h_src : ∀ᶠ y in 𝓝 y₀, candY j y ∈ (chartAt ℂ x₀).source :=
+      h_cand_tend.eventually h_chart_x₀_src_nhd
+    have h_U : ∀ᶠ y in 𝓝 y₀, candY j y ∈ U_kfold :=
+      h_cand_tend.eventually h_U_kfold_nhd
+    have h_rε_tgt : ∀ᶠ y in 𝓝 y₀,
+        r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target :=
+      (h_rε_tendsto j).eventually h_chart_x₀_tgt_nhd
+    have h_φr : ∀ᶠ y in 𝓝 y₀,
+        φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+          (ζ ^ (j : ℕ)) * kthRoot (w_of y) :=
+      (h_ε_tendsto j).eventually h_right_inv
+    have h_pow_form_evt : ∀ᶠ y in 𝓝 y₀,
+        ∀ᶠ z in 𝓝 (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))),
+          chartLocalAt f x₀ z - c₀ = φ z ^ k := by
+      have h_eventually_nhd : ∀ᶠ z in 𝓝 z₀,
+          ∀ᶠ z' in 𝓝 z, chartLocalAt f x₀ z' - c₀ = φ z' ^ k :=
+        eventually_eventually_nhds.mpr hφ_eq
+      exact (h_rε_tendsto j).eventually h_eventually_nhd
+    have h_f_cand_src : ∀ᶠ y in 𝓝 y₀, f (candY j y) ∈ (chartAt ℂ (f x₀)).source := by
+      have h_f_tendsto : Filter.Tendsto (fun y => f (candY j y)) (𝓝 y₀) (𝓝 (f x₀)) := by
+        have h_f_at : ContinuousAt f x₀ := h_f_cont_at_x₀
+        exact h_f_at.tendsto.comp h_cand_tend
+      exact h_f_tendsto.eventually h_chart_y₀_src_nhd
+    filter_upwards [h_src, h_U, h_rε_tgt, h_φr, h_pow_form_evt, h_f_cand_src]
+      with y h1 h2 h3 h4 h5 h6
+    exact ⟨h1, h2, h3, h4, h5, h6⟩
+  have h_all_evt : ∀ᶠ y in 𝓝 y₀, ∀ j : Fin k,
+      candY j y ∈ (chartAt ℂ x₀).source ∧
+      candY j y ∈ U_kfold ∧
+      r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target ∧
+      φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+        (ζ ^ (j : ℕ)) * kthRoot (w_of y) ∧
+      (∀ᶠ z in 𝓝 (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))),
+        chartLocalAt f x₀ z - c₀ = φ z ^ k) ∧
+      f (candY j y) ∈ (chartAt ℂ (f x₀)).source := by
+    rw [Filter.eventually_all]
+    exact h_per_j_evt
+  have h_y_src_evt : ∀ᶠ y in 𝓝 y₀, y ∈ (chartAt ℂ (f x₀)).source := by
+    have h_src_nhd : (chartAt ℂ (f x₀)).source ∈ 𝓝 y₀ := by
+      apply (chartAt ℂ (f x₀)).open_source.mem_nhds
+      rw [show y₀ = f x₀ from hx₀_fiber.symm]
+      exact mem_chart_source ℂ (f x₀)
+    exact Filter.eventually_mem_set.mpr h_src_nhd
+  filter_upwards [h_all_evt, h_y_src_evt] with y h_jall h_y_src
+  intro hy_ne s _hs_card _hs_sub _hs_unram hs_exhaust
+  set w_y : ℂ := w_of y with hw_y_def
+  set candX : Fin k → X := fun j =>
+    (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot w_y)) with hcandX_def
+  have h_f_candX_eq : ∀ j : Fin k, f (candX j) = y := by
+    intro j
+    obtain ⟨_h_src, _h_U, _h_rε_tgt, h_φr, h_pow_form_evt, h_f_src⟩ := h_jall j
+    have h_pow_at_rε : chartLocalAt f x₀ (r ((ζ ^ (j : ℕ)) * kthRoot w_y)) - c₀ =
+        (φ (r ((ζ ^ (j : ℕ)) * kthRoot w_y))) ^ k :=
+      h_pow_form_evt.self_of_nhds
+    have h_chartLocal_val :
+        chartLocalAt f x₀ (r ((ζ ^ (j : ℕ)) * kthRoot w_y)) - c₀ = w_y := by
+      rw [h_pow_at_rε, h_φr, mul_pow, h_kthRoot_pow]
+      rw [show (ζ ^ (j : ℕ)) ^ k = (ζ ^ k) ^ (j : ℕ) from by
+            rw [← pow_mul, ← pow_mul, Nat.mul_comm]]
+      rw [hζ_pr.pow_eq_one, one_pow, one_mul]
+    have h_chartY_val :
+        chartAt ℂ (f x₀) (f (candX j)) = c₀ + w_y := by
+      have hdef : chartLocalAt f x₀ (r ((ζ ^ (j : ℕ)) * kthRoot w_y)) =
+          chartAt ℂ (f x₀) (f (candX j)) := rfl
+      have := hdef ▸ h_chartLocal_val
+      linear_combination this
+    have h_y_chart_eq : chartAt ℂ (f x₀) y = c₀ + w_y := by
+      show chartAt ℂ (f x₀) y = c₀ + (chartAt ℂ (f x₀) y - c₀); ring
+    have hchart_eq : chartAt ℂ (f x₀) (f (candX j)) = chartAt ℂ (f x₀) y := by
+      rw [h_chartY_val, h_y_chart_eq]
+    have h_candX_eq : candX j = candY j y := rfl
+    have h_f_candX_src : f (candX j) ∈ (chartAt ℂ (f x₀)).source := by
+      rw [h_candX_eq]; exact h_f_src
+    exact (chartAt ℂ (f x₀)).injOn h_f_candX_src h_y_src hchart_eq
+  have h_candX_U : ∀ j : Fin k, candX j ∈ U_kfold := by
+    intro j
+    have h_candX_eq : candX j = candY j y := rfl
+    rw [h_candX_eq]; exact (h_jall j).2.1
+  have h_candX_in_s : ∀ j : Fin k, candX j ∈ s := fun j =>
+    hs_exhaust (candX j) (h_candX_U j) (h_f_candX_eq j)
+  have h_candX_inj : Function.Injective candX := by
+    intro j₁ j₂ h_eq
+    have hr_tgt_1 := (h_jall j₁).2.2.1
+    have hr_tgt_2 := (h_jall j₂).2.2.1
+    have h_chart_eq :
+        chartAt ℂ x₀ (candX j₁) = chartAt ℂ x₀ (candX j₂) := by rw [h_eq]
+    have h_chart_symm_1 : chartAt ℂ x₀ (candX j₁) =
+        r ((ζ ^ (j₁ : ℕ)) * kthRoot w_y) :=
+      (chartAt ℂ x₀).right_inv hr_tgt_1
+    have h_chart_symm_2 : chartAt ℂ x₀ (candX j₂) =
+        r ((ζ ^ (j₂ : ℕ)) * kthRoot w_y) :=
+      (chartAt ℂ x₀).right_inv hr_tgt_2
+    have h_r_eq : r ((ζ ^ (j₁ : ℕ)) * kthRoot w_y) = r ((ζ ^ (j₂ : ℕ)) * kthRoot w_y) := by
+      rw [← h_chart_symm_1, ← h_chart_symm_2]; exact h_chart_eq
+    have h_φr_1 := (h_jall j₁).2.2.2.1
+    have h_φr_2 := (h_jall j₂).2.2.2.1
+    have h_ε_eq : (ζ ^ (j₁ : ℕ)) * kthRoot w_y = (ζ ^ (j₂ : ℕ)) * kthRoot w_y := by
+      have := congrArg φ h_r_eq
+      rw [h_φr_1, h_φr_2] at this; exact this
+    have hw_y_ne : w_y ≠ 0 := by
+      intro hzero
+      apply hy_ne
+      have heq : chartAt ℂ (f x₀) y = c₀ := by
+        have h0 : chartAt ℂ (f x₀) y - c₀ = 0 := hzero
+        linear_combination h0
+      have h_fx₀_src : f x₀ ∈ (chartAt ℂ (f x₀)).source := mem_chart_source ℂ (f x₀)
+      rw [show y₀ = f x₀ from hx₀_fiber.symm]
+      exact (chartAt ℂ (f x₀)).injOn h_y_src h_fx₀_src heq
+    have h_kthRoot_ne : kthRoot w_y ≠ 0 := by
+      intro hzero
+      apply hw_y_ne
+      have h := h_kthRoot_pow w_y
+      rw [hzero, zero_pow hk_pos.ne'] at h
+      exact h.symm
+    have h_ζ_eq : ζ ^ (j₁ : ℕ) = ζ ^ (j₂ : ℕ) :=
+      mul_right_cancel₀ h_kthRoot_ne h_ε_eq
+    have h_nat_eq : (j₁ : ℕ) = (j₂ : ℕ) := by
+      have h1_lt : (j₁ : ℕ) < k := j₁.isLt
+      have h2_lt : (j₂ : ℕ) < k := j₂.isLt
+      exact hζ_pr.pow_inj h1_lt h2_lt h_ζ_eq
+    exact Fin.ext h_nat_eq
+  refine ⟨fun j => ⟨candX j, h_candX_in_s j⟩, ?_, ?_⟩
+  · intro j₁ j₂ h_eq
+    have h_val_eq : candX j₁ = candX j₂ := Subtype.mk_eq_mk.mp h_eq
+    exact h_candX_inj h_val_eq
+  · intro j; rfl
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
@@ -868,7 +2784,567 @@ private theorem ramifiedKfoldSum_locally_bounded
         ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
             (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
               CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
-  sorry
+  classical
+  -- ============================================================
+  -- Step 1: Extract DB-A primitives + eventually bijection.
+  -- ============================================================
+  obtain ⟨φ, r, kthRoot, ζ, hφ_an, hφ_z₀, hφ_deriv, hφ_eq,
+      h_right_inv, h_left_inv, hr_at_0, h_kthRoot_pow, h_kthRoot_zero,
+      h_kthRoot_cont, hζ_pr, h_evt_bij⟩ :=
+    ramified_kfold_chart_bijection f hf hbc hcompat y₀ x₀ hx₀_fiber k hk_pos hk_ram
+      U_kfold hU_kfold_open hxU_kfold
+  -- Abbreviations.
+  set z₀ : ℂ := chartAt ℂ x₀ x₀ with hz₀_def
+  set c₀ : ℂ := chartAt ℂ (f x₀) (f x₀) with hc₀_def
+  -- ============================================================
+  -- Step 2: Layer B — chart-local derivative formula.
+  -- ============================================================
+  have h_deriv_evt : ∀ᶠ z in 𝓝 z₀,
+      deriv (chartLocalAt f x₀) z =
+        (k : ℂ) * φ z ^ (k - 1) * deriv φ z :=
+    chartLocal_deriv_of_zPow_form (f := f) (x₀ := x₀) (k := k) hk_pos hφ_an hφ_eq
+  -- ============================================================
+  -- Step 3: η.toFun · 1 chart-local analyticity (§8-internal helper).
+  -- ============================================================
+  -- The composition `ε ↦ (η.toFun (chart.symm ε)) 1` is analytic at z₀.
+  -- This is `etaTimesOne_chart_local_analytic` inlined as §8-internal `have`s.
+  have h_etaOne_an : AnalyticAt ℂ
+      (fun ε : ℂ => (η.toFun ((chartAt ℂ x₀).symm ε)) (1 : ℂ)) z₀ := by
+    -- ContMDiff of trivial-bundle section via clm_bundle_apply.
+    have h1 : ContMDiff (𝓘(ℂ, ℂ)) ((𝓘(ℂ, ℂ)).prod (𝓘(ℂ, ℂ))) ⊤
+        (fun x : X => Bundle.TotalSpace.mk' ℂ (E := Bundle.Trivial X ℂ) x
+          (show (Bundle.Trivial X ℂ) x from (η.toFun x) (1 : ℂ))) :=
+      η.contMDiff.clm_bundle_apply contMDiff_tangentSection_one
+    -- Extract ContMDiffAt of the underlying eval-at-1 function via trivialization-iff.
+    have hsrc : (fun x : X => Bundle.TotalSpace.mk' ℂ
+        (E := Bundle.Trivial X ℂ) x ((η.toFun x) (1 : ℂ))) x₀
+          ∈ (trivializationAt ℂ (Bundle.Trivial X ℂ) x₀).source := by
+      rw [Trivialization.mem_source]
+      exact FiberBundle.mem_baseSet_trivializationAt' x₀
+    have h_iff :=
+      (trivializationAt ℂ (Bundle.Trivial X ℂ) x₀).contMDiffAt_iff
+        (IB := 𝓘(ℂ, ℂ)) (IM := 𝓘(ℂ, ℂ)) (n := (⊤ : WithTop ℕ∞))
+        (f := fun x : X => Bundle.TotalSpace.mk' ℂ (E := Bundle.Trivial X ℂ) x
+          ((η.toFun x) (1 : ℂ)))
+        hsrc
+    have h_evalOne : ContMDiffAt 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤
+        (fun x : X => (η.toFun x) (1 : ℂ)) x₀ :=
+      (h_iff.mp h1.contMDiffAt).2
+    -- Translate ContMDiffAt → ContDiffAt of the chart-local composition.
+    rw [contMDiffAt_iff] at h_evalOne
+    obtain ⟨_h_cont, h_cdwithin⟩ := h_evalOne
+    rw [ModelWithCorners.range_eq_univ, contDiffWithinAt_univ] at h_cdwithin
+    -- Self-model: extChartAt = chartAt, codomain extChart = id.
+    exact h_cdwithin.analyticAt
+  -- ============================================================
+  -- Step 4: Build h_DA and apply DA.
+  -- ============================================================
+  -- Analyticity of `r` at 0 via the analytic inverse function theorem.
+  have hSD : HasStrictDerivAt φ (deriv φ z₀) z₀ := hφ_an.hasStrictDerivAt
+  -- Build the canonical analytic local inverse `r'` and prove `r =ᶠ[𝓝 0] r'`,
+  -- then transport analyticity.
+  set r' : ℂ → ℂ := hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv with hr'_def
+  have hr'_an_at_φz₀ : AnalyticAt ℂ r' (φ z₀) := by
+    simpa [r', hr'_def] using hφ_an.analyticAt_localInverse hφ_deriv
+  have hr'_at_0 : r' 0 = z₀ := by
+    have h_left : ∀ᶠ z in 𝓝 z₀, r' (φ z) = z := by
+      simpa [r', hr'_def] using hSD.eventually_left_inverse hφ_deriv
+    have := h_left.self_of_nhds
+    rwa [hφ_z₀] at this
+  have hr'_cont_at_0 : ContinuousAt r' 0 := by
+    have hr'_an_at_0 : AnalyticAt ℂ r' 0 := by rw [← hφ_z₀]; exact hr'_an_at_φz₀
+    exact hr'_an_at_0.continuousAt
+  have hr'_tendsto_z₀ : Filter.Tendsto r' (𝓝 (0 : ℂ)) (𝓝 z₀) := by
+    have h := hr'_cont_at_0.tendsto
+    rwa [hr'_at_0] at h
+  -- Uniqueness of right inverse: r = r' eventually near 0.
+  -- Strategy: apply `h_left_inv : ∀ᶠ z in 𝓝 z₀, r (φ z) = z` at `z = r' ε` (which lies near `z₀`).
+  -- Then `r (φ (r' ε)) = r' ε`. Combined with `φ (r' ε) = ε` (right inverse of r'), we get `r ε = r' ε`.
+  have h_right_inv' : ∀ᶠ ε in 𝓝 (0 : ℂ), φ (r' ε) = ε := by
+    have h := hSD.eventually_right_inverse hφ_deriv
+    rw [hφ_z₀] at h
+    simpa [r', hr'_def] using h
+  have h_r_eq_r' : ∀ᶠ ε in 𝓝 (0 : ℂ), r ε = r' ε := by
+    have h_left_at_r' : ∀ᶠ ε in 𝓝 (0 : ℂ), r (φ (r' ε)) = r' ε :=
+      hr'_tendsto_z₀.eventually h_left_inv
+    filter_upwards [h_left_at_r', h_right_inv'] with ε h1 h2
+    rw [h2] at h1; exact h1
+  have hr_an_at_0 : AnalyticAt ℂ r 0 := by
+    have hr'_an_at_0 : AnalyticAt ℂ r' 0 := by rw [← hφ_z₀]; exact hr'_an_at_φz₀
+    exact hr'_an_at_0.congr (h_r_eq_r'.mono (fun _ h => h.symm))
+  -- Continuity of r at 0 (will need for various Tendsto compositions).
+  have hr_cont_at_0 : ContinuousAt r 0 := hr_an_at_0.continuousAt
+  have hr_tendsto_z₀ : Filter.Tendsto r (𝓝 (0 : ℂ)) (𝓝 z₀) := by
+    have := hr_cont_at_0.tendsto
+    rwa [hr_at_0] at this
+  -- Build `h_DA` and prove analyticity at 0.
+  -- h_DA(ε) := (η.toFun ((chart x₀).symm (r ε))) 1 / deriv φ (r ε)
+  set h_DA : ℂ → ℂ :=
+    fun ε => (η.toFun ((chartAt ℂ x₀).symm (r ε))) (1 : ℂ) / deriv φ (r ε) with hh_DA_def
+  have h_DA_an : AnalyticAt ℂ h_DA 0 := by
+    -- Numerator: (η.toFun (chart.symm (r ε))) 1, analytic at 0.
+    -- Decompose: (h_etaOne_an ∘ r), where h_etaOne_an analytic at z₀ = r 0.
+    have h_num_an : AnalyticAt ℂ
+        (fun ε : ℂ => (η.toFun ((chartAt ℂ x₀).symm (r ε))) (1 : ℂ)) 0 := by
+      have h_comp : AnalyticAt ℂ
+          ((fun z : ℂ => (η.toFun ((chartAt ℂ x₀).symm z)) (1 : ℂ)) ∘ r) 0 := by
+        have h_at : (fun z : ℂ => (η.toFun ((chartAt ℂ x₀).symm z)) (1 : ℂ)) (r 0) =
+            (η.toFun ((chartAt ℂ x₀).symm z₀)) (1 : ℂ) := by rw [hr_at_0]
+        have h_left : AnalyticAt ℂ
+            (fun z : ℂ => (η.toFun ((chartAt ℂ x₀).symm z)) (1 : ℂ)) (r 0) := by
+          rw [hr_at_0]; exact h_etaOne_an
+        exact h_left.comp hr_an_at_0
+      exact h_comp
+    -- Denominator: deriv φ (r ε), analytic at 0, nonzero at 0.
+    have h_dφ_an_at_z₀ : AnalyticAt ℂ (deriv φ) z₀ := hφ_an.deriv
+    have h_denom_an : AnalyticAt ℂ (fun ε : ℂ => deriv φ (r ε)) 0 := by
+      have h_left : AnalyticAt ℂ (deriv φ) (r 0) := by rw [hr_at_0]; exact h_dφ_an_at_z₀
+      exact h_left.comp hr_an_at_0
+    have h_denom_ne : (fun ε : ℂ => deriv φ (r ε)) 0 ≠ 0 := by
+      show deriv φ (r 0) ≠ 0
+      rw [hr_at_0]; exact hφ_deriv
+    exact h_num_an.div h_denom_an h_denom_ne
+  -- Apply DA.
+  obtain ⟨g, hg_an, h_avg_eq⟩ := rotation_avg_eq_g_pow_k h_DA_an hk_pos hζ_pr
+  -- Bound g locally near 0: from AnalyticAt ⇒ ContinuousAt.
+  have hg_cont_at_0 : ContinuousAt g 0 := hg_an.continuousAt
+  set M : ℝ := ‖g 0‖ + 1 with hM_def
+  -- Eventually ‖g t‖ ≤ M for t near 0.
+  have hg_evt_bound : ∀ᶠ t in 𝓝 (0 : ℂ), ‖g t‖ ≤ M := by
+    have h_tend : Filter.Tendsto g (𝓝 (0 : ℂ)) (𝓝 (g 0)) := hg_cont_at_0.tendsto
+    have h_ball : Metric.ball (g 0) 1 ∈ 𝓝 (g 0) := Metric.ball_mem_nhds _ one_pos
+    have h_evt_ball : ∀ᶠ t in 𝓝 (0 : ℂ), g t ∈ Metric.ball (g 0) 1 :=
+      h_tend.eventually h_ball
+    filter_upwards [h_evt_ball] with t ht
+    rw [Metric.mem_ball] at ht
+    have h_norm_sub : ‖g t - g 0‖ < 1 := by simpa [dist_eq_norm] using ht
+    calc ‖g t‖ ≤ ‖g t - g 0‖ + ‖g 0‖ := by
+            have := norm_add_le (g t - g 0) (g 0)
+            simpa using this
+      _ ≤ 1 + ‖g 0‖ := by linarith [h_norm_sub.le]
+      _ = M := by rw [hM_def]; ring
+  -- ============================================================
+  -- Step 5: Define V, W, M.
+  -- ============================================================
+  -- W := W₀ ∩ U_kfold (open, contains x₀, ⊆ W₀).
+  set W : Set X := W₀ ∩ U_kfold with hW_def
+  have hW_open : IsOpen W := hW₀_open.inter hU_kfold_open
+  have hxW : x₀ ∈ W := ⟨hxW₀, hxU_kfold⟩
+  have hW_sub_W₀ : W ⊆ W₀ := Set.inter_subset_left
+  have hW_sub_U : W ⊆ U_kfold := Set.inter_subset_right
+  -- Define `w_of y := chartAt ℂ (f x₀) y - c₀` (the chart-local coord of y relative to f x₀).
+  set w_of : Y → ℂ := fun y => chartAt ℂ (f x₀) y - c₀ with hw_of_def
+  have hw_of_at_y₀ : w_of y₀ = 0 := by
+    show chartAt ℂ (f x₀) y₀ - c₀ = 0
+    rw [show y₀ = f x₀ from hx₀_fiber.symm, hc₀_def]; ring
+  -- Continuity of `w_of` at y₀.
+  have h_chart_y₀_cont : ContinuousAt (chartAt ℂ (f x₀)) y₀ := by
+    have h_chart_src : (chartAt ℂ (f x₀)).source ∈ 𝓝 y₀ := by
+      apply (chartAt ℂ (f x₀)).open_source.mem_nhds
+      rw [show y₀ = f x₀ from hx₀_fiber.symm]
+      exact mem_chart_source ℂ (f x₀)
+    exact (chartAt ℂ (f x₀)).continuousOn.continuousAt h_chart_src
+  have hw_of_cont : ContinuousAt w_of y₀ := h_chart_y₀_cont.sub continuousAt_const
+  have hw_of_tendsto : Filter.Tendsto w_of (𝓝 y₀) (𝓝 (0 : ℂ)) := by
+    have h := hw_of_cont.tendsto
+    rwa [hw_of_at_y₀] at h
+  -- `kthRoot` tendsto 0 at 0.
+  have h_kthRoot_tendsto : Filter.Tendsto kthRoot (𝓝 (0 : ℂ)) (𝓝 (0 : ℂ)) := by
+    have h := h_kthRoot_cont.tendsto
+    rwa [h_kthRoot_zero] at h
+  -- Per-j scaled-rootlet: ε_j(y) := ζ^j * kthRoot (w_of y). Tendsto 0 as y → y₀.
+  have h_ε_tendsto : ∀ j : Fin k,
+      Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) (𝓝 y₀) (𝓝 (0 : ℂ)) := by
+    intro j
+    have h := h_kthRoot_tendsto.comp hw_of_tendsto
+    have h2 : Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) (𝓝 y₀)
+        (𝓝 ((ζ ^ (j : ℕ)) * 0)) := by
+      exact (Filter.Tendsto.const_mul (ζ ^ (j : ℕ)) h)
+    simpa using h2
+  -- Per-j candidate preimage: candX j y := (chart x₀).symm (r (ζ^j · kthRoot (w_of y))).
+  set candX : Fin k → Y → X := fun j y =>
+    (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) with hcandX_def
+  -- Continuity of (chartAt ℂ x₀).symm at z₀.
+  have h_chart_symm_cont_at_z₀ : ContinuousAt (chartAt ℂ x₀).symm z₀ := by
+    apply (chartAt ℂ x₀).continuousAt_symm
+    show z₀ ∈ (chartAt ℂ x₀).target
+    rw [hz₀_def]
+    exact (chartAt ℂ x₀).map_source (mem_chart_source ℂ x₀)
+  have h_chart_symm_tendsto : Filter.Tendsto (chartAt ℂ x₀).symm (𝓝 z₀) (𝓝 x₀) := by
+    have h_val : (chartAt ℂ x₀).symm z₀ = x₀ := by
+      rw [hz₀_def]; exact (chartAt ℂ x₀).left_inv (mem_chart_source ℂ x₀)
+    have h := h_chart_symm_cont_at_z₀.tendsto
+    rwa [h_val] at h
+  have h_candX_tendsto : ∀ j : Fin k, Filter.Tendsto (candX j) (𝓝 y₀) (𝓝 x₀) := by
+    intro j
+    have h := h_chart_symm_tendsto.comp (hr_tendsto_z₀.comp (h_ε_tendsto j))
+    exact h
+  -- Choose V: intersection of eventually-nhds (V_kfold, candidates ∈ W, kthRoot w_y small, etc.).
+  -- We need: y ∈ V_kfold, |w_y| small enough that:
+  --   (a) For each j, candX j y ∈ W = W₀ ∩ U_kfold.
+  --   (b) For each j, ζ^j · kthRoot w_y is in the right-inverse nhd of `r` (h_right_inv).
+  --   (c) ‖g (w_y)‖ ≤ M (hg_evt_bound).
+  --   (d) ζ^j · kthRoot w_y is in the rotation-avg eventually nhd from DA (h_avg_eq).
+  -- Plus DB-A's eventually-y bijection ((h_evt_bij : ∀ᶠ y in 𝓝 y₀, …)).
+  -- And `y` in (chartAt ℂ (f x₀)).source (for the chart-coordinate w_y to be valid).
+  have h_W_nhd_x₀ : W ∈ 𝓝 x₀ := hW_open.mem_nhds hxW
+  have h_candX_in_W_evt : ∀ j : Fin k, ∀ᶠ y in 𝓝 y₀, candX j y ∈ W :=
+    fun j => (h_candX_tendsto j).eventually h_W_nhd_x₀
+  -- ζ^j · kthRoot w_y in r's right-inverse nhd.
+  have h_right_inv_evt_jallY : ∀ᶠ y in 𝓝 y₀, ∀ j : Fin k,
+      φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) = (ζ ^ (j : ℕ)) * kthRoot (w_of y) := by
+    rw [Filter.eventually_all]
+    intro j
+    exact (h_ε_tendsto j).eventually h_right_inv
+  -- g-bound at w_y.
+  have hg_bound_evt : ∀ᶠ y in 𝓝 y₀, ‖g (w_of y)‖ ≤ M := hw_of_tendsto.eventually hg_evt_bound
+  -- Rotation-avg formula at kthRoot w_y.
+  have h_avg_evt_y : ∀ᶠ y in 𝓝 y₀,
+      (∑ j ∈ Finset.range k, ζ ^ j * h_DA (ζ ^ j * kthRoot (w_of y))) =
+        (kthRoot (w_of y)) ^ (k - 1) * g ((kthRoot (w_of y)) ^ k) := by
+    have h_kthRoot_tend := h_kthRoot_tendsto.comp hw_of_tendsto
+    exact h_kthRoot_tend.eventually h_avg_eq
+  -- All candidates analytic-target-nhd containment (so we can use chart.right_inv on chart x₀ (candX j y)).
+  have h_chart_x₀_tgt_nhd : (chartAt ℂ x₀).target ∈ 𝓝 z₀ :=
+    (chartAt ℂ x₀).open_target.mem_nhds
+      (by rw [hz₀_def]; exact (chartAt ℂ x₀).map_source (mem_chart_source ℂ x₀))
+  have h_rε_tgt_evt : ∀ᶠ y in 𝓝 y₀, ∀ j : Fin k,
+      r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target := by
+    rw [Filter.eventually_all]
+    intro j
+    exact (hr_tendsto_z₀.comp (h_ε_tendsto j)).eventually h_chart_x₀_tgt_nhd
+  -- y ∈ source of chart at f x₀.
+  have h_y_in_chart_src_evt : ∀ᶠ y in 𝓝 y₀, y ∈ (chartAt ℂ (f x₀)).source := by
+    have h_src_nhd : (chartAt ℂ (f x₀)).source ∈ 𝓝 y₀ := by
+      apply (chartAt ℂ (f x₀)).open_source.mem_nhds
+      rw [show y₀ = f x₀ from hx₀_fiber.symm]
+      exact mem_chart_source ℂ (f x₀)
+    exact Filter.eventually_mem_set.mpr h_src_nhd
+  -- Layer B deriv formula at each chart x₀ (candX j y) = r (ζ^j · kthRoot w_y).
+  have h_deriv_evt_y : ∀ᶠ y in 𝓝 y₀, ∀ j : Fin k,
+      deriv (chartLocalAt f x₀) (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+        (k : ℂ) * φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) ^ (k - 1) *
+          deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) := by
+    rw [Filter.eventually_all]
+    intro j
+    exact (hr_tendsto_z₀.comp (h_ε_tendsto j)).eventually h_deriv_evt
+  -- deriv φ continuous at z₀ (from analyticAt), so deriv φ (r ε_j) ≠ 0 eventually.
+  have h_dφ_cont_at_z₀ : ContinuousAt (deriv φ) z₀ := hφ_an.deriv.continuousAt
+  have h_dφr_ne_evt : ∀ᶠ y in 𝓝 y₀, ∀ j : Fin k,
+      deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) ≠ 0 := by
+    rw [Filter.eventually_all]
+    intro j
+    -- deriv φ continuous at z₀; deriv φ z₀ ≠ 0 ⇒ deriv φ ≠ 0 on a nhd of z₀.
+    -- Then r ε_j ∈ that nhd eventually y.
+    have h_dφ_ne_evt_z : ∀ᶠ z in 𝓝 z₀, deriv φ z ≠ 0 := by
+      have h_tend : Filter.Tendsto (deriv φ) (𝓝 z₀) (𝓝 (deriv φ z₀)) := h_dφ_cont_at_z₀.tendsto
+      have h_compl_open : IsOpen ({0}ᶜ : Set ℂ) := isOpen_compl_iff.mpr isClosed_singleton
+      have h_compl_nhd : ({0}ᶜ : Set ℂ) ∈ 𝓝 (deriv φ z₀) :=
+        h_compl_open.mem_nhds (Set.mem_compl_singleton_iff.mpr hφ_deriv)
+      exact h_tend.eventually h_compl_nhd
+    exact (hr_tendsto_z₀.comp (h_ε_tendsto j)).eventually h_dφ_ne_evt_z
+  -- Collect everything into one eventually-y.
+  have h_all_evt : ∀ᶠ y in 𝓝 y₀,
+      (∀ j : Fin k, candX j y ∈ W) ∧
+      (∀ j : Fin k, φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) = (ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∧
+      (‖g (w_of y)‖ ≤ M) ∧
+      ((∑ j ∈ Finset.range k, ζ ^ j * h_DA (ζ ^ j * kthRoot (w_of y))) =
+        (kthRoot (w_of y)) ^ (k - 1) * g ((kthRoot (w_of y)) ^ k)) ∧
+      (∀ j : Fin k, r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target) ∧
+      (y ∈ (chartAt ℂ (f x₀)).source) ∧
+      (∀ j : Fin k, deriv (chartLocalAt f x₀) (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+          (k : ℂ) * φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) ^ (k - 1) *
+            deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)))) ∧
+      (∀ j : Fin k, deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) ≠ 0) := by
+    have h_candX_all : ∀ᶠ y in 𝓝 y₀, ∀ j : Fin k, candX j y ∈ W := by
+      rw [Filter.eventually_all]; exact h_candX_in_W_evt
+    filter_upwards [h_candX_all, h_right_inv_evt_jallY, hg_bound_evt,
+      h_avg_evt_y, h_rε_tgt_evt, h_y_in_chart_src_evt, h_deriv_evt_y, h_dφr_ne_evt, h_evt_bij]
+      with y h1 h2 h3 h4 h5 h6 h7 h8 _h_bij
+    exact ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩
+  -- Also include DB-A's eventually-y bijection separately.
+  have h_combined_evt : ∀ᶠ y in 𝓝 y₀,
+      (∀ j : Fin k, candX j y ∈ W) ∧
+      (∀ j : Fin k, φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) = (ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∧
+      (‖g (w_of y)‖ ≤ M) ∧
+      ((∑ j ∈ Finset.range k, ζ ^ j * h_DA (ζ ^ j * kthRoot (w_of y))) =
+        (kthRoot (w_of y)) ^ (k - 1) * g ((kthRoot (w_of y)) ^ k)) ∧
+      (∀ j : Fin k, r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target) ∧
+      (y ∈ (chartAt ℂ (f x₀)).source) ∧
+      (∀ j : Fin k, deriv (chartLocalAt f x₀) (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+          (k : ℂ) * φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) ^ (k - 1) *
+            deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)))) ∧
+      (∀ j : Fin k, deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) ≠ 0) ∧
+      (y ≠ y₀ → ∀ (s : Finset X), s.card = k → (↑s : Set X) ⊆ U_kfold →
+        (∀ x' ∈ s, f x' = y ∧ hbc.ramificationIndex x' = 1) →
+        (∀ x' ∈ U_kfold, f x' = y → x' ∈ s) →
+        ∃ e : Fin k → s, Function.Injective e ∧
+          ∀ j : Fin k, (e j : X) =
+            (chartAt ℂ x₀).symm
+              (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)))) := by
+    filter_upwards [h_all_evt, h_evt_bij] with y h1 h2
+    refine ⟨h1.1, h1.2.1, h1.2.2.1, h1.2.2.2.1, h1.2.2.2.2.1, h1.2.2.2.2.2.1,
+      h1.2.2.2.2.2.2.1, h1.2.2.2.2.2.2.2, ?_⟩
+    intro hy_ne s hs_card hs_sub hs_unram hs_exhaust
+    obtain ⟨e, he_inj, he_form⟩ := h2 hy_ne s hs_card hs_sub hs_unram hs_exhaust
+    refine ⟨e, he_inj, ?_⟩
+    intro j
+    show (e j : X) = (chartAt ℂ x₀).symm
+      (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)))
+    have h_eq : chartAt ℂ (f x₀) y - chartAt ℂ (f x₀) (f x₀) = w_of y := by
+      show chartAt ℂ (f x₀) y - c₀ = w_of y
+      rw [hw_of_def]
+    rw [← h_eq]
+    exact he_form j
+  -- Now extract V as an open subset of V_kfold ∩ source ∩ (eventually-y nhd of y₀).
+  obtain ⟨V_evt, hV_evt_open, hy₀V_evt, hV_evt_sub⟩ :
+      ∃ V_evt : Set Y, IsOpen V_evt ∧ y₀ ∈ V_evt ∧
+        ∀ y ∈ V_evt,
+          (∀ j : Fin k, candX j y ∈ W) ∧
+          (∀ j : Fin k, φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) = (ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∧
+          (‖g (w_of y)‖ ≤ M) ∧
+          ((∑ j ∈ Finset.range k, ζ ^ j * h_DA (ζ ^ j * kthRoot (w_of y))) =
+            (kthRoot (w_of y)) ^ (k - 1) * g ((kthRoot (w_of y)) ^ k)) ∧
+          (∀ j : Fin k, r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target) ∧
+          (y ∈ (chartAt ℂ (f x₀)).source) ∧
+          (∀ j : Fin k, deriv (chartLocalAt f x₀) (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+              (k : ℂ) * φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) ^ (k - 1) *
+                deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)))) ∧
+          (∀ j : Fin k, deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) ≠ 0) ∧
+          (y ≠ y₀ → ∀ (s : Finset X), s.card = k → (↑s : Set X) ⊆ U_kfold →
+            (∀ x' ∈ s, f x' = y ∧ hbc.ramificationIndex x' = 1) →
+            (∀ x' ∈ U_kfold, f x' = y → x' ∈ s) →
+            ∃ e : Fin k → s, Function.Injective e ∧
+              ∀ j : Fin k, (e j : X) =
+                (chartAt ℂ x₀).symm
+                  (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)))) := by
+    rw [Filter.eventually_iff_exists_mem] at h_combined_evt
+    obtain ⟨S, hS_nhd, hS_prop⟩ := h_combined_evt
+    rw [mem_nhds_iff] at hS_nhd
+    obtain ⟨V₀, hV₀_sub, hV₀_open, hy₀V₀⟩ := hS_nhd
+    refine ⟨V₀ ∩ V_kfold, hV₀_open.inter hV_kfold_open, ⟨hy₀V₀, hy₀V_kfold⟩, ?_⟩
+    intro y ⟨hy_V₀, _hy_Vk⟩
+    exact hS_prop _ (hV₀_sub hy_V₀)
+  -- Use V := V_evt ∩ V_kfold; that gives us the needed properties AND y ∈ V_kfold for h_kfold_data.
+  refine ⟨V_evt ∩ V_kfold, W, M, hV_evt_open.inter hV_kfold_open,
+    ⟨hy₀V_evt, hy₀V_kfold⟩, hW_open, hxW, hW_sub_W₀, ?_⟩
+  intro y ⟨hy_V_evt, hy_Vk⟩ hy_ne hy_reg
+  -- Extract all per-y info.
+  obtain ⟨h_candX_W, h_φr_eq, h_g_bd, h_avg_y, h_rε_tgt, h_y_src, h_deriv_y, h_dφr_ne, h_bij_y⟩ :=
+    hV_evt_sub y hy_V_evt
+  -- Extract the kfold data for this y.
+  obtain ⟨s, hs_card, hs_sub_Uk, hs_data, hs_exhaust⟩ := h_kfold_data y hy_Vk hy_ne
+  have hs_fiber : ∀ x' ∈ s, f x' = y := fun x' hx's => (hs_data x' hx's).1
+  have hs_unram : ∀ x' ∈ s, hbc.ramificationIndex x' = 1 := fun x' hx's => (hs_data x' hx's).2
+  -- Extract bijection.
+  obtain ⟨e, he_inj, he_form⟩ := h_bij_y hy_ne s hs_card hs_sub_Uk hs_data hs_exhaust
+  -- Each (e j).val = candX j y, hence in W.
+  have h_e_in_W : ∀ j : Fin k, (e j : X) ∈ W := by
+    intro j; rw [he_form j]; exact h_candX_W j
+  -- (e j).val also in s_y (subtype).
+  -- e : Fin k → {x // x ∈ s} is injective + same card ⇒ bijective.
+  have h_e_bij : Function.Bijective e := by
+    have h_card_eq : Fintype.card (Fin k) = Fintype.card { x // x ∈ s } := by
+      rw [Fintype.card_fin, Fintype.card_coe]; exact hs_card.symm
+    exact (Fintype.bijective_iff_injective_and_card e).mpr ⟨he_inj, h_card_eq⟩
+  -- Conclude (↑s : Set X) ⊆ W: each x' ∈ s equals e j for some j.
+  have hs_sub_W : (↑s : Set X) ⊆ W := by
+    intro x' hx's
+    obtain ⟨j, hj⟩ := h_e_bij.2 ⟨x', hx's⟩
+    have : (e j : X) = x' := by rw [hj]
+    rw [← this]; exact h_e_in_W j
+  -- Apply norm_filterSum_eq_norm_phiForm.
+  -- Need source / fsource of each x ∈ s.
+  have hHol : IsHolomorphic f :=
+    isHolomorphic_of_contMDiff hf (hasLocalKfoldRamification_of_contMDiff hf)
+  have hs_source : ∀ x ∈ s, x ∈ (chartAt ℂ x₀).source := by
+    intro x' hx's
+    obtain ⟨j, hj⟩ := h_e_bij.2 ⟨x', hx's⟩
+    have h_x'_eq : x' = (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) := by
+      have : (e j : X) = x' := by rw [hj]
+      rw [← this]; exact he_form j
+    rw [h_x'_eq]
+    exact (chartAt ℂ x₀).map_target (h_rε_tgt j)
+  have hs_fsource : ∀ x ∈ s, f x ∈ (chartAt ℂ (f x₀)).source := by
+    intro x' hx's
+    rw [hs_fiber x' hx's]
+    exact h_y_src
+  -- Apply norm_filterSum_eq_norm_phiForm.
+  have h_deriv_at_s : ∀ x ∈ s,
+      deriv (chartLocalAt f x₀) (chartAt ℂ x₀ x) =
+        (k : ℂ) * φ (chartAt ℂ x₀ x) ^ (k - 1) * deriv φ (chartAt ℂ x₀ x) := by
+    intro x' hx's
+    obtain ⟨j, hj⟩ := h_e_bij.2 ⟨x', hx's⟩
+    have h_x'_eq : x' = (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) := by
+      have : (e j : X) = x' := by rw [hj]
+      rw [← this]; exact he_form j
+    have h_chart_x' : chartAt ℂ x₀ x' = r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) := by
+      rw [h_x'_eq]
+      exact (chartAt ℂ x₀).right_inv (h_rε_tgt j)
+    rw [h_chart_x']
+    exact h_deriv_y j
+  -- Bound the norm.
+  rw [norm_filterSum_eq_norm_phiForm hbc hcompat hHol η x₀ k φ W hW_sub_U s
+        hs_unram hs_fiber hs_exhaust hs_sub_W hs_source hs_fsource h_deriv_at_s]
+  -- Goal: ‖s.attach.sum (fun x => (((k : ℂ) * φ(chart x₀ x.1)^(k-1) * deriv φ(chart x₀ x.1))⁻¹) •
+  --                                  (η.toFun x.1) 1)‖ ≤ M
+  -- Reindex via e : Fin k → {x // x ∈ s} (bijection) → sum over Finset.univ in Fin k.
+  let eEquiv : Fin k ≃ { x // x ∈ s } := Equiv.ofBijective e h_e_bij
+  have h_reindex :
+      s.attach.sum (fun x => (((k : ℂ) * φ (chartAt ℂ x₀ x.1) ^ (k - 1) *
+            deriv φ (chartAt ℂ x₀ x.1))⁻¹) •
+          (η.toFun x.1) (1 : TangentSpace 𝓘(ℂ, ℂ) x.1))
+        = (Finset.univ : Finset (Fin k)).sum (fun j =>
+          (((k : ℂ) * φ (chartAt ℂ x₀ (e j).1) ^ (k - 1) *
+              deriv φ (chartAt ℂ x₀ (e j).1))⁻¹) •
+            (η.toFun (e j).1) (1 : TangentSpace 𝓘(ℂ, ℂ) (e j).1)) := by
+    show (Finset.univ : Finset { x // x ∈ s }).sum _ = _
+    rw [← Equiv.sum_comp eEquiv]
+    rfl
+  rw [h_reindex]
+  -- Substitute the explicit formulas: e j = (chart x₀).symm (r (ζ^j · kthRoot w_y))
+  -- chart x₀ (e j).1 = r (ζ^j · kthRoot w_y), and φ ∘ r ε = ε, so φ(r(...)) = ζ^j · kthRoot w_y.
+  have h_summand_explicit : ∀ j : Fin k,
+      (((k : ℂ) * φ (chartAt ℂ x₀ (e j).1) ^ (k - 1) *
+          deriv φ (chartAt ℂ x₀ (e j).1))⁻¹) •
+          (η.toFun (e j).1) (1 : TangentSpace 𝓘(ℂ, ℂ) (e j).1)
+        = ((k : ℂ) * ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ^ (k - 1) *
+            deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))))⁻¹ *
+            ((η.toFun ((chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))))) (1 : ℂ)) := by
+    intro j
+    have h_x'_eq : (e j).1 = (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) :=
+      he_form j
+    have h_chart_ej : chartAt ℂ x₀ (e j).1 = r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) := by
+      rw [h_x'_eq]; exact (chartAt ℂ x₀).right_inv (h_rε_tgt j)
+    rw [h_chart_ej, h_φr_eq j, h_x'_eq]
+    -- TangentSpace 𝓘(ℂ,ℂ) p = ℂ definitionally; smul = mul.
+    show _ • _ = _ * _
+    rw [smul_eq_mul]
+  rw [Finset.sum_congr rfl (fun j _ => h_summand_explicit j)]
+  -- Sum is now Σ_{j ∈ univ Fin k} (k * (ε_j)^(k-1) * deriv φ (r ε_j))⁻¹ * (eta1Comp (r ε_j))
+  -- where ε_j = ζ^j · kthRoot w_y.
+  -- Pull out (k * (kthRoot w_y)^(k-1))⁻¹ and rewrite (ζ^j)^(k-1) factor.
+  -- Recall h_DA(ε) = (eta1Comp (r ε)) / (deriv φ (r ε)).
+  -- So each summand = (k * (ε_j)^(k-1))⁻¹ * h_DA(ε_j) * (η.toFun (chart.symm (r ε_j))) 1 *
+  --                  (deriv φ (r ε_j))⁻¹ ... wait, let's recompute.
+  -- Summand = (k * (ε_j)^(k-1) * deriv φ (r ε_j))⁻¹ * (η.toFun (chart.symm (r ε_j))) 1
+  --        = (1/k) * (ε_j)^(-(k-1)) * (deriv φ (r ε_j))⁻¹ * (η.toFun (chart.symm (r ε_j))) 1
+  --        = (1/k) * (ε_j)^(-(k-1)) * h_DA(ε_j)
+  -- where h_DA(ε) = (η.toFun (chart.symm (r ε))) 1 / deriv φ (r ε).
+  -- Note ε_j = ζ^j · kthRoot w_y; (ε_j)^(-(k-1)) = (ζ^j)^(-(k-1)) * (kthRoot w_y)^(-(k-1)).
+  -- And (ζ^j)^(-(k-1)) = ζ^j (using ζ^k = 1, -(k-1) ≡ 1 mod k).
+  -- So summand = (1/k) * ζ^j * (kthRoot w_y)^(-(k-1)) * h_DA(ζ^j · kthRoot w_y).
+  -- Sum = (1/k) * (kthRoot w_y)^(-(k-1)) * ∑ j, ζ^j * h_DA(ζ^j · kthRoot w_y)
+  --     = (1/k) * (kthRoot w_y)^(-(k-1)) * (kthRoot w_y)^(k-1) * g((kthRoot w_y)^k)   [by DA]
+  --     = (1/k) * g(w_y)   [since (kthRoot w_y)^k = w_y].
+  -- For this to make sense we need (kthRoot w_y)^(-(k-1)) · (kthRoot w_y)^(k-1) = 1, i.e.,
+  -- kthRoot w_y ≠ 0 (i.e., w_y ≠ 0 i.e., y ≠ y₀). Already have y ≠ y₀.
+  -- Critical helper: w_y ≠ 0.
+  have hw_y_ne : w_of y ≠ 0 := by
+    intro hzero
+    apply hy_ne
+    have heq : chartAt ℂ (f x₀) y = c₀ := by
+      have h0 : chartAt ℂ (f x₀) y - c₀ = 0 := hzero
+      linear_combination h0
+    have h_fx₀_src : f x₀ ∈ (chartAt ℂ (f x₀)).source := mem_chart_source ℂ (f x₀)
+    rw [show y₀ = f x₀ from hx₀_fiber.symm]
+    exact (chartAt ℂ (f x₀)).injOn h_y_src h_fx₀_src heq
+  have hkthRoot_ne : kthRoot (w_of y) ≠ 0 := by
+    intro hzero
+    apply hw_y_ne
+    have h := h_kthRoot_pow (w_of y)
+    rw [hzero, zero_pow hk_pos.ne'] at h
+    exact h.symm
+  -- Build the sum equation:
+  -- ∑ j, (above summand) = (k : ℂ)⁻¹ • g(w_y) = g(w_y) / k.
+  -- And we have ∑_{j ∈ range k} ζ^j · h_DA(ζ^j · kthRoot w_y) = (kthRoot w_y)^(k-1) · g(w_y)  (from h_avg_y).
+  -- Define the factored summand:
+  -- f_j = (k * (ε_j)^(k-1) * deriv φ (r ε_j))⁻¹ * (eta1Comp (r ε_j))
+  -- Show ∑ j∈univ, f_j = (k : ℂ)⁻¹ * g(w_y).
+  have h_sum_eq :
+      (Finset.univ : Finset (Fin k)).sum (fun j =>
+          ((k : ℂ) * ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ^ (k - 1) *
+              deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))))⁻¹ *
+              ((η.toFun ((chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))))) (1 : ℂ)))
+        = (k : ℂ)⁻¹ * g (w_of y) := by
+    -- Each summand: (k * (ε_j)^(k-1) * deriv φ (r ε_j))⁻¹ * eta1
+    -- Rewrite each as (1/k) * ((ε_j)^(k-1))⁻¹ * h_DA(ε_j).
+    -- Use (k : ℂ) ≠ 0 (k > 0).
+    have hk_ne : (k : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hk_pos.ne'
+    have hζ_ne : ∀ j : Fin k, ζ ^ (j : ℕ) ≠ 0 := fun j =>
+      pow_ne_zero _ (hζ_pr.ne_zero hk_pos.ne')
+    have h_ε_ne : ∀ j : Fin k, (ζ ^ (j : ℕ)) * kthRoot (w_of y) ≠ 0 :=
+      fun j => mul_ne_zero (hζ_ne j) hkthRoot_ne
+    -- Step A: rewrite each summand as (1/k) * ((ε_j)^(k-1))⁻¹ * h_DA(ε_j)
+    -- where h_DA(ε) := (η.toFun (chart.symm (r ε))) 1 / deriv φ (r ε).
+    have h_summand_to_hDA : ∀ j ∈ (Finset.univ : Finset (Fin k)),
+        ((k : ℂ) * ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ^ (k - 1) *
+            deriv φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))))⁻¹ *
+            ((η.toFun ((chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))))) (1 : ℂ))
+          = (k : ℂ)⁻¹ * (((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ^ (k - 1))⁻¹ *
+              h_DA ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) := by
+      intro j _
+      have h_dφr := h_dφr_ne j
+      have h_ε := h_ε_ne j
+      have h_εp_ne : ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ^ (k - 1) ≠ 0 := pow_ne_zero _ h_ε
+      show _ = _
+      -- Unfold h_DA: (η.toFun (chart.symm (r ε))) 1 / deriv φ (r ε).
+      simp only [hh_DA_def]
+      field_simp
+    rw [Finset.sum_congr rfl h_summand_to_hDA]
+    -- Step B: pull ζ^j * t^(-(k-1)) factor + (1/k).
+    have h_summand_to_avg_form : ∀ j ∈ (Finset.univ : Finset (Fin k)),
+        (k : ℂ)⁻¹ * (((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ^ (k - 1))⁻¹ *
+            h_DA ((ζ ^ (j : ℕ)) * kthRoot (w_of y))
+          = ((k : ℂ)⁻¹ * ((kthRoot (w_of y)) ^ (k - 1))⁻¹) *
+              ((ζ ^ (j : ℕ)) * h_DA ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) := by
+      intro j _
+      have h_ζj_ne := hζ_ne j
+      have h_ζj_p_ne : (ζ ^ (j : ℕ)) ^ (k - 1) ≠ 0 := pow_ne_zero _ h_ζj_ne
+      have h_kr_p_ne : (kthRoot (w_of y)) ^ (k - 1) ≠ 0 := pow_ne_zero _ hkthRoot_ne
+      -- (ζ^j)^(k-1) = (ζ^j)⁻¹ since (ζ^j)^k = 1.
+      have h_ζj_pow_k : (ζ ^ (j : ℕ)) ^ k = 1 := by
+        rw [← pow_mul, Nat.mul_comm, pow_mul, hζ_pr.pow_eq_one, one_pow]
+      have h_pow_eq_inv : (ζ ^ (j : ℕ)) ^ (k - 1) = (ζ ^ (j : ℕ))⁻¹ := by
+        -- (ζ^j)^(k-1) * (ζ^j) = (ζ^j)^k = 1
+        have h_prod : (ζ ^ (j : ℕ)) ^ (k - 1) * (ζ ^ (j : ℕ)) = 1 := by
+          rw [← pow_succ, Nat.sub_add_cancel hk_pos, h_ζj_pow_k]
+        exact eq_inv_of_mul_eq_one_left h_prod
+      have h_ε_pow : ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ^ (k - 1) =
+          (ζ ^ (j : ℕ)) ^ (k - 1) * (kthRoot (w_of y)) ^ (k - 1) := by
+        rw [mul_pow]
+      rw [h_ε_pow, mul_inv, h_pow_eq_inv, inv_inv]
+      ring
+    rw [Finset.sum_congr rfl h_summand_to_avg_form]
+    -- Step C: pull the constant out of the sum.
+    rw [← Finset.mul_sum]
+    -- Step D: convert univ-sum over Fin k to range-sum.
+    have h_univ_to_range :
+        ((Finset.univ : Finset (Fin k)).sum
+          (fun j : Fin k => (ζ ^ (j : ℕ)) * h_DA ((ζ ^ (j : ℕ)) * kthRoot (w_of y))))
+          = (Finset.range k).sum
+            (fun j : ℕ => ζ ^ j * h_DA (ζ ^ j * kthRoot (w_of y))) := by
+      rw [← Finset.sum_range fun j => ζ ^ j * h_DA (ζ ^ j * kthRoot (w_of y))]
+    rw [h_univ_to_range, h_avg_y]
+    -- Step E: simplify.
+    have h_kr_p_ne : (kthRoot (w_of y)) ^ (k - 1) ≠ 0 := pow_ne_zero _ hkthRoot_ne
+    have h_kthRoot_pow_w : (kthRoot (w_of y)) ^ k = w_of y := h_kthRoot_pow (w_of y)
+    rw [h_kthRoot_pow_w]
+    field_simp
+  rw [h_sum_eq]
+  -- Final norm bound: ‖g(w_y) / k‖ ≤ M.
+  have hk_ne_R : (k : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hk_pos.ne'
+  have hk_pos_R : 0 < (k : ℝ) := Nat.cast_pos.mpr hk_pos
+  have hk_le : (1 : ℝ) ≤ (k : ℝ) := by exact_mod_cast hk_pos
+  have hM_nn : 0 ≤ M := by rw [hM_def]; positivity
+  rw [show ((k : ℂ)⁻¹ * g (w_of y)) = (g (w_of y)) / (k : ℂ) by field_simp]
+  rw [norm_div, Complex.norm_natCast]
+  have h_norm_le_M : ‖g (w_of y)‖ ≤ M := h_g_bd
+  calc ‖g (w_of y)‖ / (k : ℝ) ≤ M / (k : ℝ) := by
+        exact div_le_div_of_nonneg_right h_norm_le_M (le_of_lt hk_pos_R)
+    _ ≤ M / 1 := by
+        apply div_le_div_of_nonneg_left hM_nn one_pos hk_le
+    _ = M := by norm_num
 
 /--
 **Strictly narrower fiber-point helper (Provider 2 internal),
