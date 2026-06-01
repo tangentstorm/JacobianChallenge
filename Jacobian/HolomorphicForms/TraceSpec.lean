@@ -1015,7 +1015,7 @@ Uses Milestone 1's scoped `Inv` / `Field` instances on
 `TangentSpace 𝓘(ℂ, ℂ) (f x)` (= `ℂ` definitionally) so that the smul
 chain `(toSpanSingleton ℂ a) 1 = a • 1 = a` typechecks transparently.
 -/
-private theorem cotangentPushforward_apply_one
+theorem cotangentPushforward_apply_one
     {f : X → Y} (hbc : BranchedCoverData X Y f)
     (hcompat : hbc.RamificationIndexCompatible)
     (hHol : IsHolomorphic f)
@@ -1059,7 +1059,7 @@ After the `CotangentModelFiber ℂ = ℂ →L[ℂ] ℂ` identification (via the
 trivial bundle and the Milestone-1 `TangentSpace` bridge), this lets
 the C3a sum reduction push `toSpanSingleton ℂ` outside the Finset sum.
 -/
-private theorem cotangentPushforward_eq_toSpanSingleton_scalar
+theorem cotangentPushforward_eq_toSpanSingleton_scalar
     {f : X → Y} (hbc : BranchedCoverData X Y f)
     (hcompat : hbc.RamificationIndexCompatible)
     (hHol : IsHolomorphic f)
