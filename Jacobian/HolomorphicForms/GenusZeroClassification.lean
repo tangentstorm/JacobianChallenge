@@ -23,6 +23,11 @@ Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
 
 namespace JacobianChallenge.HolomorphicForms
 
+-- v4.31: `TangentSpace 𝓘(ℂ,ℂ) x` is a non-reducible synonym for `ℂ`, so `rw`
+-- with `map_smul` on fiber-typed CLM applications can't match unless instance
+-- defeq sees through it (mirrors Mathlib's Riemannian.Basic / CotangentBundle).
+set_option backward.isDefEq.respectTransparency false
+
 open scoped Manifold
 
 /--
@@ -429,7 +434,9 @@ theorem holomorphicOneFormCoeffTendstoZeroOfTransition
   -- The product of `w^2 → 0` and `g` bounded.
   have hw2 : Filter.Tendsto (fun w : ℂ => -w^2 * g w) (nhds (0 : ℂ)) (nhds 0) := by
     have hsq : Filter.Tendsto (fun w : ℂ => -w^2) (nhds (0 : ℂ)) (nhds 0) := by
-      simpa using (continuous_neg.comp (continuous_pow 2)).tendsto (0 : ℂ)
+      have h := (continuous_neg.comp (continuous_pow 2)).tendsto (0 : ℂ)
+      have hpow : ((0 : ℂ) ^ 2) = 0 := by norm_num
+      simpa only [Function.comp_def, neg_zero, hpow] using h
     -- product of `→ 0` with bounded gives `→ 0`.
     refine Filter.Tendsto.zero_mul_isBoundedUnder_le hsq ?_
     refine ⟨M, Filter.eventually_map.mpr ?_⟩
@@ -507,7 +514,6 @@ theorem holomorphicOneForm_onePointCx_toFun_finite_eq_zero
     (holomorphicOneForm_coeff_entire ω).eq_zero_of_tendsto_zero_cocompact
       (holomorphicOneForm_coeff_tendsto_zero ω)
   ext
-  simp only [ContinuousLinearMap.zero_apply]
   exact congr_fun hzero z
 
 /--
@@ -632,7 +638,7 @@ theorem holomorphicOneForm_onePointCx_toFun_infty_eq_zero
     · apply ContinuousOn.comp e.continuousOn
         (Continuous.continuousOn (ω.contMDiff.continuous))
       intro x hx
-      rw [Trivialization.mem_source]
+      rw [Bundle.Trivialization.mem_source]
       exact hx
     · exact Set.mapsTo_univ _ _
   have hphi_fin : ∀ z : ℂ, (↑z : OnePoint ℂ) ∈ e.baseSet → phi (↑z : OnePoint ℂ) = 0 := by
@@ -640,11 +646,11 @@ theorem holomorphicOneForm_onePointCx_toFun_infty_eq_zero
     show (e (Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) (↑z : OnePoint ℂ)
       (ω.toFun (↑z : OnePoint ℂ)))).2 = 0
     rw [holomorphicOneForm_onePointCx_toFun_finite_eq_zero ω z]
-    rw [← Trivialization.linearEquivAt_apply (R := ℂ) e (↑z : OnePoint ℂ) hz]
+    rw [← Bundle.Trivialization.linearEquivAt_apply (R := ℂ) e (↑z : OnePoint ℂ) hz]
     exact map_zero _
   suffices h_phi_infty : phi OnePoint.infty = 0 by
     have htriv : (e.linearEquivAt ℂ OnePoint.infty h_mem) (ω.toFun OnePoint.infty) = 0 := by
-      rw [Trivialization.linearEquivAt_apply (R := ℂ)]
+      rw [Bundle.Trivialization.linearEquivAt_apply (R := ℂ)]
       exact h_phi_infty
     exact (e.linearEquivAt ℂ OnePoint.infty h_mem).injective (by rw [htriv, map_zero])
   by_contra h

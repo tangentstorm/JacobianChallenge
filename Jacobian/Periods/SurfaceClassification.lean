@@ -344,7 +344,8 @@ theorem singularH1_finrank_eq_two_mul_topologicalGenus_of_compactOrientableSurfa
     [Orientable M] :
     Module.finrank ℤ (singularH1 M) = 2 * topologicalGenus M := by
   obtain ⟨e⟩ := singularH1_iso_freeZ_of_compactOrientableSurface M
-  rw [e.finrank_eq, Module.finrank_pi, Fintype.card_fin]
+  rw [e.finrank_eq]
+  exact Module.finrank_fin_fun (R := ℤ) (n := 2 * topologicalGenus M)
 
 /--
 **Singular `H₁` of a compact orientable smooth real 2-manifold
