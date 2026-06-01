@@ -913,10 +913,12 @@ theorem genusZeroGlobalGluing_coord_mem_target_on_patch
     (family : GenusZeroGlobalPatchFamily X) :
     ∀ i x, x ∈ (family.patch i).source →
       (family.patch i).coord x ∈ (family.patch i).targetChart.target := by
-  -- Field-specific 2d frontier: the local normalized coordinate attached to a
-  -- patch lands in the coordinate domain of its chosen identity/inversion
-  -- target chart.
-  sorry
+  intro i x _hx
+  rcases (family.patch i).targetChart_standard with hchart | hchart
+  · rw [hchart]
+    simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+  · rw [hchart]
+    simp [inversionChart]
 
 /--
 The canonical forward candidate obtained by choosing one patch containing each
