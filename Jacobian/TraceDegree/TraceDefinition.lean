@@ -159,7 +159,10 @@ theorem localInverseAt_holomorphic
       simpa [ContinuousAt, hr_z₀] using hr_an.continuousAt
     have hchart_tendsto : Tendsto (fun y : Y => chartAt ℂ (f x) y)
         (𝓝 (f x)) (𝓝 w₀) := by
-      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      have hca : ContinuousAt (fun y : Y => chartAt ℂ (f x) y) (f x) :=
+        (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      rw [show w₀ = chartAt ℂ (f x) (f x) from rfl]
+      exact hca
     have hsymm_tendsto : Tendsto (fun z => (chartAt ℂ x).symm z)
         (𝓝 z₀) (𝓝 x) := by
       have hcont := (chartAt ℂ x).continuousAt_symm
@@ -168,7 +171,8 @@ theorem localInverseAt_holomorphic
         (𝓝 ((chartAt ℂ x).symm z₀)) at hcont
       simpa [z₀, (chartAt ℂ x).left_inv (mem_chart_source ℂ x)] using hcont
     have hcomp := hsymm_tendsto.comp (hr_tendsto.comp hchart_tendsto)
-    simpa [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀, w₀] using hcomp
+    refine hcomp.congr fun y' => ?_
+    simp only [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀, Function.comp_apply]
   have hanalyticInv_mem_U : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ U :=
     hlocalInv_tendsto.eventually (hUopen.mem_nhds hxU)
   have hanalyticInv_right : ∀ᶠ y in 𝓝 (f x), f (analyticInv y) = y := by
@@ -180,7 +184,10 @@ theorem localInverseAt_holomorphic
           (hf := (_hf.holomorphicAt x).hasStrictDerivAt) (hf' := hderiv))
     have hchart_tendsto : Tendsto (fun y : Y => chartAt ℂ (f x) y)
         (𝓝 (f x)) (𝓝 w₀) := by
-      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      have hca : ContinuousAt (fun y : Y => chartAt ℂ (f x) y) (f x) :=
+        (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      rw [show w₀ = chartAt ℂ (f x) (f x) from rfl]
+      exact hca
     have hright_y : ∀ᶠ y in 𝓝 (f x), F (r (chartAt ℂ (f x) y)) =
         chartAt ℂ (f x) y :=
       hchart_tendsto.eventually hright_z
@@ -194,7 +201,8 @@ theorem localInverseAt_holomorphic
         ((chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x)))
     filter_upwards [hright_y, hy_source, hf_analyticInv_source] with y hy_eq hy_src hfy_src
     have hchart : chartAt ℂ (f x) (f (analyticInv y)) = chartAt ℂ (f x) y := by
-      simpa [analyticInv, IsHolomorphicAt.localInverse, F, r, z₀, w₀] using hy_eq
+      show chartLocalAt f x (r (chartAt ℂ (f x) y)) = chartAt ℂ (f x) y
+      exact hy_eq
     exact (chartAt ℂ (f x)).injOn hfy_src hy_src hchart
   filter_upwards [hanalyticInv_mem_U, hanalyticInv_right] with y hy_an_U hy_an_right
   have hleft := hleft_branch (analyticInv y) hy_an_U
@@ -237,18 +245,17 @@ private theorem IsHolomorphicAt.sum_cotangentModelFiber
   · intro _hf
     change IsHolomorphicAt (fun _ : Y => (0 : CotangentModelFiber ℂ)) p
     unfold IsHolomorphicAt chartLocalAt
-    simpa using (analyticAt_const :
-      AnalyticAt ℂ
-        (fun _ : ℂ => chartAt ℂ (0 : CotangentModelFiber ℂ) (0 : CotangentModelFiber ℂ))
-        (chartAt ℂ p p))
+    simp only [Function.comp_def]
+    exact analyticAt_const
   · intro a s ha ih hfs
     have ha_holo : IsHolomorphicAt (f a) p :=
       hfs a (Finset.mem_insert_self a s)
     have hs_holo : IsHolomorphicAt (fun y => Finset.sum s (fun i => f i y)) p :=
       ih fun i hi => hfs i (Finset.mem_insert_of_mem hi)
     unfold IsHolomorphicAt chartLocalAt at *
-    simpa [Finset.sum_insert, ha, Pi.add_apply, Function.comp_def] using
-      ha_holo.add hs_holo
+    have hsum := ha_holo.add hs_holo
+    simp only [Function.comp_def, Finset.sum_insert ha, map_add, map_sum]
+    exact hsum
 
 /-- A local version of the trace sum, defined in a neighborhood of `y`. -/
 noncomputable def localTraceAtRegularValue
@@ -348,7 +355,8 @@ theorem mfderiv_isIso_of_ramificationIndex_one
     have hFD' : HasFDerivWithinAt (chartLocalAt f x)
         (ContinuousLinearMap.toSpanSingleton ℂ a) Set.univ (chartAt ℂ x x) :=
       hFD.hasFDerivWithinAt
-    simpa [writtenInExtChartAt, chartLocalAt, Function.comp_def] using hFD'
+    convert hFD' using 2
+    simp
   have hmFD : mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x =
       ContinuousLinearMap.toSpanSingleton ℂ a := hMF.mfderiv
   refine ⟨{
