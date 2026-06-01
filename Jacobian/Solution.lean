@@ -16,6 +16,7 @@ import Jacobian.TraceDegree.PushforwardBasis
 import Jacobian.TraceDegree.AnalyticDegree
 import Jacobian.TraceDegree.PiecewiseC1Instance
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
+import Jacobian.TraceDegree.AnalyticPushforwardFunctorialU
 
 set_option linter.unusedSectionVars false
 set_option backward.isDefEq.respectTransparency false
@@ -246,15 +247,29 @@ variable {Y : Type*} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [Connecte
 variable (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
 
 /-- The pushforward map between Jacobians associated to a map of the underlying curves. -/
-def pushforward (f : X → Y)
+noncomputable def pushforward (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    Jacobian X →ₜ+ Jacobian Y := sorry
+    Jacobian X →ₜ+ Jacobian Y :=
+  JacobianChallenge.ComplexTorus.ULiftContinuousAddMonoidHom'
+    (JacobianChallenge.TraceDegree.analyticPushforwardU f hf)
 
 theorem pushforward_contMDiff :
   ContMDiff (modelWithCornersSelf ℂ (Fin (genus X) → ℂ))
-  (modelWithCornersSelf ℂ (Fin (genus Y) → ℂ)) ω (pushforward f hf) := sorry
+  (modelWithCornersSelf ℂ (Fin (genus Y) → ℂ)) ω (pushforward f hf) := by
+  show ContMDiff _ _ ω
+    (fun a : Jacobian X =>
+      (ULift.up (JacobianChallenge.TraceDegree.analyticPushforwardU f hf a.down) : Jacobian Y))
+  exact (JacobianChallenge.ComplexTorus.contMDiff_uLift_up
+        (Λ := JacobianChallenge.Periods.periodFullComplexLatticeU Y)).comp
+    ((JacobianChallenge.TraceDegree.analyticPushforward_contMDiffU f hf).comp
+      (JacobianChallenge.ComplexTorus.contMDiff_uLift_down
+        (Λ := JacobianChallenge.Periods.periodFullComplexLatticeU X)))
 
-lemma pushforward_id_apply (P : Jacobian X) : pushforward id contMDiff_id P = P := sorry
+lemma pushforward_id_apply (P : Jacobian X) : pushforward id contMDiff_id P = P := by
+  show (ULift.up (JacobianChallenge.TraceDegree.analyticPushforwardU id contMDiff_id P.down)
+      : Jacobian X) = P
+  rw [JacobianChallenge.TraceDegree.analyticPushforward_id_applyU P.down]
+  rfl
 
 variable {Z : Type*} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
   [ChartedSpace ℂ Z] [IsManifold 𝓘(ℂ) ω Z]
@@ -262,8 +277,11 @@ variable {Z : Type*} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [Connecte
 variable (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
 
 lemma pushforward_comp_apply (P : Jacobian X) :
-    pushforward (g ∘ f) (hg.comp hf) P = pushforward g hg (pushforward f hf P) :=
-  sorry
+    pushforward (g ∘ f) (hg.comp hf) P = pushforward g hg (pushforward f hf P) := by
+  show ULift.up (JacobianChallenge.TraceDegree.analyticPushforwardU (g ∘ f) (hg.comp hf) P.down)
+    = ULift.up (JacobianChallenge.TraceDegree.analyticPushforwardU g hg
+        (JacobianChallenge.TraceDegree.analyticPushforwardU f hf P.down))
+  rw [JacobianChallenge.TraceDegree.analyticPushforward_comp_applyU f hf g hg P.down]
 
 /-- Pullback map between Jacobians associated to a map of the underlying curves. -/
 def pullback (f : X → Y)
