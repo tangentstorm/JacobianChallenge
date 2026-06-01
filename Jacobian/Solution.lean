@@ -18,6 +18,7 @@ import Jacobian.TraceDegree.PiecewiseC1Instance
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Jacobian.TraceDegree.AnalyticPushforwardFunctorialU
 import Jacobian.TraceDegree.AnalyticPullbackFunctorialU
+import Jacobian.TraceDegree.AnalyticPushPullU
 
 set_option linter.unusedSectionVars false
 set_option backward.isDefEq.respectTransparency false
@@ -335,6 +336,14 @@ theorem _root_.ContMDiff.degree_constant (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω 
   simp [hconst]
 
 lemma pushforward_pullback (P : Jacobian Y) :
-  pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P := sorry
+  pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P := by
+  show ULift.up (JacobianChallenge.TraceDegree.analyticPushforwardU f hf
+      (JacobianChallenge.TraceDegree.analyticPullbackU f hf P.down))
+    = (ContMDiff.degree f hf) • P
+  rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullbackU f hf P.down]
+  show (ULift.up ((JacobianChallenge.TraceDegree.analyticDegreeU f hf) • P.down) : Jacobian Y)
+    = (ContMDiff.degree f hf) • P
+  rw [show ContMDiff.degree f hf = JacobianChallenge.TraceDegree.analyticDegreeU f hf from rfl]
+  rfl
 
 end Jacobian
