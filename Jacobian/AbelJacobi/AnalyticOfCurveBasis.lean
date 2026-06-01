@@ -480,7 +480,7 @@ theorem euler_char_identity_low_degree
     push_cast
     rw [Int.toNat_of_nonneg (by linarith : (0 : ℤ) ≤ d + 1)]
     ring
-  · push_neg at h
+  · push Not at h
     refine ⟨0, (-(d + 1)).toNat, 0, ?_⟩
     push_cast
     rw [Int.toNat_of_nonneg (by linarith : (0 : ℤ) ≤ -(d + 1))]
@@ -507,7 +507,7 @@ theorem riemannRoch_formula_general
     exact ⟨ℓD, 0, g, by simpa using hRR⟩
   · -- Low-degree with sufficiently large `g`: pick `g = (2 - d).toNat`
     -- so that `d ≤ 2g - 2`, hence in the low-degree régime.
-    push_neg at h
+    push Not at h
     -- `d ≤ -2` so `d ≤ 2 * 0 - 2 = -2`; pick `g = 0`.
     exact riemannRoch_formula_low_degree d ⟨0, by simpa using h⟩
 
@@ -646,7 +646,7 @@ theorem dim_geq_two_from_RR_formula
   by_cases hg : g ≤ 1
   · exact dim_geq_two_translate_to_divisor_shape X Q₁ Q₂ hne
       (dim_geq_two_low_genus ⟨ℓD, ℓKD, g, hRRℓ, hg⟩)
-  · push_neg at hg
+  · push Not at hg
     exact dim_geq_two_translate_to_divisor_shape X Q₁ Q₂ hne
       (dim_geq_two_high_genus ⟨ℓD, ℓKD, g, hRRℓ, hg⟩)
 

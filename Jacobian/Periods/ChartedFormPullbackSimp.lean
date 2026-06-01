@@ -1,5 +1,5 @@
 import Jacobian.Periods.ChartedFormPullback
-import Mathlib.Geometry.Manifold.VectorBundle.SmoothSection
+import Mathlib.Geometry.Manifold.VectorBundle.ContMDiffSection
 
 namespace JacobianChallenge.Periods
 

@@ -489,7 +489,7 @@ theorem hodge_form_posDef
     exact (holomorphicOneFormDualEquiv ℂ X).map_eq_zero_iff.mp h
   obtain ⟨i₀, hi₀⟩ : ∃ i, v i ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hv_ne (funext fun i => (h i).trans rfl)
   refine Finset.sum_pos' (fun i _ => Complex.normSq_nonneg _)
     ⟨i₀, Finset.mem_univ _, ?_⟩

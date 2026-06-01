@@ -1,5 +1,5 @@
 import Jacobian.HolomorphicForms.CotangentBundle
-import Mathlib.Geometry.Manifold.VectorBundle.SmoothSection
+import Mathlib.Geometry.Manifold.VectorBundle.ContMDiffSection
 
 /-!
 # Holomorphic 1-forms on a complex manifold

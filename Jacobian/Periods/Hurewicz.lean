@@ -2956,7 +2956,7 @@ lemma finsupp_mapDomain_exists_negative_in_fiber
   classical
   have hsum := finsupp_mapDomain_fiber_sum_zero f x hx a
   by_contra hneg
-  push_neg at hneg
+  push Not at hneg
   have h_nonneg : ∀ b ∈ x.support.filter (fun b => f b = f a), 0 ≤ x b := by
     intro b hb
     exact hneg b (Finset.mem_filter.mp hb).1 (by simpa using (Finset.mem_filter.mp hb).2)
@@ -6873,7 +6873,7 @@ noncomputable def polygon4g_cellularToSingularChainMap
     map_add' := by
       intro a b
       ext x
-      simp only [Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.coe_add,
+      simp only [Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.coe_add,
         Finsupp.coe_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
       change
         (∑ e : Fin (2 * g),
@@ -6887,7 +6887,7 @@ noncomputable def polygon4g_cellularToSingularChainMap
     map_smul' := by
       intro n a
       ext x
-      simp only [Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.coe_smul,
+      simp only [Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.coe_smul,
         Pi.smul_apply, smul_eq_mul, RingHom.id_apply, Polygon4gSingularC1.smul_coeff]
       change
         (∑ e : Fin (2 * g),

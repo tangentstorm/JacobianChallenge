@@ -174,7 +174,7 @@ theorem continuous_staircaseFirstCoord :
 theorem continuous_staircaseTimeCoord :
     Continuous (fun f : Fin (n + 2) → ℝ => staircaseTimeCoord n i f) := by
   unfold staircaseTimeCoord
-  exact continuous_finset_sum _ (fun j _ => continuous_apply j)
+  exact continuous_finsetSum _ (fun j _ => continuous_apply j)
 
 /-- Continuity of `staircaseFun`. -/
 theorem continuous_staircaseFun :
@@ -812,7 +812,7 @@ theorem prismSimplex_side_face_lower
         exact hval
       · exfalso
         rw [Fin.lt_def] at hmj
-        push_neg at hmj
+        push Not at hmj
         simp only [Fin.val_succ, Fin.val_castSucc] at hval hmj
         omega
     · rintro rfl
@@ -835,7 +835,7 @@ theorem prismSimplex_side_face_lower
         simp only [Fin.val_castSucc, hj_loval] at hval hmj
         omega
       · rw [Fin.lt_def] at hmj
-        push_neg at hmj
+        push Not at hmj
         simp only [Fin.val_succ, Fin.val_castSucc] at hval hmj
         apply Fin.ext
         show m.val = k.val - 1
@@ -884,7 +884,7 @@ theorem prismSimplex_side_face_lower
         apply congrArg
         apply Fin.ext
         simp
-      · push_neg at hkj
+      · push Not at hkj
         have hkj_gt : j.val < k.val := lt_of_le_of_ne hkj (Ne.symm hne_val)
         have hk_pos : 0 < k.val := by omega
         rw [hfilter_gt k hkj_gt, Finset.sum_singleton]
@@ -900,7 +900,7 @@ theorem prismSimplex_side_face_lower
           simp only [if_pos hcond]
           apply congrArg; apply Fin.ext
           simp
-        · push_neg at hk_lt_i
+        · push Not at hk_lt_i
           by_cases hk_eq_i : k.val = i.val
           · simp only [staircaseFirstCoord, if_neg (by omega : ¬ k.val < i.val),
               if_pos hk_eq_i]
@@ -1028,7 +1028,7 @@ theorem prismSimplex_side_face_upper
           simp [Fin.val_castSucc]; rw [hi'val] at hi'lt; omega
         rw [if_neg hLHS, if_neg hi'lt]
     · -- m.val ≥ j.val. succAbove j m = m.succ, val = m.val + 1 > j.val > i.val.
-      push_neg at hm
+      push Not at hm
       have hsa : Fin.succAbove j m = m.succ := by
         rw [Fin.succAbove, if_neg (by simp [Fin.lt_def]; omega)]
       rw [hsa]
@@ -1059,7 +1059,7 @@ theorem prismSimplex_side_face_upper
         apply Fin.ext; show m.val = k.val; exact hval
       · exfalso
         rw [Fin.lt_def] at hmj
-        push_neg at hmj
+        push Not at hmj
         simp only [Fin.val_succ, Fin.val_castSucc, hj_jm1val] at hval hmj
         rw [hj_jm1val] at hkj
         omega
@@ -1085,7 +1085,7 @@ theorem prismSimplex_side_face_upper
         rw [hj_jm1val] at hkj
         omega
       · rw [Fin.lt_def] at hmj
-        push_neg at hmj
+        push Not at hmj
         simp only [Fin.val_succ, Fin.val_castSucc] at hval hmj
         apply Fin.ext; show m.val = k.val - 1; omega
     · rintro rfl
@@ -1128,7 +1128,7 @@ theorem prismSimplex_side_face_upper
           have hcond : (k.val) < i'.val := by rw [hi'val]; exact hk_lt_i
           simp only [if_pos hcond]
           apply congrArg; apply Fin.ext; simp
-        · push_neg at hk_lt_i
+        · push Not at hk_lt_i
           by_cases hk_eq_i : k.val = i.val
           · -- k.val = i.val. LHS = q.val i.castSucc + q.val i.succ.
             simp only [staircaseFirstCoord, if_neg (by omega : ¬ k.val < i.val),
@@ -1164,7 +1164,7 @@ theorem prismSimplex_side_face_upper
             simp only [if_neg hcond, if_neg hcond_ne]
             apply congrArg; apply Fin.ext; simp
       · -- Case 2: k.val > j_jm1.val = j.val - 1, so k.val ≥ j.val.
-        push_neg at hkj
+        push Not at hkj
         have hkj_gt : j_jm1.val < k.val := lt_of_le_of_ne hkj (Ne.symm hne_val)
         have hkj_ge : j.val ≤ k.val := by rw [hj_jm1val] at hkj_gt; omega
         rw [hfilter_gt k hkj_gt, Finset.sum_singleton]

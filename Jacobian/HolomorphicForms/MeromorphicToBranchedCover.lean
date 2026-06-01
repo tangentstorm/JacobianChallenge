@@ -2712,7 +2712,7 @@ theorem orderAt_P_eq_neg_one
     -- Specialize the global germ-equality at `P`.
     exact s.outside_constants ⟨c, hc P⟩
   · -- Order at `P` is `< 0` and `≥ -1`, so equals `-1`.
-    push_neg at hP
+    push Not at hP
     -- `hP : orderAt P s.finiteLift < 0`
     -- Combined with `order_ge_neg_one_at_P : -1 ≤ orderAt P s.finiteLift`,
     -- and the fact that the order is in `WithTop ℤ`.

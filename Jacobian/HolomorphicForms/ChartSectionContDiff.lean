@@ -49,7 +49,7 @@ private lemma trivial_triv_identity (z₀ : ℂ)
     (x : OnePoint ℂ) (v : (Bundle.Trivial (OnePoint ℂ) ℂ) x) :
     (trivializationAt ℂ (Bundle.Trivial (OnePoint ℂ) ℂ) (OnePoint.some z₀)
       (TotalSpace.mk x v)).2 = v := by
-  cases x <;> simp_all [ Trivial ]
+  cases x <;> simp_all
 
 /-
 The trivialized cotangent section value equals the section value for

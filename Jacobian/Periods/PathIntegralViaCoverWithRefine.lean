@@ -179,7 +179,7 @@ element.
 -/
 theorem subpathAux_divFinIcc_apply_divFinIcc
     (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (i : Fin n) (j : ℕ) (hj : j ≤ k) :
-    Path.subpathAux (divFinIcc n hn i.val (le_of_lt i.isLt))
+    Set.Icc.convexComb (divFinIcc n hn i.val (le_of_lt i.isLt))
                     (divFinIcc n hn (i.val + 1) i.isLt)
                     (divFinIcc k hk j hj) =
       divFinIcc (n * k) (Nat.mul_pos hn hk) (i.val * k + j)
@@ -207,11 +207,11 @@ affine-interpolations (outer `(i/n) → ((i+1)/n)` and inner `(j/k) →
 theorem subpathAux_subpathAux_eq
     (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (i : Fin n) (j : Fin k)
     (s : unitInterval) :
-    Path.subpathAux (divFinIcc n hn i.val (le_of_lt i.isLt))
+    Set.Icc.convexComb (divFinIcc n hn i.val (le_of_lt i.isLt))
                     (divFinIcc n hn (i.val + 1) i.isLt)
-                    (Path.subpathAux (divFinIcc k hk j.val (le_of_lt j.isLt))
+                    (Set.Icc.convexComb (divFinIcc k hk j.val (le_of_lt j.isLt))
                                      (divFinIcc k hk (j.val + 1) j.isLt) s) =
-      Path.subpathAux
+      Set.Icc.convexComb
         (divFinIcc (n * k) (Nat.mul_pos hn hk) (i.val * k + j.val)
           (by
             have hi1 : i.val + 1 ≤ n := i.isLt
@@ -377,7 +377,7 @@ theorem pathIntegralViaCoverWith_refine_to_multiple
     (finProdFinEquiv (i, j')).isLt
   -- subpathAux applied at lo and hi positions equals the corresponding divFinIcc on Fin (n*k).
   have hsubpath_lo :
-      Path.subpathAux (divFinIcc n hn i.val (le_of_lt i.isLt))
+      Set.Icc.convexComb (divFinIcc n hn i.val (le_of_lt i.isLt))
                       (divFinIcc n hn (i.val + 1) i.isLt) p_lo =
       divFinIcc (n * k) hnk (finProdFinEquiv (i, j')).val hbound_lo := by
     rw [hp_lo_def]
@@ -388,7 +388,7 @@ theorem pathIntegralViaCoverWith_refine_to_multiple
     congr 1
     exact_mod_cast hidx_lo.symm
   have hsubpath_hi :
-      Path.subpathAux (divFinIcc n hn i.val (le_of_lt i.isLt))
+      Set.Icc.convexComb (divFinIcc n hn i.val (le_of_lt i.isLt))
                       (divFinIcc n hn (i.val + 1) i.isLt) p_hi =
       divFinIcc (n * k) hnk ((finProdFinEquiv (i, j')).val + 1) hbound_hi := by
     rw [hp_hi_def]
@@ -405,12 +405,12 @@ theorem pathIntegralViaCoverWith_refine_to_multiple
   have ha_eq : δ_i p_lo =
       γ (divFinIcc (n * k) hnk (finProdFinEquiv (i, j')).val hbound_lo) := by
     rw [hδ_i_def]
-    show γ (Path.subpathAux _ _ p_lo) = γ _
+    show γ (Set.Icc.convexComb _ _ p_lo) = γ _
     rw [hsubpath_lo]
   have hb_eq : δ_i p_hi =
       γ (divFinIcc (n * k) hnk ((finProdFinEquiv (i, j')).val + 1) hbound_hi) := by
     rw [hδ_i_def]
-    show γ (Path.subpathAux _ _ p_hi) = γ _
+    show γ (Set.Icc.convexComb _ _ p_hi) = γ _
     rw [hsubpath_hi]
   -- Apply combined chart-change + path-HEq lemma.
   refine pathIntegralViaChartCorrect_eq_of_chart_path_heq
@@ -418,10 +418,10 @@ theorem pathIntegralViaCoverWith_refine_to_multiple
   · -- HEq of paths via Path.heq_of_toFun_eq.
     refine Path.heq_of_toFun_eq _ _ ha_eq hb_eq ?_
     funext s
-    show δ_i (Path.subpathAux p_lo p_hi s) = γ (Path.subpathAux _ _ s)
+    show δ_i (Set.Icc.convexComb p_lo p_hi s) = γ (Set.Icc.convexComb _ _ s)
     rw [hδ_i_def]
-    show γ (Path.subpathAux _ _ (Path.subpathAux p_lo p_hi s)) =
-         γ (Path.subpathAux _ _ s)
+    show γ (Set.Icc.convexComb _ _ (Set.Icc.convexComb p_lo p_hi s)) =
+         γ (Set.Icc.convexComb _ _ s)
     congr 1
     rw [hp_lo_def, hp_hi_def]
     rw [subpathAux_subpathAux_eq n k hn hk i j' s]

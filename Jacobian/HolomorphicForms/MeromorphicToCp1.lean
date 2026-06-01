@@ -171,8 +171,7 @@ theorem liftToCp1_local_kfold_ramified
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (_hholo : True) :
-    ∀ [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-      [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) (OnePoint ℂ)]
+    ∀ [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) (OnePoint ℂ)]
       {x : X} {k : ℕ}, 0 < k →
       mapAnalyticOrderAt (meromorphicToCp1 X f) x = k →
       ∃ U : Set X, IsOpen U ∧ x ∈ U ∧
@@ -182,7 +181,7 @@ theorem liftToCp1_local_kfold_ramified
         (∀ x' ∈ s, meromorphicToCp1 X f x' = y ∧
           mapAnalyticOrderAt (meromorphicToCp1 X f) x' = 1) ∧
         (∀ x' ∈ U, meromorphicToCp1 X f x' = y → x' ∈ s) := by
-  intro _ _ x k hk hram
+  intro _ x k hk hram
   exact local_kfold_ramified_of_contMDiff (liftToCp1_contMDiff X f) hk hram
 
 /-- Local conservation of the weighted fibre count for the CP¹ lift. -/
@@ -191,8 +190,7 @@ theorem liftToCp1_weightedFiberSum_eventually_eq
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (_hholo : True) :
-    ∀ [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-      [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) (OnePoint ℂ)]
+    ∀ [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) (OnePoint ℂ)]
       [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space (OnePoint ℂ)],
       (¬ ∃ y₀ : OnePoint ℂ, ∀ x, meromorphicToCp1 X f x = y₀) →
       (finite_fiber : ∀ y : OnePoint ℂ, ((meromorphicToCp1 X f) ⁻¹' {y}).Finite) →
@@ -201,7 +199,7 @@ theorem liftToCp1_weightedFiberSum_eventually_eq
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) =
         ((finite_fiber y₀).toFinset).sum
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) := by
-  intro _ _ _ _ _ _ hnonconst finite_fiber y₀
+  intro _ _ _ _ _ hnonconst finite_fiber y₀
   exact weightedFiberConservation_of_contMDiff
     (liftToCp1_contMDiff X f) hnonconst finite_fiber y₀
 

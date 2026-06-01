@@ -45,6 +45,7 @@ The real charted-space structure on `ℂ` obtained from
 `complexEquivReal2`, equivalently from `Complex.equivRealProd` followed by the
 standard identification of `ℝ × ℝ` with `ℝ²`.
 -/
+@[reducible]
 def complexChartedSpaceReal2 : ChartedSpace (EuclideanSpace ℝ (Fin 2)) ℂ :=
   complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph.singletonChartedSpace
     (by simp [Homeomorph.toOpenPartialHomeomorph])

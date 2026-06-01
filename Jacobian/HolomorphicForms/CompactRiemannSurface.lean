@@ -304,6 +304,7 @@ The `MetricSpace` on `HolomorphicOneForm ℂ X` induced by the
 sup-norm distance `dist σ τ = ⨆ x, ‖(σ - τ) x‖`. Constructed from
 the individual axioms proved in `SectionMetric.lean`.
 -/
+@[reducible]
 noncomputable def holomorphicOneForm_metricSpace
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
@@ -3161,7 +3162,7 @@ theorem holomorphicOneForm_locallyCompact_of_compactRiemannSurface
       ext y
       simp [Metric.mem_closedBall, dist_comm]
     rw [heq]
-    exact hCompact.image (continuous_add_right x)
+    exact hCompact.image (continuous_add_const x)
   exact WeaklyLocallyCompactSpace.locallyCompactSpace
 
 /-! ### Final assembly: Riesz finite-dimensionality -/
@@ -3376,6 +3377,7 @@ theorem holomorphicOneForm_supNorm_closedBall_totallyBounded
     (holomorphicOneForm_supNorm_closedBall_evalOneBCFSet_equicontinuous X)
 
 
+@[reducible]
 noncomputable def compactRiemannSurface_holomorphicOneFormMontelData_frontier
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -3440,6 +3442,7 @@ noncomputable instance compactRiemannSurface_finiteDimensionalHolomorphicOneForm
   compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel X
 
 
+@[reducible]
 noncomputable def compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

@@ -231,7 +231,7 @@ theorem exists_singularSimplex_integration
               change (chartAt ℂ (pickChart i)) _ ∈ (chartAt ℂ (pickChart i)).target
               exact (chartAt ℂ (pickChart i)).map_source
                 (by
-                  let τ := Path.subpathAux
+                  let τ := Set.Icc.convexComb
                     (divFinIcc n hn i.val (le_of_lt i.isLt))
                     (divFinIcc n hn (i.val + 1) i.isLt) t
                   have hτmemI : τ ∈ Set.uIcc
@@ -279,7 +279,7 @@ theorem exists_singularSimplex_integration
               change (chartAt ℂ (pickChart i)) _ ∈ (chartAt ℂ (pickChart i)).target
               exact (chartAt ℂ (pickChart i)).map_source
                 (by
-                  let τ := Path.subpathAux
+                  let τ := Set.Icc.convexComb
                     (divFinIcc n hn i.val (le_of_lt i.isLt))
                     (divFinIcc n hn (i.val + 1) i.isLt) t
                   have hτmemI : τ ∈ Set.uIcc

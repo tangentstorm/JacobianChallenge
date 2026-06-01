@@ -423,7 +423,7 @@ private theorem localInverseAt_preimage_mem_nhds
       simpa [z₀, (chartAt ℂ x).left_inv (mem_chart_source ℂ x)] using hcont
     have hcomp := hsymm_tendsto.comp (hr_tendsto.comp hchart_tendsto)
     refine hcomp.congr fun y' => ?_
-    simp only [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀, w₀,
+    simp only [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀,
       Function.comp_apply]
   have hanalyticInv_mem_U : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ U :=
     hlocalInv_tendsto.eventually (hUopen.mem_nhds hxU)
@@ -2753,6 +2753,7 @@ private theorem ramified_kfold_chart_bijection
     exact h_candX_inj h_val_eq
   · intro j; rfl
 
+set_option linter.unusedSectionVars false in
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
@@ -2797,7 +2798,7 @@ private theorem ramifiedKfoldSum_locally_bounded
     (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
     ∃ (V : Set Y) (W : Set X) (M : ℝ),
       IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
-      ∀ y ∈ V, y ≠ y₀ → ∀ (hy : isRegularValue hbc y),
+      ∀ y ∈ V, y ≠ y₀ → ∀ (_hy : isRegularValue hbc y),
         ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
             (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
               CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
@@ -4735,7 +4736,7 @@ theorem traceForm_extension_at_branch_of_canonical_BCD
   exfalso
   -- Unfold ¬ isRegularValue to extract a ramified preimage.
   unfold isRegularValue at hy0_branch
-  push_neg at hy0_branch
+  push Not at hy0_branch
   obtain ⟨x, hx_mem, hx_ram⟩ := hy0_branch
   -- IsHolomorphicAt at x, from contMDiff f.
   have hfx : IsHolomorphicAt f x :=
