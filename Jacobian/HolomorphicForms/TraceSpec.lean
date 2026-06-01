@@ -45,11 +45,11 @@ open JacobianChallenge.HolomorphicForms
 open JacobianChallenge.HolomorphicForms.SectionFiberNorm
 open JacobianChallenge.Periods
 
-variable {X Y : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+variable {X Y : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) X]
   [StableChartAt ℂ X]
-variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
+variable {Y : Type*} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [ChartedSpace ℂ Y]
   [IsManifold 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) Y]
   [StableChartAt ℂ Y]
