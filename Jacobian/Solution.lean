@@ -35,9 +35,10 @@ instance (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [Connecte
     [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] :
     JacobianChallenge.Periods.StableChartAt ℂ X := sorry
 
-instance (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
+noncomputable instance (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] :
-    JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X := sorry
+    JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X :=
+  JacobianChallenge.HolomorphicForms.compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
 
 /-- The genus of a compact Riemann surface. -/
 noncomputable def genus (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
