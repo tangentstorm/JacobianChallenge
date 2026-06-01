@@ -135,9 +135,8 @@ theorem holomorphicTraceCoord_id
     holomorphicTraceCoord (X := X) (Y := X) id contMDiff_id =
       LinearMap.id := by
   unfold holomorphicTraceCoord
-  rw [pullbackFormsBundledLM_id]
-  ext v
-  simp
+  rw [pullbackFormsBundledLM_id, LinearMap.id_comp]
+  exact LinearMap.ext fun x => (holomorphicOneFormFinBasis ℂ X).equivFun.apply_symm_apply x
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z] in
@@ -152,8 +151,11 @@ theorem holomorphicTraceCoord_comp
       (holomorphicTraceCoord f hf).comp (holomorphicTraceCoord g hg) := by
   unfold holomorphicTraceCoord
   rw [pullbackFormsBundledLM_comp f hf g hg]
-  ext v
-  simp [LinearMap.comp_apply]
+  -- The middle `Y.equivFun.symm ∘ₗ Y.equivFun` cancels at point level.
+  apply LinearMap.ext
+  intro v
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
+    LinearEquiv.symm_apply_apply]
 
 /-!
 ### Top-level `pushforwardTraceLift` via matrix transpose
