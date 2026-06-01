@@ -1,4 +1,5 @@
 import Jacobian.TraceDegree.AnalyticPullbackContMDiffU
+import Jacobian.TraceDegree.TraceFormsIdU
 
 /-!
 # Universe-polymorphic analytic-pullback functoriality
@@ -74,11 +75,13 @@ in `PullbackBasis.lean`. Genuine discharge is the later "E2-trace-id" task; thes
 two are the ONLY sorries in this file.
 -/
 
-/-- **Frontier obligation (id).** Universe-`u` trace functoriality along `id`;
-companion of the Type-0 `traceFormsBundledLM_id` (`PullbackBasis.lean:954`). -/
+/-- **Universe-`u` trace functoriality along `id`** — GENUINELY DISCHARGED (R-id).
+Companion of the Type-0 `traceFormsBundledLM_id` (`PullbackBasis.lean:954`); the
+genuine proof is `TraceFormsIdU.traceFormsBundledLM_id_genuineU` (the id-case
+branched-cover chain ported to `Type u`, no sorry). -/
 theorem traceFormsBundledLM_idU :
     traceFormsBundledLM (X := X) (Y := X) (id : X → X) contMDiff_id = LinearMap.id :=
-  sorry
+  TraceFormsIdU.traceFormsBundledLM_id_genuineU
 
 /-- **Frontier obligation (comp).** Universe-`u` trace functoriality along
 `g ∘ f`; companion of the Type-0 `traceFormsBundledLM_comp`
