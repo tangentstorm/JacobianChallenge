@@ -332,7 +332,10 @@ theorem identityChartCoeff_tendsto_zero (ω : HolomorphicOneForm ℂ (OnePoint �
           (OnePoint.some (w⁻¹) : OnePoint ℂ) (-(w⁻¹) ^ 2) = (1 : ℂ) := by
       have hfm := tangent_continuousLinearMapAt_inversion_apply (w⁻¹) hwinv
         (-(w⁻¹) ^ 2)
-      simp only [hfm]
+      -- `rw`/`simp` can't see the LHS (its argument lives in the fiber type
+      -- `TangentSpace 𝓘(ℂ,ℂ) ↑w⁻¹`, defeq to ℂ but not syntactically); close
+      -- in term mode where the fiber defeq is transparent.
+      refine hfm.trans ?_
       -- Goal: -((w⁻¹)^2)⁻¹ * -(w⁻¹)^2 = 1
       have hsqne : ((w⁻¹) ^ 2 : ℂ) ≠ 0 := pow_ne_zero _ hwinv
       field_simp
@@ -351,17 +354,17 @@ theorem identityChartCoeff_tendsto_zero (ω : HolomorphicOneForm ℂ (OnePoint �
         Bundle.Trivialization.symmL_continuousLinearMapAt
           (trivializationAt ℂ (TangentSpace (modelWithCornersSelf ℂ ℂ))
             (OnePoint.infty : OnePoint ℂ)) htan_mem (-(w⁻¹) ^ 2)
-      simp only [hcLMA_apply] at hround
-      exact hround
+      exact hcLMA_apply ▸ hround
     rw [hH_apply, hsymmL_one]
     -- `H(↑w⁻¹)(1) = ω(↑w⁻¹)(-(w⁻¹)^2) = -(w⁻¹)^2 · f(w⁻¹)`.
     -- Goal: `f(w⁻¹) = -w^2 * (-(w⁻¹)^2 · f(w⁻¹))`.
     have hlin :=
       (ω.toFun (OnePoint.some (w⁻¹) : OnePoint ℂ)).map_smul (-(w⁻¹) ^ 2 : ℂ) (1 : ℂ)
     simp only [smul_eq_mul, mul_one] at hlin
-    simp only [hlin]
-    show f w⁻¹ = -w ^ 2 * (-(w⁻¹) ^ 2 *
-      (ω.toFun (OnePoint.some (w⁻¹) : OnePoint ℂ)) (1 : ℂ))
+    -- Goal applies `ω.toFun ↑w⁻¹` to an argument in the fiber `TangentSpace 𝓘(ℂ,ℂ) ↑w⁻¹`,
+    -- so `rw [hlin]` (over ℂ) can't match; rewrite the goal to the `_ • 1` form first.
+    show f w⁻¹ = -w ^ 2 * (ω.toFun (OnePoint.some (w⁻¹) : OnePoint ℂ)) (-(w⁻¹) ^ 2 • (1 : ℂ))
+    rw [hlin]
     have hfw : (ω.toFun (OnePoint.some (w⁻¹) : OnePoint ℂ)) (1 : ℂ) = f w⁻¹ := rfl
     rw [hfw]
     have hcancel : -w ^ 2 * (-(w⁻¹) ^ 2) = (1 : ℂ) := by
