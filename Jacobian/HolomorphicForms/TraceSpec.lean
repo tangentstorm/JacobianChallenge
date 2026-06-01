@@ -2753,7 +2753,7 @@ private theorem ramified_kfold_chart_bijection
     exact h_candX_inj h_val_eq
   · intro j; rfl
 
-set_option linter.unusedSectionVars false in
+omit [T2Space X] [CompactSpace X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
@@ -3364,6 +3364,7 @@ private theorem ramifiedKfoldSum_locally_bounded
         apply div_le_div_of_nonneg_left hM_nn one_pos hk_le
     _ = M := by norm_num
 
+omit [T2Space X] [CompactSpace X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Strictly narrower fiber-point helper (Provider 2 internal),
 ramified leaf, `y ≠ y₀` case.** When `x₀` is ramified of index
@@ -3432,6 +3433,7 @@ private theorem ramifiedNonY₀FiberPoint_partialTrace_locally_bounded
     k hk_pos rfl U_kfold hU_kfold_open hxU_kfold V_kfold hV_kfold_open
     hy₀V_kfold h_kfold_data W₀ hW₀_open hxW₀
 
+omit [T2Space X] [CompactSpace X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Strictly narrower fiber-point helper (Provider 2 internal),
 ramified leaf, dispatcher.** Refines the `ramifiedNonY₀` narrower
@@ -3473,6 +3475,7 @@ private theorem ramifiedFiberPoint_partialTrace_locally_bounded
   · -- `y ≠ y₀`: delegate to the narrower helper.
     exact hbound' y hy_V hy_eq hy_reg
 
+omit [T2Space X] [CompactSpace X] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Strictly narrower fiber-point helper (Provider 2 internal),
 dispatcher.** Branches on whether `x₀` is unramified or ramified
@@ -3497,6 +3500,7 @@ private theorem fiberPoint_partialTrace_locally_bounded
   · exact ramifiedFiberPoint_partialTrace_locally_bounded f hf η hbc hcompat
       y₀ x₀ hx₀_fiber hx₀_ram W₀ hW₀_open hxW₀
 
+omit [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Provider (2).** *Trace locally bounded near branch values.* At
 every branch value `y₀` (a non-regular value) of `hbc`, there is a
@@ -4642,6 +4646,7 @@ theorem regularLocus_dite_trace_holomorphicAt
     rfl
 
 
+omit [CompactSpace Y] in
 private theorem traceForm_extension_per_BCD
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
@@ -4749,6 +4754,7 @@ theorem traceForm_extension_at_branch_of_canonical_BCD
   -- Combine: hbc0.ramificationIndex x = 1 but also ≠ 1. Contradiction.
   exact hx_ram (h0.trans (h1.symm.trans hreg))
 
+omit [CompactSpace Y] in
 /--
 **Narrow classical leaf: trace-form holomorphic extension.** For a
 nonconstant smooth map `f : X → Y` between compact Riemann surfaces
@@ -4887,6 +4893,7 @@ structure TraceFormsRegularSpec
       (traceFormsBundled f hf η).toFun y =
         traceAtRegularValue hbc (fun x => η.toFun x) y hy
 
+omit [CompactSpace Y] in
 /--
 Private helper: in the constant-map case, the construction-data
 provider for any input form `η` reduces to
