@@ -118,7 +118,8 @@ noncomputable def smul_meromorphic (c : ℂ) (f : MeromorphicFunctionType X) : M
       have hm : MeromorphicAt
           (fun z => c * f.toFiniteFun ((chartAt ℂ p).symm z))
           (chartAt ℂ p p) := by
-        simpa [Pi.mul_apply] using (MeromorphicAt.const c (chartAt ℂ p p)).mul hf
+        have hmul := (MeromorphicAt.const c (chartAt ℂ p p)).mul hf
+        exact hmul.congr (Filter.Eventually.of_forall fun _ => rfl)
       convert hm using 1
       ext z
       cases h : f.toFun ((chartAt ℂ p).symm z) <;>
@@ -231,7 +232,8 @@ theorem toFun_ne_infty_of_is_holomorphic {X : Type*} [TopologicalSpace X] [Chart
 private lemma finiteProjection_continuousAt (c : ℂ) :
     ContinuousAt (fun y : OnePoint ℂ => y.getD 0) (c : OnePoint ℂ) := by
   rw [OnePoint.continuousAt_coe]
-  simpa using (continuousAt_id : ContinuousAt (fun x : ℂ => x) c)
+  have hid : ContinuousAt (id : ℂ → ℂ) c := continuousAt_id
+  exact hid.congr (Filter.Eventually.of_forall fun _ => rfl)
 
 omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- If a meromorphic function has no infinite values, its finite projection is continuous. -/
@@ -278,7 +280,7 @@ theorem mdifferentiable_toFiniteFun_of_no_infty {X : Type*} [TopologicalSpace X]
       have hd : DifferentiableAt ℂ
           (fun z => f.toFiniteFun ((extChartAt 𝓘(ℂ) p).symm z))
           (extChartAt 𝓘(ℂ) p p) := han.differentiableAt
-      simpa [writtenInExtChartAt] using hd.differentiableWithinAt
+      simpa [writtenInExtChartAt, Function.comp_def] using hd.differentiableWithinAt
 
 /-- Constant meromorphic functions have no poles. -/
 theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -385,8 +387,8 @@ def smul (c : ℂ) (F : MeromorphicGermAt X p) : MeromorphicGermAt X p :=
       refine ⟨c • f, ?_, ?_⟩
       · rw [hf_eq]
         rfl
-      · simpa [Pi.smul_apply] using
-          (MeromorphicAt.const c (extChartAt 𝓘(ℂ) p p)).mul hf_mer }
+      · have hmul := (MeromorphicAt.const c (extChartAt 𝓘(ℂ) p p)).mul hf_mer
+        exact hmul.congr (Filter.Eventually.of_forall fun _ => rfl) }
 
 instance : SMul ℂ (MeromorphicGermAt X p) := ⟨smul⟩
 

@@ -28,10 +28,9 @@ noncomputable def pathIntegralViaChartCorrect
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) (a : X)
     (h : range (Path.refl a) ⊆ c.source) :
     pathIntegralViaChartCorrect c ω (Path.refl a) h = 0 := by
-  unfold pathIntegralViaChartCorrect chartLift
-  have : (Path.refl a).map' (c.continuousOn_toFun.mono h) = Path.refl (c a) :=
-    Path.ext rfl
-  rw [this]
+  have hpath : chartLift c (Path.refl a) h = Path.refl (c a) := Path.ext rfl
+  unfold pathIntegralViaChartCorrect
+  rw [hpath]
   exact pathIntegralInChartCorrect_refl c ω (c a)
 
 /-- Symmetric path: corrected from-`X` integral negates. -/
