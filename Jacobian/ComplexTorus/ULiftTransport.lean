@@ -32,7 +32,7 @@ namespace JacobianChallenge.ComplexTorus
 
 open scoped Manifold
 
-universe u
+universe u v
 
 /--
 Transporting both charts in a transition along a homeomorphism does not
@@ -409,6 +409,30 @@ noncomputable def ULiftContinuousAddMonoidHom
   toFun a := ULift.up (φ a.down)
   map_zero' := by
     show ULift.up (φ (0 : ULift.{u} A).down) = (0 : ULift.{u} B)
+    simp [map_zero]
+    rfl
+  map_add' a b := by
+    show ULift.up (φ (a + b).down) = ULift.up (φ a.down) + ULift.up (φ b.down)
+    simp [map_add]
+    rfl
+  continuous_toFun :=
+    continuous_uliftUp.comp (φ.continuous.comp continuous_uliftDown)
+
+/--
+Lift a continuous additive group homomorphism from the analytic carriers up to
+their `ULift` versions, allowing the source and target to live at **independent**
+`ULift` universes (`ULift.{u} A →ₜ+ ULift.{v} B`). Companion to
+`ULiftContinuousAddMonoidHom` for the universe-heterogeneous case (the public
+`Jacobian` functorial block — `pushforward`/`pullback` — has its source and target
+curves in independent universes, so the lifted Jacobians sit at independent ULift
+levels). -/
+noncomputable def ULiftContinuousAddMonoidHom'
+    {A B : Type*} [AddMonoid A] [AddMonoid B]
+    [TopologicalSpace A] [TopologicalSpace B]
+    (φ : A →ₜ+ B) : ULift.{u} A →ₜ+ ULift.{v} B where
+  toFun a := ULift.up (φ a.down)
+  map_zero' := by
+    show ULift.up (φ (0 : ULift.{u} A).down) = (0 : ULift.{v} B)
     simp [map_zero]
     rfl
   map_add' a b := by
