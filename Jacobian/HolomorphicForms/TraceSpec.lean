@@ -2420,6 +2420,321 @@ private theorem rotation_avg_eq_g_pow_k
     show H t = t ^ (k - 1) * g (t ^ k)
     rw [hHt, hgt]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/--
+**DB-A — Chart-local Finset bijection `Fin k ↪ s_y` (eventually-y form).**
+
+For a ramified branch point `x₀` of index `k`, the C4-pre chart-local
+primitives (`φ`, local inverse `r`, principal `k`-th root `kthRoot`,
+primitive `k`-th root `ζ`) realize the unramified `k`-element preimage
+Finset `s_y` of any nearby regular value `y` as the image of the
+explicit map `j ↦ (chartAt x₀).symm (r (ζ^j · kthRoot w_y))` where
+`w_y := chartAt (f x₀) y - chartAt (f x₀) (f x₀)`.
+
+The bijection is delivered in *eventually-y* form: for `y` in some
+neighbourhood of `y₀` with `y ≠ y₀`, an injection `e : Fin k → s` exists
+with `(e j).val = (chartAt x₀).symm (r (ζ^j · kthRoot w_y))`. DB-B
+extracts an open `V ⊆ V_kfold` from the eventually quantifier via
+`mem_nhds_iff`.
+
+Sorry-free; primitive extraction is folded in as §8-internal `have`s.
+-/
+private theorem ramified_kfold_chart_bijection
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hbc : BranchedCoverData X Y f) (hcompat : hbc.RamificationIndexCompatible)
+    (y₀ : Y) (x₀ : X) (hx₀_fiber : f x₀ = y₀)
+    (k : ℕ) (hk_pos : 0 < k) (hk_ram : k = hbc.ramificationIndex x₀)
+    (U_kfold : Set X) (hU_kfold_open : IsOpen U_kfold) (hxU_kfold : x₀ ∈ U_kfold) :
+    ∃ (φ r kthRoot : ℂ → ℂ) (ζ : ℂ),
+      AnalyticAt ℂ φ (chartAt ℂ x₀ x₀) ∧
+      φ (chartAt ℂ x₀ x₀) = 0 ∧
+      deriv φ (chartAt ℂ x₀ x₀) ≠ 0 ∧
+      (∀ᶠ z in 𝓝 (chartAt ℂ x₀ x₀),
+        chartLocalAt f x₀ z - chartAt ℂ (f x₀) (f x₀) = φ z ^ k) ∧
+      (∀ᶠ ε in 𝓝 (0 : ℂ), φ (r ε) = ε) ∧
+      (∀ᶠ z in 𝓝 (chartAt ℂ x₀ x₀), r (φ z) = z) ∧
+      r 0 = chartAt ℂ x₀ x₀ ∧
+      (∀ w : ℂ, (kthRoot w) ^ k = w) ∧
+      kthRoot 0 = 0 ∧
+      IsPrimitiveRoot ζ k ∧
+      ∀ᶠ y in 𝓝 y₀, y ≠ y₀ → ∀ (s : Finset X),
+        s.card = k → (↑s : Set X) ⊆ U_kfold →
+        (∀ x' ∈ s, f x' = y ∧ hbc.ramificationIndex x' = 1) →
+        (∀ x' ∈ U_kfold, f x' = y → x' ∈ s) →
+        ∃ e : Fin k → s,
+          Function.Injective e ∧
+          ∀ j : Fin k, (e j : X) =
+            (chartAt ℂ x₀).symm
+              (r ((ζ ^ (j : ℕ)) *
+                (kthRoot (chartAt ℂ (f x₀) y - chartAt ℂ (f x₀) (f x₀))))) := by
+  classical
+  have hHol : IsHolomorphic f :=
+    isHolomorphic_of_contMDiff hf (hasLocalKfoldRamification_of_contMDiff hf)
+  have hk_ram' : mapAnalyticOrderAt f x₀ = k := by
+    rw [hk_ram]
+    exact (hbc.ramificationIndex_eq_mapAnalyticOrderAt hcompat
+      (hHol.holomorphicAt x₀)).symm
+  obtain ⟨φ, hφ_an, hφ_z₀, hφ_deriv, hφ_eq⟩ :=
+    chartLocal_zPow_form_of_ramified (hHol.holomorphicAt x₀) hk_pos hk_ram'
+  have hSD : HasStrictDerivAt φ (deriv φ (chartAt ℂ x₀ x₀)) (chartAt ℂ x₀ x₀) :=
+    hφ_an.hasStrictDerivAt
+  set z₀ : ℂ := chartAt ℂ x₀ x₀ with hz₀_def
+  set c₀ : ℂ := chartAt ℂ (f x₀) (f x₀) with hc₀_def
+  let r : ℂ → ℂ := hSD.localInverse φ (deriv φ z₀) z₀ hφ_deriv
+  have h_right_inv : ∀ᶠ ε in 𝓝 (0 : ℂ), φ (r ε) = ε := by
+    have hR : ∀ᶠ ε in 𝓝 (φ z₀), φ (r ε) = ε :=
+      hSD.eventually_right_inverse hφ_deriv
+    rwa [hφ_z₀] at hR
+  have h_left_inv : ∀ᶠ z in 𝓝 z₀, r (φ z) = z :=
+    hSD.eventually_left_inverse hφ_deriv
+  have hr_at_0 : r 0 = z₀ := by
+    have hL : r (φ z₀) = z₀ := h_left_inv.self_of_nhds
+    rwa [hφ_z₀] at hL
+  let kthRoot : ℂ → ℂ := fun w => w ^ ((k : ℂ)⁻¹)
+  have h_kthRoot_pow : ∀ w : ℂ, (kthRoot w) ^ k = w :=
+    fun w => Complex.cpow_nat_inv_pow w hk_pos.ne'
+  have h_kthRoot_zero : kthRoot 0 = 0 := by
+    show (0 : ℂ) ^ ((k : ℂ)⁻¹) = 0
+    apply Complex.zero_cpow
+    have : (k : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hk_pos.ne'
+    exact inv_ne_zero this
+  set ζ : ℂ := Complex.exp (2 * Real.pi * Complex.I / k) with hζ_def
+  have hζ_pr : IsPrimitiveRoot ζ k :=
+    Complex.isPrimitiveRoot_exp k hk_pos.ne'
+  refine ⟨φ, r, kthRoot, ζ, hφ_an, hφ_z₀, hφ_deriv, hφ_eq,
+    h_right_inv, h_left_inv, hr_at_0, h_kthRoot_pow, h_kthRoot_zero,
+    hζ_pr, ?_⟩
+  set w_of : Y → ℂ := fun y => chartAt ℂ (f x₀) y - c₀ with hw_of_def
+  have hw_of_at_y₀ : w_of y₀ = 0 := by
+    show chartAt ℂ (f x₀) y₀ - c₀ = 0
+    rw [show y₀ = f x₀ from hx₀_fiber.symm, hc₀_def]; ring
+  have h_chart_y₀_cont : ContinuousAt (chartAt ℂ (f x₀)) y₀ := by
+    have h_chart_src : (chartAt ℂ (f x₀)).source ∈ 𝓝 y₀ := by
+      apply (chartAt ℂ (f x₀)).open_source.mem_nhds
+      rw [show y₀ = f x₀ from hx₀_fiber.symm]
+      exact mem_chart_source ℂ (f x₀)
+    exact (chartAt ℂ (f x₀)).continuousOn.continuousAt h_chart_src
+  have hw_of_cont : ContinuousAt w_of y₀ := h_chart_y₀_cont.sub continuousAt_const
+  have h_kthRoot_cont : ContinuousAt kthRoot 0 := by
+    show ContinuousAt (fun w => w ^ ((k : ℂ)⁻¹)) 0
+    have h_re_pos : 0 < ((k : ℂ)⁻¹).re := by
+      have hk_re : ((k : ℂ)⁻¹).re = ((k : ℝ)⁻¹) := by
+        simp [Complex.inv_re, Complex.natCast_re]
+      rw [hk_re]
+      exact inv_pos.mpr (Nat.cast_pos.mpr hk_pos)
+    exact Complex.continuousAt_cpow_const_of_re_pos (Or.inl (le_refl _)) h_re_pos
+  have h_r_cont_at_0 : ContinuousAt r 0 := by
+    have h_r_strict_at_φz₀ : HasStrictDerivAt r ((deriv φ z₀)⁻¹) (φ z₀) :=
+      hSD.to_localInverse hφ_deriv
+    have h_r_cont_at_φz₀ : ContinuousAt r (φ z₀) := h_r_strict_at_φz₀.continuousAt
+    rw [hφ_z₀] at h_r_cont_at_φz₀
+    exact h_r_cont_at_φz₀
+  have h_chart_symm_cont_at_z₀ : ContinuousAt (chartAt ℂ x₀).symm z₀ := by
+    apply (chartAt ℂ x₀).continuousAt_symm
+    show z₀ ∈ (chartAt ℂ x₀).target
+    rw [hz₀_def]
+    exact (chartAt ℂ x₀).map_source (mem_chart_source ℂ x₀)
+  set candY : Fin k → Y → X := fun j y =>
+    (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) with hcandY_def
+  have h_candY_at_y₀ : ∀ j : Fin k, candY j y₀ = x₀ := by
+    intro j
+    show (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y₀))) = x₀
+    rw [hw_of_at_y₀, h_kthRoot_zero, mul_zero, hr_at_0]
+    exact (chartAt ℂ x₀).left_inv (mem_chart_source ℂ x₀)
+  have h_ε_at_y₀ : ∀ j : Fin k, (ζ ^ (j : ℕ)) * kthRoot (w_of y₀) = 0 := by
+    intro j; rw [hw_of_at_y₀, h_kthRoot_zero, mul_zero]
+  have h_ε_cont : ∀ j : Fin k,
+      ContinuousAt (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀ := by
+    intro j
+    have h1 : ContinuousAt kthRoot (w_of y₀) := by
+      rw [hw_of_at_y₀]; exact h_kthRoot_cont
+    exact continuousAt_const.mul (h1.comp hw_of_cont)
+  have h_rε_at_y₀ : ∀ j : Fin k, r ((ζ ^ (j : ℕ)) * kthRoot (w_of y₀)) = z₀ := by
+    intro j; rw [h_ε_at_y₀ j]; exact hr_at_0
+  -- Express r ∘ ε continuity into 𝓝 z₀ directly via a Tendsto statement,
+  -- so subsequent .eventually applications match nhds-target nhds.
+  have h_rε_tendsto : ∀ j : Fin k,
+      Filter.Tendsto (fun y => r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) (𝓝 y₀) (𝓝 z₀) := by
+    intro j
+    -- Build via Tendsto.comp explicitly.
+    have h_ε_tend_to_0 : Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y))
+        (𝓝 y₀) (𝓝 0) := by
+      have h_val : (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀ = 0 := h_ε_at_y₀ j
+      have h_tend : Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y))
+          (𝓝 y₀) (𝓝 ((fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀)) :=
+        (h_ε_cont j).tendsto
+      rwa [h_val] at h_tend
+    have h_r_tend : Filter.Tendsto r (𝓝 0) (𝓝 z₀) := by
+      have h_val : r 0 = z₀ := hr_at_0
+      have h_tend : Filter.Tendsto r (𝓝 0) (𝓝 (r 0)) := h_r_cont_at_0.tendsto
+      rwa [h_val] at h_tend
+    exact h_r_tend.comp h_ε_tend_to_0
+  -- Similarly for the ε itself: Tendsto into 𝓝 0.
+  have h_ε_tendsto : ∀ j : Fin k,
+      Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) (𝓝 y₀) (𝓝 0) := by
+    intro j
+    have h_eq : (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀ = 0 := h_ε_at_y₀ j
+    have : Filter.Tendsto (fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) (𝓝 y₀)
+        (𝓝 ((fun y => (ζ ^ (j : ℕ)) * kthRoot (w_of y)) y₀)) := (h_ε_cont j).tendsto
+    rwa [h_eq] at this
+  have h_candY_tendsto : ∀ j : Fin k,
+      Filter.Tendsto (candY j) (𝓝 y₀) (𝓝 x₀) := by
+    intro j
+    have h_symm_tendsto : Filter.Tendsto (chartAt ℂ x₀).symm (𝓝 z₀) (𝓝 x₀) := by
+      have h_chart_symm_at_z₀_val : (chartAt ℂ x₀).symm z₀ = x₀ := by
+        rw [hz₀_def]; exact (chartAt ℂ x₀).left_inv (mem_chart_source ℂ x₀)
+      have : Filter.Tendsto (chartAt ℂ x₀).symm (𝓝 z₀) (𝓝 ((chartAt ℂ x₀).symm z₀)) :=
+        h_chart_symm_cont_at_z₀.tendsto
+      rwa [h_chart_symm_at_z₀_val] at this
+    exact h_symm_tendsto.comp (h_rε_tendsto j)
+  have h_chart_x₀_src_nhd : (chartAt ℂ x₀).source ∈ 𝓝 x₀ :=
+    (chartAt ℂ x₀).open_source.mem_nhds (mem_chart_source ℂ x₀)
+  have h_U_kfold_nhd : U_kfold ∈ 𝓝 x₀ := hU_kfold_open.mem_nhds hxU_kfold
+  have h_chart_x₀_tgt_nhd : (chartAt ℂ x₀).target ∈ 𝓝 z₀ :=
+    (chartAt ℂ x₀).open_target.mem_nhds
+      (by rw [hz₀_def]; exact (chartAt ℂ x₀).map_source (mem_chart_source ℂ x₀))
+  have h_chart_y₀_src_nhd : (chartAt ℂ (f x₀)).source ∈ 𝓝 (f x₀) :=
+    (chartAt ℂ (f x₀)).open_source.mem_nhds (mem_chart_source ℂ (f x₀))
+  have h_f_cont_at_x₀ : ContinuousAt f x₀ := hf.continuous.continuousAt
+  have h_per_j_evt : ∀ j : Fin k, ∀ᶠ y in 𝓝 y₀,
+      candY j y ∈ (chartAt ℂ x₀).source ∧
+      candY j y ∈ U_kfold ∧
+      r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target ∧
+      φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+        (ζ ^ (j : ℕ)) * kthRoot (w_of y) ∧
+      (∀ᶠ z in 𝓝 (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))),
+        chartLocalAt f x₀ z - c₀ = φ z ^ k) ∧
+      f (candY j y) ∈ (chartAt ℂ (f x₀)).source := by
+    intro j
+    have h_cand_tend := h_candY_tendsto j
+    have h_src : ∀ᶠ y in 𝓝 y₀, candY j y ∈ (chartAt ℂ x₀).source :=
+      h_cand_tend.eventually h_chart_x₀_src_nhd
+    have h_U : ∀ᶠ y in 𝓝 y₀, candY j y ∈ U_kfold :=
+      h_cand_tend.eventually h_U_kfold_nhd
+    have h_rε_tgt : ∀ᶠ y in 𝓝 y₀,
+        r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target :=
+      (h_rε_tendsto j).eventually h_chart_x₀_tgt_nhd
+    have h_φr : ∀ᶠ y in 𝓝 y₀,
+        φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+          (ζ ^ (j : ℕ)) * kthRoot (w_of y) :=
+      (h_ε_tendsto j).eventually h_right_inv
+    have h_pow_form_evt : ∀ᶠ y in 𝓝 y₀,
+        ∀ᶠ z in 𝓝 (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))),
+          chartLocalAt f x₀ z - c₀ = φ z ^ k := by
+      have h_eventually_nhd : ∀ᶠ z in 𝓝 z₀,
+          ∀ᶠ z' in 𝓝 z, chartLocalAt f x₀ z' - c₀ = φ z' ^ k :=
+        eventually_eventually_nhds.mpr hφ_eq
+      exact (h_rε_tendsto j).eventually h_eventually_nhd
+    have h_f_cand_src : ∀ᶠ y in 𝓝 y₀, f (candY j y) ∈ (chartAt ℂ (f x₀)).source := by
+      have h_f_tendsto : Filter.Tendsto (fun y => f (candY j y)) (𝓝 y₀) (𝓝 (f x₀)) := by
+        have h_f_at : ContinuousAt f x₀ := h_f_cont_at_x₀
+        exact h_f_at.tendsto.comp h_cand_tend
+      exact h_f_tendsto.eventually h_chart_y₀_src_nhd
+    filter_upwards [h_src, h_U, h_rε_tgt, h_φr, h_pow_form_evt, h_f_cand_src]
+      with y h1 h2 h3 h4 h5 h6
+    exact ⟨h1, h2, h3, h4, h5, h6⟩
+  have h_all_evt : ∀ᶠ y in 𝓝 y₀, ∀ j : Fin k,
+      candY j y ∈ (chartAt ℂ x₀).source ∧
+      candY j y ∈ U_kfold ∧
+      r ((ζ ^ (j : ℕ)) * kthRoot (w_of y)) ∈ (chartAt ℂ x₀).target ∧
+      φ (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))) =
+        (ζ ^ (j : ℕ)) * kthRoot (w_of y) ∧
+      (∀ᶠ z in 𝓝 (r ((ζ ^ (j : ℕ)) * kthRoot (w_of y))),
+        chartLocalAt f x₀ z - c₀ = φ z ^ k) ∧
+      f (candY j y) ∈ (chartAt ℂ (f x₀)).source := by
+    rw [Filter.eventually_all]
+    exact h_per_j_evt
+  have h_y_src_evt : ∀ᶠ y in 𝓝 y₀, y ∈ (chartAt ℂ (f x₀)).source := by
+    have h_src_nhd : (chartAt ℂ (f x₀)).source ∈ 𝓝 y₀ := by
+      apply (chartAt ℂ (f x₀)).open_source.mem_nhds
+      rw [show y₀ = f x₀ from hx₀_fiber.symm]
+      exact mem_chart_source ℂ (f x₀)
+    exact Filter.eventually_mem_set.mpr h_src_nhd
+  filter_upwards [h_all_evt, h_y_src_evt] with y h_jall h_y_src
+  intro hy_ne s _hs_card _hs_sub _hs_unram hs_exhaust
+  set w_y : ℂ := w_of y with hw_y_def
+  set candX : Fin k → X := fun j =>
+    (chartAt ℂ x₀).symm (r ((ζ ^ (j : ℕ)) * kthRoot w_y)) with hcandX_def
+  have h_f_candX_eq : ∀ j : Fin k, f (candX j) = y := by
+    intro j
+    obtain ⟨_h_src, _h_U, _h_rε_tgt, h_φr, h_pow_form_evt, h_f_src⟩ := h_jall j
+    have h_pow_at_rε : chartLocalAt f x₀ (r ((ζ ^ (j : ℕ)) * kthRoot w_y)) - c₀ =
+        (φ (r ((ζ ^ (j : ℕ)) * kthRoot w_y))) ^ k :=
+      h_pow_form_evt.self_of_nhds
+    have h_chartLocal_val :
+        chartLocalAt f x₀ (r ((ζ ^ (j : ℕ)) * kthRoot w_y)) - c₀ = w_y := by
+      rw [h_pow_at_rε, h_φr, mul_pow, h_kthRoot_pow]
+      rw [show (ζ ^ (j : ℕ)) ^ k = (ζ ^ k) ^ (j : ℕ) from by
+            rw [← pow_mul, ← pow_mul, Nat.mul_comm]]
+      rw [hζ_pr.pow_eq_one, one_pow, one_mul]
+    have h_chartY_val :
+        chartAt ℂ (f x₀) (f (candX j)) = c₀ + w_y := by
+      have hdef : chartLocalAt f x₀ (r ((ζ ^ (j : ℕ)) * kthRoot w_y)) =
+          chartAt ℂ (f x₀) (f (candX j)) := rfl
+      have := hdef ▸ h_chartLocal_val
+      linear_combination this
+    have h_y_chart_eq : chartAt ℂ (f x₀) y = c₀ + w_y := by
+      show chartAt ℂ (f x₀) y = c₀ + (chartAt ℂ (f x₀) y - c₀); ring
+    have hchart_eq : chartAt ℂ (f x₀) (f (candX j)) = chartAt ℂ (f x₀) y := by
+      rw [h_chartY_val, h_y_chart_eq]
+    have h_candX_eq : candX j = candY j y := rfl
+    have h_f_candX_src : f (candX j) ∈ (chartAt ℂ (f x₀)).source := by
+      rw [h_candX_eq]; exact h_f_src
+    exact (chartAt ℂ (f x₀)).injOn h_f_candX_src h_y_src hchart_eq
+  have h_candX_U : ∀ j : Fin k, candX j ∈ U_kfold := by
+    intro j
+    have h_candX_eq : candX j = candY j y := rfl
+    rw [h_candX_eq]; exact (h_jall j).2.1
+  have h_candX_in_s : ∀ j : Fin k, candX j ∈ s := fun j =>
+    hs_exhaust (candX j) (h_candX_U j) (h_f_candX_eq j)
+  have h_candX_inj : Function.Injective candX := by
+    intro j₁ j₂ h_eq
+    have hr_tgt_1 := (h_jall j₁).2.2.1
+    have hr_tgt_2 := (h_jall j₂).2.2.1
+    have h_chart_eq :
+        chartAt ℂ x₀ (candX j₁) = chartAt ℂ x₀ (candX j₂) := by rw [h_eq]
+    have h_chart_symm_1 : chartAt ℂ x₀ (candX j₁) =
+        r ((ζ ^ (j₁ : ℕ)) * kthRoot w_y) :=
+      (chartAt ℂ x₀).right_inv hr_tgt_1
+    have h_chart_symm_2 : chartAt ℂ x₀ (candX j₂) =
+        r ((ζ ^ (j₂ : ℕ)) * kthRoot w_y) :=
+      (chartAt ℂ x₀).right_inv hr_tgt_2
+    have h_r_eq : r ((ζ ^ (j₁ : ℕ)) * kthRoot w_y) = r ((ζ ^ (j₂ : ℕ)) * kthRoot w_y) := by
+      rw [← h_chart_symm_1, ← h_chart_symm_2]; exact h_chart_eq
+    have h_φr_1 := (h_jall j₁).2.2.2.1
+    have h_φr_2 := (h_jall j₂).2.2.2.1
+    have h_ε_eq : (ζ ^ (j₁ : ℕ)) * kthRoot w_y = (ζ ^ (j₂ : ℕ)) * kthRoot w_y := by
+      have := congrArg φ h_r_eq
+      rw [h_φr_1, h_φr_2] at this; exact this
+    have hw_y_ne : w_y ≠ 0 := by
+      intro hzero
+      apply hy_ne
+      have heq : chartAt ℂ (f x₀) y = c₀ := by
+        have h0 : chartAt ℂ (f x₀) y - c₀ = 0 := hzero
+        linear_combination h0
+      have h_fx₀_src : f x₀ ∈ (chartAt ℂ (f x₀)).source := mem_chart_source ℂ (f x₀)
+      rw [show y₀ = f x₀ from hx₀_fiber.symm]
+      exact (chartAt ℂ (f x₀)).injOn h_y_src h_fx₀_src heq
+    have h_kthRoot_ne : kthRoot w_y ≠ 0 := by
+      intro hzero
+      apply hw_y_ne
+      have h := h_kthRoot_pow w_y
+      rw [hzero, zero_pow hk_pos.ne'] at h
+      exact h.symm
+    have h_ζ_eq : ζ ^ (j₁ : ℕ) = ζ ^ (j₂ : ℕ) :=
+      mul_right_cancel₀ h_kthRoot_ne h_ε_eq
+    have h_nat_eq : (j₁ : ℕ) = (j₂ : ℕ) := by
+      have h1_lt : (j₁ : ℕ) < k := j₁.isLt
+      have h2_lt : (j₂ : ℕ) < k := j₂.isLt
+      exact hζ_pr.pow_inj h1_lt h2_lt h_ζ_eq
+    exact Fin.ext h_nat_eq
+  refine ⟨fun j => ⟨candX j, h_candX_in_s j⟩, ?_, ?_⟩
+  · intro j₁ j₂ h_eq
+    have h_val_eq : candX j₁ = candX j₂ := Subtype.mk_eq_mk.mp h_eq
+    exact h_candX_inj h_val_eq
+  · intro j; rfl
+
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
