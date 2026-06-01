@@ -65,8 +65,8 @@ theorem periodPairingComplexU_eq_zero (γ : IntegralOneCycleU X) :
     (JacobianChallenge.Blueprint.Sec03.singularChainComplexZU X) 1).homologyπ
   · exact CategoryTheory.ShortComplex.instEpiHomologyπ
       (HomologicalComplex.sc (JacobianChallenge.Blueprint.Sec03.singularChainComplexZU X) 1)
-  · simp +decide [HomologicalComplex.sc]
-    exact Eq.symm (ModuleCat.hom_ext rfl)
+  · erw [CategoryTheory.ShortComplex.π_descHomology]
+    exact CategoryTheory.Limits.comp_zero
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
 /-- The range of the universe-`u` complex-model period pairing is trivial. -/

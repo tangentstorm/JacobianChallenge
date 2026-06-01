@@ -75,6 +75,7 @@ in `PullbackBasis.lean`. Genuine discharge is the later "E2-trace-id" task; thes
 two are the ONLY sorries in this file.
 -/
 
+omit [FiniteDimensionalHolomorphicOneForms ℂ X] in
 /-- **Universe-`u` trace functoriality along `id`** — GENUINELY DISCHARGED (R-id).
 Companion of the Type-0 `traceFormsBundledLM_id` (`PullbackBasis.lean:954`); the
 genuine proof is `TraceFormsIdU.traceFormsBundledLM_id_genuineU` (the id-case
@@ -108,7 +109,8 @@ theorem traceFormsCoordU_id :
   rw [traceFormsBundledLM_idU]
   apply LinearMap.ext
   intro v
-  simp
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearMap.id_coe, id_eq]
+  rw [LinearEquiv.apply_symm_apply]
 
 /-- Composition functoriality of `traceFormsCoordU` (covariant on the trace). -/
 theorem traceFormsCoordU_comp
@@ -120,7 +122,7 @@ theorem traceFormsCoordU_comp
   rw [traceFormsBundledLM_compU f hf g hg]
   apply LinearMap.ext
   intro v
-  simp [LinearMap.comp_apply]
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.symm_apply_apply]
 
 /-- Identity functoriality of the dual-pullback trace lift. -/
 theorem traceDualPullbackLiftU_id :

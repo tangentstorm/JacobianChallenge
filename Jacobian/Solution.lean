@@ -241,7 +241,7 @@ lemma ofCurve_self (P : X) : ofCurve P P = 0 := by
 
 lemma ofCurve_inj (P : X) (h : 0 < genus X) : Function.Injective (ofCurve P) := by
   intro a b hab
-  apply JacobianChallenge.AbelJacobi.analyticOfCurve_injectiveU X P (by simpa [genus] using h)
+  apply JacobianChallenge.AbelJacobi.analyticOfCurve_injectiveU X P (by rw [genus] at h; exact h)
   exact ULift.up_injective hab
 
 variable {Y : Type*} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]

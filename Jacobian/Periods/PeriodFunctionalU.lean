@@ -78,7 +78,7 @@ noncomputable def periodPairingU
   let Im : S.X₂ ⟶ ModuleCat.of ℤ (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
     ModuleCat.ofHom I_E
   have hI_sc : ∀ (s : ↑S.X₁), Im.hom (S.f.hom s) = 0 := by
-    intro s; ext ω; simp [Im, I_E]
+    intro s; ext ω; exact rfl
   (S.descHomology (S.iCycles ≫ Im)
     (periodPairing_descent_auxU S Im hI_sc)).hom.toAddMonoidHom
 
@@ -98,7 +98,7 @@ noncomputable def periodPairingComplexU
   let Im : S.X₂ ⟶ ModuleCat.of ℤ (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) :=
     ModuleCat.ofHom I
   have hI_sc : ∀ (s : ↑S.X₁), Im.hom (S.f.hom s) = 0 := by
-    intro s; ext ω; simp [Im, I]
+    intro s; ext ω; exact rfl
   (S.descHomology (S.iCycles ≫ Im)
     (periodPairing_descent_auxU S Im hI_sc)).hom.toAddMonoidHom
 

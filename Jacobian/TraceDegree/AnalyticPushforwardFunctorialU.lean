@@ -52,8 +52,10 @@ theorem holomorphicTraceCoord_idU :
     holomorphicTraceCoordU (X := X) (Y := X) id contMDiff_id = LinearMap.id := by
   unfold holomorphicTraceCoordU
   rw [pullbackFormsBundledLM_id]
-  ext v
-  simp
+  apply LinearMap.ext
+  intro v
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearMap.id_coe, id_eq]
+  rw [LinearEquiv.apply_symm_apply]
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
   [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y]
@@ -66,8 +68,9 @@ theorem holomorphicTraceCoord_compU
       (holomorphicTraceCoordU f hf).comp (holomorphicTraceCoordU g hg) := by
   unfold holomorphicTraceCoordU
   rw [pullbackFormsBundledLM_comp f hf g hg]
-  ext v
-  simp [LinearMap.comp_apply]
+  apply LinearMap.ext
+  intro v
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.symm_apply_apply]
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X] in
 /-- The universe-`u` trace-lift linear map along the identity is the identity. -/

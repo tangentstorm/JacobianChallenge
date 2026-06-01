@@ -37,6 +37,7 @@ variable {X : Type u} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
   [FiniteDimensionalHolomorphicOneForms ℂ X]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
 /-- The chart-local order of the identity map at any point is `1`. Universe-`u`
 restatement of the Type-0 `mapAnalyticOrderAt_id_eq_one` (`PullbackBasis.lean:797`). -/
 theorem mapAnalyticOrderAt_id_eq_oneU (x : X) :
@@ -74,6 +75,7 @@ theorem mapAnalyticOrderAt_id_eq_oneU (x : X) :
   unfold mapAnalyticOrderAt analyticOrderNatAt
   rw [hord]; rfl
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
 /-- The cotangent pushforward along the identity is the identity on cotangent
 vectors. Universe-`u` restatement of the Type-0 `cotangentPushforward_id_apply`
 (`PullbackBasis.lean:882`). -/
@@ -89,8 +91,8 @@ theorem cotangentPushforward_id_applyU (x : X)
       inv := ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x),
       left_inv := ?_,
       right_inv := ?_ }⟩
-    · rw [hmf]; ext; simp
-    · rw [hmf]; ext; simp
+    · rw [hmf]; ext; rfl
+    · rw [hmf]; ext; rfl
   simp only [dif_pos hiso]
   set h := Classical.choice hiso with hh
   have hinv_id :
@@ -142,11 +144,13 @@ noncomputable def idBranchedCoverDataU :
     · intro z _ z' _ hzz'; exact hzz'
     · intro y _; exact ⟨y, Set.mem_univ _, rfl⟩
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ, ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
 /-- Every value of the identity map is a regular value. -/
 theorem isRegularValue_idBranchedCoverDataU (y : X) :
     isRegularValue (idBranchedCoverDataU (X := X)) y := by
   intro x _; rfl
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [IsManifold 𝓘(ℂ, ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
 /-- The identity branched-cover datum is compatible with `mapAnalyticOrderAt`. -/
 theorem idBranchedCoverData_compatibleU :
     (idBranchedCoverDataU (X := X)).RamificationIndexCompatible := by
@@ -154,6 +158,7 @@ theorem idBranchedCoverData_compatibleU :
   show 1 = mapAnalyticOrderAt (id : X → X) x
   exact (mapAnalyticOrderAt_id_eq_oneU x).symm
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [JacobianChallenge.Periods.StableChartAt ℂ X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
 /-- Local trace identity at a regular value of the identity map. -/
 theorem traceAtRegularValue_idU
     (η : HolomorphicOneForm ℂ X)
@@ -161,24 +166,25 @@ theorem traceAtRegularValue_idU
     traceAtRegularValue (idBranchedCoverDataU (X := X))
         (fun x => η.toFun x) y hy = η.toFun y := by
   classical
-  unfold traceAtRegularValue
+  dsimp only [traceAtRegularValue]
   have hfib : (id ⁻¹' ({y} : Set X)) = ({y} : Set X) := by ext x; simp
   have hfin : ((idBranchedCoverDataU (X := X)).finite_fiber y).toFinset
       = ({y} : Finset X) := by ext x; simp [hfib]
   rw [hfin]
-  rw [show (({y} : Finset X).attach.sum
+  have H : (({y} : Finset X).attach.sum
         (fun (x : { x // x ∈ ({y} : Finset X) }) =>
           cotangentPushforward (id : X → X) x.1 (η.toFun x.1))) =
-      cotangentPushforward (id : X → X) y (η.toFun y) from ?_]
-  · exact cotangentPushforward_id_applyU y (η.toFun y)
-  · rw [show ({y} : Finset X).attach =
-        ({⟨y, by simp⟩} : Finset { x // x ∈ ({y} : Finset X) }) from ?_]
+      cotangentPushforward (id : X → X) y (η.toFun y) := by
+    rw [show ({y} : Finset X).attach =
+          ({⟨y, by simp⟩} : Finset { x // x ∈ ({y} : Finset X) }) from ?_]
     · simp
     · ext z; simp [Finset.mem_attach]
       rcases z with ⟨z, hz⟩
       have : z = y := by simpa using hz
       subst this; simp
+  exact H ▸ cotangentPushforward_id_applyU y (η.toFun y)
 
+omit [FiniteDimensionalHolomorphicOneForms ℂ X] in
 /-- **Identity functoriality for the global trace** at `Type u`: the trace of any
 holomorphic 1-form along the identity map equals the form itself. Identity
 principle on the (full) regular locus of `idBranchedCoverDataU`. -/
@@ -200,6 +206,7 @@ theorem traceFormsBundled_idU (η : HolomorphicOneForm ℂ X) :
   rw [h_reg]
   exact traceAtRegularValue_idU η y hy
 
+omit [FiniteDimensionalHolomorphicOneForms ℂ X] in
 /-- **The genuine id-functoriality of `traceFormsBundledLM`** at `Type u`:
 `traceFormsBundledLM (id) contMDiff_id = LinearMap.id`. This is the genuine
 discharge of the E2c route-β obligation

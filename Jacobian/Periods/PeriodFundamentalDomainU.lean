@@ -55,11 +55,8 @@ companion to `basisAlignedPeriodSubmoduleℤ_discreteTopology`.
 -/
 noncomputable instance basisAlignedPeriodSubmoduleℤU_discreteTopology :
     DiscreteTopology (basisAlignedPeriodSubmoduleℤU X) := by
-  haveI : DiscreteTopology (basisAlignedPeriodSubgroupConcreteU X) :=
-    periodSubgroup_isZLatticeU X
-  exact DiscreteTopology.of_continuous_injective
-    (f := fun (x : basisAlignedPeriodSubmoduleℤU X) =>
-      (⟨x.1, x.2⟩ : basisAlignedPeriodSubgroupConcreteU X))
+  exact @DiscreteTopology.of_continuous_injective _ _ _ _
+    (periodSubgroup_isZLatticeU X) _
     (continuous_induced_rng.mpr continuous_subtype_val)
     (fun _ _ h => Subtype.ext (congr_arg Subtype.val h))
 
@@ -72,8 +69,7 @@ companion to `basisAlignedPeriodSubmoduleℤ_isZLattice`.
 noncomputable instance basisAlignedPeriodSubmoduleℤU_isZLattice :
     IsZLattice ℝ (basisAlignedPeriodSubmoduleℤU X) where
   span_top := by
-    simpa [basisAlignedPeriodSubmoduleℤU, AddSubgroup.coe_toIntSubmodule]
-      using periodSubgroup_spans_realU X
+    exact periodSubgroup_spans_realU X
 
 /--
 Existence of a compact fundamental domain for the universe-`u` basis-aligned

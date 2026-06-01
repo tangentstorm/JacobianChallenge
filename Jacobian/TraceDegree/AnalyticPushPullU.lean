@@ -60,6 +60,7 @@ variable {Y : Type v} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [JacobianChallenge.Periods.StableChartAt ℂ Y]
   [FiniteDimensionalHolomorphicOneForms ℂ Y]
 
+omit [FiniteDimensionalHolomorphicOneForms ℂ X] [FiniteDimensionalHolomorphicOneForms ℂ Y] in
 /-- **Universe-`u` trace-of-pullback = degree** — GENUINELY DISCHARGED (R-tracepullback).
 Companion of the Type-0 `traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smul`
 (`AnalyticDegree.lean:236`); the genuine proof is
@@ -144,7 +145,8 @@ theorem analyticPushforward_analyticPullbackU
         (analyticDegreeU f hf : ℂ) • v := by
     have h := pushforwardTraceLiftU_traceDualPullbackLiftU_eq_degree_smul f hf
     have happ := LinearMap.congr_fun h v
-    simpa [LinearMap.smul_apply, LinearMap.id_apply] using happ
+    simp only [LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply] at happ
+    exact happ
   rw [show pushforwardTraceLiftCLMU f hf (traceDualPullbackLiftCLMU f hf v)
         = (analyticDegreeU f hf : ℂ) • v from hvec]
   rw [Nat.cast_smul_eq_nsmul ℂ (analyticDegreeU f hf) v]
