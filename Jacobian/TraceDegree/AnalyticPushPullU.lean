@@ -1,6 +1,7 @@
 import Jacobian.TraceDegree.AnalyticDegreeU
 import Jacobian.TraceDegree.PushforwardTraceLiftU
 import Jacobian.TraceDegree.AnalyticPushforwardContMDiffU
+import Jacobian.TraceDegree.TracePullbackProviderU
 import Jacobian.ComplexTorus.Smul
 
 /-!
@@ -59,16 +60,17 @@ variable {Y : Type v} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [JacobianChallenge.Periods.StableChartAt ℂ Y]
   [FiniteDimensionalHolomorphicOneForms ℂ Y]
 
-/-- **Frontier obligation (trace-of-pullback = degree).** Universe-`u` companion of
-the Type-0 `traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smul`
-(`AnalyticDegree.lean:236`); its genuine proof is the deep branched-cover
-trace-of-pullback identity `trace_pullback_provider` (`:191`). This is the ONLY
-sorry in the file; genuine discharge is the later "E3-trace-id" task. -/
+/-- **Universe-`u` trace-of-pullback = degree** — GENUINELY DISCHARGED (R-tracepullback).
+Companion of the Type-0 `traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smul`
+(`AnalyticDegree.lean:236`); the genuine proof is
+`TracePullbackProviderU.traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smul_genuineU`
+(the branched-cover trace-of-pullback identity `trace_pullback_provider` ported to
+`Type u`, no sorry). -/
 theorem traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smulU
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (traceFormsBundledLM f hf).comp (pullbackFormsBundledLM X Y f hf) =
       (analyticDegreeU f hf : ℂ) • LinearMap.id :=
-  sorry
+  TracePullbackProviderU.traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smul_genuineU f hf
 
 /-!
 ### Genuine descent (no sorry of its own)
