@@ -741,10 +741,10 @@ theorem nonconstant_extracted_from_dim_quotient
   set f := HolomorphicForms.twoPointMeromorphicMap Q₁ Q₂ hne
   refine ⟨f, HolomorphicForms.twoPointMeromorphicMap_nonconstant Q₁ Q₂ hne, ?_⟩
   show HolomorphicForms.Divisor.Effective _
+  -- v4.31: the `simp` below now fully closes the effectivity goal (the divisor
+  -- sum cancels to 0 and `effective_zero` fires inside simp); the former
+  -- explicit `rw … abel; exact effective_zero` tail is now dead.
   simp [f, HolomorphicForms.twoPointMeromorphicMap]
-  rw [show (-HolomorphicForms.Divisor.point Q₂ + -HolomorphicForms.Divisor.point Q₁ +
-        (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂)) = 0 by abel]
-  exact HolomorphicForms.Divisor.effective_zero
 
 
 theorem nonconstant_in_riemannRoch_space_of_dim_geq_two
