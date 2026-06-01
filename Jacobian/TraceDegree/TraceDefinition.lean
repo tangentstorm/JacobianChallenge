@@ -259,7 +259,7 @@ private theorem IsHolomorphicAt.sum_cotangentModelFiber
       ih fun i hi => hfs i (Finset.mem_insert_of_mem hi)
     unfold IsHolomorphicAt chartLocalAt at *
     have hsum := ha_holo.add hs_holo
-    simp only [Function.comp_def, Finset.sum_insert ha, map_add, map_sum]
+    simp only [Function.comp_def, Finset.sum_insert ha]
     exact hsum
 
 /-- A local version of the trace sum, defined in a neighborhood of `y`. -/

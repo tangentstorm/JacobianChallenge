@@ -1417,10 +1417,6 @@ theorem singularH1ClassOfCycle_eq_zero_sc_boundary
       ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
           (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) =
         ModuleCat.Hom.hom S.iCycles c := by
-    change
-      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
-          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) =
-        ModuleCat.Hom.hom S.iCycles c
     rw [← ModuleCat.comp_apply, S.moduleCatCyclesIso_hom_i]
   calc
     ModuleCat.Hom.hom (((singularChainComplexZ X).sc 1).f) B =
@@ -1454,8 +1450,7 @@ theorem hurewicz_singularBoundary_eq_sc_f_early
   refine ⟨(K.XIsoOfEq hprev).hom s, ?_⟩
   have hcomp := K.XIsoOfEq_hom_comp_d hprev 1
   have h := congrArg (fun (φ : _ ⟶ _) => ModuleCat.Hom.hom φ s) hcomp
-  simp only [ModuleCat.hom_comp, LinearMap.comp_apply, Function.comp_apply,
-    ModuleCat.hom_ofHom] at h
+  simp only [ModuleCat.hom_comp, LinearMap.comp_apply] at h
   exact h.symm
 
 
@@ -3898,10 +3893,6 @@ theorem singularH1ClassOfCycle_eq_zero_boundary
       ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
           (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) =
         ModuleCat.Hom.hom S.iCycles c := by
-    change
-      ModuleCat.Hom.hom S.moduleCatLeftHomologyData.i
-          (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) =
-        ModuleCat.Hom.hom S.iCycles c
     rw [← ModuleCat.comp_apply, S.moduleCatCyclesIso_hom_i]
   calc
     ModuleCat.Hom.hom (((singularChainComplexZ X).sc 1).f) B =
@@ -3935,8 +3926,7 @@ theorem hurewicz_singularBoundary_eq_sc_f
   refine ⟨(K.XIsoOfEq hprev).hom s, ?_⟩
   have hcomp := K.XIsoOfEq_hom_comp_d hprev 1
   have h := congrArg (fun (φ : _ ⟶ _) => ModuleCat.Hom.hom φ s) hcomp
-  simp only [ModuleCat.hom_comp, LinearMap.comp_apply, Function.comp_apply,
-    ModuleCat.hom_ofHom] at h
+  simp only [ModuleCat.hom_comp, LinearMap.comp_apply] at h
   exact h.symm
 
 noncomputable def signedFaceTargetEdgeCoefficient

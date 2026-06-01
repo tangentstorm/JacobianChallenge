@@ -71,8 +71,7 @@ theorem singularBoundary_eq_sc_f
   refine ⟨(K.XIsoOfEq hprev).hom s, ?_⟩
   have hcomp := K.XIsoOfEq_hom_comp_d hprev 1
   have h := congrArg (fun (φ : _ ⟶ _) => ModuleCat.Hom.hom φ s) hcomp
-  simp only [ModuleCat.hom_comp, LinearMap.comp_apply, Function.comp_apply,
-    ModuleCat.hom_ofHom] at h ⊢
+  simp only [] at h ⊢
   exact h.symm
 
 /--

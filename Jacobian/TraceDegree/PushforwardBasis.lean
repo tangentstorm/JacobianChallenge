@@ -120,9 +120,7 @@ linear equivalences `holomorphicOneFormFinBasis.equivFun` to convert
 between abstract forms and `Fin g → ℂ` coordinates.
 -/
 noncomputable def holomorphicTraceCoord
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ Y] :
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   (holomorphicOneFormFinBasis ℂ X).equivFun.toLinearMap ∘ₗ
     (pullbackFormsBundledLM X Y f hf) ∘ₗ
@@ -130,8 +128,7 @@ noncomputable def holomorphicTraceCoord
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Identity functoriality of the trace-coordinate map. -/
-theorem holomorphicTraceCoord_id
-    [FiniteDimensionalHolomorphicOneForms ℂ X] :
+theorem holomorphicTraceCoord_id :
     holomorphicTraceCoord (X := X) (Y := X) id contMDiff_id =
       LinearMap.id := by
   unfold holomorphicTraceCoord
@@ -143,10 +140,7 @@ omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y
 /-- Composition functoriality of the trace-coordinate map. -/
 theorem holomorphicTraceCoord_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ Y]
-    [FiniteDimensionalHolomorphicOneForms ℂ Z] :
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     holomorphicTraceCoord (g ∘ f) (hg.comp hf) =
       (holomorphicTraceCoord f hf).comp (holomorphicTraceCoord g hg) := by
   unfold holomorphicTraceCoord

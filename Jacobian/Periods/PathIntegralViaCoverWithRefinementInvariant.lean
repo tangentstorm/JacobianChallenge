@@ -328,11 +328,11 @@ private lemma segment_integrability
           grind;
           nlinarith [ show ( i : ℝ ) + 1 ≤ n by norm_cast; linarith [ Fin.is_lt i ], inv_mul_cancel₀ ( by positivity : ( n : ℝ ) ≠ 0 ) ];
         · simp +decide [ Path.subpath, Path.extend ];
-          simp +decide [ IccExtend, subpathAux ];
+          simp +decide [ IccExtend ];
           simp +decide [ projIcc ];
           obtain ⟨ht₁, ht₂⟩ := ht
           refine congrArg (⇑(chartAt E (pickChart i))) (DFunLike.congr_arg γ (Subtype.ext ?_))
-          simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc]
+          simp only [Set.Icc.coe_convexComb, divFinIcc_val]
           rw [min_eq_right ht₂, max_eq_right ht₁]
           have hpos : (0:ℝ) < n := by positivity
           have hni : (i : ℝ) + 1 ≤ n := by exact_mod_cast Nat.succ_le_of_lt i.2
@@ -362,8 +362,7 @@ private lemma segment_integrability
         have hninv : (0:ℝ) ≤ (↑n)⁻¹ := by positivity
         have hinv : (n:ℝ) * (↑n)⁻¹ = 1 := mul_inv_cancel₀ (ne_of_gt hpos)
         convert hcov i _ _ _ _ _ using 1 <;>
-          simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc,
-            min_eq_right ht.2, max_eq_right ht.1, div_eq_mul_inv] <;>
+          simp only [Set.Icc.coe_convexComb, divFinIcc_val, div_eq_mul_inv] <;>
           push_cast <;>
           nlinarith [ht.1, ht.2, hninv, hinv, hni, hi0,
             mul_nonneg ht.1 hninv, mul_nonneg (by linarith : (0:ℝ) ≤ 1 - t) hninv,
@@ -376,8 +375,8 @@ private lemma segment_integrability
         have hni : (i : ℝ) + 1 ≤ n := by exact_mod_cast Nat.succ_le_of_lt i.2
         have hi0 : (0:ℝ) ≤ i := Nat.cast_nonneg _
         have hninv : (0:ℝ) ≤ (↑n)⁻¹ := by positivity
-        simp only [Set.mem_preimage, Path.subpath, Path.coe_mk_mk, Function.comp_apply,
-          Path.extend, Set.IccExtend, Set.projIcc_of_mem (zero_le_one) ⟨ht₁, ht₂⟩]
+        simp only [Path.subpath, Path.coe_mk_mk,
+          Path.extend, Set.IccExtend]
         apply (chartAt E (pickChart i)).map_source
         have hcoe2 : (1 - t) * ((i:ℝ) / n) + t * (((i:ℝ) + 1) / n) = ((i:ℝ) + t) / n := by
           field_simp; ring
@@ -401,8 +400,8 @@ private lemma segment_integrability
         have hcoe2 : (1 - t) * ((i:ℝ) / n) + t * (((i:ℝ) + 1) / n) = ((i:ℝ) + t) / n := by
           field_simp; ring
         refine ⟨?_, ⟨ht₁, ht₂⟩⟩
-        simp only [Set.mem_preimage, Path.subpath, Path.coe_mk_mk, Function.comp_apply,
-          Path.extend, Set.IccExtend, Set.projIcc_of_mem (zero_le_one) ⟨ht₁, ht₂⟩]
+        simp only [Set.mem_preimage, Path.subpath, Path.coe_mk_mk,
+          Path.extend, Set.IccExtend]
         refine hcov i _ ?_ ?_
         · simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc, min_eq_right ht₂, max_eq_right ht₁]
           push_cast
