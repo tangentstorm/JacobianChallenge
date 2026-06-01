@@ -19,6 +19,9 @@ namespace JacobianChallenge.Periods
 
 open Set unitInterval JacobianChallenge.HolomorphicForms
 
+set_option backward.isDefEq.respectTransparency false
+set_option maxHeartbeats 1000000
+
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
@@ -308,7 +311,11 @@ private lemma segment_integrability
             simp +decide [ divFinIcc_val ];
             constructor <;> nlinarith [ show ( i : ℝ ) + 1 ≤ n by norm_cast; exact Nat.succ_le_of_lt i.2, show ( i : ℝ ) ≥ 0 by positivity, div_mul_cancel₀ ( ( i : ℝ ) + 1 ) ( by positivity : ( n : ℝ ) ≠ 0 ), div_mul_cancel₀ ( ( i : ℝ ) ) ( by positivity : ( n : ℝ ) ≠ 0 ) ] ⟩ _ _ using 1
           generalize_proofs at *;
-          · simp +decide [ ht₁, ht₂ ] ; ring_nf;
+          · refine DFunLike.congr_arg γ (Subtype.ext ?_)
+            simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc]
+            rw [min_eq_right ht₂, max_eq_right ht₁]
+            push_cast
+            ring
           · simp +decide [ divFinIcc ];
             exact mul_nonneg ( sub_nonneg.2 <| by gcongr ; linarith ) ht₁;
           · all_goals generalize_proofs at *;
@@ -323,7 +330,24 @@ private lemma segment_integrability
         · simp +decide [ Path.subpath, Path.extend ];
           simp +decide [ IccExtend, subpathAux ];
           simp +decide [ projIcc ];
-          grind;
+          obtain ⟨ht₁, ht₂⟩ := ht
+          refine congrArg (⇑(chartAt E (pickChart i))) (DFunLike.congr_arg γ (Subtype.ext ?_))
+          simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc]
+          rw [min_eq_right ht₂, max_eq_right ht₁]
+          have hpos : (0:ℝ) < n := by positivity
+          have hni : (i : ℝ) + 1 ≤ n := by exact_mod_cast Nat.succ_le_of_lt i.2
+          have hi0 : (0:ℝ) ≤ i := Nat.cast_nonneg _
+          have hninv : (0:ℝ) ≤ (↑n)⁻¹ := by positivity
+          have hsum : ((i:ℝ) / ↑n + (((i:ℝ) + 1) / ↑n - (i:ℝ) / ↑n) * t)
+              = ((i:ℝ) + t) / ↑n := by
+            field_simp; ring
+          have haff₀ : 0 ≤ ((i:ℝ) / ↑n + (((i:ℝ) + 1) / ↑n - (i:ℝ) / ↑n) * t) := by
+            rw [hsum]; apply div_nonneg _ (le_of_lt hpos); nlinarith
+          have haff₁ : ((i:ℝ) / ↑n + (((i:ℝ) + 1) / ↑n - (i:ℝ) / ↑n) * t) ≤ 1 := by
+            rw [hsum, div_le_one hpos]; nlinarith
+          rw [min_eq_right haff₁, max_eq_right haff₀]
+          push_cast
+          ring
     · fun_prop;
   have h_cont_diff : ContinuousOn (fun t => (chartedFormPullback (chartAt E (pickChart i)) ω) ((chartAt E (pickChart i)) ((γ.subpath (divFinIcc n hn ↑i.val (le_of_lt i.isLt)) (divFinIcc n hn (↑i.val + 1) i.isLt)).extend t)) (derivWithin ((chartAt E (pickChart i)) ∘ ⇑(γ.subpath (divFinIcc n hn ↑i.val (le_of_lt i.isLt)) (divFinIcc n hn (↑i.val + 1) i.isLt)).extend) (Icc 0 1) t)) (Set.Icc 0 1) := by
     refine' ContinuousOn.clm_apply _ _;
@@ -332,24 +356,62 @@ private lemma segment_integrability
       · refine' h_cont_diff.continuousOn.mono _;
         intro t ht;
         simp_all +decide [ Path.subpath ];
-        convert hcov i _ _ _ _ _ using 1 <;> ring_nf <;> norm_num [ hn.ne' ];
-        · exact add_nonneg ( mul_nonneg ht.1 ( inv_nonneg.2 ( Nat.cast_nonneg _ ) ) ) ( mul_nonneg ( Nat.cast_nonneg _ ) ( inv_nonneg.2 ( Nat.cast_nonneg _ ) ) );
-        · nlinarith [ show ( i : ℝ ) + 1 ≤ n by norm_cast; exact Nat.succ_le_of_lt i.2, inv_mul_cancel₀ ( by positivity : ( n : ℝ ) ≠ 0 ) ];
-        · exact mul_nonneg ( inv_nonneg.2 ( Nat.cast_nonneg _ ) ) ht.1;
-        · nlinarith [ inv_pos.2 ( by positivity : 0 < ( n : ℝ ) ) ];
+        have hpos : (0:ℝ) < n := by positivity
+        have hni : (i : ℝ) + 1 ≤ n := by exact_mod_cast Nat.succ_le_of_lt i.2
+        have hi0 : (0:ℝ) ≤ i := Nat.cast_nonneg _
+        have hninv : (0:ℝ) ≤ (↑n)⁻¹ := by positivity
+        have hinv : (n:ℝ) * (↑n)⁻¹ = 1 := mul_inv_cancel₀ (ne_of_gt hpos)
+        convert hcov i _ _ _ _ _ using 1 <;>
+          simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc,
+            min_eq_right ht.2, max_eq_right ht.1, div_eq_mul_inv] <;>
+          push_cast <;>
+          nlinarith [ht.1, ht.2, hninv, hinv, hni, hi0,
+            mul_nonneg ht.1 hninv, mul_nonneg (by linarith : (0:ℝ) ≤ 1 - t) hninv,
+            mul_nonneg ht.1 hi0, mul_nonneg (by linarith : (0:ℝ) ≤ 1 - t) hi0,
+            mul_le_of_le_one_left hninv ht.2,
+            mul_le_of_le_one_left hninv (by linarith : (1:ℝ) - t ≤ 1)]
       · intro t ht;
-        simp +decide [ Path.subpath, ht.1, ht.2 ];
-        exact ( chartAt E ( pickChart i ) ).map_source ( hcov i _ ( by
-          norm_num; ring_nf; nlinarith [ ht.1, ht.2, show ( i : ℝ ) + 1 ≤ n by norm_cast; linarith [ Fin.is_lt i ], mul_inv_cancel₀ ( by positivity : ( n : ℝ ) ≠ 0 ) ] ; ) ( by
-          exact show ( 1 - t ) * ( i / n : ℝ ) + t * ( ( i + 1 ) / n : ℝ ) ≤ ( i + 1 ) / n from by nlinarith [ ht.1, ht.2, show ( i : ℝ ) + 1 ≤ n by norm_cast; linarith [ Fin.is_lt i ], div_mul_cancel₀ ( i : ℝ ) ( by positivity : ( n : ℝ ) ≠ 0 ), div_mul_cancel₀ ( ( i + 1 ) : ℝ ) ( by positivity : ( n : ℝ ) ≠ 0 ) ] ; ) );
+        obtain ⟨ht₁, ht₂⟩ := ht
+        have hpos : (0:ℝ) < n := by positivity
+        have hni : (i : ℝ) + 1 ≤ n := by exact_mod_cast Nat.succ_le_of_lt i.2
+        have hi0 : (0:ℝ) ≤ i := Nat.cast_nonneg _
+        have hninv : (0:ℝ) ≤ (↑n)⁻¹ := by positivity
+        simp only [Set.mem_preimage, Path.subpath, Path.coe_mk_mk, Function.comp_apply,
+          Path.extend, Set.IccExtend, Set.projIcc_of_mem (zero_le_one) ⟨ht₁, ht₂⟩]
+        apply (chartAt E (pickChart i)).map_source
+        have hcoe2 : (1 - t) * ((i:ℝ) / n) + t * (((i:ℝ) + 1) / n) = ((i:ℝ) + t) / n := by
+          field_simp; ring
+        refine hcov i _ ?_ ?_
+        · simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc, min_eq_right ht₂, max_eq_right ht₁]
+          push_cast
+          rw [hcoe2, div_le_div_iff_of_pos_right hpos]
+          linarith
+        · simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc, min_eq_right ht₂, max_eq_right ht₁]
+          push_cast
+          rw [hcoe2, div_le_div_iff_of_pos_right hpos]
+          linarith
     · have h_cont_diff : ContDiffOn ℝ 1 (⇑(chartAt E (pickChart i)) ∘ ⇑(γ.subpath (divFinIcc n hn ↑i.val (le_of_lt i.isLt)) (divFinIcc n hn (↑i.val + 1) i.isLt)).extend) (Icc 0 1) := by
         refine' h_cont_diff.mono _;
-        intro t ht; simp +decide [ *, Path.subpath ] ;
-        convert hcov i ⟨ ( 1 - t ) * ( i / n : ℝ ) + t * ( ( i + 1 ) / n : ℝ ), by
-          constructor <;> nlinarith [ ht.1, ht.2, show ( i : ℝ ) + 1 ≤ n by norm_cast; linarith [ Fin.is_lt i ], div_mul_cancel₀ ( ( i : ℝ ) : ℝ ) ( by positivity : ( n : ℝ ) ≠ 0 ), div_mul_cancel₀ ( ( i + 1 : ℝ ) : ℝ ) ( by positivity : ( n : ℝ ) ≠ 0 ) ] ⟩ _ _ using 1 <;> ring_nf
-        all_goals generalize_proofs at *;
-        · exact le_add_of_nonneg_right ( mul_nonneg ( inv_nonneg.2 ( Nat.cast_nonneg _ ) ) ht.1 );
-        · nlinarith [ ht.1, ht.2, inv_pos.2 ( by positivity : 0 < ( n : ℝ ) ) ];
+        intro t ht;
+        obtain ⟨ht₁, ht₂⟩ := ht
+        have hpos : (0:ℝ) < n := by positivity
+        have hni : (i : ℝ) + 1 ≤ n := by exact_mod_cast Nat.succ_le_of_lt i.2
+        have hi0 : (0:ℝ) ≤ i := Nat.cast_nonneg _
+        have hninv : (0:ℝ) ≤ (↑n)⁻¹ := by positivity
+        have hcoe2 : (1 - t) * ((i:ℝ) / n) + t * (((i:ℝ) + 1) / n) = ((i:ℝ) + t) / n := by
+          field_simp; ring
+        refine ⟨?_, ⟨ht₁, ht₂⟩⟩
+        simp only [Set.mem_preimage, Path.subpath, Path.coe_mk_mk, Function.comp_apply,
+          Path.extend, Set.IccExtend, Set.projIcc_of_mem (zero_le_one) ⟨ht₁, ht₂⟩]
+        refine hcov i _ ?_ ?_
+        · simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc, min_eq_right ht₂, max_eq_right ht₁]
+          push_cast
+          rw [hcoe2, div_le_div_iff_of_pos_right hpos]
+          linarith
+        · simp only [Set.Icc.coe_convexComb, divFinIcc_val, Set.coe_projIcc, min_eq_right ht₂, max_eq_right ht₁]
+          push_cast
+          rw [hcoe2, div_le_div_iff_of_pos_right hpos]
+          linarith
       have := h_cont_diff.continuousOn_derivWithin;
       exact this ( uniqueDiffOn_Icc ( by norm_num ) ) le_rfl;
   rw [ intervalIntegrable_iff_integrableOn_Icc_of_le zero_le_one ];

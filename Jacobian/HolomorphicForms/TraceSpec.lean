@@ -29,6 +29,12 @@ cycle.
 
 namespace JacobianChallenge.HolomorphicForms
 
+-- v4.31: `TangentSpace 𝓘(ℂ,ℂ) x` is a non-reducible synonym for `ℂ`, so synthesizing
+-- the operator `Norm`/`NormedAddCommGroup` on `CotangentSpace ℂ _ _`
+-- (`TangentSpace … →L[ℂ] _`) requires instance defeq to see through the synonym.
+-- Mirrors `CotangentBundle.lean` / `TraceDefinition.lean`.
+set_option backward.isDefEq.respectTransparency false
+
 open scoped Manifold ContDiff Topology Classical
 open JacobianChallenge.HolomorphicForms
 open JacobianChallenge.HolomorphicForms.SectionFiberNorm
@@ -399,7 +405,10 @@ private theorem localInverseAt_preimage_mem_nhds
       simpa [ContinuousAt, hr_z₀] using hr_an.continuousAt
     have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
         (𝓝 (f x)) (𝓝 w₀) := by
-      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      have hca : ContinuousAt (fun y : Y => chartAt ℂ (f x) y) (f x) :=
+        (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      rw [show w₀ = chartAt ℂ (f x) (f x) from rfl]
+      exact hca
     have hsymm_tendsto : Filter.Tendsto (fun z => (chartAt ℂ x).symm z)
         (𝓝 z₀) (𝓝 x) := by
       have hcont := (chartAt ℂ x).continuousAt_symm
@@ -408,7 +417,9 @@ private theorem localInverseAt_preimage_mem_nhds
         (𝓝 ((chartAt ℂ x).symm z₀)) at hcont
       simpa [z₀, (chartAt ℂ x).left_inv (mem_chart_source ℂ x)] using hcont
     have hcomp := hsymm_tendsto.comp (hr_tendsto.comp hchart_tendsto)
-    simpa [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀, w₀] using hcomp
+    refine hcomp.congr fun y' => ?_
+    simp only [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀, w₀,
+      Function.comp_apply]
   have hanalyticInv_mem_U : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ U :=
     hlocalInv_tendsto.eventually (hUopen.mem_nhds hxU)
   have hanalyticInv_right : ∀ᶠ y in 𝓝 (f x), f (analyticInv y) = y := by
@@ -420,7 +431,10 @@ private theorem localInverseAt_preimage_mem_nhds
           (hf := (hHol.holomorphicAt x).hasStrictDerivAt) (hf' := hderiv))
     have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
         (𝓝 (f x)) (𝓝 w₀) := by
-      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      have hca : ContinuousAt (fun y : Y => chartAt ℂ (f x) y) (f x) :=
+        (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      rw [show w₀ = chartAt ℂ (f x) (f x) from rfl]
+      exact hca
     have hright_y : ∀ᶠ y in 𝓝 (f x), F (r (chartAt ℂ (f x) y)) =
         chartAt ℂ (f x) y :=
       hchart_tendsto.eventually hright_z
@@ -434,7 +448,8 @@ private theorem localInverseAt_preimage_mem_nhds
         ((chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x)))
     filter_upwards [hright_y, hy_source, hf_analyticInv_source] with y hy_eq hy_src hfy_src
     have hchart : chartAt ℂ (f x) (f (analyticInv y)) = chartAt ℂ (f x) y := by
-      simpa [analyticInv, IsHolomorphicAt.localInverse, F, r, z₀, w₀] using hy_eq
+      show chartLocalAt f x (r (chartAt ℂ (f x) y)) = chartAt ℂ (f x) y
+      exact hy_eq
     exact (chartAt ℂ (f x)).injOn hfy_src hy_src hchart
   have heq : ∀ᶠ y in 𝓝 (f x), analyticInv y = h.localInverseAt x hx y := by
     filter_upwards [hanalyticInv_mem_U, hanalyticInv_right] with y hy_an_U hy_an_right
@@ -1209,15 +1224,15 @@ private theorem removableSingularity_oneD_punctured_disc
   -- Apply Riemann's removable singularity theorem (bounded version).
   have hext_diff :
       DifferentiableOn ℂ
-        (Function.update φ c (limUnder (𝓝[≠] c) φ)) _s :=
+        (Function.update φ c (Filter.limUnder (𝓝[≠] c) φ)) _s :=
     Complex.differentiableOn_update_limUnder_of_bddAbove _hs_nhds hdiff hbnd
   -- The updated function is analytic at c (1D Cauchy: DifferentiableOn → AnalyticAt).
-  set φ_ext : ℂ → ℂ := Function.update φ c (limUnder (𝓝[≠] c) φ) with hφ_ext_def
+  set φ_ext : ℂ → ℂ := Function.update φ c (Filter.limUnder (𝓝[≠] c) φ) with hφ_ext_def
   have hAnalyticAt : AnalyticAt ℂ φ_ext c := hext_diff.analyticAt _hs_nhds
   refine ⟨φ_ext, _s, _hs_nhds, Set.Subset.rfl, hAnalyticAt, ?_⟩
   -- Agreement: φ_ext z = φ z for z ≠ c.
   intro z _ hz_ne
-  show Function.update φ c (limUnder (𝓝[≠] c) φ) z = φ z
+  show Function.update φ c (Filter.limUnder (𝓝[≠] c) φ) z = φ z
   exact Function.update_of_ne hz_ne _ _
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
@@ -1726,7 +1741,7 @@ private theorem bundleSection_contMDiff_of_pointwiseHolomorphic
         (g_ext y).comp (tT.symmL ℂ y)
     rw [show e = tT.continuousLinearMap (RingHom.id ℂ)
         (trivializationAt ℂ (Bundle.Trivial Y ℂ) y₀) from rfl,
-      Trivialization.continuousLinearMap_apply]
+      Bundle.Trivialization.continuousLinearMap_apply]
     have hTrivial :
         (trivializationAt ℂ (Bundle.Trivial Y ℂ) y₀).continuousLinearMapAt ℂ y =
           ContinuousLinearMap.id ℂ ℂ := by
