@@ -22,6 +22,53 @@ fiber at `x : X` is `TangentSpace 𝓘(ℂ, E) x →L[ℂ] ℂ`.
 
 namespace JacobianChallenge.HolomorphicForms
 
+/-!
+## Fiber norm on the tangent / cotangent space
+
+In Mathlib v4.31, `TangentSpace I x := E` is a `not reducible` type synonym
+whose `deriving` clause provides `TopologicalSpace, AddCommGroup, Module 𝕜,
+ContinuousSMul, ContinuousConstSMul` — but no longer a `NormedAddCommGroup`
+or `NormedSpace`. Consequently the operator-norm instance
+`ContinuousLinearMap.toNormedAddCommGroup` cannot synthesize a norm on the
+cotangent fiber `TangentSpace 𝓘(ℂ,E) x →L[ℂ] (Bundle.Trivial X ℂ) x`.
+
+We register the missing fiber norms by transporting `E`'s own structure
+through the definitional equality `TangentSpace 𝓘(ℂ,E) x ≡ E` (the synonym
+body), following Mathlib's own
+`Mathlib.Geometry.Manifold.Riemannian.Basic.normedAddCommGroupTangentSpaceVectorSpace`.
+The instances are tagged `@[instance_reducible]` so that their underlying
+`AddCommGroup` / `TopologicalSpace` / `Module` projections stay definitionally
+equal to the `deriving`-supplied ones (they are literally `E`'s, transported
+through the synonym), which keeps the `VectorBundle ℂ (CotangentModelFiber ℂ)
+(CotangentSpace ℂ X)` synthesis diamond-free — see the `example` below.
+
+Because `TangentSpace` is `not reducible`, downstream consumers that need to
+*synthesize the operator norm* through these instances must enable
+`set_option backward.isDefEq.respectTransparency false` (exactly as Mathlib's
+Riemannian-bundle lemmas do); see `SectionMetric.lean` /
+`CompactRiemannSurface.lean`.
+-/
+
+/-- `NormedAddCommGroup` on the tangent space, transported from the model
+fiber `E`. Diamond-free: the underlying `AddCommGroup` / `TopologicalSpace`
+coincide definitionally with the `deriving`-supplied ones. -/
+@[instance_reducible]
+noncomputable instance instNormedAddCommGroupTangentSpace
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {X : Type*} [TopologicalSpace X] [ChartedSpace E X] (x : X) :
+    NormedAddCommGroup (TangentSpace (modelWithCornersSelf ℂ E) x) :=
+  inferInstanceAs (NormedAddCommGroup E)
+
+/-- `NormedSpace ℂ` on the tangent space, transported from the model fiber
+`E`. Its `toModule` coincides definitionally with the `deriving`-supplied
+`Module ℂ (TangentSpace …)`. -/
+@[instance_reducible]
+noncomputable instance instNormedSpaceTangentSpace
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {X : Type*} [TopologicalSpace X] [ChartedSpace E X] (x : X) :
+    NormedSpace ℂ (TangentSpace (modelWithCornersSelf ℂ E) x) :=
+  inferInstanceAs (NormedSpace ℂ E)
+
 /--
 The cotangent space at `x : X`: continuous ℂ-linear functionals on
 the tangent space at `x`. The model fiber `E` is exposed as an
@@ -50,6 +97,18 @@ example
     (X : Type*) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] :
     VectorBundle ℂ (CotangentModelFiber E) (CotangentSpace E X) :=
+  inferInstance
+
+-- Sanity check: with the transported fiber norms above (and the
+-- `backward.isDefEq.respectTransparency false` relaxation needed because
+-- `TangentSpace` is `not reducible`), the cotangent fiber carries the
+-- operator `NormedAddCommGroup`.
+set_option backward.isDefEq.respectTransparency false in
+noncomputable example
+    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (X : Type*) [TopologicalSpace X] [ChartedSpace E X]
+    (x : X) :
+    NormedAddCommGroup (CotangentSpace E X x) :=
   inferInstance
 
 end JacobianChallenge.HolomorphicForms
