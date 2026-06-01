@@ -473,7 +473,7 @@ theorem etaTimesOne_chart_local_analytic
   have hsrc : (fun x : X => Bundle.TotalSpace.mk' ℂ
       (E := Bundle.Trivial X ℂ) x ((ω.toFun x) (1 : ℂ))) x₀
         ∈ (trivializationAt ℂ (Bundle.Trivial X ℂ) x₀).source := by
-    rw [Trivialization.mem_source]
+    rw [(trivializationAt ℂ (Bundle.Trivial X ℂ) x₀).mem_source]
     exact FiberBundle.mem_baseSet_trivializationAt' x₀
   have h_iff :=
     (trivializationAt ℂ (Bundle.Trivial X ℂ) x₀).contMDiffAt_iff

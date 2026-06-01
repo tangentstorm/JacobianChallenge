@@ -309,6 +309,7 @@ theorem regularLocus_dense
    on the BCD chosen), via `Set.Finite.toFinset_inj` (Provider 4).
 -/
 
+omit [CompactSpace X] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Provider (1).** *Trace holomorphic on the regular locus.* At
 every regular value `y` of `hbc`, the local trace function
@@ -527,6 +528,7 @@ private theorem IsHolomorphicAt.continuousAt_cotangentModelFiber
   rw [h_eq] at h_back
   exact h_back
 
+omit [CompactSpace X] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Strictly narrower fiber-point helper (Provider 2 internal),
 unramified leaf.** When `x₀` is unramified (ramification index 1),
@@ -3273,6 +3275,7 @@ private theorem ramifiedFiberPoint_partialTrace_locally_bounded
   · -- `y ≠ y₀`: delegate to the narrower helper.
     exact hbound' y hy_V hy_eq hy_reg
 
+omit [CompactSpace X] [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Strictly narrower fiber-point helper (Provider 2 internal),
 dispatcher.** Branches on whether `x₀` is unramified or ramified
@@ -3297,6 +3300,7 @@ private theorem fiberPoint_partialTrace_locally_bounded
   · exact ramifiedFiberPoint_partialTrace_locally_bounded f hf η hbc hcompat
       y₀ x₀ hx₀_fiber hx₀_ram W₀ hW₀_open hxW₀
 
+omit [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Provider (2).** *Trace locally bounded near branch values.* At
 every branch value `y₀` (a non-regular value) of `hbc`, there is a
@@ -4236,6 +4240,7 @@ theorem traceAtRegularValue_BCD_invariance
     Subsingleton.elim _ _
   congr 1
 
+omit [CompactSpace Y] [ConnectedSpace Y] in
 /--
 **Trace-locus pointwise holomorphic auxiliary for Provider (3).**
 
@@ -4441,6 +4446,7 @@ theorem regularLocus_dite_trace_holomorphicAt
     rfl
 
 
+omit [CompactSpace Y] in
 private theorem traceForm_extension_per_BCD
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
@@ -4548,6 +4554,7 @@ theorem traceForm_extension_at_branch_of_canonical_BCD
   -- Combine: hbc0.ramificationIndex x = 1 but also ≠ 1. Contradiction.
   exact hx_ram (h0.trans (h1.symm.trans hreg))
 
+omit [CompactSpace Y] in
 /--
 **Narrow classical leaf: trace-form holomorphic extension.** For a
 nonconstant smooth map `f : X → Y` between compact Riemann surfaces
@@ -4686,6 +4693,7 @@ structure TraceFormsRegularSpec
       (traceFormsBundled f hf η).toFun y =
         traceAtRegularValue hbc (fun x => η.toFun x) y hy
 
+omit [CompactSpace Y] in
 /--
 Private helper: in the constant-map case, the construction-data
 provider for any input form `η` reduces to
