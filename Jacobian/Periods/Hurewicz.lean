@@ -1620,6 +1620,70 @@ structure Polygon4gQuotientPathFiniteLiftSubdivision
         (lift j (stdSimplexVertex 0))
 
 /--
+Interior points of the disk have trivial side-pairing fibres.
+
+Every generator of `Polygon4g.SideRel` lies on the boundary circle
+(`‖z‖ = 1`).  Hence an equivalence-chain starting from a point with
+`‖z‖ < 1` cannot take a non-reflexive side-pairing step, so the
+equivalence class is the singleton `{z}`.  This is the first local
+section chart for the quotient map: over the open disk interior,
+`Polygon4g.mk` is locally represented by the identity lift.
+-/
+theorem polygon4g_sideRel_eq_of_norm_lt_one
+    (g : ℕ) {z w : DiskC} (hz : ‖(z : ℂ)‖ < 1)
+    (hrel : Polygon4g.SideRel g z w) : z = w := by
+  let Q : DiskC → DiskC → Prop := fun a b =>
+    a = b ∨ (‖(a : ℂ)‖ = 1 ∧ ‖(b : ℂ)‖ = 1)
+  have hQ_equiv : Equivalence Q := by
+    constructor
+    · intro a
+      exact Or.inl rfl
+    · intro a b hab
+      rcases hab with h | ⟨ha, hb⟩
+      · exact Or.inl h.symm
+      · exact Or.inr ⟨hb, ha⟩
+    · intro a b c hab hbc
+      rcases hab with hab | ⟨ha, hb⟩
+      · subst b
+        exact hbc
+      · rcases hbc with hbc | ⟨_hb, hc⟩
+        · subst c
+          exact Or.inr ⟨ha, hb⟩
+        · exact Or.inr ⟨ha, hc⟩
+  have hgenQ : ∀ a b : DiskC, Polygon4g.SideGen g a b → Q a b := by
+    intro a b hgen
+    cases hgen with
+    | a_pair i t ht =>
+        exact Or.inr ⟨by
+          simpa [boundaryParam, boundaryParam'] using
+            boundaryParamC'_norm_eq_one (4 * g) (4 * i.val) t, by
+          simpa [boundaryParam, boundaryParam'] using
+            boundaryParamC'_norm_eq_one (4 * g) (4 * i.val + 2) (1 - t)⟩
+    | b_pair i t ht =>
+        exact Or.inr ⟨by
+          simpa [boundaryParam, boundaryParam'] using
+            boundaryParamC'_norm_eq_one (4 * g) (4 * i.val + 1) t, by
+          simpa [boundaryParam, boundaryParam'] using
+            boundaryParamC'_norm_eq_one (4 * g) (4 * i.val + 3) (1 - t)⟩
+  have hQ : Q z w :=
+    (hQ_equiv.eqvGen_iff).mp (Relation.EqvGen.mono hgenQ hrel)
+  rcases hQ with h | ⟨hz_boundary, _hw_boundary⟩
+  · exact h
+  · nlinarith
+
+/--
+Interior quotient-kernel form of
+`polygon4g_sideRel_eq_of_norm_lt_one`: two disk points in the same
+quotient fibre are equal as soon as the first point lies in the open
+disk.
+-/
+theorem polygon4g_mk_eq_of_norm_lt_one
+    (g : ℕ) {z w : DiskC} (hz : ‖(z : ℂ)‖ < 1)
+    (hmk : Polygon4g.mk g z = Polygon4g.mk g w) : z = w :=
+  polygon4g_sideRel_eq_of_norm_lt_one g hz
+    ((Polygon4g.mk_eq_mk_iff g z w).mp hmk)
+
+/--
 Local topology leaf: every polygon quotient singular one-simplex has
 a finite subdivision by pieces that lift to the closed disk, with
 adjacent lifted endpoints related by `SideRel`.
