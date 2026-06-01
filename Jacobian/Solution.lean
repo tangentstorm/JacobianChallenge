@@ -17,6 +17,7 @@ import Jacobian.TraceDegree.AnalyticDegree
 import Jacobian.TraceDegree.PiecewiseC1Instance
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Jacobian.TraceDegree.AnalyticPushforwardFunctorialU
+import Jacobian.TraceDegree.AnalyticPullbackFunctorialU
 
 set_option linter.unusedSectionVars false
 set_option backward.isDefEq.respectTransparency false
@@ -284,18 +285,36 @@ lemma pushforward_comp_apply (P : Jacobian X) :
   rw [JacobianChallenge.TraceDegree.analyticPushforward_comp_applyU f hf g hg P.down]
 
 /-- Pullback map between Jacobians associated to a map of the underlying curves. -/
-def pullback (f : X → Y)
+noncomputable def pullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    Jacobian Y →ₜ+ Jacobian X := sorry
+    Jacobian Y →ₜ+ Jacobian X :=
+  JacobianChallenge.ComplexTorus.ULiftContinuousAddMonoidHom'
+    (JacobianChallenge.TraceDegree.analyticPullbackU f hf)
 
 theorem pullback_contMDiff :
     ContMDiff (modelWithCornersSelf ℂ (Fin (genus Y) → ℂ))
-      (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (pullback f hf) := sorry
+      (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (pullback f hf) := by
+  show ContMDiff _ _ ω
+    (fun a : Jacobian Y =>
+      (ULift.up (JacobianChallenge.TraceDegree.analyticPullbackU f hf a.down) : Jacobian X))
+  exact (JacobianChallenge.ComplexTorus.contMDiff_uLift_up
+        (Λ := JacobianChallenge.Periods.periodFullComplexLatticeU X)).comp
+    ((JacobianChallenge.TraceDegree.analyticPullback_contMDiffU f hf).comp
+      (JacobianChallenge.ComplexTorus.contMDiff_uLift_down
+        (Λ := JacobianChallenge.Periods.periodFullComplexLatticeU Y)))
 
-lemma pullback_id_apply (P : Jacobian X) : pullback id contMDiff_id P = P := sorry
+lemma pullback_id_apply (P : Jacobian X) : pullback id contMDiff_id P = P := by
+  show (ULift.up (JacobianChallenge.TraceDegree.analyticPullbackU id contMDiff_id P.down)
+      : Jacobian X) = P
+  rw [JacobianChallenge.TraceDegree.analyticPullback_id_applyU P.down]
+  rfl
 
 lemma pullback_comp_apply (P : Jacobian Z) :
-    pullback (g.comp f) (hg.comp hf) P = pullback f hf (pullback g hg P) := sorry
+    pullback (g.comp f) (hg.comp hf) P = pullback f hf (pullback g hg P) := by
+  show ULift.up (JacobianChallenge.TraceDegree.analyticPullbackU (g.comp f) (hg.comp hf) P.down)
+    = ULift.up (JacobianChallenge.TraceDegree.analyticPullbackU f hf
+        (JacobianChallenge.TraceDegree.analyticPullbackU g hg P.down))
+  rw [JacobianChallenge.TraceDegree.analyticPullback_comp_applyU f hf g hg P.down]
 
 noncomputable def _root_.ContMDiff.degree
     (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
