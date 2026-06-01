@@ -38,6 +38,8 @@ open Set MeasureTheory Path
 open scoped unitInterval
 open JacobianChallenge.HolomorphicForms
 
+set_option backward.isDefEq.respectTransparency false
+
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]

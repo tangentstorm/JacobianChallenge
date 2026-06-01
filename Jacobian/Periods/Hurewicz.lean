@@ -23,31 +23,38 @@ surface needed by the Jacobian project.
 namespace JacobianChallenge.Periods
 
 open AlgebraicTopology CategoryTheory CategoryTheory.Limits SimplexCategory Opposite
-open Simplicial
+-- NOTE: `open Simplicial` is deliberately NOT used here.  Its `scoped[Simplicial]`
+-- geometric-realization notation `|X|` (Mathlib.AlgebraicTopology.SingularSet)
+-- registers `|` as a leading term token, which under v4.31's parser conflicts with
+-- the `|`-pattern syntax of equation-style `def`s and GADT-style inductive
+-- constructors used below.  We use `SimplexCategory.mk n` explicitly instead of the
+-- Simplicial-scoped `⦋n⦌` notation.
+
+-- The `TangentSpace`/`ModuleCat.carrier` synonyms in this file are non-reducible
+-- (`TangentSpace 𝓘(ℂ,ℂ) x := ℂ`, `ModuleCat.carrier`); v4.31's stricter `instances`
+-- transparency in `rw`/`change` rejects defeq-but-not-instance-transparent goals.
+-- Relaxing the backward compat flag restores the v4.28 behaviour.
+set_option backward.isDefEq.respectTransparency false
 
 
 def Polygon4gAbelianization (g : ℕ) : Type :=
   Fin (2 * (g + 1)) → ℤ
 
 instance polygon4gAbelianization_addCommGroup (g : ℕ) :
-    AddCommGroup (Polygon4gAbelianization g) := by
-  unfold Polygon4gAbelianization
-  infer_instance
+    AddCommGroup (Polygon4gAbelianization g) :=
+  inferInstanceAs (AddCommGroup (Fin (2 * (g + 1)) → ℤ))
 
 instance polygon4gAbelianization_module (g : ℕ) :
-    Module ℤ (Polygon4gAbelianization g) := by
-  unfold Polygon4gAbelianization
-  infer_instance
+    Module ℤ (Polygon4gAbelianization g) :=
+  inferInstanceAs (Module ℤ (Fin (2 * (g + 1)) → ℤ))
 
 instance polygon4gAbelianization_module_free (g : ℕ) :
-    Module.Free ℤ (Polygon4gAbelianization g) := by
-  unfold Polygon4gAbelianization
-  infer_instance
+    Module.Free ℤ (Polygon4gAbelianization g) :=
+  Module.Free.pi ℤ (fun _ : Fin (2 * (g + 1)) => ℤ)
 
 instance polygon4gAbelianization_module_finite (g : ℕ) :
-    Module.Finite ℤ (Polygon4gAbelianization g) := by
-  unfold Polygon4gAbelianization
-  infer_instance
+    Module.Finite ℤ (Polygon4gAbelianization g) :=
+  Module.Finite.pi
 
 /--
 The singular datum attached to the unique zero-cell of the standard
@@ -775,8 +782,10 @@ theorem pointChain_map
         (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f 0)
       (pointChain X x) =
         pointChain Y (f x) := by
-  simpa [pointChain, pointSingularSimplex] using
-    singularChainElement_map f 0 (pointSingularSimplex X x)
+  have h := singularChainElement_map f 0 (pointSingularSimplex X x)
+  have hcomp : f.comp (pointSingularSimplex X x) = pointSingularSimplex Y (f x) := by
+    ext y; rfl
+  rw [pointChain, pointChain, h, hcomp]
 
 /-- Orientation for a primitive boundary-edge repair step. -/
 inductive BoundaryArcOrientation where
@@ -787,12 +796,14 @@ inductive BoundaryArcOrientation where
 namespace BoundaryArcOrientation
 
 /-- The integral sign represented by an oriented boundary edge. -/
-def sign : BoundaryArcOrientation → ℤ
+def sign (o : BoundaryArcOrientation) : ℤ :=
+  match o with
   | forward => 1
   | reverse => -1
 
 /-- Reverse an oriented boundary edge. -/
-def flip : BoundaryArcOrientation → BoundaryArcOrientation
+def flip (o : BoundaryArcOrientation) : BoundaryArcOrientation :=
+  match o with
   | forward => reverse
   | reverse => forward
 
@@ -1380,8 +1391,7 @@ theorem singularH1ClassOfCycle_eq_zero_sc_boundary
     change singularH1ClassOfCycle X z hz = 0 at h
     simpa [K, c, singularH1ClassOfCycle] using h
   have hπS :
-      ModuleCat.Hom.hom S.homologyπ c = 0 := by
-    simpa [S, K] using hπ
+      ModuleCat.Hom.hom S.homologyπ c = 0 := hπ
   have hq :
       ModuleCat.Hom.hom S.moduleCatLeftHomologyData.π
           (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) = 0 := by
@@ -1435,17 +1445,18 @@ theorem hurewicz_singularBoundary_eq_sc_f_early
     let S := K.sc 1
     ∀ (s : S.X₁), ∃ s' : (singularChainComplexZ X).X 2,
       S.f.hom s = ((singularChainComplexZ X).d 2 1).hom s' := by
-  unfold singularChainComplexZ Polygon4gSingularC1.singularChainComplexZ
-  simp +decide [AlgebraicTopology.singularChainComplexFunctor]
-  unfold AlgebraicTopology.SSet.singularChainComplexFunctor
-  simp +decide
-  unfold AlgebraicTopology.alternatingFaceMapComplex
-  unfold AlgebraicTopology.AlternatingFaceMapComplex.obj
-  simp +decide [ComplexShape.down]
-  unfold ChainComplex.of
-  simp +decide [ComplexShape.down']
-  split_ifs <;> simp_all +decide [ComplexShape.prev]
-  exact fun s => ⟨_, rfl⟩
+  intro K S s
+  -- `S.f = K.d ((ComplexShape.down ℕ).prev 1) 1` and `(ComplexShape.down ℕ).prev 1 = 2`,
+  -- so the short-complex map is the degree-`(2,1)` differential precomposed with the
+  -- canonical degree-coincidence isomorphism.
+  have hprev : (ComplexShape.down ℕ).prev 1 = 2 :=
+    (ComplexShape.down ℕ).prev_eq' (rfl : (ComplexShape.down ℕ).Rel 2 1)
+  refine ⟨(K.XIsoOfEq hprev).hom s, ?_⟩
+  have hcomp := K.XIsoOfEq_hom_comp_d hprev 1
+  have h := congrArg (fun (φ : _ ⟶ _) => ModuleCat.Hom.hom φ s) hcomp
+  simp only [ModuleCat.hom_comp, LinearMap.comp_apply, Function.comp_apply,
+    ModuleCat.hom_ofHom] at h
+  exact h.symm
 
 
 structure SingularOneSimplexSubdivisionData
@@ -2292,7 +2303,7 @@ theorem singularChainCoproduct_sum_support_decomposition
     (z : SingularChainCoproduct X 1) :
     Nonempty (SingularOneChainSupportDecomposition X z) := by
   classical
-  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋1⦌)
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op (SimplexCategory.mk 1))
   let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
   let iso := ModuleCat.coprodIsoDirectSum Z
   let dz : DirectSum I (fun i => (Z i : Type)) := iso.hom.hom z
@@ -2386,7 +2397,7 @@ theorem singularChainCoproduct_sum_support_decomposition_degree
     (z : SingularChainCoproduct X n) :
     Nonempty (SingularChainSupportDecomposition X n z) := by
   classical
-  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋n⦌)
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op (SimplexCategory.mk n))
   let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
   let iso := ModuleCat.coprodIsoDirectSum Z
   let dz : DirectSum I (fun i => (Z i : Type)) := iso.hom.hom z
@@ -2696,9 +2707,9 @@ structure Polygon4gProjectedEndpointBoundaryCancellation
 noncomputable def singularZeroChainFinsupp
     (X : Type) [TopologicalSpace X] :
     SingularChainCoproduct X 0 →+
-      ((TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌) →₀ ℤ) := by
+      ((TopCat.toSSet.obj (TopCat.of X)).obj (op (SimplexCategory.mk 0)) →₀ ℤ) := by
   classical
-  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op (SimplexCategory.mk 0))
   let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
   let iso := ModuleCat.coprodIsoDirectSum Z
   exact ((finsuppLEquivDirectSum ℤ ℤ I).symm.toAddMonoidHom).comp
@@ -2712,7 +2723,7 @@ theorem singularZeroChainFinsupp_singularChainElement
       (singularChainElement σ : SingularChainCoproduct X 0) =
       Finsupp.single (singularChainSimplexIndex X 0 σ) 1 := by
   classical
-  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op (SimplexCategory.mk 0))
   let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
   let idx : I := singularChainSimplexIndex X 0 σ
   have hι :
@@ -2748,7 +2759,7 @@ lemma zeroSimplex_eq_pointSingularSimplex
 /-- The point recovered from a zero-simplex index maps back to that index. -/
 theorem singularZeroChainFinsupp_pointChain_of_index
     (X : Type) [TopologicalSpace X]
-    (i : (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)) :
+    (i : (TopCat.toSSet.obj (TopCat.of X)).obj (op (SimplexCategory.mk 0))) :
     singularZeroChainFinsupp X
       (pointChain X
         (((singularChainSimplexIndex X 0).symm i)
@@ -2785,8 +2796,8 @@ theorem singularZeroChainFinsupp_map_of_decomposition
       (singularZeroChainFinsupp X c) := by
   classical
   letI := decomp.simplexFintype
-  let IX := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)
-  let IY := (TopCat.toSSet.obj (TopCat.of Y)).obj (op ⦋0⦌)
+  let IX := (TopCat.toSSet.obj (TopCat.of X)).obj (op (SimplexCategory.mk 0))
+  let IY := (TopCat.toSSet.obj (TopCat.of Y)).obj (op (SimplexCategory.mk 0))
   let φ : IX → IY := fun i =>
     singularChainSimplexIndex Y 0
       (f.comp ((singularChainSimplexIndex X 0).symm i))
@@ -2850,7 +2861,7 @@ theorem singularZeroChainFinsupp_injective
     (X : Type) [TopologicalSpace X] :
     Function.Injective (singularZeroChainFinsupp X) := by
   classical
-  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋0⦌)
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op (SimplexCategory.mk 0))
   let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
   let iso := ModuleCat.coprodIsoDirectSum Z
   intro c d h
@@ -3166,8 +3177,8 @@ theorem finite_projected_endpoint_matching_data
           (fun i =>
             pointChain DiskC (rightEndpoint s i) -
               pointChain DiskC (leftEndpoint s i))))
-  let Q := (TopCat.toSSet.obj (TopCat.of (Polygon4g (g + 1)))).obj (op ⦋0⦌)
-  let D := (TopCat.toSSet.obj (TopCat.of DiskC)).obj (op ⦋0⦌)
+  let Q := (TopCat.toSSet.obj (TopCat.of (Polygon4g (g + 1)))).obj (op (SimplexCategory.mk 0))
+  let D := (TopCat.toSSet.obj (TopCat.of DiskC)).obj (op (SimplexCategory.mk 0))
   let projectIdx : D → Q := fun i =>
     singularChainSimplexIndex (Polygon4g (g + 1)) 0
       ((polygon4gMkContinuousMap (g + 1)).comp
@@ -3861,8 +3872,7 @@ theorem singularH1ClassOfCycle_eq_zero_boundary
     change singularH1ClassOfCycle X z hz = 0 at h
     simpa [K, c, singularH1ClassOfCycle] using h
   have hπS :
-      ModuleCat.Hom.hom S.homologyπ c = 0 := by
-    simpa [S, K] using hπ
+      ModuleCat.Hom.hom S.homologyπ c = 0 := hπ
   have hq :
       ModuleCat.Hom.hom S.moduleCatLeftHomologyData.π
           (ModuleCat.Hom.hom S.moduleCatCyclesIso.hom c) = 0 := by
@@ -3916,17 +3926,18 @@ theorem hurewicz_singularBoundary_eq_sc_f
     let S := K.sc 1
     ∀ (s : S.X₁), ∃ s' : (singularChainComplexZ X).X 2,
       S.f.hom s = ((singularChainComplexZ X).d 2 1).hom s' := by
-  unfold singularChainComplexZ Polygon4gSingularC1.singularChainComplexZ
-  simp +decide [AlgebraicTopology.singularChainComplexFunctor]
-  unfold AlgebraicTopology.SSet.singularChainComplexFunctor
-  simp +decide
-  unfold AlgebraicTopology.alternatingFaceMapComplex
-  unfold AlgebraicTopology.AlternatingFaceMapComplex.obj
-  simp +decide [ComplexShape.down]
-  unfold ChainComplex.of
-  simp +decide [ComplexShape.down']
-  split_ifs <;> simp_all +decide [ComplexShape.prev]
-  exact fun s => ⟨_, rfl⟩
+  intro K S s
+  -- `S.f = K.d ((ComplexShape.down ℕ).prev 1) 1` and `(ComplexShape.down ℕ).prev 1 = 2`,
+  -- so the short-complex map is the degree-`(2,1)` differential precomposed with the
+  -- canonical degree-coincidence isomorphism.
+  have hprev : (ComplexShape.down ℕ).prev 1 = 2 :=
+    (ComplexShape.down ℕ).prev_eq' (rfl : (ComplexShape.down ℕ).Rel 2 1)
+  refine ⟨(K.XIsoOfEq hprev).hom s, ?_⟩
+  have hcomp := K.XIsoOfEq_hom_comp_d hprev 1
+  have h := congrArg (fun (φ : _ ⟶ _) => ModuleCat.Hom.hom φ s) hcomp
+  simp only [ModuleCat.hom_comp, LinearMap.comp_apply, Function.comp_apply,
+    ModuleCat.hom_ofHom] at h
+  exact h.symm
 
 noncomputable def signedFaceTargetEdgeCoefficient
     (g : ℕ) (target : Fin (2 * (g + 1)))
@@ -5358,7 +5369,7 @@ theorem signedFaceTargetEdgeCoefficient_eq_edgeSimplexTargetCoefficient_of_sum
     signedFaceTargetEdgeCoefficient g target Simplex coeff simplex =
       edgeSimplexTargetCoefficient g target v := by
   classical
-  let I := (TopCat.toSSet.obj (TopCat.of (Polygon4g (g + 1)))).obj (op ⦋1⦌)
+  let I := (TopCat.toSSet.obj (TopCat.of (Polygon4g (g + 1)))).obj (op (SimplexCategory.mk 1))
   let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
   let iso := ModuleCat.coprodIsoDirectSum Z
   let targetIdx : I := singularChainSimplexIndex (Polygon4g (g + 1)) 1
@@ -6502,7 +6513,7 @@ noncomputable def edgeCoefficientCyclesMap (g : ℕ) :
             Module ℤ ((singularChainComplexZ (Polygon4g (g + 1))).cycles 1)),
         int_smul_eq_zsmul
           (inferInstance : Module ℤ (Polygon4gAbelianization g))]
-      exact coeffAdd.map_zsmul x n
+      exact map_zsmul coeffAdd n x
   }
 
 /--

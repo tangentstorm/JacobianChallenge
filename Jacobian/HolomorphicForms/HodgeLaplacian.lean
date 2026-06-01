@@ -51,9 +51,9 @@ theorem hodgeStarOp_squared
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     (hodgeStarOp X).comp (hodgeStarOp X) = -LinearMap.id := by
-  ext ω
-  simp [hodgeStarOp]
-  rw [← mul_assoc, Complex.I_mul_I, neg_one_mul]
+  rw [hodgeStarOp, LinearMap.comp_smul, LinearMap.smul_comp, LinearMap.id_comp,
+    smul_smul, Complex.I_mul_I]
+  exact neg_one_smul ℂ (LinearMap.id : SmoothDiffForm 1 X →ₗ[ℂ] SmoothDiffForm 1 X)
 
 /--
 Current-model formal adjoint `d^*_1 : Ω¹(X) → Ω⁰(X)`.
