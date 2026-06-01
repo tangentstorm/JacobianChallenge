@@ -243,7 +243,11 @@ theorem cellularH1_finite_singularIsoData
   -- 5. Construct the cellular H₁ witness type and the isomorphism
   let CH1 := Fin (2 * g) → ℤ
   let e_singular := b.equivFun.symm.trans (singularH1LinearEquivOfHomeo homeo.symm)
-  exact ⟨CH1, inferInstance, inferInstance, inferInstance, inferInstance, ⟨e_singular⟩⟩
+  -- v4.31 no longer infers Module.Finite/Free ℤ (Fin _ → ℤ) through the `let`;
+  -- supply the Pi instances explicitly.
+  refine ⟨CH1, inferInstanceAs (AddCommGroup (Fin (2 * g) → ℤ)),
+    inferInstanceAs (Module ℤ (Fin (2 * g) → ℤ)),
+    Module.Finite.pi, Module.Free.pi ℤ _, ⟨e_singular⟩⟩
 
 /--
 Derived from `cellularH1_finite_singularIsoData` by forgetting the
