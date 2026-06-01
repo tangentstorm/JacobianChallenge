@@ -396,8 +396,8 @@ noncomputable def analyticPushPull_provider (f : X → Y)
       (analyticDegree f hf : ℂ) • v := by
     have h := pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul f hf
     have happ := DFunLike.congr_fun h v
-    simpa [AddMonoidHom.comp_apply, LinearMap.smul_apply, LinearMap.id_apply]
-      using happ
+    simpa only [AddMonoidHom.comp_apply, LinearMap.toAddMonoidHom_coe,
+      LinearMap.smul_apply, LinearMap.id_coe, id_eq] using happ
   rw [hvec]
   -- mk ((n : ℂ) • v) = mk (n • v) = n • mk v.
   rw [Nat.cast_smul_eq_nsmul ℂ (analyticDegree f hf) v]
