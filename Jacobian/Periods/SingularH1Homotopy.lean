@@ -207,7 +207,7 @@ theorem singularH1_inducedMap_pair_of_homotopyEquiv
     rw [← h1, h2, h3]; rfl
 
 
-def SingularH1InvPair.toLinearEquiv {X Y : Type}
+noncomputable def SingularH1InvPair.toLinearEquiv {X Y : Type}
     [TopologicalSpace X] [TopologicalSpace Y]
     (p : SingularH1InvPair X Y) : singularH1 X ≃ₗ[ℤ] singularH1 Y where
   toFun := p.fwd

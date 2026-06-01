@@ -231,7 +231,7 @@ theorem exists_singularSimplex_integration
               change (chartAt ℂ (pickChart i)) _ ∈ (chartAt ℂ (pickChart i)).target
               exact (chartAt ℂ (pickChart i)).map_source
                 (by
-                  let τ := Path.subpathAux
+                  let τ := Set.Icc.convexComb
                     (divFinIcc n hn i.val (le_of_lt i.isLt))
                     (divFinIcc n hn (i.val + 1) i.isLt) t
                   have hτmemI : τ ∈ Set.uIcc
@@ -252,7 +252,7 @@ theorem exists_singularSimplex_integration
                     rw [divFinIcc_val] at h2'
                     push_cast at h2'
                     exact h2'
-                  simpa [Path.subpath, τ] using hcov i τ h1 hle2)))
+                  exact hcov i τ h1 hle2)))
         (fun i =>
           chartedFormPullback_curveIntegrable
             (chartAt ℂ (pickChart i)) (IsManifold.chart_mem_maximalAtlas (pickChart i)) η
@@ -279,7 +279,7 @@ theorem exists_singularSimplex_integration
               change (chartAt ℂ (pickChart i)) _ ∈ (chartAt ℂ (pickChart i)).target
               exact (chartAt ℂ (pickChart i)).map_source
                 (by
-                  let τ := Path.subpathAux
+                  let τ := Set.Icc.convexComb
                     (divFinIcc n hn i.val (le_of_lt i.isLt))
                     (divFinIcc n hn (i.val + 1) i.isLt) t
                   have hτmemI : τ ∈ Set.uIcc
@@ -300,7 +300,7 @@ theorem exists_singularSimplex_integration
                     rw [divFinIcc_val] at h2'
                     push_cast at h2'
                     exact h2'
-                  simpa [Path.subpath, τ] using hcov i τ h1 hle2))),
+                  exact hcov i τ h1 hle2))),
     map_smul' := fun k ω => by
       -- Multi-chart linearity in the form (scalar mult) follows from
       -- pathIntegralViaCoverPickSmul.lean (unconditional).

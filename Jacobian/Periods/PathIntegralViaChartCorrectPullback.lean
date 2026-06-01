@@ -239,7 +239,7 @@ theorem pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz
     rfl
   · -- γ_X.extend not differentiable at t. derivWithin γ_X.extend I t = 0.
     rw [derivWithin_zero_of_not_differentiableWithinAt hd]
-    rw [map_zero]
+    refine Eq.trans (map_zero _) ?_
     -- Goal: 0 = derivWithin (ψ ∘ γ_X.extend) I t.
     by_cases hd' : DifferentiableWithinAt ℝ (ψ ∘ γ_X.extend) (Set.Icc (0:ℝ) 1) t
     · -- Pathological case: γ_X.extend not differentiable but ψ ∘ γ_X.extend is.

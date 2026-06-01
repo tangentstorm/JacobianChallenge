@@ -108,9 +108,9 @@ result is stated at the morphism level (compositions in the category
 lemma sigmaConst_obj_map_ι
     {α β : Type} (f : α → β) (a : α) :
     (Sigma.ι (fun _ : α => ModuleCat.of ℤ ℤ) a : _ ⟶ _)
-        ≫ (sigmaConst.obj (ModuleCat.of ℤ ℤ)).map f
+        ≫ Sigma.map' f (fun _ => 𝟙 (ModuleCat.of ℤ ℤ))
       = Sigma.ι (fun _ : β => ModuleCat.of ℤ ℤ) (f a) := by
-  simp [sigmaConst]
+  rw [Sigma.ι_comp_map', Category.id_comp]
 
 /--
 `d_{n+1} (singularChainElement σ) =

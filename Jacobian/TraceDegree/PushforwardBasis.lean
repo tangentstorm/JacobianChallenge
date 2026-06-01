@@ -120,9 +120,7 @@ linear equivalences `holomorphicOneFormFinBasis.equivFun` to convert
 between abstract forms and `Fin g → ℂ` coordinates.
 -/
 noncomputable def holomorphicTraceCoord
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ Y] :
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   (holomorphicOneFormFinBasis ℂ X).equivFun.toLinearMap ∘ₗ
     (pullbackFormsBundledLM X Y f hf) ∘ₗ
@@ -130,30 +128,28 @@ noncomputable def holomorphicTraceCoord
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Identity functoriality of the trace-coordinate map. -/
-theorem holomorphicTraceCoord_id
-    [FiniteDimensionalHolomorphicOneForms ℂ X] :
+theorem holomorphicTraceCoord_id :
     holomorphicTraceCoord (X := X) (Y := X) id contMDiff_id =
       LinearMap.id := by
   unfold holomorphicTraceCoord
-  rw [pullbackFormsBundledLM_id]
-  ext v
-  simp
+  rw [pullbackFormsBundledLM_id, LinearMap.id_comp]
+  exact LinearMap.ext fun x => (holomorphicOneFormFinBasis ℂ X).equivFun.apply_symm_apply x
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z] in
 /-- Composition functoriality of the trace-coordinate map. -/
 theorem holomorphicTraceCoord_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ Y]
-    [FiniteDimensionalHolomorphicOneForms ℂ Z] :
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     holomorphicTraceCoord (g ∘ f) (hg.comp hf) =
       (holomorphicTraceCoord f hf).comp (holomorphicTraceCoord g hg) := by
   unfold holomorphicTraceCoord
   rw [pullbackFormsBundledLM_comp f hf g hg]
-  ext v
-  simp [LinearMap.comp_apply]
+  -- The middle `Y.equivFun.symm ∘ₗ Y.equivFun` cancels at point level.
+  apply LinearMap.ext
+  intro v
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
+    LinearEquiv.symm_apply_apply]
 
 /-!
 ### Top-level `pushforwardTraceLift` via matrix transpose

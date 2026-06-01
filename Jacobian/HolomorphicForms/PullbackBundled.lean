@@ -6,7 +6,7 @@ import Jacobian.TraceDegree.PullbackFunComp
 import Jacobian.TraceDegree.PullbackFormsLinearMap
 import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
-import Mathlib.Geometry.Manifold.VectorBundle.SmoothSection
+import Mathlib.Geometry.Manifold.VectorBundle.ContMDiffSection
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!

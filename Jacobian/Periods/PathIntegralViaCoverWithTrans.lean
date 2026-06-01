@@ -174,7 +174,7 @@ private lemma trans_subpath_first_half_pointwise
   have h_n_R_pos : (0 : ℝ) < n := by exact_mod_cast hn
   have h_2n_R_pos : (0 : ℝ) < ((2 * n : ℕ) : ℝ) := by exact_mod_cast h_2n_pos
   have h_2n_eq : ((2 * n : ℕ) : ℝ) = 2 * n := by push_cast; ring
-  show (γ.trans γ') (Path.subpathAux _ _ s) = γ (Path.subpathAux _ _ s)
+  show (γ.trans γ') (Set.Icc.convexComb _ _ s) = γ (Set.Icc.convexComb _ _ s)
   have h_s_nn : (0 : ℝ) ≤ s := s.2.1
   have h_s_le : (s : ℝ) ≤ 1 := s.2.2
   have h_1ms_nn : (0 : ℝ) ≤ 1 - s := by linarith
@@ -185,7 +185,7 @@ private lemma trans_subpath_first_half_pointwise
   have h_div_hi : ((((j + 1) : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) ≤ 1/2 := by
     rw [div_le_iff₀ h_2n_R_pos, h_2n_eq]; push_cast at h_j1_le ⊢; linarith
   set u_path : unitInterval :=
-    Path.subpathAux (divFinIcc (2 * n) h_2n_pos j (by omega))
+    Set.Icc.convexComb (divFinIcc (2 * n) h_2n_pos j (by omega))
                     (divFinIcc (2 * n) h_2n_pos (j + 1) (by omega)) s with hu_def
   have hu_le : (u_path : ℝ) ≤ 1/2 := by
     rw [hu_def]
@@ -211,7 +211,7 @@ private lemma trans_subpath_first_half_pointwise
   congr 1
   apply Subtype.ext
   show (2 : ℝ) * (u_path : ℝ) =
-       (Path.subpathAux (divFinIcc n hn j _) (divFinIcc n hn (j + 1) _) s : ℝ)
+       (Set.Icc.convexComb (divFinIcc n hn j _) (divFinIcc n hn (j + 1) _) s : ℝ)
   rw [hu_def]
   show (2 : ℝ) * ((1 - s) * ((j : ℝ) / ((2 * n : ℕ) : ℝ)) +
                   s * (((j + 1 : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ))) =
@@ -238,7 +238,7 @@ private lemma trans_subpath_second_half_pointwise
   have h_n_R_pos : (0 : ℝ) < n := by exact_mod_cast hn
   have h_2n_R_pos : (0 : ℝ) < ((2 * n : ℕ) : ℝ) := by exact_mod_cast h_2n_pos
   have h_2n_eq : ((2 * n : ℕ) : ℝ) = 2 * n := by push_cast; ring
-  show (γ.trans γ') (Path.subpathAux _ _ s) = γ' (Path.subpathAux _ _ s)
+  show (γ.trans γ') (Set.Icc.convexComb _ _ s) = γ' (Set.Icc.convexComb _ _ s)
   have h_s_nn : (0 : ℝ) ≤ s := s.2.1
   have h_s_le : (s : ℝ) ≤ 1 := s.2.2
   have h_1ms_nn : (0 : ℝ) ≤ 1 - s := by linarith
@@ -253,7 +253,7 @@ private lemma trans_subpath_second_half_pointwise
     push_cast
     linarith
   set u_path : unitInterval :=
-    Path.subpathAux (divFinIcc (2 * n) h_2n_pos (n + k) (by omega))
+    Set.Icc.convexComb (divFinIcc (2 * n) h_2n_pos (n + k) (by omega))
                     (divFinIcc (2 * n) h_2n_pos (n + k + 1) (by omega)) s with hu_def
   have hu_ge : (1 : ℝ) / 2 ≤ (u_path : ℝ) := by
     rw [hu_def]
@@ -279,7 +279,7 @@ private lemma trans_subpath_second_half_pointwise
   congr 1
   apply Subtype.ext
   show (2 : ℝ) * (u_path : ℝ) - 1 =
-       (Path.subpathAux (divFinIcc n hn k _) (divFinIcc n hn (k + 1) _) s : ℝ)
+       (Set.Icc.convexComb (divFinIcc n hn k _) (divFinIcc n hn (k + 1) _) s : ℝ)
   rw [hu_def]
   show (2 : ℝ) * ((1 - s) * (((n + k : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) +
                   s * (((n + k + 1 : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ))) - 1 =
@@ -516,7 +516,7 @@ theorem exists_aligned_partition_for_trans
       rw [le_div_iff₀ h2nAB_pos] at h_jt
       linarith
   · -- Case: j.val ≥ nA * nB. The aligned pick is `pickB ⟨j.val - n, _⟩`.
-    push_neg at hjn
+    push Not at hjn
     have h_aligned_eq :
         alignedPickT (nA * nB)
           (fun i => pickArAW ⟨i.val / nB, hidiv_A i⟩)
@@ -570,7 +570,7 @@ theorem exists_aligned_partition_for_trans
       -- aligned-cell bound forces `j.val = nA * nB`. Then
       -- `(γ.trans γ') t = γ ⟨1, _⟩ = b = γ' 0`, so `γ' 0 ∈ chart` follows
       -- from `hcovBraw` at `i = 0`, `t' = 0`.
-      push_neg at ht_gt_half
+      push Not at ht_gt_half
       have ht_eq : (t : ℝ) = 1 / 2 := le_antisymm ht_gt_half ht_ge_half
       have hj_eq : j.val = nA * nB := by
         have hj1' : (j : ℝ) / ((2 * (nA * nB) : ℕ) : ℝ) ≤ 1 / 2 := by

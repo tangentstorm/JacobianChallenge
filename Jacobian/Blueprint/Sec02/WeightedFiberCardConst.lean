@@ -314,9 +314,16 @@ theorem mapAnalyticOrderAt_ramified_finite
     rw [discreteTopology_iff_isOpen_singleton]
     rintro ⟨ x, hx ⟩;
     rw [ isOpen_iff_mem_nhds ];
-    simp +decide [ nhds_induced ];
+    rintro ⟨ y, hy ⟩ hmem
+    rw [ Set.mem_singleton_iff, Subtype.mk_eq_mk ] at hmem
+    subst hmem
+    rw [ nhds_induced, Filter.mem_comap ]
     obtain ⟨ t, ht, ht' ⟩ := mem_nhdsWithin.mp ( mapAnalyticOrderAt_isolated_at_ramified _hf _hnonconst hx );
-    exact ⟨ t, ht.mem_nhds ht'.1, fun y hy hy' => Classical.not_not.1 fun hy'' => hy <| ht' |>.2 ⟨ hy', hy'' ⟩ ⟩;
+    refine ⟨ t, ht.mem_nhds ht'.1, ?_ ⟩
+    rintro ⟨ z, hz ⟩ hzt
+    rw [ Set.mem_singleton_iff, Subtype.mk_eq_mk ]
+    by_contra hzx
+    exact hz ( ht'.2 ⟨ hzt, hzx ⟩ );
   have h_closed : IsClosed {x : X | mapAnalyticOrderAt f x ≠ 1} := by
     convert isOpen_setOf_mapAnalyticOrderAt_eq_one _hf |> IsOpen.isClosed_compl using 1;
   have h_compact : CompactSpace {x : X | mapAnalyticOrderAt f x ≠ 1} := by

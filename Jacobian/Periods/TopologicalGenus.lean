@@ -73,7 +73,9 @@ noncomputable def singularH1_inducedLinearMap
 theorem singularH1_inducedLinearMap_id (X : Type) [TopologicalSpace X] :
     singularH1_inducedLinearMap (X := X) (Y := X) (ContinuousMap.id X) =
       LinearMap.id := by
-  simp [singularH1_inducedLinearMap, TopCat.ofHom_id, ModuleCat.hom_id]
+  simp only [singularH1_inducedLinearMap, TopCat.ofHom_id, CategoryTheory.Functor.map_id,
+    ModuleCat.hom_id]
+  rfl
 
 /-- Composition functoriality of `singularH1_inducedLinearMap`. -/
 theorem singularH1_inducedLinearMap_comp
@@ -81,7 +83,9 @@ theorem singularH1_inducedLinearMap_comp
     (f : C(X, Y)) (g : C(Y, Z)) :
     singularH1_inducedLinearMap (g.comp f) =
       (singularH1_inducedLinearMap g).comp (singularH1_inducedLinearMap f) := by
-  simp [singularH1_inducedLinearMap, TopCat.ofHom_comp, ModuleCat.hom_comp]
+  simp only [singularH1_inducedLinearMap, TopCat.ofHom_comp, CategoryTheory.Functor.map_comp,
+    ModuleCat.hom_comp]
+  rfl
 
 /--
 **Stage A leaf (prism construction).** Homotopy invariance of

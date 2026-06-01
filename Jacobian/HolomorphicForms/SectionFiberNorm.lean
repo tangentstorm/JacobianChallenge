@@ -1,4 +1,4 @@
-import Mathlib.Geometry.Manifold.VectorBundle.SmoothSection
+import Mathlib.Geometry.Manifold.VectorBundle.ContMDiffSection
 import Mathlib.Topology.VectorBundle.Basic
 import Mathlib.Topology.ContinuousOn
 import Mathlib.Analysis.Normed.Group.Basic

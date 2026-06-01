@@ -47,6 +47,14 @@ The three obligations are independently Aristotle-shaped:
   `FiniteDimensional.of_locallyCompactSpace`.
 -/
 
+-- The cotangent fiber `TangentSpace 𝓘(ℂ,ℂ) x →L[ℂ] (Bundle.Trivial X ℂ) x`
+-- gets its operator `NormedAddCommGroup`/`NormedSpace` from the transported
+-- fiber norms in `CotangentBundle.lean`. Because `TangentSpace` is a
+-- `not reducible` type synonym, the operator-norm synthesis only succeeds
+-- with the reducibility relaxation below — exactly as Mathlib's
+-- Riemannian-bundle lemmas do.
+set_option backward.isDefEq.respectTransparency false
+
 namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
@@ -119,11 +127,13 @@ existing `AddCommGroup` instance by construction. Marked `abbrev` so
 that `letI`-binding unfolds and exposes `toAddCommGroup =
 ContMDiffSection.instAddCommGroup` definitionally.
 -/
-abbrev toNormedAddCommGroup : NormedAddCommGroup (HolomorphicOneForm ℂ X) where
+noncomputable abbrev toNormedAddCommGroup : NormedAddCommGroup (HolomorphicOneForm ℂ X) where
   norm := B.toNorm.norm
   toAddCommGroup := ContMDiffSection.instAddCommGroup
   toMetricSpace := B.toMetricSpace
-  dist_eq := B.dist_eq
+  dist_eq := fun x y => by
+    rw [@dist_comm _ B.toMetricSpace.toPseudoMetricSpace x y, B.dist_eq y x,
+      show y - x = -x + y by abel]
 
 /--
 Recover the full `NormedSpace ℂ` from the bundle, sharing the
@@ -294,6 +304,7 @@ The `MetricSpace` on `HolomorphicOneForm ℂ X` induced by the
 sup-norm distance `dist σ τ = ⨆ x, ‖(σ - τ) x‖`. Constructed from
 the individual axioms proved in `SectionMetric.lean`.
 -/
+@[reducible]
 noncomputable def holomorphicOneForm_metricSpace
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
@@ -738,7 +749,7 @@ theorem holomorphicOneForm_toSpanSingleton_section_contMDiff
     rfl
   ext
   simp only [ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe]
-  rw [Trivialization.symm_continuousLinearEquivAt_eq]
+  rw [Bundle.Trivialization.symm_continuousLinearEquivAt_eq]
   change (trivializationAt ℂ (Bundle.Trivial X ℂ) x₀).continuousLinearEquivAt ℂ x hxC
       ((ContinuousLinearMap.toSpanSingleton ℂ (f x))
       (((trivializationAt ℂ (TangentSpace (modelWithCornersSelf ℂ ℂ)) x₀).symmL ℂ x)
@@ -3151,7 +3162,7 @@ theorem holomorphicOneForm_locallyCompact_of_compactRiemannSurface
       ext y
       simp [Metric.mem_closedBall, dist_comm]
     rw [heq]
-    exact hCompact.image (continuous_add_right x)
+    exact hCompact.image (continuous_add_const x)
   exact WeaklyLocallyCompactSpace.locallyCompactSpace
 
 /-! ### Final assembly: Riesz finite-dimensionality -/
@@ -3366,6 +3377,7 @@ theorem holomorphicOneForm_supNorm_closedBall_totallyBounded
     (holomorphicOneForm_supNorm_closedBall_evalOneBCFSet_equicontinuous X)
 
 
+@[reducible]
 noncomputable def compactRiemannSurface_holomorphicOneFormMontelData_frontier
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -3430,6 +3442,7 @@ noncomputable instance compactRiemannSurface_finiteDimensionalHolomorphicOneForm
   compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel X
 
 
+@[reducible]
 noncomputable def compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

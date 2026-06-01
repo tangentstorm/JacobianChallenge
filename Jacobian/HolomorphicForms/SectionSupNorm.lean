@@ -74,7 +74,7 @@ theorem supNorm_zero :
   · convert ciSup_const
     · exact norm_zero
     · exact hM
-  · push_neg at hM
+  · push Not at hM
     exact Real.iSup_of_isEmpty _
 
 theorem supNorm_eq_zero_iff [Nonempty M]
@@ -100,7 +100,7 @@ theorem supNorm_add_le
       le_trans (norm_add_le _ _)
         (add_le_add (le_ciSup (bddAbove_range_norm hcompat σ) x)
           (le_ciSup (bddAbove_range_norm hcompat τ) x))
-  · push_neg at hM
+  · push Not at hM
     simp [supNorm, Real.iSup_of_isEmpty]
 
 theorem supNorm_smul_le
@@ -112,7 +112,7 @@ theorem supNorm_smul_le
   · exact ciSup_le fun x =>
       le_trans (by convert norm_smul_le c (σ.toFun x) using 1)
         (mul_le_mul_of_nonneg_left (le_ciSup (bddAbove_range_norm hcompat σ) x) (norm_nonneg c))
-  · push_neg at hM
+  · push Not at hM
     simp [supNorm, Real.iSup_of_isEmpty]
 
 omit [CompactSpace M] in

@@ -15,6 +15,7 @@ import Jacobian.TraceDegree.PiecewiseC1Instance
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 set_option linter.unusedSectionVars false
+set_option backward.isDefEq.respectTransparency false
 
 /-! # Solution mirror of `Jacobian/Challenge.lean` -/
 

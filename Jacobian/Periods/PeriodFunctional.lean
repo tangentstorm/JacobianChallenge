@@ -62,13 +62,17 @@ theorem singularBoundary_eq_sc_f
     let S := K.sc 1
     ∀ (s : ↑S.X₁), ∃ (s' : ↑(JacobianChallenge.Blueprint.Sec03.SingularTwoChain X)),
       S.f.hom s = JacobianChallenge.Blueprint.Sec03.singularBoundary21 X s' := by
-  unfold Blueprint.Sec03.singularChainComplexZ; simp +decide [ AlgebraicTopology.singularChainComplexFunctor ] ;
-  unfold AlgebraicTopology.SSet.singularChainComplexFunctor; simp +decide ;
-  unfold AlgebraicTopology.alternatingFaceMapComplex;
-  unfold AlgebraicTopology.AlternatingFaceMapComplex.obj; simp +decide [ ComplexShape.down ] ;
-  unfold ChainComplex.of; simp +decide [ ComplexShape.down' ] ;
-  split_ifs <;> simp_all +decide [ ComplexShape.prev ];
-  exact fun s => ⟨ _, rfl ⟩
+  intro K S s
+  -- `S.f = K.d ((ComplexShape.down ℕ).prev 1) 1` and `(ComplexShape.down ℕ).prev 1 = 2`,
+  -- so the short-complex map is the degree-`(2,1)` differential precomposed with the
+  -- canonical degree-coincidence isomorphism.
+  have hprev : (ComplexShape.down ℕ).prev 1 = 2 :=
+    (ComplexShape.down ℕ).prev_eq' (rfl : (ComplexShape.down ℕ).Rel 2 1)
+  refine ⟨(K.XIsoOfEq hprev).hom s, ?_⟩
+  have hcomp := K.XIsoOfEq_hom_comp_d hprev 1
+  have h := congrArg (fun (φ : _ ⟶ _) => ModuleCat.Hom.hom φ s) hcomp
+  simp only [] at h ⊢
+  exact h.symm
 
 /--
 **Complex-model bridge.** In the model-space case actually used by
@@ -111,7 +115,11 @@ noncomputable def periodPairing
   let Im : S.X₂ ⟶ ModuleCat.of ℤ (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
     ModuleCat.ofHom I_E
   have hI_sc : ∀ (s : ↑S.X₁), Im.hom (S.f.hom s) = 0 := by
-    intro s; ext ω; simp [Im, I_E]
+    intro s
+    have hzero : Im.hom = 0 := by
+      show (ModuleCat.ofHom (0 : _ →ₗ[ℤ] _)).hom = 0
+      rw [ModuleCat.ofHom_zero, ModuleCat.hom_zero]
+    rw [hzero]; rfl
   (S.descHomology (S.iCycles ≫ Im)
     (periodPairing_descent_aux S Im hI_sc)).hom.toAddMonoidHom
 
@@ -132,7 +140,11 @@ noncomputable def periodPairingComplex
   let Im : S.X₂ ⟶ ModuleCat.of ℤ (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) :=
     ModuleCat.ofHom I
   have hI_sc : ∀ (s : ↑S.X₁), Im.hom (S.f.hom s) = 0 := by
-    intro s; ext ω; simp [Im, I]
+    intro s
+    have hzero : Im.hom = 0 := by
+      show (ModuleCat.ofHom (0 : _ →ₗ[ℤ] _)).hom = 0
+      rw [ModuleCat.ofHom_zero, ModuleCat.hom_zero]
+    rw [hzero]; rfl
   (S.descHomology (S.iCycles ≫ Im)
     (periodPairing_descent_aux S Im hI_sc)).hom.toAddMonoidHom
 
@@ -477,7 +489,7 @@ theorem hodge_form_posDef
     exact (holomorphicOneFormDualEquiv ℂ X).map_eq_zero_iff.mp h
   obtain ⟨i₀, hi₀⟩ : ∃ i, v i ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hv_ne (funext fun i => (h i).trans rfl)
   refine Finset.sum_pos' (fun i _ => Complex.normSq_nonneg _)
     ⟨i₀, Finset.mem_univ _, ?_⟩
@@ -537,7 +549,9 @@ theorem hodge_form_posDef_on_periods
   -- Since the sum of squares is non-negative, the only way for it to be less than or equal to zero is if each term is zero.
   have h_each_zero : ∀ i : Fin (analyticGenus ℂ X), Complex.normSq (((holomorphicOneFormFinBasis ℂ X).repr ω) i) = 0 := by
     exact fun i => le_antisymm ( le_trans ( Finset.single_le_sum ( fun i _ => Complex.normSq_nonneg ( ( holomorphicOneFormFinBasis ℂ X ).repr ω i ) ) ( Finset.mem_univ i ) ) hω_nonzero ) ( Complex.normSq_nonneg _ );
-  exact ( holomorphicOneFormFinBasis ℂ X ).ext_elem fun i => by simpa using h_each_zero i;
+  exact ( holomorphicOneFormFinBasis ℂ X ).ext_elem fun i => by
+    simpa only [map_zero, Finsupp.coe_zero, Pi.zero_apply, Complex.normSq_eq_zero]
+      using h_each_zero i;
 
 
 theorem riemann_classical_real_LI_input
@@ -1014,17 +1028,16 @@ noncomputable instance basisAlignedPeriodSubmoduleℤ_discreteTopology
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     DiscreteTopology (basisAlignedPeriodSubmoduleℤ X) := by
-  haveI : DiscreteTopology
+  haveI hdisc : DiscreteTopology
       (AddSubgroup.map
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
         ((periodPairing ℂ X).range)) :=
     periodSubgroup_isZLattice ℂ X
   exact DiscreteTopology.of_continuous_injective
-    (f := fun (x : basisAlignedPeriodSubmoduleℤ X) =>
-      (⟨x.1, x.2⟩ :
-        AddSubgroup.map
-          (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
-          ((periodPairing ℂ X).range)))
+    (β := AddSubgroup.map
+        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+        ((periodPairing ℂ X).range))
+    (f := fun (x : basisAlignedPeriodSubmoduleℤ X) => ⟨x.1, x.2⟩)
     (continuous_induced_rng.mpr continuous_subtype_val)
     (fun _ _ h => Subtype.ext (congr_arg Subtype.val h))
 
@@ -1049,8 +1062,8 @@ noncomputable instance basisAlignedPeriodSubmoduleℤ_isZLattice
     -- underlying `AddSubgroup.map …` carrier (via
     -- `AddSubgroup.coe_toIntSubmodule`), so the goal is exactly
     -- `periodSubgroup_spans_real X`.
-    simpa [basisAlignedPeriodSubmoduleℤ, AddSubgroup.coe_toIntSubmodule]
-      using periodSubgroup_spans_real X
+    rw [basisAlignedPeriodSubmoduleℤ, AddSubgroup.coe_toIntSubmodule]
+    exact periodSubgroup_spans_real X
 
 /-! ### Existence of a compact fundamental domain (bottom-up consequence) -/
 

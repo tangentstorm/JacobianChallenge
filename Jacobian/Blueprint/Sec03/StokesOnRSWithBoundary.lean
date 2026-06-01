@@ -142,7 +142,8 @@ theorem stokes_local_euclidean_P
       have hline : HasDerivAt (fun y : ℝ => (x, y)) (0, 1) y := by
         simpa using
           (HasFDerivAt.hasDerivAt (hasFDerivAt_prodMk_right (𝕜 := ℝ) x y))
-      simpa using hdiff.hasFDerivAt.comp_hasDerivAt y hline
+      have h := hdiff.hasFDerivAt.comp_hasDerivAt y hline
+      exact h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun _ => rfl)
     have hint :
         IntervalIntegrable (fun y : ℝ => fderiv ℝ P (x, y) (0, 1))
           MeasureTheory.volume c d := by
@@ -186,7 +187,8 @@ theorem stokes_local_euclidean_Q
       have hline : HasDerivAt (fun x : ℝ => (x, y)) (1, 0) x := by
         simpa using
           (HasFDerivAt.hasDerivAt (hasFDerivAt_prodMk_left (𝕜 := ℝ) x y))
-      simpa using hdiff.hasFDerivAt.comp_hasDerivAt x hline
+      have h := hdiff.hasFDerivAt.comp_hasDerivAt x hline
+      exact h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun _ => rfl)
     have hint :
         IntervalIntegrable (fun x : ℝ => fderiv ℝ Q (x, y) (1, 0))
           MeasureTheory.volume a b := by

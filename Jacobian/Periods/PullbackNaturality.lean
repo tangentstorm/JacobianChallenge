@@ -604,8 +604,8 @@ theorem periodPairing_chainLevel_repr
     exact ( HomologicalComplex.sc ( Blueprint.Sec03.singularChainComplexZ X ) 1 ).homologyπ;
     · exact CategoryTheory.ShortComplex.instEpiHomologyπ
         (HomologicalComplex.sc (Blueprint.Sec03.singularChainComplexZ X) 1)
-    · simp +decide [ HomologicalComplex.sc ];
-      exact Eq.symm (ModuleCat.hom_ext rfl)
+    · erw [CategoryTheory.ShortComplex.π_descHomology]
+      exact CategoryTheory.Limits.comp_zero
   exact h_desc_zero ▸ rfl);
 
 theorem periodPairing_eq_zero_placeholder
@@ -624,8 +624,8 @@ theorem periodPairing_eq_zero_placeholder
   exact ( HomologicalComplex.sc ( JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X ) 1 ).homologyπ;
   · exact CategoryTheory.ShortComplex.instEpiHomologyπ
       (HomologicalComplex.sc (JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X) 1)
-  · simp +decide [ HomologicalComplex.sc ];
-    exact Eq.symm (ModuleCat.hom_ext rfl)
+  · erw [CategoryTheory.ShortComplex.π_descHomology]
+    exact CategoryTheory.Limits.comp_zero
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
@@ -728,6 +728,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_id
     rw [pullbackFormsBundledLM_id]; rfl]
   -- γ.map continuous_id = γ.
   rw [show γ.map continuous_id = γ from Path.ext (by ext t; rfl)]
+  -- v4.31 no longer auto-closes the residual reflexivity after the final `rw`.
+  rfl
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in

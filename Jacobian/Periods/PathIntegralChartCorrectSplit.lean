@@ -99,8 +99,8 @@ theorem pathIntegralViaChartCorrect_split_subpath
     show (∫ t in (0 : ℝ)..(s : ℝ), curveIntegralFun omtilde gtilde t) =
       curveIntegral omtilde (chartLift c (γ.subpath 0 s) hsub_left)
     rw [chartLift_subpath c γ hrange 0 s hsub_left]
-    rw [curveIntegral_subpath_of_le omtilde gtilde 0 s s.2.1]
-    refine intervalIntegral.integral_congr (fun t _ => ?_)
+    refine Eq.trans (intervalIntegral.integral_congr (fun t _ => ?_))
+      (curveIntegral_subpath_of_le omtilde gtilde 0 s s.2.1).symm
     rw [curveIntegralFun_def]
   · -- right half
     show (∫ t in (s : ℝ)..1, curveIntegralFun omtilde gtilde t) =
@@ -108,8 +108,8 @@ theorem pathIntegralViaChartCorrect_split_subpath
     show (∫ t in (s : ℝ)..1, curveIntegralFun omtilde gtilde t) =
       curveIntegral omtilde (chartLift c (γ.subpath s 1) hsub_right)
     rw [chartLift_subpath c γ hrange s 1 hsub_right]
-    rw [curveIntegral_subpath_of_le omtilde gtilde s 1 s.2.2]
-    refine intervalIntegral.integral_congr (fun t _ => ?_)
+    refine Eq.trans (intervalIntegral.integral_congr (fun t _ => ?_))
+      (curveIntegral_subpath_of_le omtilde gtilde s 1 s.2.2).symm
     rw [curveIntegralFun_def]
 
 end JacobianChallenge.Periods

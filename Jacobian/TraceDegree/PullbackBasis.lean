@@ -8,6 +8,11 @@ import Jacobian.HolomorphicForms.TraceSpec
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 
 set_option linter.unusedSectionVars false
+-- v4.31: `TangentSpace 𝓘(ℂ,ℂ) x` is a non-reducible synonym for `ℂ`, so `rw`/`simp`
+-- with CLM lemmas (e.g. an `IsIso.right_inv` on `mfderiv`) can't match the fiber-typed
+-- composition unless instance defeq is allowed to see through it.  Mirrors Mathlib's
+-- own `Geometry.Manifold.Riemannian.Basic` and `TraceDegree/TraceDefinition.lean`.
+set_option backward.isDefEq.respectTransparency false
 
 /-!
 # Analytic pullback on the basis-aligned carrier

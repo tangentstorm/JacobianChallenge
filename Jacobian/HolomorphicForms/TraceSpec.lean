@@ -34,6 +34,12 @@ cycle.
 
 namespace JacobianChallenge.HolomorphicForms
 
+-- v4.31: `TangentSpace 𝓘(ℂ,ℂ) x` is a non-reducible synonym for `ℂ`, so synthesizing
+-- the operator `Norm`/`NormedAddCommGroup` on `CotangentSpace ℂ _ _`
+-- (`TangentSpace … →L[ℂ] _`) requires instance defeq to see through the synonym.
+-- Mirrors `CotangentBundle.lean` / `TraceDefinition.lean`.
+set_option backward.isDefEq.respectTransparency false
+
 open scoped Manifold ContDiff Topology Classical NNReal ENNReal
 open JacobianChallenge.HolomorphicForms
 open JacobianChallenge.HolomorphicForms.SectionFiberNorm
@@ -404,7 +410,10 @@ private theorem localInverseAt_preimage_mem_nhds
       simpa [ContinuousAt, hr_z₀] using hr_an.continuousAt
     have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
         (𝓝 (f x)) (𝓝 w₀) := by
-      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      have hca : ContinuousAt (fun y : Y => chartAt ℂ (f x) y) (f x) :=
+        (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      rw [show w₀ = chartAt ℂ (f x) (f x) from rfl]
+      exact hca
     have hsymm_tendsto : Filter.Tendsto (fun z => (chartAt ℂ x).symm z)
         (𝓝 z₀) (𝓝 x) := by
       have hcont := (chartAt ℂ x).continuousAt_symm
@@ -413,7 +422,9 @@ private theorem localInverseAt_preimage_mem_nhds
         (𝓝 ((chartAt ℂ x).symm z₀)) at hcont
       simpa [z₀, (chartAt ℂ x).left_inv (mem_chart_source ℂ x)] using hcont
     have hcomp := hsymm_tendsto.comp (hr_tendsto.comp hchart_tendsto)
-    simpa [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀, w₀] using hcomp
+    refine hcomp.congr fun y' => ?_
+    simp only [analyticInv, IsHolomorphicAt.localInverse, r, F, z₀,
+      Function.comp_apply]
   have hanalyticInv_mem_U : ∀ᶠ y in 𝓝 (f x), analyticInv y ∈ U :=
     hlocalInv_tendsto.eventually (hUopen.mem_nhds hxU)
   have hanalyticInv_right : ∀ᶠ y in 𝓝 (f x), f (analyticInv y) = y := by
@@ -425,7 +436,10 @@ private theorem localInverseAt_preimage_mem_nhds
           (hf := (hHol.holomorphicAt x).hasStrictDerivAt) (hf' := hderiv))
     have hchart_tendsto : Filter.Tendsto (fun y : Y => chartAt ℂ (f x) y)
         (𝓝 (f x)) (𝓝 w₀) := by
-      simpa [w₀] using (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      have hca : ContinuousAt (fun y : Y => chartAt ℂ (f x) y) (f x) :=
+        (chartAt ℂ (f x)).continuousAt (mem_chart_source ℂ (f x))
+      rw [show w₀ = chartAt ℂ (f x) (f x) from rfl]
+      exact hca
     have hright_y : ∀ᶠ y in 𝓝 (f x), F (r (chartAt ℂ (f x) y)) =
         chartAt ℂ (f x) y :=
       hchart_tendsto.eventually hright_z
@@ -439,7 +453,8 @@ private theorem localInverseAt_preimage_mem_nhds
         ((chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x)))
     filter_upwards [hright_y, hy_source, hf_analyticInv_source] with y hy_eq hy_src hfy_src
     have hchart : chartAt ℂ (f x) (f (analyticInv y)) = chartAt ℂ (f x) y := by
-      simpa [analyticInv, IsHolomorphicAt.localInverse, F, r, z₀, w₀] using hy_eq
+      show chartLocalAt f x (r (chartAt ℂ (f x) y)) = chartAt ℂ (f x) y
+      exact hy_eq
     exact (chartAt ℂ (f x)).injOn hfy_src hy_src hchart
   have heq : ∀ᶠ y in 𝓝 (f x), analyticInv y = h.localInverseAt x hx y := by
     filter_upwards [hanalyticInv_mem_U, hanalyticInv_right] with y hy_an_U hy_an_right
@@ -1974,7 +1989,9 @@ private theorem exists_analytic_extension_of_rotation_invariant
     exact_mod_cast hr_pos)] with z hz_in_r_ball
   -- ‖z‖₊ < r.
   have h_z_nnnorm_lt : (‖z‖₊ : ℝ≥0∞) < r := by
-    simpa [Metric.mem_eball, edist_zero_right] using hz_in_r_ball
+    rw [Metric.mem_eball, edist_zero_right] at hz_in_r_ball
+    -- v4.31: `edist_zero_right` lands in the enorm `‖z‖ₑ`; rewrite to `‖z‖₊`.
+    rwa [enorm_eq_nnnorm] at hz_in_r_ball
   -- z ∈ eball 0 rF (since r < rF).
   have hz_in_rF : z ∈ Metric.eball (0 : ℂ) rF := by
     rw [Metric.mem_eball, edist_zero_right]
@@ -2528,7 +2545,7 @@ private theorem ramified_kfold_chart_bijection
   have h_r_cont_at_0 : ContinuousAt r 0 := by
     have h_r_strict_at_φz₀ : HasStrictDerivAt r ((deriv φ z₀)⁻¹) (φ z₀) :=
       hSD.to_localInverse hφ_deriv
-    have h_r_cont_at_φz₀ : ContinuousAt r (φ z₀) := h_r_strict_at_φz₀.continuousAt
+    have h_r_cont_at_φz₀ : ContinuousAt r (φ z₀) := h_r_strict_at_φz₀.hasDerivAt.continuousAt
     rw [hφ_z₀] at h_r_cont_at_φz₀
     exact h_r_cont_at_φz₀
   have h_chart_symm_cont_at_z₀ : ContinuousAt (chartAt ℂ x₀).symm z₀ := by
@@ -2736,6 +2753,7 @@ private theorem ramified_kfold_chart_bijection
     exact h_candX_inj h_val_eq
   · intro j; rfl
 
+set_option linter.unusedSectionVars false in
 /--
 **Pure `k`-element-sum boundedness helper for the ramified leaf.**
 
@@ -2780,7 +2798,7 @@ private theorem ramifiedKfoldSum_locally_bounded
     (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
     ∃ (V : Set Y) (W : Set X) (M : ℝ),
       IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
-      ∀ y ∈ V, y ≠ y₀ → ∀ (hy : isRegularValue hbc y),
+      ∀ y ∈ V, y ≠ y₀ → ∀ (_hy : isRegularValue hbc y),
         ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
             (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
               CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
@@ -2819,7 +2837,7 @@ private theorem ramifiedKfoldSum_locally_bounded
     have hsrc : (fun x : X => Bundle.TotalSpace.mk' ℂ
         (E := Bundle.Trivial X ℂ) x ((η.toFun x) (1 : ℂ))) x₀
           ∈ (trivializationAt ℂ (Bundle.Trivial X ℂ) x₀).source := by
-      rw [Trivialization.mem_source]
+      rw [Bundle.Trivialization.mem_source]
       exact FiberBundle.mem_baseSet_trivializationAt' x₀
     have h_iff :=
       (trivializationAt ℂ (Bundle.Trivial X ℂ) x₀).contMDiffAt_iff
@@ -3685,15 +3703,15 @@ private theorem removableSingularity_oneD_punctured_disc
   -- Apply Riemann's removable singularity theorem (bounded version).
   have hext_diff :
       DifferentiableOn ℂ
-        (Function.update φ c (limUnder (𝓝[≠] c) φ)) _s :=
+        (Function.update φ c (Filter.limUnder (𝓝[≠] c) φ)) _s :=
     Complex.differentiableOn_update_limUnder_of_bddAbove _hs_nhds hdiff hbnd
   -- The updated function is analytic at c (1D Cauchy: DifferentiableOn → AnalyticAt).
-  set φ_ext : ℂ → ℂ := Function.update φ c (limUnder (𝓝[≠] c) φ) with hφ_ext_def
+  set φ_ext : ℂ → ℂ := Function.update φ c (Filter.limUnder (𝓝[≠] c) φ) with hφ_ext_def
   have hAnalyticAt : AnalyticAt ℂ φ_ext c := hext_diff.analyticAt _hs_nhds
   refine ⟨φ_ext, _s, _hs_nhds, Set.Subset.rfl, hAnalyticAt, ?_⟩
   -- Agreement: φ_ext z = φ z for z ≠ c.
   intro z _ hz_ne
-  show Function.update φ c (limUnder (𝓝[≠] c) φ) z = φ z
+  show Function.update φ c (Filter.limUnder (𝓝[≠] c) φ) z = φ z
   exact Function.update_of_ne hz_ne _ _
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
@@ -4202,7 +4220,7 @@ private theorem bundleSection_contMDiff_of_pointwiseHolomorphic
         (g_ext y).comp (tT.symmL ℂ y)
     rw [show e = tT.continuousLinearMap (RingHom.id ℂ)
         (trivializationAt ℂ (Bundle.Trivial Y ℂ) y₀) from rfl,
-      Trivialization.continuousLinearMap_apply]
+      Bundle.Trivialization.continuousLinearMap_apply]
     have hTrivial :
         (trivializationAt ℂ (Bundle.Trivial Y ℂ) y₀).continuousLinearMapAt ℂ y =
           ContinuousLinearMap.id ℂ ℂ := by
@@ -4718,7 +4736,7 @@ theorem traceForm_extension_at_branch_of_canonical_BCD
   exfalso
   -- Unfold ¬ isRegularValue to extract a ramified preimage.
   unfold isRegularValue at hy0_branch
-  push_neg at hy0_branch
+  push Not at hy0_branch
   obtain ⟨x, hx_mem, hx_ram⟩ := hy0_branch
   -- IsHolomorphicAt at x, from contMDiff f.
   have hfx : IsHolomorphicAt f x :=

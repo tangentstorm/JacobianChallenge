@@ -151,6 +151,9 @@ theorem polygon4g_succ_singularH1_isTorsionFree (g : ℕ) :
 theorem polygon4g_succ_singularH1_finrank_eq (g : ℕ) :
     Module.finrank ℤ (singularH1 (Polygon4g (g + 1))) = 2 * (g + 1) := by
   obtain ⟨e⟩ := hurewicz_singularH1_iso_polygon4g g
-  rw [← e.finrank_eq]; unfold Polygon4gAbelianization; rw [Module.finrank_pi, Fintype.card_fin]
+  rw [← e.finrank_eq]
+  have : Module.finrank ℤ (Polygon4gAbelianization g) = 2 * (g + 1) :=
+    Module.finrank_fin_fun (R := ℤ) (n := 2 * (g + 1))
+  exact this
 
 end JacobianChallenge.Periods

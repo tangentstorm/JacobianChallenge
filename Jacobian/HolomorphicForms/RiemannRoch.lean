@@ -219,7 +219,7 @@ lemma not_continuous_two_point_indicator
     ext x
     by_cases hx : x = p ∨ x = q
     · simp [hx, OnePoint.infty_ne_coe (0 : ℂ), Set.mem_insert_iff]
-    · push_neg at hx
+    · push Not at hx
       simp [hx.1, hx.2, Set.mem_insert_iff]
   -- `{(0:ℂ)}` is closed in OnePoint ℂ.
   have hclosed_zero : IsClosed ({((0 : ℂ) : OnePoint ℂ)} : Set (OnePoint ℂ)) :=

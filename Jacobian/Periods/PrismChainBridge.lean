@@ -196,8 +196,8 @@ theorem singChain_map_basisCat {X Y : Type} [TopologicalSpace X]
         (((singularChainComplexFunctor (ModuleCat ℤ)).obj
             (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f n =
       singChain_basisCat ((TopCat.toSSet.map (TopCat.ofHom f)).app _ σ) := by
-  simp [singChain_basisCat, singularChainComplexFunctor,
-    SSet.singularChainComplexFunctor]
+  exact SSet.ι_chainComplexMap_f (f := TopCat.toSSet.map (TopCat.ofHom f))
+    (R := ModuleCat.of ℤ ℤ) (x := σ)
 
 /--
 The action of `TopCat.toSSet.map f` on the categorical simplex
@@ -247,9 +247,11 @@ theorem singChain_d_basisCat {X : Type} [TopologicalSpace X] (n : ℕ)
       ∑ j : Fin (n + 2), ((-1 : ℤ) ^ j.val) •
         singChain_basisCat
           ((TopCat.toSSet.obj (TopCat.of X)).map (SimplexCategory.δ j).op σ) := by
-  simp [singChain_basisCat, singularChainComplexFunctor,
-    SSet.singularChainComplexFunctor, AlternatingFaceMapComplex.objD,
-    SimplicialObject.δ, Preadditive.comp_sum, Sigma.ι_comp_map']
+  simp only [singChain_basisCat]
+  have h := SSet.ιChainComplex_d (X := TopCat.toSSet.obj (TopCat.of X))
+    (R := ModuleCat.of ℤ ℤ) (n := n) (x := σ)
+  simp only [SimplicialObject.δ_def, SSet.ιChainComplex] at h
+  exact h
 
 /--
 The geometric face inclusion `Δⁿ → Δⁿ⁺¹` corresponding to dropping

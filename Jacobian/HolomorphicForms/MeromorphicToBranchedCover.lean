@@ -424,7 +424,6 @@ theorem MeromorphicMapToSphere.orderAt_getD_eq_neg_one_of_simple_pole
       intro hcontra
       apply hz_ne
       have := congrArg (fun y : X => e y) hcontra
-      simp only at this
       rw [he_round] at this
       exact this
     -- `f.toMap (e.symm z) ≠ ∞` (since `e.symm z ≠ P`).
@@ -1122,11 +1121,11 @@ theorem branchedCoverData_of_simplePoleToSphereData
     d.toMeromorphicFunctionType P with hmft
   have hfHol : JacobianChallenge.HolomorphicForms.IsHolomorphic d.toMap := by
     have := liftToCp1_isHolomorphic X mft True.intro
-    simpa [hmft] using this
+    simpa [hmft, meromorphicToCp1] using this
   have hWeighted :
       JacobianChallenge.HolomorphicForms.HasWeightedFiberConservation d.toMap := by
     have := liftToCp1_hasWeightedFiberConservation X mft True.intro
-    simpa [hmft] using this
+    simpa [hmft, meromorphicToCp1] using this
   -- Step B. Nonconstancy of `d.toMap`.
   have hnc' : ¬ ∃ y₀ : OnePoint ℂ, ∀ x : X, d.toMap x = y₀ :=
     nonconstant_toMap_of_simplePoleToSphereData P d
@@ -2713,7 +2712,7 @@ theorem orderAt_P_eq_neg_one
     -- Specialize the global germ-equality at `P`.
     exact s.outside_constants ⟨c, hc P⟩
   · -- Order at `P` is `< 0` and `≥ -1`, so equals `-1`.
-    push_neg at hP
+    push Not at hP
     -- `hP : orderAt P s.finiteLift < 0`
     -- Combined with `order_ge_neg_one_at_P : -1 ≤ orderAt P s.finiteLift`,
     -- and the fact that the order is in `WithTop ℤ`.
@@ -2893,7 +2892,12 @@ theorem genusZero_pointRRSection_outside_constants_of_analyticData
       ∀ c : ℂ, ContinuousAt (fun y : OnePoint ℂ => y.getD 0) (c : OnePoint ℂ) := by
     intro c
     rw [OnePoint.continuousAt_coe]
-    simpa using (continuousAt_id : ContinuousAt (fun x : ℂ => x) c)
+    have h_eq : (fun y : OnePoint ℂ => y.getD 0) ∘ OnePoint.some = (fun x : ℂ => x) := by
+      funext x
+      rfl
+    rw [Function.comp_def] at h_eq ⊢
+    rw [h_eq]
+    exact continuousAt_id
   have hcontOff : ∀ p : X, p ≠ P → ContinuousAt F p := by
     intro p hp
     have hne : f.toMap p ≠ (OnePoint.infty : OnePoint ℂ) :=
@@ -2902,7 +2906,8 @@ theorem genusZero_pointRRSection_outside_constants_of_analyticData
     · exact (hne hfp).elim
     · have hproj :
           ContinuousAt (fun y : OnePoint ℂ => y.getD 0) (f.toMap p) := by
-        simpa [hfp] using hfiniteProjection_continuousAt c
+        rw [hfp]
+        exact hfiniteProjection_continuousAt c
       exact hproj.comp han.continuous_toMap.continuousAt
   have horderP :
       JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =

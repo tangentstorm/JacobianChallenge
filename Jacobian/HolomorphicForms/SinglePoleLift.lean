@@ -145,7 +145,7 @@ noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (_hne : Q1 ≠ Q2) :
     toMap_eq_infty_of_poleDivisor_pos := fun x hx => by
       have heq : x = Q1 ∨ x = Q2 := by
         by_contra h_nor
-        push_neg at h_nor
+        push Not at h_nor
         have hx' : 0 < (Divisor.point Q1) x + (Divisor.point Q2) x := hx
         have hzero : (Divisor.point Q1) x + (Divisor.point Q2) x = 0 := by
           rw [Divisor.point_apply_ne h_nor.1, Divisor.point_apply_ne h_nor.2, add_zero]

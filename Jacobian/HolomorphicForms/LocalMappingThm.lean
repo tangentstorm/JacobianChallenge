@@ -130,8 +130,9 @@ theorem local_biholo_ball {φ : ℂ → ℂ} {z₀ : ℂ}
     exact Metric.mem_nhds_iff.mp (hφ0 ▸ h_image)
   refine' ⟨r, hr.1, δ, hδ.1, hr.2.1, hδ.2, hr.2.2.1, hr.2.2.2, _⟩
   intro t ht h't; exact (by
-    have h_order : analyticOrderAt (fun s => φ s - φ t) t = 1 := by
-      grind +suggestions
+    have hφt : AnalyticAt ℂ φ t := hr.2.2.1 t ht
+    have h_order : analyticOrderAt (fun s => φ s - φ t) t = 1 :=
+      hφt.analyticOrderAt_sub_eq_one_of_deriv_ne_zero h't
     convert h_order using 1
     simp +decide [analyticOrderNatAt, analyticOrderAt])
 
