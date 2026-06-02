@@ -910,6 +910,24 @@ structure GenusZeroDegreeOneBiholomorphicRoute
   branchedDegree_one : branchedDegree branchedCoverData = 1
 
 /--
+Single-pole meromorphic route data for the degree-one parametrization.
+
+This is the next smaller analytic payload: a nonconstant meromorphic map to
+the Riemann sphere with explicit analytic data and exactly one simple pole.
+The compatible degree-one branched-cover package is derived from this data.
+-/
+structure GenusZeroSinglePoleMeromorphicRoute
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  meromorphicMap : MeromorphicMapToSphere X
+  pole : X
+  poleDivisor_eq : meromorphicMap.poles = Divisor.point pole
+  nonconstant : meromorphicMap.Nonconstant
+  analyticData : meromorphicMap.AnalyticData
+
+/--
 A degree-one branched cover is unramified at every source point. This is the
 local inverse gateway used by the remaining biholomorphic inverse-smoothness
 frontier.
@@ -1081,6 +1099,71 @@ theorem contMDiff_invMap
 
 end GenusZeroDegreeOneBiholomorphicRoute
 
+/--
+A single-pole meromorphic route canonically supplies the degree-one
+branched-cover route data.
+-/
+noncomputable def GenusZeroSinglePoleMeromorphicRoute.toDegreeOneBiholomorphicRoute
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (route : GenusZeroSinglePoleMeromorphicRoute X) :
+    GenusZeroDegreeOneBiholomorphicRoute X := by
+  classical
+  let f : MeromorphicMapToSphere X := route.meromorphicMap
+  have hfHol : JacobianChallenge.HolomorphicForms.IsHolomorphic f.toMap :=
+    f.isHolomorphic_toMap_of_analyticData route.analyticData
+  have hWeighted :
+      JacobianChallenge.HolomorphicForms.HasWeightedFiberConservation f.toMap :=
+    f.hasWeightedFiberConservation_toMap_of_analyticData route.analyticData
+  have hnc : ¬ ∃ y₀ : OnePoint ℂ, ∀ x : X, f.toMap x = y₀ := by
+    intro h
+    exact route.nonconstant h
+  let hbc :
+      JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) f.toMap :=
+    JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+      hfHol hWeighted hnc
+  have hcompat : hbc.RamificationIndexCompatible :=
+    JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
+      hfHol hWeighted hnc
+  have hdegree : branchedDegree hbc = 1 := by
+    rw [JacobianChallenge.HolomorphicForms.branchedDegree_eq_weightedFiberCard hbc
+      (OnePoint.infty : OnePoint ℂ)]
+    have hfib_eq : f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} =
+        ({route.pole} : Set X) :=
+      f.preimage_infty_eq_singleton_of_poleDivisor_point route.pole
+        route.poleDivisor_eq
+    have hfib_finite :
+        hbc.finite_fiber (OnePoint.infty : OnePoint ℂ) =
+          (by exact hfib_eq ▸ Set.finite_singleton route.pole :
+            (f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)}).Finite) := by
+      apply Subsingleton.elim
+    show ((hbc.finite_fiber (OnePoint.infty : OnePoint ℂ)).toFinset).sum
+          hbc.ramificationIndex = 1
+    have hto : (hbc.finite_fiber (OnePoint.infty : OnePoint ℂ)).toFinset =
+        {route.pole} := by
+      rw [hfib_finite]
+      rw [show (hfib_eq ▸ Set.finite_singleton route.pole :
+                  (f.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)}).Finite).toFinset =
+                (Set.finite_singleton route.pole).toFinset from by
+        ext x
+        simp [hfib_eq]]
+      ext x
+      simp
+    rw [hto, Finset.sum_singleton]
+    have hrami :
+        hbc.ramificationIndex route.pole =
+          JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap route.pole :=
+      hcompat route.pole (hfHol.holomorphicAt route.pole)
+    rw [hrami, route.analyticData.simple_pole_order_one route.pole route.poleDivisor_eq]
+  exact
+    { meromorphicMap := route.meromorphicMap
+      analyticData := route.analyticData
+      branchedCoverData := hbc
+      ramificationIndex_compatible := hcompat
+      branchedDegree_one := hdegree }
+
 namespace GenusZeroGlobalGluingData
 
 /-- The homeomorphism obtained after the global gluing data is complete. -/
@@ -1127,14 +1210,28 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Degree-one meromorphic route frontier for the Riemann sphere: from the
-topological sphere witness, produce a degree-one meromorphic map whose
-bijective inverse is smooth.
+Single-pole meromorphic route frontier for the Riemann sphere: from the
+topological sphere witness, produce a nonconstant meromorphic map with exactly
+one simple pole and explicit analytic data.
 
 This is the current genuine analytic genus-zero input.  It is narrower than a
-smooth uniformization because it names the intended construction route:
-Riemann-Roch/simple-pole data, degree-one meromorphic bijectivity, and the
-degree-one map's biholomorphic smoothness.
+degree-one branched-cover route because the compatible branch data and
+degree-one calculation are derived from the single-pole analytic payload.
+-/
+theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroSinglePoleMeromorphicRoute X) := by
+  -- Field-specific analytic frontier: construct the single-pole meromorphic
+  -- parametrization with explicit chart-local analytic data.
+  sorry
+
+/--
+Degree-one meromorphic route assembly for the Riemann sphere: the single-pole
+route data canonically supplies the compatible degree-one branched-cover data.
 -/
 theorem genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1143,9 +1240,9 @@ theorem genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroDegreeOneBiholomorphicRoute X) := by
-  -- Field-specific analytic frontier: construct the degree-one meromorphic
-  -- parametrization and prove its inverse is holomorphic/smooth.
-  sorry
+  obtain ⟨route⟩ :=
+    genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty X _e
+  exact ⟨route.toDegreeOneBiholomorphicRoute⟩
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
