@@ -943,6 +943,30 @@ theorem ramificationIndex_eq_one
   route.branchedCoverData.ramificationIndex_eq_one_of_branchedDegree_one
     route.branchedDegree_one x
 
+/--
+At every point of a degree-one route, the branch-cover local inverse is a
+two-sided inverse on open neighborhoods.
+-/
+theorem localInverse_is_inverse
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (route : GenusZeroDegreeOneBiholomorphicRoute X) (x : X) :
+    ∃ U : Set X, ∃ V : Set (OnePoint ℂ),
+      IsOpen U ∧ IsOpen V ∧ x ∈ U ∧ route.meromorphicMap.toMap x ∈ V ∧
+      Set.BijOn route.meromorphicMap.toMap U V ∧
+      (∀ y' ∈ V,
+        route.meromorphicMap.toMap
+            (route.branchedCoverData.localInverseAt x
+              (route.ramificationIndex_eq_one x) y') = y') ∧
+      (∀ x' ∈ U,
+        route.branchedCoverData.localInverseAt x
+            (route.ramificationIndex_eq_one x)
+            (route.meromorphicMap.toMap x') = x') :=
+  route.branchedCoverData.localInverse_is_inverse
+    (route.ramificationIndex_eq_one x)
+
 end GenusZeroDegreeOneBiholomorphicRoute
 
 namespace GenusZeroGlobalGluingData
