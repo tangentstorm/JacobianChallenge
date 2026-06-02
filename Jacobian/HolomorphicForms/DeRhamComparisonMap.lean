@@ -1075,9 +1075,63 @@ theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primiti
     X (ω : SmoothDiffForm 1 X) hω_exact
 
 /--
+**Zero-period primitive-existence provider (degree 1) — NARROWEST ROOT.**
+A closed 1-form `ω` whose de Rham comparison image vanishes (all periods zero)
+admits a global primitive: `∃ θ : SmoothDiffForm 0 X, dθ = ω`.
+
+This is the single honest analytic input behind de Rham exactness in degree 1
+(the period-vanishing ⇒ primitive-exists direction).  It is the strictly
+narrower root obligation produced by the provider-discipline decomposition of
+`deRhamComparisonMap1_zero_period_exact_axiom_frontier`: the *assembly below is
+sorry-free* (`ExactForm 0 X = range (exteriorDerivative 0 X)`, so a primitive
+is literally a witness of exactness) and reduces the exactness statement to
+exactly this primitive-existence input.
+
+Defined fresh and independently of the (self-referential) `…_primitive_…`
+chain later in this file, so it carries no hidden circular dependency.
+
+NOTE (substrate frontier): on the current zero-differential `SmoothDiffForm`
+surrogate `exteriorDerivative := 0`, so the only available primitive has
+`dθ = 0`, and this provider is true only when `ω = 0`.  The honest statement
+becomes true once `exteriorDerivative` is given real chartwise content (owner
+of `SmoothDifferentialForm.lean`); the decomposition here is the correct shape
+to consume that content.  See `.sci/result.md`. -/
+theorem deRhamComparisonMap1_zero_period_primitiveExists_provider
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  sorry
+
+/--
+**Primitive ⇒ exact assembly (sorry-free).** Since `ExactForm 0 X` is by
+definition `LinearMap.range (exteriorDerivative 0 X)`, a global primitive `θ`
+with `dθ = ω` is exactly a proof that `ω` is exact.  This is the honest
+assembly half of the provider-discipline split of the exactness axiom. -/
+theorem deRhamComparisonMap1_zero_period_primitiveExists_exact_assembly
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hprim : ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hprim
+
+/--
 **Zero-period exactness substrate axiom.** This is the exactness input
 needed to prove zero-period closed-form vanishing in the current
 path-integral primitive scaffold.
+
+Now a **sorry-free assembly**: it composes the narrowest primitive-existence
+provider `deRhamComparisonMap1_zero_period_primitiveExists_provider` with the
+sorry-free `…_exact_assembly`.
 -/
 theorem deRhamComparisonMap1_zero_period_exact_axiom_frontier
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1087,7 +1141,8 @@ theorem deRhamComparisonMap1_zero_period_exact_axiom_frontier
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
-  sorry
+  exact deRhamComparisonMap1_zero_period_primitiveExists_exact_assembly X ω
+    (deRhamComparisonMap1_zero_period_primitiveExists_provider X ω hω)
 
 /--
 **Closed-form vanishing for the direct primitive exactness primitive primitive

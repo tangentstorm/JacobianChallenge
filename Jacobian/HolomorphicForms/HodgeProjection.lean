@@ -120,22 +120,83 @@ theorem harmonicProjection1_vanishes_on_exact
   simp [harmonicProjection1, exteriorDerivative]
 
 /--
+**Hodge harmonic embedding.** A harmonic 1-form `h : HarmonicOneForm X`
+(its coefficient data) re-enters the smooth-form substrate as the form
+`(h, 0)` carrying no period payload.  This names the section of
+`harmonicProjection1` used to phrase the Hodge decomposition: it is a genuine
+right inverse on the coefficient part (`harmonicProjection1 X (harmonicEmbed X h) = h`).
+-/
+noncomputable def harmonicEmbed
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (h : HarmonicOneForm X) : SmoothDiffForm 1 X :=
+  (h, 0)
+
+theorem harmonicProjection1_harmonicEmbed
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (h : HarmonicOneForm X) :
+    harmonicProjection1 X (harmonicEmbed X h) = h := rfl
+
+/--
+**Hodge decomposition provider (degree 1) — NARROWEST ROOT.**
+Every closed 1-form `ω` differs from the embedded harmonic representative of
+its own projection by an *exact* form:
+`ω - harmonicEmbed X (harmonicProjection1 X ω) ∈ ExactForm 0 X`.
+
+This is the single honest analytic input of the Hodge theorem in degree 1
+(orthogonal splitting `closed = harmonic ⊕ exact`).  It is the strictly
+narrower root obligation produced by the provider-discipline decomposition of
+`harmonicProjection1_kernel_subset_exact`: the *assembly below is sorry-free*
+and reduces the kernel-exactness statement to exactly this splitting.
+
+NOTE (substrate frontier): on the current zero-differential `SmoothDiffForm`
+surrogate `exteriorDerivative := 0`, so `ExactForm 0 X = ⊥` and this provider
+collapses to `ω.2 = 0`, which is not yet true for the period-only forms the
+surrogate admits.  The honest statement becomes true once `exteriorDerivative`
+is given real chartwise content (owner of `SmoothDifferentialForm.lean`); the
+decomposition here is the correct shape to consume that content.  See
+`.sci/result.md`. -/
+theorem harmonicProjection1_hodgeDecomposition
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0) :
+    ω - harmonicEmbed X (harmonicProjection1 X ω) ∈ ExactForm 0 X := by
+  sorry
+
+/--
 **Current-model Hodge representative uniqueness.** If a closed
 1-form has zero harmonic projection, then it is exact.
 
 Bottom-up content: Hodge decomposition writes every closed form as a
 harmonic form plus an exact form; the zero-projection condition kills the
 harmonic summand.
+
+This **assembly is sorry-free**: it consumes the narrowest provider
+`harmonicProjection1_hodgeDecomposition`.  When the harmonic projection
+vanishes, the embedded harmonic representative is `harmonicEmbed X 0 = 0`, so
+`ω - 0 = ω` is exactly the exact form supplied by the decomposition.
 -/
 theorem harmonicProjection1_kernel_subset_exact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : SmoothDiffForm 1 X) (_hclosed : exteriorDerivative 1 X ω = 0)
+    (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0)
     (hproj : harmonicProjection1 X ω = 0) :
     ω ∈ ExactForm 0 X := by
-  sorry
+  have hsplit := harmonicProjection1_hodgeDecomposition X ω hclosed
+  rw [hproj] at hsplit
+  have hembed : harmonicEmbed X (0 : HarmonicOneForm X) = 0 := by
+    simp [harmonicEmbed]
+  rw [hembed, sub_zero] at hsplit
+  exact hsplit
 
 /--
 **Current-model kernel identity.** The harmonic projection vanishes
