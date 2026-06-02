@@ -893,10 +893,9 @@ Degree-one meromorphic route data strong enough to give the smooth
 uniformization used by the global-gluing selector.
 
 This is narrower than a bare `GenusZeroSmoothUniformization`: it records that
-the forward map comes from a degree-one meromorphic map to the Riemann sphere,
-and isolates the remaining topological upgrade as continuity of the inverse
-supplied by bijectivity.  Its inverse smoothness is then derived below from
-local branch-cover inverse holomorphicity.
+the forward map comes from a degree-one meromorphic map to the Riemann sphere.
+The inverse topology and smoothness are derived below from compactness,
+bijectivity, and local branch-cover inverse holomorphicity.
 -/
 structure GenusZeroDegreeOneBiholomorphicRoute
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -909,10 +908,6 @@ structure GenusZeroDegreeOneBiholomorphicRoute
   ramificationIndex_compatible :
     branchedCoverData.RamificationIndexCompatible
   branchedDegree_one : branchedDegree branchedCoverData = 1
-  continuous_invMap :
-    Continuous
-        ((Equiv.ofBijective meromorphicMap.toMap
-          (degree_one_bijective branchedCoverData branchedDegree_one)).symm : OnePoint ℂ → X)
 
 /--
 A degree-one branched cover is unramified at every source point. This is the
@@ -1042,8 +1037,31 @@ theorem isHolomorphicAt_symm
     (route.eventuallyEq_symm_localInverseAt y).symm
 
 /--
-The inverse of the degree-one bijection is complex-smooth; continuity is the
-only inverse-side topological input still carried by the route.
+The inverse of the degree-one bijection is continuous, derived from the
+continuous forward meromorphic map and compact-to-T2 bijectivity.
+-/
+theorem continuous_invMap
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (route : GenusZeroDegreeOneBiholomorphicRoute X) :
+    Continuous
+        ((Equiv.ofBijective route.meromorphicMap.toMap
+          (degree_one_bijective route.branchedCoverData route.branchedDegree_one)).symm :
+            OnePoint ℂ → X) := by
+  classical
+  let e : X ≃ OnePoint ℂ :=
+    Equiv.ofBijective route.meromorphicMap.toMap
+      (degree_one_bijective route.branchedCoverData route.branchedDegree_one)
+  have he : Continuous e := by
+    simpa [e] using route.analyticData.continuous_toMap
+  simpa [e] using he.continuous_symm_of_equiv_compact_to_t2
+
+/--
+The inverse of the degree-one bijection is complex-smooth, derived from
+compact-to-T2 inverse continuity plus pointwise branch-cover inverse
+holomorphicity.
 -/
 theorem contMDiff_invMap
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
