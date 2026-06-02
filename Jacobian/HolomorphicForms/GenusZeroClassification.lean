@@ -901,19 +901,14 @@ structure GenusZeroDegreeOneBiholomorphicRoute
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] where
-  toMap : X → OnePoint ℂ
-  continuous_toMap : Continuous toMap
-  bijective_toMap : Function.Bijective toMap
-  degree_one_data :
-    ∃ f : MeromorphicMapToSphere X, toMap = f.toMap ∧
-      Nonempty (MeromorphicDegreeOneData X f)
-  contMDiff_toMap :
-    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞) toMap
+  meromorphicMap : MeromorphicMapToSphere X
+  analyticData : meromorphicMap.AnalyticData
+  degreeOneData : Nonempty (MeromorphicDegreeOneData X meromorphicMap)
   contMDiff_invMap :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞)
-        ((Equiv.ofBijective toMap bijective_toMap).symm : OnePoint ℂ → X)
+        ((Equiv.ofBijective meromorphicMap.toMap
+          (Classical.choice degreeOneData).bijective_toMap).symm : OnePoint ℂ → X)
 
 namespace GenusZeroGlobalGluingData
 
@@ -1000,9 +995,12 @@ theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
   classical
   obtain ⟨route⟩ :=
     genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty X _e
-  let e : X ≃ OnePoint ℂ := Equiv.ofBijective route.toMap route.bijective_toMap
+  let data : MeromorphicDegreeOneData X route.meromorphicMap :=
+    Classical.choice route.degreeOneData
+  let e : X ≃ OnePoint ℂ :=
+    Equiv.ofBijective route.meromorphicMap.toMap data.bijective_toMap
   have he : Continuous e := by
-    simpa [e] using route.continuous_toMap
+    simpa [e] using route.analyticData.continuous_toMap
   let uniformization : X ≃ₜ OnePoint ℂ :=
     { e with
       continuous_toFun := he
@@ -1011,8 +1009,9 @@ theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
     { uniformization := uniformization
       contMDiff_uniformization := ?_
       contMDiff_symm := ?_ }⟩
-  · simpa [uniformization, e] using route.contMDiff_toMap
-  · simpa [uniformization, e] using route.contMDiff_invMap
+  · simpa [uniformization, e] using
+      route.meromorphicMap.contMDiff_toMap_of_analyticData route.analyticData
+  · simpa [uniformization, e, data] using route.contMDiff_invMap
 
 /--
 Analytic 2d patch-selection frontier: choose a finite source cover carrying
