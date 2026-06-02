@@ -1227,11 +1227,29 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Holomorphic one-form vanishing frontier for the Riemann sphere: from the
-topological sphere witness, prove that every holomorphic one-form is zero.
+Holomorphic one-form transport frontier for the Riemann sphere: from the
+topological sphere witness, construct the linear equivalence that transports
+holomorphic one-forms on `X` to holomorphic one-forms on `OnePoint ℂ`.
 
-This is the concrete analytic content needed for the analytic-genus-zero
-assembly below.
+This is the concrete complex-structure-uniqueness input needed for one-form
+vanishing. Once it is available, vanishing follows from the already proved
+`holomorphicOneForm_onePointCx_subsingleton`.
+-/
+theorem genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
+  -- Field-specific analytic frontier: transport holomorphic one-forms from
+  -- the topological sphere witness without routing through the downstream
+  -- smooth uniformization theorem.
+  sorry
+
+/--
+Holomorphic one-form vanishing assembly for the Riemann sphere: transport to
+`OnePoint ℂ`, where holomorphic one-forms already vanish.
 -/
 theorem genusZero_complexStructureUnique_holomorphicOneForms_subsingleton
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1240,10 +1258,11 @@ theorem genusZero_complexStructureUnique_holomorphicOneForms_subsingleton
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
-  -- Field-specific analytic frontier: prove holomorphic one-form vanishing
-  -- from the topological sphere witness without routing through the
-  -- downstream smooth uniformization theorem.
-  sorry
+  obtain ⟨eForms⟩ :=
+    genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty X _e
+  haveI : Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
+    holomorphicOneForm_onePointCx_subsingleton
+  exact eForms.toEquiv.subsingleton
 
 /--
 Analytic-genus-zero assembly for the Riemann sphere: holomorphic one-form
