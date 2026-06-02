@@ -911,6 +911,40 @@ structure GenusZeroDegreeOneBiholomorphicRoute
         ((Equiv.ofBijective meromorphicMap.toMap
           (degree_one_bijective branchedCoverData branchedDegree_one)).symm : OnePoint ℂ → X)
 
+/--
+A degree-one branched cover is unramified at every source point. This is the
+local inverse gateway used by the remaining biholomorphic inverse-smoothness
+frontier.
+-/
+theorem BranchedCoverData.ramificationIndex_eq_one_of_branchedDegree_one
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f)
+    (hdeg : branchedDegree h = 1) (x : X) :
+    h.ramificationIndex x = 1 := by
+  classical
+  obtain ⟨x₀, hfiber, hram⟩ := branchedDegree_one_fiber_singleton h (f x) hdeg
+  have hxmem : x ∈ (h.finite_fiber (f x)).toFinset := by
+    rw [Set.Finite.mem_toFinset]
+    rfl
+  rw [hfiber, Finset.mem_singleton] at hxmem
+  rw [hxmem]
+  exact hram
+
+namespace GenusZeroDegreeOneBiholomorphicRoute
+
+/-- The branch-cover part of a degree-one route is unramified everywhere. -/
+theorem ramificationIndex_eq_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (route : GenusZeroDegreeOneBiholomorphicRoute X) (x : X) :
+    route.branchedCoverData.ramificationIndex x = 1 :=
+  route.branchedCoverData.ramificationIndex_eq_one_of_branchedDegree_one
+    route.branchedDegree_one x
+
+end GenusZeroDegreeOneBiholomorphicRoute
+
 namespace GenusZeroGlobalGluingData
 
 /-- The homeomorphism obtained after the global gluing data is complete. -/
