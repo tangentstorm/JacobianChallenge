@@ -903,12 +903,13 @@ structure GenusZeroDegreeOneBiholomorphicRoute
     [JacobianChallenge.Periods.StableChartAt ℂ X] where
   meromorphicMap : MeromorphicMapToSphere X
   analyticData : meromorphicMap.AnalyticData
-  degreeOneData : Nonempty (MeromorphicDegreeOneData X meromorphicMap)
+  branchedCoverData : BranchedCoverData X (OnePoint ℂ) meromorphicMap.toMap
+  branchedDegree_one : branchedDegree branchedCoverData = 1
   contMDiff_invMap :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞)
         ((Equiv.ofBijective meromorphicMap.toMap
-          (Classical.choice degreeOneData).bijective_toMap).symm : OnePoint ℂ → X)
+          (degree_one_bijective branchedCoverData branchedDegree_one)).symm : OnePoint ℂ → X)
 
 namespace GenusZeroGlobalGluingData
 
@@ -995,10 +996,10 @@ theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
   classical
   obtain ⟨route⟩ :=
     genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty X _e
-  let data : MeromorphicDegreeOneData X route.meromorphicMap :=
-    Classical.choice route.degreeOneData
+  have hbij : Function.Bijective route.meromorphicMap.toMap :=
+    degree_one_bijective route.branchedCoverData route.branchedDegree_one
   let e : X ≃ OnePoint ℂ :=
-    Equiv.ofBijective route.meromorphicMap.toMap data.bijective_toMap
+    Equiv.ofBijective route.meromorphicMap.toMap hbij
   have he : Continuous e := by
     simpa [e] using route.analyticData.continuous_toMap
   let uniformization : X ≃ₜ OnePoint ℂ :=
@@ -1011,7 +1012,7 @@ theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
       contMDiff_symm := ?_ }⟩
   · simpa [uniformization, e] using
       route.meromorphicMap.contMDiff_toMap_of_analyticData route.analyticData
-  · simpa [uniformization, e, data] using route.contMDiff_invMap
+  · simpa [uniformization, e, hbij] using route.contMDiff_invMap
 
 /--
 Analytic 2d patch-selection frontier: choose a finite source cover carrying
