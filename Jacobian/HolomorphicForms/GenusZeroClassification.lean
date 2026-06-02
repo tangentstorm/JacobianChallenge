@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.MeromorphicToBranchedCover
+import Jacobian.HolomorphicForms.RiemannRoch
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.EntireZero
@@ -750,6 +751,415 @@ Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `§Uniformization-lite`.
 -/
 
+/--
+One source patch in the global genus-zero gluing construction.
+
+This is intentionally a global-gluing object, not another local analytic leaf:
+the coordinate function is attached to an open subset of `X`, and the target
+chart is one of the two public charts on `OnePoint ℂ`.
+-/
+structure GenusZeroGlobalGluingPatch
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
+  source : Set X
+  isOpen_source : IsOpen source
+  targetChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ
+  targetChart_standard : targetChart = identityChart ∨ targetChart = inversionChart
+  coord : X → ℂ
+  invCoord : ℂ → X
+  coord_contMDiffOn :
+    ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) coord source
+
+/--
+Global gluing data for the genus-zero uniformization step.
+
+The fields are the named 2d frontier: finite source patches, target atlas
+choices, overlap compatibility of the local coordinate limits, local inverse
+branches, and the resulting global map/inverse with smoothness.  This is
+strictly narrower than `exists_contMDiff_homeomorph_to_onePointCx`: it exposes
+the chart-level obligations that the global construction must prove instead of
+postulating a smooth homeomorphism directly.
+-/
+structure GenusZeroGlobalGluingData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  PatchIndex : Type
+  patch_fintype : Fintype PatchIndex
+  patch_nonempty : Nonempty PatchIndex
+  patch : PatchIndex → GenusZeroGlobalGluingPatch X
+  patch_cover : ∀ x : X, ∃ i : PatchIndex, x ∈ (patch i).source
+  target_chart_cover :
+    ∀ y : OnePoint ℂ, ∃ (i : PatchIndex) (z : ℂ),
+      z ∈ (patch i).targetChart.target ∧ y = (patch i).targetChart.symm z
+  toMap : X → OnePoint ℂ
+  invMap : OnePoint ℂ → X
+  target_mem_on_patch :
+    ∀ i x, x ∈ (patch i).source → toMap x ∈ (patch i).targetChart.source
+  chart_expression_on_patch :
+    ∀ i x, x ∈ (patch i).source →
+      (patch i).targetChart (toMap x) = (patch i).coord x
+  overlap_compatible :
+    ∀ i j x,
+      x ∈ (patch i).source → x ∈ (patch j).source →
+        (patch i).targetChart.symm ((patch i).coord x) =
+          (patch j).targetChart.symm ((patch j).coord x)
+  inverse_branch_agrees_on_patch :
+    ∀ i z, z ∈ (patch i).targetChart.target →
+      invMap ((patch i).targetChart.symm z) = (patch i).invCoord z
+  local_left_inverse_on_patch :
+    ∀ i x, x ∈ (patch i).source → invMap (toMap x) = x
+  local_right_inverse_on_target_chart :
+    ∀ i z, z ∈ (patch i).targetChart.target →
+      toMap ((patch i).invCoord z) = (patch i).targetChart.symm z
+  contMDiff_toMap :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) toMap
+  contMDiff_invMap :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) invMap
+
+/--
+The finite family of source patches and target-chart choices used before the
+actual global map is assembled.
+-/
+structure GenusZeroGlobalPatchFamily
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  PatchIndex : Type
+  patch_fintype : Fintype PatchIndex
+  patch_nonempty : Nonempty PatchIndex
+  patch : PatchIndex → GenusZeroGlobalGluingPatch X
+  patch_cover : ∀ x : X, ∃ i : PatchIndex, x ∈ (patch i).source
+  target_chart_cover :
+    ∀ y : OnePoint ℂ, ∃ (i : PatchIndex) (z : ℂ),
+      z ∈ (patch i).targetChart.target ∧ y = (patch i).targetChart.symm z
+
+namespace GenusZeroGlobalGluingData
+
+/-- The homeomorphism obtained after the global gluing data is complete. -/
+noncomputable def toHomeomorph
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (data : GenusZeroGlobalGluingData X) :
+    X ≃ₜ OnePoint ℂ where
+  toFun := data.toMap
+  invFun := data.invMap
+  left_inv := by
+    intro x
+    rcases data.patch_cover x with ⟨i, hx⟩
+    exact data.local_left_inverse_on_patch i x hx
+  right_inv := by
+    intro y
+    rcases data.target_chart_cover y with ⟨i, z, hz, rfl⟩
+    rw [data.inverse_branch_agrees_on_patch i z hz]
+    exact data.local_right_inverse_on_target_chart i z hz
+  continuous_toFun := data.contMDiff_toMap.continuous
+  continuous_invFun := data.contMDiff_invMap.continuous
+
+/--
+Completed global gluing data gives exactly the smooth homeomorphism required by
+the genus-zero uniformization target.
+-/
+theorem exists_contMDiff_homeomorph
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (data : GenusZeroGlobalGluingData X) :
+    ∃ (f : X ≃ₜ OnePoint ℂ),
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) f ∧
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) f.symm := by
+  refine ⟨data.toHomeomorph, ?_, ?_⟩
+  · exact data.contMDiff_toMap
+  · exact data.contMDiff_invMap
+
+end GenusZeroGlobalGluingData
+
+/--
+Global 2d patch-selection frontier: choose a finite source cover carrying the
+normalized local Montel limits, with each patch assigned to one of the two
+standard target charts on `OnePoint ℂ`.
+-/
+theorem genusZeroGlobalPatchFamily_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroGlobalPatchFamily X) := by
+  -- Field-specific 2d frontier: extract a finite cover by normalized local
+  -- Montel chart limits and assign the identity/inversion target chart data.
+  sorry
+
+/--
+Target-membership frontier for local gluing coordinates: every normalized
+local coordinate value actually lies in the target of the patch's assigned
+`OnePoint ℂ` chart.
+-/
+theorem genusZeroGlobalGluing_coord_mem_target_on_patch
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) :
+    ∀ i x, x ∈ (family.patch i).source →
+      (family.patch i).coord x ∈ (family.patch i).targetChart.target := by
+  intro i x _hx
+  rcases (family.patch i).targetChart_standard with hchart | hchart
+  · rw [hchart]
+    simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+  · rw [hchart]
+    simp [inversionChart]
+
+/--
+The canonical forward candidate obtained by choosing one patch containing each
+point and evaluating that patch's target-chart inverse on its local coordinate.
+-/
+noncomputable def genusZeroGlobalGluing_toMap
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) : X → OnePoint ℂ :=
+  fun x =>
+    let i := Classical.choose (family.patch_cover x)
+    (family.patch i).targetChart.symm ((family.patch i).coord x)
+
+/--
+Overlap-compatibility frontier through the public `OnePoint ℂ` transition
+charts.
+-/
+theorem genusZeroGlobalGluing_overlap_compatible
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) :
+    ∀ i j x,
+      x ∈ (family.patch i).source → x ∈ (family.patch j).source →
+        (family.patch i).targetChart.symm ((family.patch i).coord x) =
+          (family.patch j).targetChart.symm ((family.patch j).coord x) := by
+  -- Field-specific 2d frontier: prove local limit coordinates agree on
+  -- overlaps after the identity/inversion transition map.
+  sorry
+
+/--
+The canonical glued map lands in every target chart on the corresponding
+source patch.
+-/
+theorem genusZeroGlobalGluing_toMap_target_mem_on_patch
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) :
+    ∀ i x, x ∈ (family.patch i).source →
+      genusZeroGlobalGluing_toMap family x ∈ (family.patch i).targetChart.source := by
+  intro i x hx
+  classical
+  let j : family.PatchIndex := Classical.choose (family.patch_cover x)
+  have hj : x ∈ (family.patch j).source := Classical.choose_spec (family.patch_cover x)
+  have hcoord_i :
+      (family.patch i).coord x ∈ (family.patch i).targetChart.target :=
+    genusZeroGlobalGluing_coord_mem_target_on_patch family i x hx
+  have hglue :
+      (family.patch j).targetChart.symm ((family.patch j).coord x) =
+        (family.patch i).targetChart.symm ((family.patch i).coord x) :=
+    genusZeroGlobalGluing_overlap_compatible family j i x hj hx
+  have hmem :
+      (family.patch i).targetChart.symm ((family.patch i).coord x) ∈
+        (family.patch i).targetChart.source :=
+    (family.patch i).targetChart.map_target hcoord_i
+  simpa [genusZeroGlobalGluing_toMap, j, hglue] using hmem
+
+/--
+Global candidate-map construction: the chosen-patch formula gives a single
+candidate `X → OnePoint ℂ` landing in the selected target chart on every patch.
+-/
+theorem genusZeroGlobalGluing_toMap_exists
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X) :
+    ∃ toMap : X → OnePoint ℂ,
+      ∀ i x, x ∈ (family.patch i).source →
+        toMap x ∈ (family.patch i).targetChart.source := by
+  exact ⟨genusZeroGlobalGluing_toMap family,
+    genusZeroGlobalGluing_toMap_target_mem_on_patch family⟩
+
+/--
+Chart expression for the canonical glued global map.
+-/
+theorem genusZeroGlobalGluing_chart_expression_on_patch
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) :
+    ∀ i x, x ∈ (family.patch i).source →
+      (family.patch i).targetChart (genusZeroGlobalGluing_toMap family x) =
+        (family.patch i).coord x := by
+  intro i x hx
+  classical
+  let j : family.PatchIndex := Classical.choose (family.patch_cover x)
+  have hj : x ∈ (family.patch j).source := Classical.choose_spec (family.patch_cover x)
+  have hcoord_i :
+      (family.patch i).coord x ∈ (family.patch i).targetChart.target :=
+    genusZeroGlobalGluing_coord_mem_target_on_patch family i x hx
+  have hglue :
+      (family.patch j).targetChart.symm ((family.patch j).coord x) =
+        (family.patch i).targetChart.symm ((family.patch i).coord x) :=
+    genusZeroGlobalGluing_overlap_compatible family j i x hj hx
+  calc
+    (family.patch i).targetChart (genusZeroGlobalGluing_toMap family x)
+        = (family.patch i).targetChart
+            ((family.patch i).targetChart.symm ((family.patch i).coord x)) := by
+          simp [genusZeroGlobalGluing_toMap, j, hglue]
+    _ = (family.patch i).coord x :=
+          (family.patch i).targetChart.right_inv hcoord_i
+
+/--
+Inverse-candidate construction frontier from the local inverse branches.
+-/
+theorem genusZeroGlobalGluing_invMap_exists
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X) :
+    ∃ invMap : OnePoint ℂ → X,
+      ∀ i z, z ∈ (family.patch i).targetChart.target →
+        invMap ((family.patch i).targetChart.symm z) = (family.patch i).invCoord z := by
+  -- Field-specific 2d frontier: glue the local inverse branches into a single
+  -- inverse candidate on `OnePoint ℂ`.
+  sorry
+
+/--
+Local left-inverse frontier for the glued candidate maps.
+-/
+theorem genusZeroGlobalGluing_local_left_inverse_on_patch
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X)
+    (toMap : X → OnePoint ℂ) (invMap : OnePoint ℂ → X) :
+    ∀ i x, x ∈ (family.patch i).source → invMap (toMap x) = x := by
+  -- Field-specific 2d frontier: prove inverse branches invert the glued map
+  -- on every source patch.
+  sorry
+
+/--
+Local right-inverse frontier for target-chart inverse branches.
+-/
+theorem genusZeroGlobalGluing_local_right_inverse_on_target_chart
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X)
+    (toMap : X → OnePoint ℂ) :
+    ∀ i z, z ∈ (family.patch i).targetChart.target →
+      toMap ((family.patch i).invCoord z) = (family.patch i).targetChart.symm z := by
+  -- Field-specific 2d frontier: prove the glued map sends each local inverse
+  -- branch back to its target-chart point.
+  sorry
+
+/--
+Local-chart smoothness frontier for the glued global map.
+-/
+theorem genusZeroGlobalGluing_contMDiff_toMap
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) (toMap : X → OnePoint ℂ)
+    (htarget :
+      ∀ i x, x ∈ (family.patch i).source →
+        toMap x ∈ (family.patch i).targetChart.source)
+    (hchart :
+      ∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).targetChart (toMap x) = (family.patch i).coord x) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) toMap := by
+  -- Field-specific 2d frontier: use the local chart expressions, source cover,
+  -- and OnePoint transition smoothness to prove `toMap` is `ContMDiff`.
+  sorry
+
+/--
+Local-chart smoothness frontier for the glued inverse map.
+-/
+theorem genusZeroGlobalGluing_contMDiff_invMap
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) (invMap : OnePoint ℂ → X)
+    (hinv :
+      ∀ i z, z ∈ (family.patch i).targetChart.target →
+        invMap ((family.patch i).targetChart.symm z) = (family.patch i).invCoord z) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) invMap := by
+  -- Field-specific 2d frontier: use the local inverse branch chart
+  -- expressions and target-chart cover to prove `invMap` is `ContMDiff`.
+  sorry
+
+/--
+Global gluing data assembly from the named field-specific frontiers above.
+-/
+theorem genusZeroGlobalGluingData_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroGlobalGluingData X) := by
+  classical
+  let family : GenusZeroGlobalPatchFamily X :=
+    Classical.choice (genusZeroGlobalPatchFamily_nonempty X _e)
+  let toMap : X → OnePoint ℂ := genusZeroGlobalGluing_toMap family
+  have htarget :
+      ∀ i x, x ∈ (family.patch i).source →
+        toMap x ∈ (family.patch i).targetChart.source := by
+    exact genusZeroGlobalGluing_toMap_target_mem_on_patch family
+  have hchart :
+      ∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).targetChart (toMap x) = (family.patch i).coord x := by
+    exact genusZeroGlobalGluing_chart_expression_on_patch family
+  obtain ⟨invMap, hinv_branch⟩ := genusZeroGlobalGluing_invMap_exists _e family
+  refine ⟨
+    { PatchIndex := family.PatchIndex
+      patch_fintype := family.patch_fintype
+      patch_nonempty := family.patch_nonempty
+      patch := family.patch
+      patch_cover := family.patch_cover
+      target_chart_cover := family.target_chart_cover
+      toMap := toMap
+      invMap := invMap
+      target_mem_on_patch := htarget
+      chart_expression_on_patch := hchart
+      overlap_compatible :=
+        genusZeroGlobalGluing_overlap_compatible family
+      inverse_branch_agrees_on_patch := hinv_branch
+      local_left_inverse_on_patch :=
+        genusZeroGlobalGluing_local_left_inverse_on_patch family toMap invMap
+      local_right_inverse_on_target_chart :=
+        genusZeroGlobalGluing_local_right_inverse_on_target_chart family toMap
+      contMDiff_toMap :=
+        genusZeroGlobalGluing_contMDiff_toMap family toMap htarget hchart
+      contMDiff_invMap :=
+        genusZeroGlobalGluing_contMDiff_invMap family invMap hinv_branch }⟩
+
 
 
 /--
@@ -776,29 +1186,8 @@ theorem exists_contMDiff_homeomorph_to_onePointCx
         (⊤ : WithTop ℕ∞) f ∧
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) f.symm := by
-  --
-  -- This is the genus-0 case of the uniformization theorem: every compact
-  -- connected Riemann surface that is topologically a 2-sphere is
-  -- biholomorphic to `ℂℙ¹` (= `OnePoint ℂ`). The given homeomorphism `_e`
-  -- need NOT itself be smooth (e.g. it could be post-composed with complex
-  -- conjugation on `OnePoint ℂ`, which is a self-homeomorphism that is not
-  -- `ℂ`-smooth); we must construct a different homeomorphism `f` that is
-  -- `ContMDiff` in both directions.
-  --
-  -- Missing Mathlib prerequisites (all absent in v4.28.0):
-  --   * the uniformization theorem for simply-connected Riemann surfaces
-  --     (every simply-connected Riemann surface is biholomorphic to `ℂ`,
-  --     the open unit disk `𝔻`, or `ℂℙ¹`);
-  --   * the Riemann mapping theorem and Koebe / Perron normal-family
-  --     machinery that underpin it;
-  --   * a `ChartedSpace ℂ` / `IsManifold` instance on `OnePoint ℂ` rich
-  --     enough to support the biholomorphism statement uniformly with `X`.
-  --
-  -- Either a fully-fledged uniformization theorem or an equivalent
-  -- genus-0 classification (e.g. via Riemann–Roch producing a degree-1
-  -- See the architectural notes earlier in this file for the full
-  -- dependency tree.
-  sorry
+  obtain ⟨data⟩ := genusZeroGlobalGluingData_nonempty X _e
+  exact data.exists_contMDiff_homeomorph
 
 /-
 Construct a `ℂ`-linear equivalence between holomorphic 1-form spaces

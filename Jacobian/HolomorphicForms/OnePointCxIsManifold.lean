@@ -75,7 +75,7 @@ private lemma inversionChart_target_eq :
 The composition `identityChart.symm ≫ₕ inversionChart` agrees with
 `Inv.inv` on its source.
 -/
-private lemma identityChart_trans_inversionChart_eqOn :
+lemma identityChart_trans_inversionChart_eqOn :
     EqOn ((identityChart.symm ≫ₕ inversionChart : OpenPartialHomeomorph ℂ ℂ) : ℂ → ℂ)
       Inv.inv (identityChart.symm ≫ₕ inversionChart).source := by
   intro z _
@@ -86,7 +86,7 @@ private lemma identityChart_trans_inversionChart_eqOn :
 The source of `identityChart.symm ≫ₕ inversionChart` is the punctured
 plane `{(0 : ℂ)}ᶜ`.
 -/
-private lemma identityChart_trans_inversionChart_source :
+lemma identityChart_trans_inversionChart_source :
     (identityChart.symm ≫ₕ inversionChart).source = ({(0 : ℂ)}ᶜ : Set ℂ) := by
   rw [OpenPartialHomeomorph.trans_source, identityChart_symm_source]
   ext z
@@ -98,7 +98,7 @@ private lemma identityChart_trans_inversionChart_source :
 The composition `inversionChart.symm ≫ₕ identityChart` agrees with
 `Inv.inv` on its source.
 -/
-private lemma inversionChart_trans_identityChart_eqOn :
+lemma inversionChart_trans_identityChart_eqOn :
     EqOn ((inversionChart.symm ≫ₕ identityChart : OpenPartialHomeomorph ℂ ℂ) : ℂ → ℂ)
       Inv.inv (inversionChart.symm ≫ₕ identityChart).source := by
   intro w hw
@@ -117,7 +117,7 @@ private lemma inversionChart_trans_identityChart_eqOn :
 The source of `inversionChart.symm ≫ₕ identityChart` is the punctured
 plane `{(0 : ℂ)}ᶜ`.
 -/
-private lemma inversionChart_trans_identityChart_source :
+lemma inversionChart_trans_identityChart_source :
     (inversionChart.symm ≫ₕ identityChart).source = ({(0 : ℂ)}ᶜ : Set ℂ) := by
   rw [OpenPartialHomeomorph.trans_source]
   ext w
@@ -138,7 +138,7 @@ private lemma inversionChart_trans_identityChart_source :
 /-! ### `ContDiffOn` of the non-trivial transitions -/
 
 /-- The transition `identityChart.symm ≫ₕ inversionChart` is `C^∞`. -/
-private lemma identityChart_trans_inversionChart_contDiffOn :
+lemma identityChart_trans_inversionChart_contDiffOn :
     ContDiffOn ℂ ⊤
       ((modelWithCornersSelf ℂ ℂ) ∘ (identityChart.symm ≫ₕ inversionChart) ∘
         (modelWithCornersSelf ℂ ℂ).symm)
@@ -154,7 +154,7 @@ private lemma identityChart_trans_inversionChart_contDiffOn :
   exact heq hz
 
 /-- The transition `inversionChart.symm ≫ₕ identityChart` is `C^∞`. -/
-private lemma inversionChart_trans_identityChart_contDiffOn :
+lemma inversionChart_trans_identityChart_contDiffOn :
     ContDiffOn ℂ ⊤
       ((modelWithCornersSelf ℂ ℂ) ∘ (inversionChart.symm ≫ₕ identityChart) ∘
         (modelWithCornersSelf ℂ ℂ).symm)

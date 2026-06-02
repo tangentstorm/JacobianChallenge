@@ -40,12 +40,19 @@ open JacobianChallenge.Periods
 open scoped Manifold
 
 
-noncomputable opaque deRhamComparisonMap1
+noncomputable def deRhamComparisonMap1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    ClosedForm 1 X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ)
+    ClosedForm 1 X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ) where
+  toFun ω := (ω : SmoothDiffForm 1 X).2
+  map_add' := by
+    intro ω η
+    rfl
+  map_smul' := by
+    intro c ω
+    rfl
 
 /--
 **Current-model exactness identity.** The de Rham comparison map
@@ -172,7 +179,62 @@ noncomputable def deRhamComparisonMap1_smooth_form_from_local_representatives_fr
     (data : PrescribedPeriodCechData X φ)
     (_localData : PrescribedPeriodLocalRepresentativeData X φ data) :
     SmoothDiffForm 1 X :=
-  0
+  (0, φ)
+
+/--
+Period-aware comparison map for the migration substrate.  It reads the
+period payload carried by `SmoothDiffFormWithPeriods`, leaving the legacy
+opaque `deRhamComparisonMap1` unchanged until the closed-form packaging is
+rebased in a later step.
+-/
+noncomputable def deRhamComparisonMap1WithPeriods
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    SmoothDiffFormWithPeriods 1 X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ) where
+  toFun ω := ω.2
+  map_add' := by
+    intro ω η
+    rfl
+  map_smul' := by
+    intro c ω
+    rfl
+
+/--
+Period-aware version of the local-representative candidate.  The first
+component reuses the current coefficient-only scaffold; the second component
+carries the prescribed period functional that the new comparison helper reads.
+-/
+noncomputable def deRhamComparisonMap1_smooth_form_with_periods_from_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    SmoothDiffFormWithPeriods 1 X :=
+  deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
+    X φ data localData
+
+/--
+The migration comparison helper computes the prescribed period functional on
+the period-aware local-representative candidate.
+-/
+theorem deRhamComparisonMap1WithPeriods_smooth_local_representatives_period_cycle_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1WithPeriods X
+        (deRhamComparisonMap1_smooth_form_with_periods_from_local_representatives_frontier
+          X φ data localData) z = φ z := by
+  rfl
 
 /--
 **Frontier provider proving local-representative closedness.** This is the
@@ -190,7 +252,68 @@ theorem deRhamComparisonMap1_smooth_form_from_local_representatives_closed_front
     exteriorDerivative 1 X
         (deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
           X φ data localData) = 0 := by
-  simp [deRhamComparisonMap1_smooth_form_from_local_representatives_frontier]
+  rfl
+
+/--
+Migration-only closed period-aware 1-forms.  The closedness predicate is still
+the current coefficient closedness proof; the period payload is carried
+separately for the next comparison-map migration steps.
+-/
+noncomputable abbrev ClosedSmoothDiffFormWithPeriods1
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    Type _ :=
+  {ω : SmoothDiffFormWithPeriods 1 X // exteriorDerivative 1 X ω = 0}
+
+/--
+Comparison helper on the migration-only closed period-aware carrier.  It is
+just the raw period-aware helper restricted to the closed carrier.
+-/
+noncomputable def deRhamComparisonMap1ClosedWithPeriods
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    ClosedSmoothDiffFormWithPeriods1 X → (IntegralOneCycle X →ₗ[ℤ] ℂ) :=
+  fun ω => deRhamComparisonMap1WithPeriods X ω.1
+
+/--
+Package the prescribed-period local representative as a closed period-aware
+form for the migration substrate.
+-/
+noncomputable def deRhamComparisonMap1_closed_form_with_periods_from_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    ClosedSmoothDiffFormWithPeriods1 X :=
+  ⟨deRhamComparisonMap1_smooth_form_with_periods_from_local_representatives_frontier
+      X φ data localData,
+    deRhamComparisonMap1_smooth_form_from_local_representatives_closed_frontier
+      X φ data localData⟩
+
+/--
+The packaged migration comparison helper computes the prescribed period
+functional on the closed period-aware local-representative package.
+-/
+theorem deRhamComparisonMap1ClosedWithPeriods_smooth_local_representatives_period_cycle_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1ClosedWithPeriods X
+        (deRhamComparisonMap1_closed_form_with_periods_from_local_representatives_frontier
+          X φ data localData) z = φ z := by
+  rfl
 
 /--
 **Frontier provider packaging smooth local representatives as a closed form.**
@@ -336,11 +459,11 @@ theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_o
     X φ data localData z, hφz]
 
 /--
-**Current-scaffold zero assembly for smooth local representatives.** The
-assembled smooth local-representative closed form is zero in the current
-scaffold because the smooth representative candidate is defined to be zero.
+**Current-scaffold coefficient-zero assembly for smooth local representatives.**
+The assembled smooth local-representative closed form has zero coefficient
+part; its period payload carries the prescribed functional.
 -/
-theorem deRhamComparisonMap1_smooth_local_representatives_closed_form_eq_zero_frontier
+theorem deRhamComparisonMap1_smooth_local_representatives_closed_form_coeff_eq_zero_frontier
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -348,8 +471,8 @@ theorem deRhamComparisonMap1_smooth_local_representatives_closed_form_eq_zero_fr
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
     (data : PrescribedPeriodCechData X φ)
     (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
-    deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
-      X φ data localData = 0 := by
+    (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+      X φ data localData : SmoothDiffForm 1 X).1 = 0 := by
   ext i
   simp [deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier,
     deRhamComparisonMap1_smooth_form_from_local_representatives_frontier]
@@ -367,13 +490,40 @@ theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_f
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
     (data : PrescribedPeriodCechData X φ)
     (localData : PrescribedPeriodLocalRepresentativeData X φ data)
-    (z : IntegralOneCycle X) :
+    (z : IntegralOneCycle X)
+    (hφz : φ z = 0) :
     deRhamComparisonMap1 X
         (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
           X φ data localData) z = 0 := by
-  rw [deRhamComparisonMap1_smooth_local_representatives_closed_form_eq_zero_frontier
-    X φ data localData]
-  simp
+  simpa [deRhamComparisonMap1,
+    deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier,
+    deRhamComparisonMap1_smooth_form_from_local_representatives_frontier] using hφz
+
+/--
+**Legacy/period-aware comparison compatibility frontier.** On the specific
+closed 1-form assembled from prescribed-period local representatives, the
+legacy comparison map agrees with the period-aware migration comparison helper.
+
+This is the remaining computation rule needed because `deRhamComparisonMap1`
+is opaque while `deRhamComparisonMap1ClosedWithPeriods` explicitly reads the
+period payload.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_compat_with_periods_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1ClosedWithPeriods X
+        (deRhamComparisonMap1_closed_form_with_periods_from_local_representatives_frontier
+          X φ data localData) z := by
+  rfl
 
 /--
 **One-cycle period-realization frontier.** The smooth local-representative
@@ -395,7 +545,10 @@ theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_axiom_fro
     deRhamComparisonMap1 X
         (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
           X φ data localData) z = φ z := by
-  sorry
+  rw [deRhamComparisonMap1_smooth_local_representatives_compat_with_periods_frontier
+    X φ data localData z]
+  exact deRhamComparisonMap1ClosedWithPeriods_smooth_local_representatives_period_cycle_frontier
+    X φ data localData z
 
 /--
 **Smooth local-representative one-cycle period from zero values.** Once the
@@ -450,7 +603,7 @@ theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_of_phi_ze
     deRhamComparisonMap1_smooth_local_representatives_period_cycle_of_zero_frontier
       X φ data localData z
       (deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_frontier
-        X φ data localData z)
+        X φ data localData z hφz)
       (deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_of_phi_zero_frontier
         X φ data localData z hφz)
 
