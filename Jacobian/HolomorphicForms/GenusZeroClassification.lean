@@ -933,18 +933,23 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Analytic genus-zero uniformization frontier: produce a smooth homeomorphism
-`X ≃ₜ OnePoint ℂ` with smooth inverse from the topological genus-zero witness.
+Complex-structure uniqueness frontier for the Riemann sphere: a compact
+connected Riemann surface merely homeomorphic to `OnePoint ℂ` admits a
+biholomorphic homeomorphism to the standard `OnePoint ℂ` complex manifold.
+
+This is the remaining genuine analytic genus-zero input.  It is narrower than
+the patch-selector/gluing data: once this smooth uniformization is available,
+the selector below is the explicit two-chart packaging.
 -/
-theorem genusZero_smoothUniformization_nonempty
+theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroSmoothUniformization X) := by
-  -- Field-specific analytic uniformization frontier: construct the
-  -- biholomorphic genus-zero parametrization.
+  -- Field-specific analytic uniformization frontier: uniqueness of the
+  -- complex structure on the topological sphere.
   sorry
 
 /--
@@ -959,9 +964,9 @@ theorem genusZero_normalizedMontelPatchSelector_nonempty
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroNormalizedMontelPatchSelector X) := by
+  Nonempty (GenusZeroNormalizedMontelPatchSelector X) := by
   classical
-  obtain ⟨smooth⟩ := genusZero_smoothUniformization_nonempty X _e
+  obtain ⟨smooth⟩ := genusZero_complexStructureUnique_smoothUniformization_nonempty X _e
   let targetChartFor : Bool → OpenPartialHomeomorph (OnePoint ℂ) ℂ :=
     fun b => cond b inversionChart identityChart
   let sourceFor : Bool → Set X :=
