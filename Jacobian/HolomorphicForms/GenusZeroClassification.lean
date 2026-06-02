@@ -8,6 +8,7 @@ import Jacobian.HolomorphicForms.EntireZero
 import Jacobian.HolomorphicForms.InversionChartContinuity
 import Jacobian.HolomorphicForms.ChartSectionContDiff
 import Jacobian.HolomorphicForms.PullbackBundled
+import Jacobian.TraceDegree.TraceDefinition
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 import Mathlib.Topology.Compactification.OnePoint.Sphere
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
@@ -29,7 +30,7 @@ namespace JacobianChallenge.HolomorphicForms
 -- defeq sees through it (mirrors Mathlib's Riemannian.Basic / CotangentBundle).
 set_option backward.isDefEq.respectTransparency false
 
-open scoped Manifold
+open scoped Manifold Topology
 
 /--
 The one-point compactification of `ℂ` is homeomorphic to the unit
@@ -904,6 +905,8 @@ structure GenusZeroDegreeOneBiholomorphicRoute
   meromorphicMap : MeromorphicMapToSphere X
   analyticData : meromorphicMap.AnalyticData
   branchedCoverData : BranchedCoverData X (OnePoint ℂ) meromorphicMap.toMap
+  ramificationIndex_compatible :
+    branchedCoverData.RamificationIndexCompatible
   branchedDegree_one : branchedDegree branchedCoverData = 1
   contMDiff_invMap :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
@@ -966,6 +969,77 @@ theorem localInverse_is_inverse
             (route.meromorphicMap.toMap x') = x') :=
   route.branchedCoverData.localInverse_is_inverse
     (route.ramificationIndex_eq_one x)
+
+/--
+The branch-cover local inverse of a degree-one route is holomorphic at the
+target point corresponding to its source point.
+-/
+theorem localInverseAt_holomorphic
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (route : GenusZeroDegreeOneBiholomorphicRoute X) (x : X) :
+    IsHolomorphicAt
+      (route.branchedCoverData.localInverseAt x
+        (route.ramificationIndex_eq_one x))
+      (route.meromorphicMap.toMap x) :=
+  JacobianChallenge.HolomorphicForms.localInverseAt_holomorphic
+    route.branchedCoverData
+    route.ramificationIndex_compatible
+    (route.meromorphicMap.isHolomorphic_toMap_of_analyticData route.analyticData)
+    x
+    (route.ramificationIndex_eq_one x)
+
+/--
+The inverse of the degree-one bijection agrees near every target point with
+the branch-cover local inverse at the corresponding source point.
+-/
+theorem eventuallyEq_symm_localInverseAt
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (route : GenusZeroDegreeOneBiholomorphicRoute X) (y : OnePoint ℂ) :
+    let e : X ≃ OnePoint ℂ :=
+      Equiv.ofBijective route.meromorphicMap.toMap
+        (degree_one_bijective route.branchedCoverData route.branchedDegree_one)
+    (e.symm : OnePoint ℂ → X) =ᶠ[𝓝 y]
+      route.branchedCoverData.localInverseAt (e.symm y)
+        (route.ramificationIndex_eq_one (e.symm y)) := by
+  classical
+  intro e
+  obtain ⟨_U, V, _hUopen, hVopen, _hxU, hfxV, _hbij, hright, _hleft⟩ :=
+    route.localInverse_is_inverse (e.symm y)
+  have hey : route.meromorphicMap.toMap (e.symm y) = y := e.apply_symm_apply y
+  have hyV : y ∈ V := by
+    simpa [hey] using hfxV
+  filter_upwards [hVopen.mem_nhds hyV] with y' hy'V
+  apply e.injective
+  simp [e, hright y' hy'V]
+
+/-- The inverse of the degree-one bijection is holomorphic at every point. -/
+theorem isHolomorphicAt_symm
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (route : GenusZeroDegreeOneBiholomorphicRoute X) (y : OnePoint ℂ) :
+    let e : X ≃ OnePoint ℂ :=
+      Equiv.ofBijective route.meromorphicMap.toMap
+        (degree_one_bijective route.branchedCoverData route.branchedDegree_one)
+    IsHolomorphicAt (e.symm : OnePoint ℂ → X) y := by
+  classical
+  intro e
+  have hlocal := route.localInverseAt_holomorphic (e.symm y)
+  have hey : route.meromorphicMap.toMap (e.symm y) = y := e.apply_symm_apply y
+  have hlocal' :
+      IsHolomorphicAt
+        (route.branchedCoverData.localInverseAt (e.symm y)
+          (route.ramificationIndex_eq_one (e.symm y))) y := by
+    simpa [hey] using hlocal
+  exact hlocal'.congr_of_eventuallyEq
+    (route.eventuallyEq_symm_localInverseAt y).symm
 
 end GenusZeroDegreeOneBiholomorphicRoute
 
