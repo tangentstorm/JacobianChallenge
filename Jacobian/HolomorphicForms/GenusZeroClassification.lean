@@ -1227,14 +1227,31 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Fixed-pole principal-part frontier for the Riemann sphere: from the
-topological sphere witness, produce a complex-valued meromorphic function with
-one simple pole at the point corresponding to `∞`.
+Fixed-pole Riemann-Roch section frontier for the Riemann sphere: from the
+topological sphere witness, produce a nonconstant algebraic RR section with
+prescribed pole at the point corresponding to `∞`.
 
 This is the current genuine analytic genus-zero input.  It is narrower than
-the existential simple-pole principal-part theorem below: the pole is fixed to
-the distinguished point `e.symm OnePoint.infty` rather than chosen
-afterwards.
+the simple-pole principal-part theorem below: the local Laurent,
+one-point-extension continuity, chart-order, and modulus-divergence fields are
+all derived by the existing `PointRiemannRochSection` local machinery.
+-/
+theorem genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (PointRiemannRochSection X (e.symm OnePoint.infty)) := by
+  -- Field-specific analytic frontier: construct the algebraic RR section
+  -- with prescribed pole at the point over infinity, without routing through
+  -- the downstream smooth uniformization theorem.
+  sorry
+
+/--
+Fixed-pole principal-part assembly for the Riemann sphere: a fixed-pole
+algebraic RR section supplies the simple-pole principal part via the existing
+local Laurent providers.
 -/
 theorem genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1243,10 +1260,11 @@ theorem genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonemp
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (e : X ≃ₜ OnePoint ℂ) :
     ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F (e.symm OnePoint.infty) := by
-  -- Field-specific analytic frontier: construct a finite meromorphic lift
-  -- with a simple pole at the point over infinity, without routing through
-  -- the downstream smooth uniformization theorem.
-  sorry
+  obtain ⟨s⟩ :=
+    genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty X e
+  let rr : RiemannRochSectionAtPoint X (e.symm OnePoint.infty) :=
+    s.toRiemannRochSectionAtPoint
+  exact ⟨rr.finiteLift, rr.hasComplexSimplePolePrincipalPart⟩
 
 /--
 Simple-pole principal-part assembly for the Riemann sphere: the fixed pole
