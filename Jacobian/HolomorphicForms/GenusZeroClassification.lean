@@ -1227,26 +1227,42 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Simple-pole principal-part frontier for the Riemann sphere: from the
+Fixed-pole principal-part frontier for the Riemann sphere: from the
 topological sphere witness, produce a complex-valued meromorphic function with
-one simple pole at some point.
+one simple pole at the point corresponding to `∞`.
 
 This is the current genuine analytic genus-zero input.  It is narrower than
-`SinglePoleMeromorphicAnalyticData`: once such a finite-lift principal part is
-available, the existing `SimplePoleToSphereData` and single-pole analytic-data
-assemblies build the map to `OnePoint ℂ`.
+the existential simple-pole principal-part theorem below: the pole is fixed to
+the distinguished point `e.symm OnePoint.infty` rather than chosen
+afterwards.
+-/
+theorem genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (e : X ≃ₜ OnePoint ℂ) :
+    ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F (e.symm OnePoint.infty) := by
+  -- Field-specific analytic frontier: construct a finite meromorphic lift
+  -- with a simple pole at the point over infinity, without routing through
+  -- the downstream smooth uniformization theorem.
+  sorry
+
+/--
+Simple-pole principal-part assembly for the Riemann sphere: the fixed pole
+over `∞` supplies the existential principal-part payload used by the
+single-pole analytic-data route.
 -/
 theorem genusZero_complexStructureUnique_simplePolePrincipalPart_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
+    (e : X ≃ₜ OnePoint ℂ) :
     ∃ P : X, ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F P := by
-  -- Field-specific analytic frontier: construct a finite meromorphic lift
-  -- with a single simple pole from the topological sphere witness without
-  -- routing through the downstream smooth uniformization theorem.
-  sorry
+  obtain ⟨F, hF⟩ :=
+    genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonempty X e
+  exact ⟨e.symm OnePoint.infty, F, hF⟩
 
 /--
 Single-pole analytic-data assembly for the Riemann sphere: a finite
