@@ -1226,6 +1226,53 @@ theorem exists_contMDiff_homeomorph
 
 end GenusZeroGlobalGluingData
 
+/-
+Early form-transport helper used by the top-down genus-zero route.  This is
+the same pullback construction as the later public
+`pullbackLinearEquivOfHomeomorph`, placed here so the current root can assemble
+before the downstream global-gluing section.
+-/
+noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    (e : X ≃ₜ Y)
+    (he : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ e)
+    (he_symm : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ e.symm) :
+    HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ Y := by
+  refine LinearEquiv.ofLinear
+    (pullbackFormsBundledLM Y X e.symm he_symm)
+    (pullbackFormsBundledLM X Y e he) ?_ ?_
+  · convert rfl
+    convert pullbackFormsBundledLM_comp _ _ _ _ using 1
+    convert pullbackFormsBundledLM_id.symm
+    exact funext fun x => e.apply_symm_apply x
+  · convert rfl
+    convert pullbackFormsBundledLM_comp _ _ _ _ using 1
+    convert pullbackFormsBundledLM_id.symm
+    exact funext fun x => e.symm_apply_apply x
+
+/--
+Smooth uniformization frontier for the Riemann sphere: construct a
+biholomorphic homeomorphism to `OnePoint ℂ` from the topological sphere
+witness.
+
+This is the uniformization input from which the one-form transport equivalence
+below is derived by functorial pullback.
+-/
+theorem genusZero_complexStructureUnique_smoothUniformization_provider_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroSmoothUniformization X) := by
+  -- Field-specific analytic frontier: construct the smooth uniformization
+  -- from the topological sphere witness using the local genus-zero
+  -- uniformization substrate.
+  sorry
+
 /--
 Holomorphic one-form transport frontier for the Riemann sphere: from the
 topological sphere witness, construct the linear equivalence that transports
@@ -1242,10 +1289,10 @@ theorem genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
-  -- Field-specific analytic frontier: transport holomorphic one-forms from
-  -- the topological sphere witness without routing through the downstream
-  -- smooth uniformization theorem.
-  sorry
+  obtain ⟨smooth⟩ :=
+    genusZero_complexStructureUnique_smoothUniformization_provider_nonempty X _e
+  exact ⟨holomorphicOneFormLinearEquivOfContMDiffHomeomorph
+    smooth.uniformization smooth.contMDiff_uniformization smooth.contMDiff_symm⟩
 
 /--
 Holomorphic one-form vanishing assembly for the Riemann sphere: transport to
