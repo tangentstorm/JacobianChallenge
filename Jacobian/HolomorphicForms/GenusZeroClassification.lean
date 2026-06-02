@@ -1254,12 +1254,26 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Smooth uniformization frontier for the Riemann sphere: construct a
-biholomorphic homeomorphism to `OnePoint ℂ` from the topological sphere
-witness.
+Degree-one meromorphic route frontier for the Riemann sphere: construct the
+concrete meromorphic map, analytic data, branch-cover package, compatibility,
+and degree-one proof from the topological sphere witness.
+-/
+theorem genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroDegreeOneBiholomorphicRoute X) := by
+  -- Field-specific analytic frontier: construct the degree-one meromorphic
+  -- route from the topological sphere witness using the local genus-zero
+  -- single-pole/uniformization substrate.
+  sorry
 
-This is the uniformization input from which the one-form transport equivalence
-below is derived by functorial pullback.
+/--
+Smooth uniformization assembly for the Riemann sphere: degree-one meromorphic
+route data induces the smooth homeomorphism required by the one-form transport
+step.
 -/
 theorem genusZero_complexStructureUnique_smoothUniformization_provider_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1268,10 +1282,26 @@ theorem genusZero_complexStructureUnique_smoothUniformization_provider_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroSmoothUniformization X) := by
-  -- Field-specific analytic frontier: construct the smooth uniformization
-  -- from the topological sphere witness using the local genus-zero
-  -- uniformization substrate.
-  sorry
+  classical
+  obtain ⟨route⟩ :=
+    genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty X _e
+  have hbij : Function.Bijective route.meromorphicMap.toMap :=
+    degree_one_bijective route.branchedCoverData route.branchedDegree_one
+  let e : X ≃ OnePoint ℂ :=
+    Equiv.ofBijective route.meromorphicMap.toMap hbij
+  have he : Continuous e := by
+    simpa [e] using route.analyticData.continuous_toMap
+  let uniformization : X ≃ₜ OnePoint ℂ :=
+    { e with
+      continuous_toFun := he
+      continuous_invFun := he.continuous_symm_of_equiv_compact_to_t2 }
+  refine ⟨
+    { uniformization := uniformization
+      contMDiff_uniformization := ?_
+      contMDiff_symm := ?_ }⟩
+  · simpa [uniformization, e] using
+      route.meromorphicMap.contMDiff_toMap_of_analyticData route.analyticData
+  · simpa [uniformization, e, hbij] using route.contMDiff_invMap
 
 /--
 Holomorphic one-form transport frontier for the Riemann sphere: from the
@@ -1416,21 +1446,6 @@ theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
     genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonempty X _e
   obtain ⟨data⟩ := hdata
   exact ⟨data.toGenusZeroSinglePoleMeromorphicRoute⟩
-
-/--
-Degree-one meromorphic route assembly for the Riemann sphere: the single-pole
-route data canonically supplies the compatible degree-one branched-cover data.
--/
-theorem genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroDegreeOneBiholomorphicRoute X) := by
-  obtain ⟨route⟩ :=
-    genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty X _e
-  exact ⟨route.toDegreeOneBiholomorphicRoute⟩
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
