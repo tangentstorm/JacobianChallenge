@@ -851,21 +851,23 @@ structure GenusZeroNormalizedMontelPatchSelector
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (e : X ≃ₜ OnePoint ℂ) where
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  uniformization : X ≃ₜ OnePoint ℂ
   family : GenusZeroGlobalPatchFamily X
   coord_represents_uniformization :
     ∀ i x, x ∈ (family.patch i).source →
-      (family.patch i).targetChart.symm ((family.patch i).coord x) = e x
+      (family.patch i).targetChart.symm ((family.patch i).coord x) =
+        uniformization x
   invCoord_represents_uniformization :
     ∀ i z, z ∈ (family.patch i).targetChart.target →
-      (family.patch i).invCoord z = e.symm ((family.patch i).targetChart.symm z)
+      (family.patch i).invCoord z =
+        uniformization.symm ((family.patch i).targetChart.symm z)
   uniformization_contMDiff :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ)
+      (⊤ : WithTop ℕ∞) (uniformization : X → OnePoint ℂ)
   inverse_uniformization_contMDiff :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)
+      (⊤ : WithTop ℕ∞) (uniformization.symm : OnePoint ℂ → X)
 
 namespace GenusZeroGlobalGluingData
 
@@ -923,8 +925,8 @@ theorem genusZero_normalizedMontelPatchSelector_nonempty
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroNormalizedMontelPatchSelector X e) := by
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroNormalizedMontelPatchSelector X) := by
   -- Field-specific analytic uniformization frontier: extract normalized
   -- Montel-limit coordinates and the two-chart selector, then show the
   -- resulting local chart expressions represent a smooth map and inverse.
@@ -986,9 +988,8 @@ theorem genusZeroGlobalGluing_toMap_eq_uniformization
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
-    ∀ x, genusZeroGlobalGluing_toMap selector.family x = e x := by
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
+    ∀ x, genusZeroGlobalGluing_toMap selector.family x = selector.uniformization x := by
   intro x
   classical
   let i : selector.family.PatchIndex := Classical.choose (selector.family.patch_cover x)
@@ -1006,8 +1007,7 @@ theorem genusZeroGlobalGluing_overlap_compatible
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
     ∀ i j x,
       x ∈ (selector.family.patch i).source → x ∈ (selector.family.patch j).source →
         (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) =
@@ -1025,8 +1025,7 @@ theorem genusZeroGlobalGluing_toMap_target_mem_on_patch
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
     ∀ i x, x ∈ (selector.family.patch i).source →
       genusZeroGlobalGluing_toMap selector.family x ∈
         (selector.family.patch i).targetChart.source := by
@@ -1039,11 +1038,11 @@ theorem genusZeroGlobalGluing_toMap_target_mem_on_patch
         (selector.family.patch i).targetChart.source :=
     (selector.family.patch i).targetChart.map_target hcoord_i
   have hto :
-      genusZeroGlobalGluing_toMap selector.family x = e x :=
+      genusZeroGlobalGluing_toMap selector.family x = selector.uniformization x :=
     genusZeroGlobalGluing_toMap_eq_uniformization selector x
   have hrep :
       (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) =
-        e x :=
+        selector.uniformization x :=
     selector.coord_represents_uniformization i x hx
   rw [hto, ← hrep]
   exact hmem
@@ -1057,8 +1056,7 @@ theorem genusZeroGlobalGluing_toMap_exists
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
     ∃ toMap : X → OnePoint ℂ,
       ∀ i x, x ∈ (selector.family.patch i).source →
         toMap x ∈ (selector.family.patch i).targetChart.source := by
@@ -1073,8 +1071,7 @@ theorem genusZeroGlobalGluing_chart_expression_on_patch
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
     ∀ i x, x ∈ (selector.family.patch i).source →
       (selector.family.patch i).targetChart (genusZeroGlobalGluing_toMap selector.family x) =
         (selector.family.patch i).coord x := by
@@ -1083,11 +1080,11 @@ theorem genusZeroGlobalGluing_chart_expression_on_patch
       (selector.family.patch i).coord x ∈ (selector.family.patch i).targetChart.target :=
     genusZeroGlobalGluing_coord_mem_target_on_patch selector.family i x hx
   have hto :
-      genusZeroGlobalGluing_toMap selector.family x = e x :=
+      genusZeroGlobalGluing_toMap selector.family x = selector.uniformization x :=
     genusZeroGlobalGluing_toMap_eq_uniformization selector x
   have hrep :
       (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) =
-        e x :=
+        selector.uniformization x :=
     selector.coord_represents_uniformization i x hx
   rw [hto, ← hrep]
   exact (selector.family.patch i).targetChart.right_inv hcoord_i
@@ -1100,13 +1097,12 @@ theorem genusZeroGlobalGluing_invMap_exists
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
     ∃ invMap : OnePoint ℂ → X,
       ∀ i z, z ∈ (selector.family.patch i).targetChart.target →
         invMap ((selector.family.patch i).targetChart.symm z) =
           (selector.family.patch i).invCoord z := by
-  refine ⟨e.symm, ?_⟩
+  refine ⟨selector.uniformization.symm, ?_⟩
   intro i z hz
   exact (selector.invCoord_represents_uniformization i z hz).symm
 
@@ -1118,13 +1114,12 @@ theorem genusZeroGlobalGluing_local_left_inverse_on_patch
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
     ∀ i x, x ∈ (selector.family.patch i).source →
-      e.symm (genusZeroGlobalGluing_toMap selector.family x) = x := by
+      selector.uniformization.symm (genusZeroGlobalGluing_toMap selector.family x) = x := by
   intro _i x _hx
   rw [genusZeroGlobalGluing_toMap_eq_uniformization selector x]
-  exact e.left_inv x
+  exact selector.uniformization.left_inv x
 
 /--
 Local right-inverse frontier for target-chart inverse branches.
@@ -1134,15 +1129,14 @@ theorem genusZeroGlobalGluing_local_right_inverse_on_target_chart
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
     ∀ i z, z ∈ (selector.family.patch i).targetChart.target →
       genusZeroGlobalGluing_toMap selector.family ((selector.family.patch i).invCoord z) =
         (selector.family.patch i).targetChart.symm z := by
   intro i z hz
   rw [genusZeroGlobalGluing_toMap_eq_uniformization selector]
   rw [selector.invCoord_represents_uniformization i z hz]
-  exact e.right_inv ((selector.family.patch i).targetChart.symm z)
+  exact selector.uniformization.right_inv ((selector.family.patch i).targetChart.symm z)
 
 /--
 Local-chart smoothness frontier for the glued global map.
@@ -1152,11 +1146,12 @@ theorem genusZeroGlobalGluing_contMDiff_toMap
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) (genusZeroGlobalGluing_toMap selector.family) := by
-  have hfun : genusZeroGlobalGluing_toMap selector.family = (e : X → OnePoint ℂ) := by
+  have hfun :
+      genusZeroGlobalGluing_toMap selector.family =
+        (selector.uniformization : X → OnePoint ℂ) := by
     funext x
     exact genusZeroGlobalGluing_toMap_eq_uniformization selector x
   rw [hfun]
@@ -1170,10 +1165,9 @@ theorem genusZeroGlobalGluing_contMDiff_invMap
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    {e : X ≃ₜ OnePoint ℂ}
-    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    (selector : GenusZeroNormalizedMontelPatchSelector X) :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X) := by
+      (⊤ : WithTop ℕ∞) (selector.uniformization.symm : OnePoint ℂ → X) := by
   exact selector.inverse_uniformization_contMDiff
 
 /--
@@ -1187,11 +1181,11 @@ theorem genusZeroGlobalGluingData_nonempty
     (e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroGlobalGluingData X) := by
   classical
-  let selector : GenusZeroNormalizedMontelPatchSelector X e :=
+  let selector : GenusZeroNormalizedMontelPatchSelector X :=
     Classical.choice (genusZero_normalizedMontelPatchSelector_nonempty X e)
   let family : GenusZeroGlobalPatchFamily X := selector.family
   let toMap : X → OnePoint ℂ := genusZeroGlobalGluing_toMap family
-  let invMap : OnePoint ℂ → X := e.symm
+  let invMap : OnePoint ℂ → X := selector.uniformization.symm
   have htarget :
       ∀ i x, x ∈ (family.patch i).source →
         toMap x ∈ (family.patch i).targetChart.source := by
