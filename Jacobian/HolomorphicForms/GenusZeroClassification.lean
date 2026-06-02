@@ -1227,14 +1227,32 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Fixed-pole Riemann-Roch section frontier for the Riemann sphere: from the
-topological sphere witness, produce a nonconstant algebraic RR section with
-prescribed pole at the point corresponding to `∞`.
+Analytic-genus-zero frontier for the Riemann sphere: from the topological
+sphere witness, prove that the compact Riemann surface has analytic genus
+zero, using the canonical finite-dimensionality instance for holomorphic
+one-forms.
 
-This is the current genuine analytic genus-zero input.  It is narrower than
-the simple-pole principal-part theorem below: the local Laurent,
-one-point-extension continuity, chart-order, and modulus-divergence fields are
-all derived by the existing `PointRiemannRochSection` local machinery.
+This is the remaining complex-structure-uniqueness input needed by the fixed
+Riemann-Roch section assembly below.
+-/
+theorem genusZero_complexStructureUnique_analyticGenus_eq_zero
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+      compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
+    analyticGenus ℂ X = 0 := by
+  -- Field-specific analytic frontier: derive analytic genus zero from the
+  -- topological sphere witness without routing through the downstream smooth
+  -- uniformization theorem.
+  sorry
+
+/--
+Fixed-pole Riemann-Roch section assembly for the Riemann sphere: analytic
+genus zero supplies the algebraic RR section with prescribed pole at the point
+corresponding to `∞`.
 -/
 theorem genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1243,10 +1261,11 @@ theorem genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (e : X ≃ₜ OnePoint ℂ) :
     Nonempty (PointRiemannRochSection X (e.symm OnePoint.infty)) := by
-  -- Field-specific analytic frontier: construct the algebraic RR section
-  -- with prescribed pole at the point over infinity, without routing through
-  -- the downstream smooth uniformization theorem.
-  sorry
+  letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+    compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
+  exact genusZero_pointRRSection_outside_constants_exists X
+    (e.symm OnePoint.infty)
+    (genusZero_complexStructureUnique_analyticGenus_eq_zero X e)
 
 /--
 Fixed-pole principal-part assembly for the Riemann sphere: a fixed-pole
