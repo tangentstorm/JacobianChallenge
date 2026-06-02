@@ -1,102 +1,86 @@
 # Comparator harness
 
-Configuration files for the [Lean comparator](https://github.com/leanprover/comparator),
-which verifies kernel-level declaration equivalence between
-`Jacobian/Challenge.lean` (the frozen public spec) and
-`Jacobian/Solution.lean` (the top-down refinement target).
+The [Lean comparator](https://github.com/leanprover/comparator) checks that
+`Jacobian/Solution.lean` actually proves the public specification in
+`Jacobian/Challenge.lean`. For each theorem listed in a config file it:
 
-This is **Round 0** of `Jacobian/WorkPackets/TopDown.md`.
+1. confirms the **statement** elaborates to the same kernel-level type in both
+   modules (so the solution proves the *same* theorem, not a weaker variant), and
+2. checks the solution's proof uses only the **permitted axioms**.
+
+`Challenge.lean` is the frozen public spec — every declaration in it is a
+`sorry` stub. `Solution.lean` supplies the real definitions and proofs. The
+comparator is what guarantees the two line up.
 
 ## Files
 
-- **`jacobian.json`** — final config. Permitted axioms: `propext`,
-  `Quot.sound`, `Classical.choice`. Will reject any imported helper
-  that contains `sorry`. Use this once all production-module
-  obligations are discharged.
-- **`jacobian-smoketest.json`** — smoketest config. Identical to
-  the final config except `sorryAx` is added to `permitted_axioms`.
-  Use this during refinement to smoketest that declaration shapes
-  match (independently of whether helpers are fully proven).
+- **`jacobian-smoketest.json`** — adds `sorryAx` to the permitted axioms, so it
+  passes as long as every listed *statement* matches, regardless of whether the
+  underlying proofs are finished. This is what GitHub CI runs.
+- **`jacobian.json`** — the strict config. Permitted axioms are only `propext`,
+  `Quot.sound`, `Classical.choice`; it rejects any remaining `sorry`. This is
+  the final acceptance check, expected to pass once every helper is sorry-free.
 
-## Usage
+Both configs list the same theorem-level declarations from `Challenge.lean`
+(`genus_eq_zero_iff_homeo`, the `Jacobian.ofCurve_*` / `pushforward_*` /
+`pullback_*` laws, and `pushforward_pullback`).
 
-The comparator binary is not installed in this repo. To run:
+## How GitHub CI uses it
 
-```sh
-# Once comparator is checked out / installed elsewhere, point at the
-# config from this directory:
-lake env path/to/comparator-binary comparator/jacobian-smoketest.json
-```
+`.github/workflows/comparator-smoketest.yml` runs on every PR and push to
+`main` that touches `Jacobian/**`, `comparator/**`, or the toolchain/manifest
+files. The job:
 
-The first smoketest should be against `jacobian-smoketest.json` to confirm
-declaration shapes; the next is against `jacobian.json` once a sufficient
-subset of the bottom-up obligations is discharged.
+1. installs `elan` and pulls the Mathlib cache (`lake exe cache get`);
+2. clones and builds the comparator binary;
+3. builds `Jacobian.Solution` (which transitively builds `Jacobian.Challenge`);
+4. runs `comparator comparator/jacobian-smoketest.json`.
 
-## Theorem-name list
+A green check means every listed statement in `Solution` matches `Challenge`.
 
-Per `Jacobian/WorkPackets/TopDown.md`'s "Comparator Role" section, the
-list contains theorem-level declarations only. Open question recorded
-there: *"determine whether comparator should also list data declarations
-such as `genus`, `Jacobian`, `Jacobian.ofCurve`, `Jacobian.pushforward`,
-`Jacobian.pullback`, and `ContMDiff.degree`"*. Until that is resolved,
-keep this list theorem-only.
+## Running it locally
 
-## Known issue: data-level universe divergence (post-keystone)
-
-After the **keystone refactor** (commit `952e750`,
-"Keystone: route basisAlignedPeriodSubgroup to concrete representative"),
-`Jacobian/Solution.lean` specialises the data-level declarations
-(`genus`, `Jacobian`, `ofCurve`, `pushforward`, `pullback`,
-`ContMDiff.degree`) to `(X : Type)` — i.e. universe `0`.
-
-`Challenge.lean` keeps these at `(X : Type u)` / `(X : Type*)`.
-
-**Why:** `Jacobian.Periods.basisAlignedPeriodSubgroup` (and hence
-`periodFullComplexLattice`) routes through
-`Jacobian.Periods.basisAlignedPeriodSubgroupConcrete`, which transitively
-depends on `IntegralOneCycle`, which is locked at `Type 0` because
-Mathlib's `singularHomologyFunctor` requires `HasCoproducts.{w} (ModuleCat ℤ)`
-and only `w = 0` is available out of the box.
-
-**Consequence for comparator:** because every theorem in `theorem_names`
-above mentions `Jacobian X` (which now has different universe shape in
-Solution vs Challenge), the kernel-level declaration types do not match
-strictly. Comparator's strict declaration-equivalence check will
-report a mismatch on every entry until the universe story is repaired.
-
-**Paths to repair (long-term):**
-
-1. **Wait for / contribute** a Mathlib instance
-   `HasCoproducts.{u} (ModuleCat ℤ)` (or equivalent), unlocking
-   `IntegralOneCycle (X : Type*)`.
-2. **Replace** the singular-homology construction in `IntegralOneCycle`
-   with a universe-polymorphic alternative (e.g. a hand-rolled
-   integer-cycle module, or a direct construction via `Path` /
-   `FundamentalGroupoid` quotients that doesn't transit through the
-   categorical homology functor).
-3. **Bypass** the period-subgroup construction at the universe level
-   via a "abstract period data" structure that lives at `Type*`
-   (the period subgroup as a chosen `AddSubgroup (Fin g → ℂ)` with
-   abstract closedness/discreteness/compactness witnesses, with the
-   `Type 0` concrete realisation supplied as a separate theorem).
-
-Until one of those lands, the smoketest workflow uses
-`jacobian-smoketest.json` for shape-checking everything except the universe
-mismatch, and the universe mismatch is documented as a tracked obligation.
-
-## Smoke test (when binary is available)
+The comparator binary is not vendored in this repo:
 
 ```sh
-# 1. Build both modules (done by the project's normal lake build):
+# Build both modules (a normal lake build does this):
 lake build Jacobian.Challenge
 lake build Jacobian.Solution
 
-# 2. Run the comparator smoketest:
+# Smoketest (tolerates sorryAx — matches CI):
 lake env path/to/comparator-binary comparator/jacobian-smoketest.json
-# Expected (until universe issue resolved): mismatch on every theorem
-# due to `Jacobian X`'s universe shape. Record exact error text.
 
-# 3. Once universe issue resolved, run the final config:
+# Strict (rejects sorryAx — final acceptance):
 lake env path/to/comparator-binary comparator/jacobian.json
-# Expected (when bottom-up obligations are discharged): pass.
 ```
+
+## Keeping the elaborated statements identical
+
+The comparator compares the **fully-elaborated** kernel type of each theorem,
+structurally — *not* up to definitional equality. So a `Solution` statement
+must elaborate to the same term as the `Challenge` one, instance arguments and
+all. Two ways this has drifted in the past, each a syntactic difference between
+otherwise-defeq terms:
+
+1. **ℂ instance path.** `Challenge.lean` does `import Mathlib`, so the
+   `[ChartedSpace ℂ X]` / `[IsManifold 𝓘(ℂ) ω X]` binders elaborate ℂ's normed
+   structure through the **C\*-algebra** instance hierarchy (`CommCStarAlgebra ℂ`,
+   from `Mathlib.Analysis.CStarAlgebra.Classes`). If `Solution.lean` does not
+   import that file, the same goals resolve through the `NormedField` /
+   `RCLike.InnerProductSpace` hierarchy instead — defeq, but a different kernel
+   term, so every ℂ-binder theorem mismatches. `Solution.lean` therefore imports
+   `Mathlib.Analysis.CStarAlgebra.Classes` to pin the same path.
+
+2. **Auto-bound instances on data definitions.** Lean includes a `variable` in a
+   definition's signature only if the body references it. A `Solution`
+   definition whose body needs an instance the matching `Challenge` `sorry` stub
+   does not (e.g. `branchedDegree` needs `[Nonempty Y]`, supplied by the
+   `[ConnectedSpace Y]` variable) picks up an extra binder, which then leaks into
+   every theorem mentioning it. `ContMDiff.degree` decides `Nonempty Y`
+   Classically in its body rather than taking it as an instance argument,
+   precisely to keep its signature equal to `Challenge`'s.
+
+When adding or refactoring a `Solution` declaration, dump both elaborated types
+with `set_option pp.all true` and diff them (normalising universe-metavar names
+like `u_1`/`u_2`, which the comparator ignores) before relying on the comparator
+to catch a regression.

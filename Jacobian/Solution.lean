@@ -1,5 +1,6 @@
 import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.Geometry.Manifold.ChartedSpace
 import Mathlib.Geometry.Manifold.Instances.Real
 import Mathlib.LinearAlgebra.FiniteDimensional.Defs
@@ -323,10 +324,13 @@ noncomputable def _root_.ContMDiff.degree
   open Classical in
   if _hconst : ∃ y₀, ∀ x, f x = y₀ then 0
   else
-    if hbc : ∃ hbc : JacobianChallenge.HolomorphicForms.BranchedCoverData X Y f,
-        hbc.RamificationIndexCompatible then
-      JacobianChallenge.HolomorphicForms.branchedDegree
-        (X := X) (Y := Y) (f := f) hbc.choose
+    if hne : Nonempty Y then
+      haveI : Nonempty Y := hne
+      if hbc : ∃ hbc : JacobianChallenge.HolomorphicForms.BranchedCoverData X Y f,
+          hbc.RamificationIndexCompatible then
+        JacobianChallenge.HolomorphicForms.branchedDegree
+          (X := X) (Y := Y) (f := f) hbc.choose
+      else 0
     else 0
 
 @[simp]
@@ -336,6 +340,17 @@ theorem _root_.ContMDiff.degree_constant (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω 
   unfold ContMDiff.degree
   simp [hconst]
 
+/-- The public `ContMDiff.degree` (whose signature deliberately omits `[ConnectedSpace Y]`
+to match `Jacobian/Challenge.lean`) agrees with the concrete `analyticDegreeU`. In the
+Riemann-surface context `[ConnectedSpace Y]` supplies the `Nonempty Y` that `degree`'s
+body decides Classically, so the extra `if hne : Nonempty Y` wrapper reduces to its
+`then` branch. -/
+theorem _root_.ContMDiff.degree_eq_analyticDegreeU (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    ContMDiff.degree f hf = JacobianChallenge.TraceDegree.analyticDegreeU f hf := by
+  unfold ContMDiff.degree JacobianChallenge.TraceDegree.analyticDegreeU
+  have hne : Nonempty Y := inferInstance
+  simp only [hne, dif_pos]
+
 lemma pushforward_pullback (P : Jacobian Y) :
   pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P := by
   show ULift.up (JacobianChallenge.TraceDegree.analyticPushforwardU f hf
@@ -344,7 +359,7 @@ lemma pushforward_pullback (P : Jacobian Y) :
   rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullbackU f hf P.down]
   show (ULift.up ((JacobianChallenge.TraceDegree.analyticDegreeU f hf) • P.down) : Jacobian Y)
     = (ContMDiff.degree f hf) • P
-  rw [show ContMDiff.degree f hf = JacobianChallenge.TraceDegree.analyticDegreeU f hf from rfl]
+  rw [ContMDiff.degree_eq_analyticDegreeU f hf]
   rfl
 
 end Jacobian
