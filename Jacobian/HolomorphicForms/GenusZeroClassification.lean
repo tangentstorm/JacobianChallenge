@@ -928,6 +928,23 @@ structure GenusZeroSinglePoleMeromorphicRoute
   analyticData : meromorphicMap.AnalyticData
 
 /--
+Existing single-pole analytic data directly gives the single-pole route
+payload used by the genus-zero classification assembly.
+-/
+noncomputable def SinglePoleMeromorphicAnalyticData.toGenusZeroSinglePoleMeromorphicRoute
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {P : X} (data : SinglePoleMeromorphicAnalyticData (X := X) P) :
+    GenusZeroSinglePoleMeromorphicRoute X where
+  meromorphicMap := data.map
+  pole := P
+  poleDivisor_eq := data.poleDivisor_eq
+  nonconstant := data.nonconstant
+  analyticData := data.analyticData
+
+/--
 A degree-one branched cover is unramified at every source point. This is the
 local inverse gateway used by the remaining biholomorphic inverse-smoothness
 frontier.
@@ -1210,13 +1227,29 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Single-pole meromorphic route frontier for the Riemann sphere: from the
-topological sphere witness, produce a nonconstant meromorphic map with exactly
-one simple pole and explicit analytic data.
+Single-pole analytic-data frontier for the Riemann sphere: from the
+topological sphere witness, produce existing `SinglePoleMeromorphicAnalyticData`
+at some pole.
 
 This is the current genuine analytic genus-zero input.  It is narrower than a
-degree-one branched-cover route because the compatible branch data and
-degree-one calculation are derived from the single-pole analytic payload.
+single-pole route because the route merely repackages this existing
+project-wide analytic-data record.
+-/
+theorem genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ P : X, Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
+  -- Field-specific analytic frontier: construct existing single-pole
+  -- analytic data from the topological sphere witness without routing
+  -- through the downstream smooth uniformization theorem.
+  sorry
+
+/--
+Single-pole meromorphic route assembly for the Riemann sphere: existing
+single-pole analytic data directly supplies the route payload.
 -/
 theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1225,9 +1258,10 @@ theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroSinglePoleMeromorphicRoute X) := by
-  -- Field-specific analytic frontier: construct the single-pole meromorphic
-  -- parametrization with explicit chart-local analytic data.
-  sorry
+  obtain ⟨P, hdata⟩ :=
+    genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonempty X _e
+  obtain ⟨data⟩ := hdata
+  exact ⟨data.toGenusZeroSinglePoleMeromorphicRoute⟩
 
 /--
 Degree-one meromorphic route assembly for the Riemann sphere: the single-pole
