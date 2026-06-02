@@ -978,6 +978,26 @@ noncomputable def genusZeroGlobalGluing_toMap
     (family.patch i).targetChart.symm ((family.patch i).coord x)
 
 /--
+The chosen-patch formula agrees with the global uniformization represented by
+the normalized Montel patch selector.
+-/
+theorem genusZeroGlobalGluing_toMap_eq_uniformization
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    ∀ x, genusZeroGlobalGluing_toMap selector.family x = e x := by
+  intro x
+  classical
+  let i : selector.family.PatchIndex := Classical.choose (selector.family.patch_cover x)
+  have hi : x ∈ (selector.family.patch i).source :=
+    Classical.choose_spec (selector.family.patch_cover x)
+  simpa [genusZeroGlobalGluing_toMap, i] using
+    selector.coord_represents_uniformization i x hi
+
+/--
 Overlap-compatibility frontier through the public `OnePoint ℂ` transition
 charts.
 -/
@@ -986,14 +1006,15 @@ theorem genusZeroGlobalGluing_overlap_compatible
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (family : GenusZeroGlobalPatchFamily X) :
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
     ∀ i j x,
-      x ∈ (family.patch i).source → x ∈ (family.patch j).source →
-        (family.patch i).targetChart.symm ((family.patch i).coord x) =
-          (family.patch j).targetChart.symm ((family.patch j).coord x) := by
-  -- Field-specific 2d frontier: prove local limit coordinates agree on
-  -- overlaps after the identity/inversion transition map.
-  sorry
+      x ∈ (selector.family.patch i).source → x ∈ (selector.family.patch j).source →
+        (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) =
+          (selector.family.patch j).targetChart.symm ((selector.family.patch j).coord x) := by
+  intro i j x hi hj
+  exact (selector.coord_represents_uniformization i x hi).trans
+    (selector.coord_represents_uniformization j x hj).symm
 
 /--
 The canonical glued map lands in every target chart on the corresponding
@@ -1004,25 +1025,28 @@ theorem genusZeroGlobalGluing_toMap_target_mem_on_patch
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (family : GenusZeroGlobalPatchFamily X) :
-    ∀ i x, x ∈ (family.patch i).source →
-      genusZeroGlobalGluing_toMap family x ∈ (family.patch i).targetChart.source := by
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    ∀ i x, x ∈ (selector.family.patch i).source →
+      genusZeroGlobalGluing_toMap selector.family x ∈
+        (selector.family.patch i).targetChart.source := by
   intro i x hx
-  classical
-  let j : family.PatchIndex := Classical.choose (family.patch_cover x)
-  have hj : x ∈ (family.patch j).source := Classical.choose_spec (family.patch_cover x)
   have hcoord_i :
-      (family.patch i).coord x ∈ (family.patch i).targetChart.target :=
-    genusZeroGlobalGluing_coord_mem_target_on_patch family i x hx
-  have hglue :
-      (family.patch j).targetChart.symm ((family.patch j).coord x) =
-        (family.patch i).targetChart.symm ((family.patch i).coord x) :=
-    genusZeroGlobalGluing_overlap_compatible family j i x hj hx
+      (selector.family.patch i).coord x ∈ (selector.family.patch i).targetChart.target :=
+    genusZeroGlobalGluing_coord_mem_target_on_patch selector.family i x hx
   have hmem :
-      (family.patch i).targetChart.symm ((family.patch i).coord x) ∈
-        (family.patch i).targetChart.source :=
-    (family.patch i).targetChart.map_target hcoord_i
-  simpa [genusZeroGlobalGluing_toMap, j, hglue] using hmem
+      (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) ∈
+        (selector.family.patch i).targetChart.source :=
+    (selector.family.patch i).targetChart.map_target hcoord_i
+  have hto :
+      genusZeroGlobalGluing_toMap selector.family x = e x :=
+    genusZeroGlobalGluing_toMap_eq_uniformization selector x
+  have hrep :
+      (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) =
+        e x :=
+    selector.coord_represents_uniformization i x hx
+  rw [hto, ← hrep]
+  exact hmem
 
 /--
 Global candidate-map construction: the chosen-patch formula gives a single
@@ -1033,12 +1057,13 @@ theorem genusZeroGlobalGluing_toMap_exists
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X) :
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
     ∃ toMap : X → OnePoint ℂ,
-      ∀ i x, x ∈ (family.patch i).source →
-        toMap x ∈ (family.patch i).targetChart.source := by
-  exact ⟨genusZeroGlobalGluing_toMap family,
-    genusZeroGlobalGluing_toMap_target_mem_on_patch family⟩
+      ∀ i x, x ∈ (selector.family.patch i).source →
+        toMap x ∈ (selector.family.patch i).targetChart.source := by
+  exact ⟨genusZeroGlobalGluing_toMap selector.family,
+    genusZeroGlobalGluing_toMap_target_mem_on_patch selector⟩
 
 /--
 Chart expression for the canonical glued global map.
@@ -1048,28 +1073,24 @@ theorem genusZeroGlobalGluing_chart_expression_on_patch
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (family : GenusZeroGlobalPatchFamily X) :
-    ∀ i x, x ∈ (family.patch i).source →
-      (family.patch i).targetChart (genusZeroGlobalGluing_toMap family x) =
-        (family.patch i).coord x := by
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    ∀ i x, x ∈ (selector.family.patch i).source →
+      (selector.family.patch i).targetChart (genusZeroGlobalGluing_toMap selector.family x) =
+        (selector.family.patch i).coord x := by
   intro i x hx
-  classical
-  let j : family.PatchIndex := Classical.choose (family.patch_cover x)
-  have hj : x ∈ (family.patch j).source := Classical.choose_spec (family.patch_cover x)
   have hcoord_i :
-      (family.patch i).coord x ∈ (family.patch i).targetChart.target :=
-    genusZeroGlobalGluing_coord_mem_target_on_patch family i x hx
-  have hglue :
-      (family.patch j).targetChart.symm ((family.patch j).coord x) =
-        (family.patch i).targetChart.symm ((family.patch i).coord x) :=
-    genusZeroGlobalGluing_overlap_compatible family j i x hj hx
-  calc
-    (family.patch i).targetChart (genusZeroGlobalGluing_toMap family x)
-        = (family.patch i).targetChart
-            ((family.patch i).targetChart.symm ((family.patch i).coord x)) := by
-          simp [genusZeroGlobalGluing_toMap, j, hglue]
-    _ = (family.patch i).coord x :=
-          (family.patch i).targetChart.right_inv hcoord_i
+      (selector.family.patch i).coord x ∈ (selector.family.patch i).targetChart.target :=
+    genusZeroGlobalGluing_coord_mem_target_on_patch selector.family i x hx
+  have hto :
+      genusZeroGlobalGluing_toMap selector.family x = e x :=
+    genusZeroGlobalGluing_toMap_eq_uniformization selector x
+  have hrep :
+      (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) =
+        e x :=
+    selector.coord_represents_uniformization i x hx
+  rw [hto, ← hrep]
+  exact (selector.family.patch i).targetChart.right_inv hcoord_i
 
 /--
 Inverse-candidate construction frontier from the local inverse branches.
@@ -1079,13 +1100,15 @@ theorem genusZeroGlobalGluing_invMap_exists
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X) :
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
     ∃ invMap : OnePoint ℂ → X,
-      ∀ i z, z ∈ (family.patch i).targetChart.target →
-        invMap ((family.patch i).targetChart.symm z) = (family.patch i).invCoord z := by
-  -- Field-specific 2d frontier: glue the local inverse branches into a single
-  -- inverse candidate on `OnePoint ℂ`.
-  sorry
+      ∀ i z, z ∈ (selector.family.patch i).targetChart.target →
+        invMap ((selector.family.patch i).targetChart.symm z) =
+          (selector.family.patch i).invCoord z := by
+  refine ⟨e.symm, ?_⟩
+  intro i z hz
+  exact (selector.invCoord_represents_uniformization i z hz).symm
 
 /--
 Local left-inverse frontier for the glued candidate maps.
@@ -1095,12 +1118,13 @@ theorem genusZeroGlobalGluing_local_left_inverse_on_patch
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (family : GenusZeroGlobalPatchFamily X)
-    (toMap : X → OnePoint ℂ) (invMap : OnePoint ℂ → X) :
-    ∀ i x, x ∈ (family.patch i).source → invMap (toMap x) = x := by
-  -- Field-specific 2d frontier: prove inverse branches invert the glued map
-  -- on every source patch.
-  sorry
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    ∀ i x, x ∈ (selector.family.patch i).source →
+      e.symm (genusZeroGlobalGluing_toMap selector.family x) = x := by
+  intro _i x _hx
+  rw [genusZeroGlobalGluing_toMap_eq_uniformization selector x]
+  exact e.left_inv x
 
 /--
 Local right-inverse frontier for target-chart inverse branches.
@@ -1110,13 +1134,15 @@ theorem genusZeroGlobalGluing_local_right_inverse_on_target_chart
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (family : GenusZeroGlobalPatchFamily X)
-    (toMap : X → OnePoint ℂ) :
-    ∀ i z, z ∈ (family.patch i).targetChart.target →
-      toMap ((family.patch i).invCoord z) = (family.patch i).targetChart.symm z := by
-  -- Field-specific 2d frontier: prove the glued map sends each local inverse
-  -- branch back to its target-chart point.
-  sorry
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
+    ∀ i z, z ∈ (selector.family.patch i).targetChart.target →
+      genusZeroGlobalGluing_toMap selector.family ((selector.family.patch i).invCoord z) =
+        (selector.family.patch i).targetChart.symm z := by
+  intro i z hz
+  rw [genusZeroGlobalGluing_toMap_eq_uniformization selector]
+  rw [selector.invCoord_represents_uniformization i z hz]
+  exact e.right_inv ((selector.family.patch i).targetChart.symm z)
 
 /--
 Local-chart smoothness frontier for the glued global map.
@@ -1126,18 +1152,15 @@ theorem genusZeroGlobalGluing_contMDiff_toMap
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (family : GenusZeroGlobalPatchFamily X) (toMap : X → OnePoint ℂ)
-    (htarget :
-      ∀ i x, x ∈ (family.patch i).source →
-        toMap x ∈ (family.patch i).targetChart.source)
-    (hchart :
-      ∀ i x, x ∈ (family.patch i).source →
-        (family.patch i).targetChart (toMap x) = (family.patch i).coord x) :
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞) toMap := by
-  -- Field-specific 2d frontier: use the local chart expressions, source cover,
-  -- and OnePoint transition smoothness to prove `toMap` is `ContMDiff`.
-  sorry
+      (⊤ : WithTop ℕ∞) (genusZeroGlobalGluing_toMap selector.family) := by
+  have hfun : genusZeroGlobalGluing_toMap selector.family = (e : X → OnePoint ℂ) := by
+    funext x
+    exact genusZeroGlobalGluing_toMap_eq_uniformization selector x
+  rw [hfun]
+  exact selector.uniformization_contMDiff
 
 /--
 Local-chart smoothness frontier for the glued inverse map.
@@ -1147,15 +1170,11 @@ theorem genusZeroGlobalGluing_contMDiff_invMap
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (family : GenusZeroGlobalPatchFamily X) (invMap : OnePoint ℂ → X)
-    (hinv :
-      ∀ i z, z ∈ (family.patch i).targetChart.target →
-        invMap ((family.patch i).targetChart.symm z) = (family.patch i).invCoord z) :
+    {e : X ≃ₜ OnePoint ℂ}
+    (selector : GenusZeroNormalizedMontelPatchSelector X e) :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞) invMap := by
-  -- Field-specific 2d frontier: use the local inverse branch chart
-  -- expressions and target-chart cover to prove `invMap` is `ContMDiff`.
-  sorry
+      (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X) := by
+  exact selector.inverse_uniformization_contMDiff
 
 /--
 Global gluing data assembly from the named field-specific frontiers above.
@@ -1165,21 +1184,28 @@ theorem genusZeroGlobalGluingData_nonempty
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
+    (e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroGlobalGluingData X) := by
   classical
-  let family : GenusZeroGlobalPatchFamily X :=
-    Classical.choice (genusZeroGlobalPatchFamily_nonempty X _e)
+  let selector : GenusZeroNormalizedMontelPatchSelector X e :=
+    Classical.choice (genusZero_normalizedMontelPatchSelector_nonempty X e)
+  let family : GenusZeroGlobalPatchFamily X := selector.family
   let toMap : X → OnePoint ℂ := genusZeroGlobalGluing_toMap family
+  let invMap : OnePoint ℂ → X := e.symm
   have htarget :
       ∀ i x, x ∈ (family.patch i).source →
         toMap x ∈ (family.patch i).targetChart.source := by
-    exact genusZeroGlobalGluing_toMap_target_mem_on_patch family
+    exact genusZeroGlobalGluing_toMap_target_mem_on_patch selector
   have hchart :
       ∀ i x, x ∈ (family.patch i).source →
         (family.patch i).targetChart (toMap x) = (family.patch i).coord x := by
-    exact genusZeroGlobalGluing_chart_expression_on_patch family
-  obtain ⟨invMap, hinv_branch⟩ := genusZeroGlobalGluing_invMap_exists _e family
+    exact genusZeroGlobalGluing_chart_expression_on_patch selector
+  have hinv_branch :
+      ∀ i z, z ∈ (family.patch i).targetChart.target →
+        invMap ((family.patch i).targetChart.symm z) = (family.patch i).invCoord z := by
+    intro i z hz
+    dsimp [family, invMap] at i z hz ⊢
+    exact (selector.invCoord_represents_uniformization i z hz).symm
   refine ⟨
     { PatchIndex := family.PatchIndex
       patch_fintype := family.patch_fintype
@@ -1192,16 +1218,16 @@ theorem genusZeroGlobalGluingData_nonempty
       target_mem_on_patch := htarget
       chart_expression_on_patch := hchart
       overlap_compatible :=
-        genusZeroGlobalGluing_overlap_compatible family
+        genusZeroGlobalGluing_overlap_compatible selector
       inverse_branch_agrees_on_patch := hinv_branch
       local_left_inverse_on_patch :=
-        genusZeroGlobalGluing_local_left_inverse_on_patch family toMap invMap
+        genusZeroGlobalGluing_local_left_inverse_on_patch selector
       local_right_inverse_on_target_chart :=
-        genusZeroGlobalGluing_local_right_inverse_on_target_chart family toMap
+        genusZeroGlobalGluing_local_right_inverse_on_target_chart selector
       contMDiff_toMap :=
-        genusZeroGlobalGluing_contMDiff_toMap family toMap htarget hchart
+        genusZeroGlobalGluing_contMDiff_toMap selector
       contMDiff_invMap :=
-        genusZeroGlobalGluing_contMDiff_invMap family invMap hinv_branch }⟩
+        genusZeroGlobalGluing_contMDiff_invMap selector }⟩
 
 
 
