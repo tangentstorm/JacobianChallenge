@@ -1227,13 +1227,28 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Analytic-genus-zero frontier for the Riemann sphere: from the topological
-sphere witness, prove that the compact Riemann surface has analytic genus
-zero, using the canonical finite-dimensionality instance for holomorphic
-one-forms.
+Holomorphic one-form vanishing frontier for the Riemann sphere: from the
+topological sphere witness, prove that every holomorphic one-form is zero.
 
-This is the remaining complex-structure-uniqueness input needed by the fixed
-Riemann-Roch section assembly below.
+This is the concrete analytic content needed for the analytic-genus-zero
+assembly below.
+-/
+theorem genusZero_complexStructureUnique_holomorphicOneForms_subsingleton
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Subsingleton (HolomorphicOneForm ℂ X) := by
+  -- Field-specific analytic frontier: prove holomorphic one-form vanishing
+  -- from the topological sphere witness without routing through the
+  -- downstream smooth uniformization theorem.
+  sorry
+
+/--
+Analytic-genus-zero assembly for the Riemann sphere: holomorphic one-form
+vanishing implies the analytic genus is zero under the canonical
+finite-dimensionality instance.
 -/
 theorem genusZero_complexStructureUnique_analyticGenus_eq_zero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1244,10 +1259,11 @@ theorem genusZero_complexStructureUnique_analyticGenus_eq_zero
     letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
       compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
     analyticGenus ℂ X = 0 := by
-  -- Field-specific analytic frontier: derive analytic genus zero from the
-  -- topological sphere witness without routing through the downstream smooth
-  -- uniformization theorem.
-  sorry
+  letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+    compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
+  letI : Subsingleton (HolomorphicOneForm ℂ X) :=
+    genusZero_complexStructureUnique_holomorphicOneForms_subsingleton X _e
+  exact analyticGenus_eq_zero_of_subsingleton
 
 /--
 Fixed-pole Riemann-Roch section assembly for the Riemann sphere: analytic
