@@ -1258,6 +1258,22 @@ Degree-one meromorphic route frontier for the Riemann sphere: construct the
 concrete meromorphic map, analytic data, branch-cover package, compatibility,
 and degree-one proof from the topological sphere witness.
 -/
+theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroSinglePoleMeromorphicRoute X) := by
+  -- Field-specific analytic frontier: construct a nonconstant meromorphic
+  -- map with exactly one simple pole and explicit analytic data from the
+  -- topological sphere witness.
+  sorry
+
+/--
+Degree-one meromorphic route assembly for the Riemann sphere: the single-pole
+route data canonically supplies the compatible degree-one branched-cover data.
+-/
 theorem genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1265,10 +1281,9 @@ theorem genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroDegreeOneBiholomorphicRoute X) := by
-  -- Field-specific analytic frontier: construct the degree-one meromorphic
-  -- route from the topological sphere witness using the local genus-zero
-  -- single-pole/uniformization substrate.
-  sorry
+  obtain ⟨route⟩ :=
+    genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty X _e
+  exact ⟨route.toDegreeOneBiholomorphicRoute⟩
 
 /--
 Smooth uniformization assembly for the Riemann sphere: degree-one meromorphic
@@ -1430,22 +1445,6 @@ theorem genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonem
   let d : SimplePoleToSphereData X P :=
     SimplePoleToSphereData.of_complexPrincipalPart F P hF
   exact ⟨P, singlePoleAnalyticData_of_simplePoleToSphereData (X := X) P d⟩
-
-/--
-Single-pole meromorphic route assembly for the Riemann sphere: existing
-single-pole analytic data directly supplies the route payload.
--/
-theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroSinglePoleMeromorphicRoute X) := by
-  obtain ⟨P, hdata⟩ :=
-    genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonempty X _e
-  obtain ⟨data⟩ := hdata
-  exact ⟨data.toGenusZeroSinglePoleMeromorphicRoute⟩
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
