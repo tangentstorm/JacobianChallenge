@@ -839,6 +839,34 @@ structure GenusZeroGlobalPatchFamily
     ∀ y : OnePoint ℂ, ∃ (i : PatchIndex) (z : ℂ),
       z ∈ (patch i).targetChart.target ∧ y = (patch i).targetChart.symm z
 
+/--
+Analytic patch-selection provider for the genus-zero global gluing step.
+
+This is the narrow uniformization input hidden behind the patch-family
+frontier: a finite family of normalized Montel-limit coordinate patches, tied
+to the chosen global map by the public `OnePoint ℂ` target charts.  The root
+patch-family theorem below only forgets these analytic witnesses.
+-/
+structure GenusZeroNormalizedMontelPatchSelector
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (e : X ≃ₜ OnePoint ℂ) where
+  family : GenusZeroGlobalPatchFamily X
+  coord_represents_uniformization :
+    ∀ i x, x ∈ (family.patch i).source →
+      (family.patch i).targetChart.symm ((family.patch i).coord x) = e x
+  invCoord_represents_uniformization :
+    ∀ i z, z ∈ (family.patch i).targetChart.target →
+      (family.patch i).invCoord z = e.symm ((family.patch i).targetChart.symm z)
+  uniformization_contMDiff :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ)
+  inverse_uniformization_contMDiff :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)
+
 namespace GenusZeroGlobalGluingData
 
 /-- The homeomorphism obtained after the global gluing data is complete. -/
@@ -885,20 +913,35 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Global 2d patch-selection frontier: choose a finite source cover carrying the
-normalized local Montel limits, with each patch assigned to one of the two
-standard target charts on `OnePoint ℂ`.
+Analytic 2d patch-selection frontier: choose a finite source cover carrying
+the normalized local Montel limits, with each patch assigned to one of the two
+standard target charts on `OnePoint ℂ`, and prove that these local coordinates
+represent the chosen genus-zero uniformization.
+-/
+theorem genusZero_normalizedMontelPatchSelector_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroNormalizedMontelPatchSelector X e) := by
+  -- Field-specific analytic uniformization frontier: extract normalized
+  -- Montel-limit coordinates and the two-chart selector, then show the
+  -- resulting local chart expressions represent a smooth map and inverse.
+  sorry
+
+/--
+Global 2d patch-selection assembly: forget the analytic Montel witnesses and
+retain the finite source-cover family used by the downstream gluing leaves.
 -/
 theorem genusZeroGlobalPatchFamily_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
+    (e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroGlobalPatchFamily X) := by
-  -- Field-specific 2d frontier: extract a finite cover by normalized local
-  -- Montel chart limits and assign the identity/inversion target chart data.
-  sorry
+  exact ⟨(Classical.choice (genusZero_normalizedMontelPatchSelector_nonempty X e)).family⟩
 
 /--
 Target-membership frontier for local gluing coordinates: every normalized
