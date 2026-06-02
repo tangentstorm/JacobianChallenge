@@ -887,6 +887,34 @@ structure GenusZeroSmoothUniformization
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) (uniformization.symm : OnePoint ℂ → X)
 
+/--
+Degree-one meromorphic route data strong enough to give the smooth
+uniformization used by the global-gluing selector.
+
+This is narrower than a bare `GenusZeroSmoothUniformization`: it records that
+the forward map comes from a degree-one meromorphic map to the Riemann sphere,
+and isolates the remaining analytic upgrade as smoothness of that map and of
+the inverse supplied by bijectivity.
+-/
+structure GenusZeroDegreeOneBiholomorphicRoute
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  toMap : X → OnePoint ℂ
+  continuous_toMap : Continuous toMap
+  bijective_toMap : Function.Bijective toMap
+  degree_one_data :
+    ∃ f : MeromorphicMapToSphere X, toMap = f.toMap ∧
+      Nonempty (MeromorphicDegreeOneData X f)
+  contMDiff_toMap :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) toMap
+  contMDiff_invMap :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞)
+        ((Equiv.ofBijective toMap bijective_toMap).symm : OnePoint ℂ → X)
+
 namespace GenusZeroGlobalGluingData
 
 /-- The homeomorphism obtained after the global gluing data is complete. -/
@@ -933,9 +961,30 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Complex-structure uniqueness frontier for the Riemann sphere: a compact
-connected Riemann surface merely homeomorphic to `OnePoint ℂ` admits a
-biholomorphic homeomorphism to the standard `OnePoint ℂ` complex manifold.
+Degree-one meromorphic route frontier for the Riemann sphere: from the
+topological sphere witness, produce a degree-one meromorphic map whose
+bijective inverse is smooth.
+
+This is the current genuine analytic genus-zero input.  It is narrower than a
+smooth uniformization because it names the intended construction route:
+Riemann-Roch/simple-pole data, degree-one meromorphic bijectivity, and the
+degree-one map's biholomorphic smoothness.
+-/
+theorem genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroDegreeOneBiholomorphicRoute X) := by
+  -- Field-specific analytic frontier: construct the degree-one meromorphic
+  -- parametrization and prove its inverse is holomorphic/smooth.
+  sorry
+
+/--
+Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
+meromorphic route data induces the smooth homeomorphism required by the
+two-chart global-gluing selector.
 
 This is the remaining genuine analytic genus-zero input.  It is narrower than
 the patch-selector/gluing data: once this smooth uniformization is available,
@@ -948,9 +997,22 @@ theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroSmoothUniformization X) := by
-  -- Field-specific analytic uniformization frontier: uniqueness of the
-  -- complex structure on the topological sphere.
-  sorry
+  classical
+  obtain ⟨route⟩ :=
+    genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty X _e
+  let e : X ≃ OnePoint ℂ := Equiv.ofBijective route.toMap route.bijective_toMap
+  have he : Continuous e := by
+    simpa [e] using route.continuous_toMap
+  let uniformization : X ≃ₜ OnePoint ℂ :=
+    { e with
+      continuous_toFun := he
+      continuous_invFun := he.continuous_symm_of_equiv_compact_to_t2 }
+  refine ⟨
+    { uniformization := uniformization
+      contMDiff_uniformization := ?_
+      contMDiff_symm := ?_ }⟩
+  · simpa [uniformization, e] using route.contMDiff_toMap
+  · simpa [uniformization, e] using route.contMDiff_invMap
 
 /--
 Analytic 2d patch-selection frontier: choose a finite source cover carrying
