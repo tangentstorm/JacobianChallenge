@@ -1227,13 +1227,31 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Single-pole analytic-data frontier for the Riemann sphere: from the
-topological sphere witness, produce existing `SinglePoleMeromorphicAnalyticData`
-at some pole.
+Simple-pole principal-part frontier for the Riemann sphere: from the
+topological sphere witness, produce a complex-valued meromorphic function with
+one simple pole at some point.
 
-This is the current genuine analytic genus-zero input.  It is narrower than a
-single-pole route because the route merely repackages this existing
-project-wide analytic-data record.
+This is the current genuine analytic genus-zero input.  It is narrower than
+`SinglePoleMeromorphicAnalyticData`: once such a finite-lift principal part is
+available, the existing `SimplePoleToSphereData` and single-pole analytic-data
+assemblies build the map to `OnePoint ℂ`.
+-/
+theorem genusZero_complexStructureUnique_simplePolePrincipalPart_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ P : X, ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F P := by
+  -- Field-specific analytic frontier: construct a finite meromorphic lift
+  -- with a single simple pole from the topological sphere witness without
+  -- routing through the downstream smooth uniformization theorem.
+  sorry
+
+/--
+Single-pole analytic-data assembly for the Riemann sphere: a finite
+simple-pole principal part canonically gives the existing project-wide
+`SinglePoleMeromorphicAnalyticData` payload at the same pole.
 -/
 theorem genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1242,10 +1260,11 @@ theorem genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonem
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     ∃ P : X, Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
-  -- Field-specific analytic frontier: construct existing single-pole
-  -- analytic data from the topological sphere witness without routing
-  -- through the downstream smooth uniformization theorem.
-  sorry
+  obtain ⟨P, F, hF⟩ :=
+    genusZero_complexStructureUnique_simplePolePrincipalPart_nonempty X _e
+  let d : SimplePoleToSphereData X P :=
+    SimplePoleToSphereData.of_complexPrincipalPart F P hF
+  exact ⟨P, singlePoleAnalyticData_of_simplePoleToSphereData (X := X) P d⟩
 
 /--
 Single-pole meromorphic route assembly for the Riemann sphere: existing
