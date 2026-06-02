@@ -894,8 +894,9 @@ uniformization used by the global-gluing selector.
 
 This is narrower than a bare `GenusZeroSmoothUniformization`: it records that
 the forward map comes from a degree-one meromorphic map to the Riemann sphere,
-and isolates the remaining analytic upgrade as smoothness of that map and of
-the inverse supplied by bijectivity.
+and isolates the remaining topological upgrade as continuity of the inverse
+supplied by bijectivity.  Its inverse smoothness is then derived below from
+local branch-cover inverse holomorphicity.
 -/
 structure GenusZeroDegreeOneBiholomorphicRoute
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -908,9 +909,8 @@ structure GenusZeroDegreeOneBiholomorphicRoute
   ramificationIndex_compatible :
     branchedCoverData.RamificationIndexCompatible
   branchedDegree_one : branchedDegree branchedCoverData = 1
-  contMDiff_invMap :
-    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞)
+  continuous_invMap :
+    Continuous
         ((Equiv.ofBijective meromorphicMap.toMap
           (degree_one_bijective branchedCoverData branchedDegree_one)).symm : OnePoint ℂ → X)
 
@@ -1040,6 +1040,26 @@ theorem isHolomorphicAt_symm
     simpa [hey] using hlocal
   exact hlocal'.congr_of_eventuallyEq
     (route.eventuallyEq_symm_localInverseAt y).symm
+
+/--
+The inverse of the degree-one bijection is complex-smooth; continuity is the
+only inverse-side topological input still carried by the route.
+-/
+theorem contMDiff_invMap
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (route : GenusZeroDegreeOneBiholomorphicRoute X) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞)
+        ((Equiv.ofBijective route.meromorphicMap.toMap
+          (degree_one_bijective route.branchedCoverData route.branchedDegree_one)).symm :
+            OnePoint ℂ → X) := by
+  classical
+  exact ContMDiff.of_isHolomorphic_and_continuous
+    (fun y => route.isHolomorphicAt_symm y)
+    route.continuous_invMap
 
 end GenusZeroDegreeOneBiholomorphicRoute
 
