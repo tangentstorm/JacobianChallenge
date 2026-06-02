@@ -869,6 +869,24 @@ structure GenusZeroNormalizedMontelPatchSelector
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) (uniformization.symm : OnePoint ℂ → X)
 
+/--
+The genuine genus-zero uniformization provider: construct a biholomorphic
+homeomorphism to `OnePoint ℂ`.  The patch selector below is then an explicit
+two-chart packaging of this map.
+-/
+structure GenusZeroSmoothUniformization
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  uniformization : X ≃ₜ OnePoint ℂ
+  contMDiff_uniformization :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (uniformization : X → OnePoint ℂ)
+  contMDiff_symm :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (uniformization.symm : OnePoint ℂ → X)
+
 namespace GenusZeroGlobalGluingData
 
 /-- The homeomorphism obtained after the global gluing data is complete. -/
@@ -915,6 +933,21 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
+Analytic genus-zero uniformization frontier: produce a smooth homeomorphism
+`X ≃ₜ OnePoint ℂ` with smooth inverse from the topological genus-zero witness.
+-/
+theorem genusZero_smoothUniformization_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroSmoothUniformization X) := by
+  -- Field-specific analytic uniformization frontier: construct the
+  -- biholomorphic genus-zero parametrization.
+  sorry
+
+/--
 Analytic 2d patch-selection frontier: choose a finite source cover carrying
 the normalized local Montel limits, with each patch assigned to one of the two
 standard target charts on `OnePoint ℂ`, and prove that these local coordinates
@@ -927,10 +960,113 @@ theorem genusZero_normalizedMontelPatchSelector_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroNormalizedMontelPatchSelector X) := by
-  -- Field-specific analytic uniformization frontier: extract normalized
-  -- Montel-limit coordinates and the two-chart selector, then show the
-  -- resulting local chart expressions represent a smooth map and inverse.
-  sorry
+  classical
+  obtain ⟨smooth⟩ := genusZero_smoothUniformization_nonempty X _e
+  let targetChartFor : Bool → OpenPartialHomeomorph (OnePoint ℂ) ℂ :=
+    fun b => cond b inversionChart identityChart
+  let sourceFor : Bool → Set X :=
+    fun b => smooth.uniformization ⁻¹' (targetChartFor b).source
+  let coordFor : Bool → X → ℂ :=
+    fun b x => (targetChartFor b) (smooth.uniformization x)
+  let invCoordFor : Bool → ℂ → X :=
+    fun b z => smooth.uniformization.symm ((targetChartFor b).symm z)
+  have hchart_contMDiffOn :
+      ∀ b : Bool,
+        ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+          (⊤ : WithTop ℕ∞) (targetChartFor b) (targetChartFor b).source := by
+    intro b
+    have hb_atlas : targetChartFor b ∈ atlas ℂ (OnePoint ℂ) := by
+      cases b
+      · change identityChart ∈ ({identityChart, inversionChart} :
+          Set (OpenPartialHomeomorph (OnePoint ℂ) ℂ))
+        simp
+      · change inversionChart ∈ ({identityChart, inversionChart} :
+          Set (OpenPartialHomeomorph (OnePoint ℂ) ℂ))
+        simp
+    exact contMDiffOn_of_mem_maximalAtlas
+      (IsManifold.subset_maximalAtlas (I := modelWithCornersSelf ℂ ℂ)
+        (n := (⊤ : WithTop ℕ∞)) hb_atlas)
+  have hcoord_contMDiffOn :
+      ∀ b : Bool,
+        ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+          (⊤ : WithTop ℕ∞) (coordFor b) (sourceFor b) := by
+    intro b
+    exact (hchart_contMDiffOn b).comp
+      smooth.contMDiff_uniformization.contMDiffOn
+      (by intro x hx; exact hx)
+  let patchFor : Bool → GenusZeroGlobalGluingPatch X :=
+    fun b =>
+      { source := sourceFor b
+        isOpen_source := (targetChartFor b).open_source.preimage smooth.uniformization.continuous
+        targetChart := targetChartFor b
+        targetChart_standard := by
+          cases b <;> simp [targetChartFor]
+        coord := coordFor b
+        invCoord := invCoordFor b
+        coord_contMDiffOn := hcoord_contMDiffOn b }
+  let family : GenusZeroGlobalPatchFamily X :=
+    { PatchIndex := Bool
+      patch_fintype := inferInstance
+      patch_nonempty := inferInstance
+      patch := patchFor
+      patch_cover := by
+        intro x
+        by_cases hx : smooth.uniformization x ∈ identityChart.source
+        · exact ⟨false, by simpa [patchFor, sourceFor, targetChartFor] using hx⟩
+        · refine ⟨true, ?_⟩
+          cases h : smooth.uniformization x with
+          | infty =>
+              change smooth.uniformization x ∈ inversionChart.source
+              rw [h]
+              simp [inversionChart]
+          | coe z =>
+              have hfin : (OnePoint.some z : OnePoint ℂ) ∈ identityChart.source := by
+                simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+              exact (hx (by simpa [h] using hfin)).elim
+      target_chart_cover := by
+        intro y
+        by_cases hy : y ∈ identityChart.source
+        · refine ⟨false, identityChart y, ?_, ?_⟩
+          · exact identityChart.map_source hy
+          · exact (identityChart.left_inv hy).symm
+        · refine ⟨true, inversionChart y, ?_, ?_⟩
+          · have hyinv : y ∈ inversionChart.source := by
+              cases y with
+              | infty =>
+                  simp [inversionChart]
+              | coe z =>
+                  by_cases hz : z = 0
+                  · subst hz
+                    have hfin : (OnePoint.some (0 : ℂ) : OnePoint ℂ) ∈
+                        identityChart.source := by
+                      simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+                    exact (hy hfin).elim
+                  · simp [inversionChart, hz]
+            exact inversionChart.map_source hyinv
+          · have hyinv : y ∈ inversionChart.source := by
+              cases y with
+              | infty =>
+                  simp [inversionChart]
+              | coe z =>
+                  by_cases hz : z = 0
+                  · subst hz
+                    have hfin : (OnePoint.some (0 : ℂ) : OnePoint ℂ) ∈
+                        identityChart.source := by
+                      simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+                    exact (hy hfin).elim
+                  · simp [inversionChart, hz]
+            exact (inversionChart.left_inv hyinv).symm }
+  refine ⟨
+    { uniformization := smooth.uniformization
+      family := family
+      coord_represents_uniformization := ?_
+      invCoord_represents_uniformization := ?_
+      uniformization_contMDiff := smooth.contMDiff_uniformization
+      inverse_uniformization_contMDiff := smooth.contMDiff_symm }⟩
+  · intro b x hx
+    exact (targetChartFor b).left_inv hx
+  · intro b z _hz
+    rfl
 
 /--
 Global 2d patch-selection assembly: forget the analytic Montel witnesses and
