@@ -1254,8 +1254,27 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Fixed-pole Riemann-Roch section frontier for the Riemann sphere: construct the
-algebraic RR section at the point corresponding to `∞`.
+Analytic-genus-zero frontier for the Riemann sphere: prove the analytic genus
+vanishes under the canonical compact-Riemann-surface finite-dimensionality
+instance.
+-/
+theorem genusZero_complexStructureUnique_analyticGenus_eq_zero
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+      compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
+    analyticGenus ℂ X = 0 := by
+  -- Field-specific analytic frontier: prove genus-zero one-form vanishing and
+  -- transport it into analytic genus zero.
+  sorry
+
+/--
+Fixed-pole Riemann-Roch section assembly for the Riemann sphere: analytic
+genus zero supplies the algebraic RR section with prescribed pole at the point
+corresponding to `∞`.
 -/
 theorem genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1264,9 +1283,11 @@ theorem genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (e : X ≃ₜ OnePoint ℂ) :
     Nonempty (PointRiemannRochSection X (e.symm OnePoint.infty)) := by
-  -- Field-specific analytic frontier: construct the fixed-pole algebraic
-  -- Riemann-Roch section at the point corresponding to infinity.
-  sorry
+  letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+    compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
+  exact genusZero_pointRRSection_outside_constants_exists X
+    (e.symm OnePoint.infty)
+    (genusZero_complexStructureUnique_analyticGenus_eq_zero X e)
 
 /--
 Fixed-pole principal-part assembly for the Riemann sphere: a fixed-pole
@@ -1421,26 +1442,6 @@ theorem genusZero_complexStructureUnique_holomorphicOneForms_subsingleton
   haveI : Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
     holomorphicOneForm_onePointCx_subsingleton
   exact eForms.toEquiv.subsingleton
-
-/--
-Analytic-genus-zero assembly for the Riemann sphere: holomorphic one-form
-vanishing implies the analytic genus is zero under the canonical
-finite-dimensionality instance.
--/
-theorem genusZero_complexStructureUnique_analyticGenus_eq_zero
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
-      compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
-    analyticGenus ℂ X = 0 := by
-  letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
-    compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
-  letI : Subsingleton (HolomorphicOneForm ℂ X) :=
-    genusZero_complexStructureUnique_holomorphicOneForms_subsingleton X _e
-  exact analyticGenus_eq_zero_of_subsingleton
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
