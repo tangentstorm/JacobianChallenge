@@ -1009,6 +1009,28 @@ structure GenusZeroTransitionCoherentLocalMontelChartSelector
               ((coherentSelector.realization j).sourceChart x))
 
 /--
+Transition-compatible local Montel selector whose source patches are exactly
+the chart-ball domains of the attached local Montel coordinates.
+
+This removes one remaining opaque part of the selector frontier: the selected
+source cover is no longer just a family of open sets, but is identified with
+the domains on which the local normal-family limits are defined.
+-/
+structure GenusZeroChartBallDomainLocalMontelSelector
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  transitionSelector : GenusZeroTransitionCoherentLocalMontelChartSelector X
+  source_eq_chartBall_domain :
+    ∀ i x,
+      x ∈ (transitionSelector.coherentSelector.localSelector.selector.family.patch i).source ↔
+        (transitionSelector.coherentSelector.realization i).sourceChart x ∈
+          Metric.ball
+            (transitionSelector.coherentSelector.localSelector.localPatch i).chartBall.center
+            ((transitionSelector.coherentSelector.localSelector.localPatch i).chartBall.radius : ℝ)
+
+/--
 Degree-one meromorphic route data strong enough to give the smooth
 uniformization used by the global-gluing selector.
 
@@ -1374,9 +1396,25 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Transition-compatible local-chart patch-selection frontier: construct
-compatible normalized local Montel chart packages whose overlap transitions
-agree through the public two-chart atlas on `OnePoint ℂ`.
+Chart-ball-domain local Montel selector frontier: construct compatible local
+Montel chart packages whose selected source patches are exactly their
+chart-ball domains.
+-/
+theorem genusZero_chartBallDomainLocalMontelSelector_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroChartBallDomainLocalMontelSelector X) := by
+  -- Field-specific analytic frontier: choose normalized local Montel limits
+  -- whose chart-ball domains form the selected source cover and whose
+  -- transition identities are compatible on overlaps.
+  sorry
+
+/--
+Transition-compatible local-chart patch-selection assembly: forget that the
+selected source patches are exactly chart-ball domains.
 -/
 theorem genusZero_transitionCoherentLocalMontelChartSelector_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1385,10 +1423,8 @@ theorem genusZero_transitionCoherentLocalMontelChartSelector_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroTransitionCoherentLocalMontelChartSelector X) := by
-  -- Field-specific analytic frontier: construct compatible normalized local
-  -- Montel chart-ball limits and prove their explicit transition identities
-  -- on source-patch overlaps.
-  sorry
+  obtain ⟨data⟩ := genusZero_chartBallDomainLocalMontelSelector_nonempty X _e
+  exact ⟨data.transitionSelector⟩
 
 /--
 Coherent local-chart patch-selection assembly: forget the explicit transition
