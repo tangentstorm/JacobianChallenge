@@ -1059,6 +1059,30 @@ structure GenusZeroTwoChartMontelAtlasSelector
       i = identityIndex ∨ i = inversionIndex
 
 /--
+Two-chart Montel atlas selector with the cover obligations stated at the
+public identity/inversion charts.
+
+This is stricter than merely proving that every selected patch has one of the
+two target charts: it records directly that the two selected source domains
+cover `X`, and that the two public target charts cover `OnePoint ℂ`.
+-/
+structure GenusZeroTwoChartMontelCoverSelector
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  atlasSelector : GenusZeroTwoChartMontelAtlasSelector X
+  source_cover_two_chart :
+    ∀ x : X,
+      x ∈ (atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch
+        atlasSelector.identityIndex).source ∨
+      x ∈ (atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch
+        atlasSelector.inversionIndex).source
+  target_cover_two_chart :
+    ∀ y : OnePoint ℂ,
+      y ∈ identityChart.source ∨ y ∈ inversionChart.source
+
+/--
 Degree-one meromorphic route data strong enough to give the smooth
 uniformization used by the global-gluing selector.
 
@@ -1424,8 +1448,24 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Two-chart Montel atlas frontier: construct the normalized local Montel atlas
-using exactly the identity and inversion target charts on `OnePoint ℂ`.
+Two-chart Montel cover frontier: construct the normalized local Montel atlas
+with explicit identity/inversion source cover and target-chart cover facts.
+-/
+theorem genusZero_twoChartMontelCoverSelector_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroTwoChartMontelCoverSelector X) := by
+  -- Field-specific analytic frontier: choose the identity/inversion Montel
+  -- source domains and prove they cover the surface while the public target
+  -- charts cover `OnePoint ℂ`.
+  sorry
+
+/--
+Two-chart Montel atlas assembly: forget the explicit two-chart cover facts
+and retain the two selected public target-chart patches.
 -/
 theorem genusZero_twoChartMontelAtlasSelector_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1434,10 +1474,8 @@ theorem genusZero_twoChartMontelAtlasSelector_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroTwoChartMontelAtlasSelector X) := by
-  -- Field-specific analytic frontier: choose the two normalized Montel chart
-  -- domains assigned to the public identity and inversion charts and prove
-  -- that they exhaust the selected atlas.
-  sorry
+  obtain ⟨data⟩ := genusZero_twoChartMontelCoverSelector_nonempty X _e
+  exact ⟨data.atlasSelector⟩
 
 /--
 Chart-ball-domain local Montel selector assembly: forget that the selected
