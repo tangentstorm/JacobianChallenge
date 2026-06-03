@@ -935,6 +935,54 @@ structure GenusZeroLocalMontelChartSelector
     ∀ i, (localPatch i).targetChart = (selector.family.patch i).targetChart
 
 /--
+Realization of one selected global patch by a normalized local Montel chart.
+
+The source chart identifies points of the source patch with points in the
+chart ball, while the patch coordinate is the Montel-limit chart-ball map in
+that source coordinate.  The inverse branch is also required to be compatible
+with the local inverse supplied by the inverse-function-theorem chart package.
+-/
+structure GenusZeroLocalMontelPatchRealization
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (patch : GenusZeroGlobalGluingPatch X)
+    (localPatch : GenusZeroLocalMontelChartPatch) where
+  sourceChart : X → ℂ
+  sourceChart_contMDiffOn :
+    ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) sourceChart patch.source
+  sourceChart_mem_chartBall :
+    ∀ x, x ∈ patch.source →
+      sourceChart x ∈
+        Metric.ball localPatch.chartBall.center (localPatch.chartBall.radius : ℝ)
+  coord_eq_chartBall :
+    ∀ x, x ∈ patch.source →
+      patch.coord x = localPatch.chartBall.toFun (sourceChart x)
+  invCoord_sourceChart_eq_localInverse :
+    ∀ z, z ∈ patch.targetChart.target →
+      sourceChart (patch.invCoord z) = localPatch.localChart.localOpen.symm z
+
+/--
+Global selector data whose selected patches are all realized by their local
+normalized Montel chart packages.
+
+This is stricter than `GenusZeroLocalMontelChartSelector`: it does not merely
+attach local packages to patches, but records that each patch coordinate and
+inverse branch are the ones induced by the attached local chart-ball limit.
+-/
+structure GenusZeroCoherentLocalMontelChartSelector
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  localSelector : GenusZeroLocalMontelChartSelector X
+  realization :
+    ∀ i, GenusZeroLocalMontelPatchRealization
+      (localSelector.selector.family.patch i) (localSelector.localPatch i)
+
+/--
 Degree-one meromorphic route data strong enough to give the smooth
 uniformization used by the global-gluing selector.
 
@@ -1300,9 +1348,26 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Local-chart-backed patch-selection frontier: construct the normalized global
-selector together with a local normalized Montel chart package over every
-selected source patch.
+Coherent local-chart patch-selection frontier: construct the normalized global
+selector together with local normalized Montel chart packages that realize the
+selected patch coordinates and inverse branches.
+-/
+theorem genusZero_coherentLocalMontelChartSelector_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroCoherentLocalMontelChartSelector X) := by
+  -- Field-specific analytic frontier: construct compatible normalized local
+  -- Montel chart-ball limits and prove that they realize the selected patch
+  -- coordinates and inverse branches.
+  sorry
+
+/--
+Local-chart-backed patch-selection assembly: forget the realization equations
+and retain the normalized local chart package attached to every selected
+source patch.
 -/
 theorem genusZero_localMontelChartSelector_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1311,9 +1376,8 @@ theorem genusZero_localMontelChartSelector_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroLocalMontelChartSelector X) := by
-  -- Field-specific analytic frontier: construct normalized local Montel
-  -- chart-ball limits for every patch and glue them into the global selector.
-  sorry
+  obtain ⟨data⟩ := genusZero_coherentLocalMontelChartSelector_nonempty X _e
+  exact ⟨data.localSelector⟩
 
 /--
 Analytic 2d patch-selection assembly: forget the local chart-ball witnesses
