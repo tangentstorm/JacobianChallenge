@@ -215,8 +215,13 @@ lemma pullback_comp_apply (P : Jacobian Z) :
         (JacobianChallenge.TraceDegree.analyticPullbackU g hg P.down))
   rw [JacobianChallenge.TraceDegree.analyticPullback_comp_applyU f hf g hg P.down]
 
+-- NB: the binder is named `hf` (not `_hf`) to match `Challenge.lean` exactly.
+-- The comparator compares the definition's *type* structurally, and Lean's
+-- derived `BEq` on `Expr` distinguishes binder names — so `_hf` vs `hf` would
+-- fail `definitionHoleMatches` even though the kernel types are defeq.
+set_option linter.unusedVariables false in
 noncomputable def _root_.ContMDiff.degree
-    (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
   open Classical in
   if _hconst : ∃ y₀, ∀ x, f x = y₀ then 0
   else

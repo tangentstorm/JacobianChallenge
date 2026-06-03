@@ -14,6 +14,17 @@
     "Jacobian.pullback_comp_apply",
     "Jacobian.pushforward_pullback"
   ],
+  "definition_names": [
+    "genus",
+    "Jacobian",
+    "Jacobian.instAddCommGroup",
+    "Jacobian.instTopologicalSpace",
+    "Jacobian.instChartedSpaceForallFinGenusComplex",
+    "Jacobian.ofCurve",
+    "Jacobian.pushforward",
+    "Jacobian.pullback",
+    "ContMDiff.degree"
+  ],
   "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
   "enable_nanoda": false
 }
