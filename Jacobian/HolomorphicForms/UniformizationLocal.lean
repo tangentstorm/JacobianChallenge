@@ -848,6 +848,47 @@ theorem exists_localNormalizedChartHomeomorphData
     simp [e, localOpenPartialHomeomorph]
 
 /--
+A normalized chart-ball limit with a packaged analytic chart-ball structure
+promotes to the local chart-homeomorphism data used by the genus-zero gluing
+construction.
+-/
+theorem exists_localNormalizedChartHomeomorphData_of_normalizedLimit
+    (data : ChartBallPowerSeries) {value slope : ℂ}
+    (hlimit :
+      NormalizedChartBallLimit data.center value slope data.radius data.toFun) :
+    Nonempty (LocalNormalizedChartHomeomorphData data) :=
+  exists_localNormalizedChartHomeomorphData data hlimit.deriv_ne_zero
+
+/--
+Montel/Weierstrass chart-ball limit promoted all the way to local chart data:
+if the locally uniform limit is itself packaged as a chart-ball power-series
+object, then the preserved nonzero derivative supplies the inverse-function
+theorem chart homeomorphism around the normalized center.
+-/
+theorem exists_localNormalizedChartHomeomorphData_of_tendstoLocallyUniformlyOn
+    (data : ℕ → ChartBallPowerSeries) (limitData : ChartBallPowerSeries)
+    {center value slope : ℂ} {radius : NNReal}
+    (hcenter : ∀ n, (data n).center = center)
+    (hradius : ∀ n, (data n).radius = radius)
+    (hlimit_center : limitData.center = center)
+    (hlim :
+      TendstoLocallyUniformlyOn
+        (fun n z => (data n).toFun z)
+        limitData.toFun atTop (Metric.ball center (radius : ℝ)))
+    (hvalue : ∀ n, (data n).toFun center = value)
+    (hderiv : ∀ n, deriv (data n).toFun center = slope)
+    (hslope : slope ≠ 0) :
+    Nonempty (LocalNormalizedChartHomeomorphData limitData) := by
+  have hnormalized :
+      NormalizedChartBallLimit center value slope radius limitData.toFun :=
+    normalizedChartBallLimit_of_tendstoLocallyUniformlyOn
+      data hcenter hradius hlim hvalue hderiv hslope
+  have hderiv_limit :
+      deriv limitData.toFun limitData.center ≠ 0 := by
+    simpa [hlimit_center] using hnormalized.deriv_ne_zero
+  exact exists_localNormalizedChartHomeomorphData limitData hderiv_limit
+
+/--
 Local open-image provider for a packaged chart-ball function.  If the image
 displacement is bounded below by `ε` on the boundary sphere and the function
 is frequently nonconstant at the center, then the image of the closed chart
