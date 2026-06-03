@@ -1,5 +1,37 @@
 # Whole-Project Axiom Audit
 
+> ⚠ **PARTIALLY SUPERSEDED — architecture change 2026-06-03.**
+> This audit was written (2026-06-01) when `Jacobian/Solution.lean` carried a
+> **two-tier** structure: a sorry-free *Type-0* implementation namespace
+> `JacobianChallenge.Solution.Jacobian₀.*` plus top-level `Jacobian.*` **stubs**
+> awaiting jc5's `Type → Type*` widen to delegate into it.
+>
+> That structure is **gone.** The `Jacobian₀` scaffold was deleted and the
+> public, universe-polymorphic `Jacobian.*` decls now carry the **real bodies
+> directly** (they call the `…U` universe-polymorphic engine decls, e.g.
+> `AbelJacobi.analyticOfCurveU`, `TraceDegree.analyticPullbackU`). The comparator
+> now matches via `definition_names` holes (see
+> [[reference_comparator_match_semantics]] and `comparator/*.json`).
+>
+> **What this means for the tables below:**
+> - Every row naming `JacobianChallenge.Solution.Jacobian₀.*` (§1C, §2.2 right
+>   column, §2.3) refers to a decl that **no longer exists**. Read it as the
+>   matching top-level `Jacobian.*` decl, which now holds that body.
+> - `Solution.genus_eq_zero_with_routeData_homeo` and
+>   `Jacobian₀.ofCurve_inj_with_meromorphicData` were also removed.
+> - The "23 Solution.lean stubs awaiting jc5's widen" framing (§2.1, §3.2, §5.2)
+>   is obsolete: the public decls are wired, not stubbed. The `sorryAx` that
+>   remains on them now flows from the genuine upstream engine sorries, not from
+>   `:= sorry` stub bodies.
+> - The custom-axiom analysis (§1, §3.3, §4.2, §5.1) and the upstream
+>   engine/frontier-sorry analysis (§2.4, §2.5, §3.1, §5.3–§5.5) are unaffected
+>   in substance — those decls were not renamed.
+>
+> The §-by-§ findings are preserved as a historical record of the 2026-06-01
+> state. A fresh full re-probe should accompany any new axiom-routing decision.
+
+---
+
 **Audit date:** 2026-06-01
 **Audit branch:** `jc3-axiom-audit` (off accepted M3 tip `8d3dae1e`)
 **Auditor:** jc3 (per Option C directive in `.sci/result.md` 2026-06-01)
@@ -73,15 +105,17 @@ These depend on **both** `sorryAx` *and* `localPullbackAt_holomorphic`. The
 `GenusZeroClassification` layers); the custom axiom arrives via the
 pullback definition itself.
 
-#### C. Solution.lean (Type-0 mirror) pullback chain
-- `JacobianChallenge.Solution.Jacobian₀.pullback`
-- `JacobianChallenge.Solution.Jacobian₀.pullback_contMDiff`
-- `JacobianChallenge.Solution.Jacobian₀.pullback_id_apply`
-- `JacobianChallenge.Solution.Jacobian₀.pullback_comp_apply`
-- `JacobianChallenge.Solution.Jacobian₀.pushforward_pullback`
+#### C. Solution.lean public pullback chain
+*(As of 2026-06-03 these are the top-level `Jacobian.*` decls; pre-2026-06-03
+they were the now-deleted `JacobianChallenge.Solution.Jacobian₀.*` mirror.)*
+- `Jacobian.pullback`
+- `Jacobian.pullback_contMDiff`
+- `Jacobian.pullback_id_apply`
+- `Jacobian.pullback_comp_apply`
+- `Jacobian.pushforward_pullback`
 
 Same dual dependence (`sorryAx` + custom axiom) — these are thin ULift
-wrappers around the `TraceDegree.analytic{Pullback,Pushforward}` decls in
+wrappers around the `TraceDegree.analytic{Pullback,Pushforward}U` decls in
 §B above.
 
 **Total decls touching the custom axiom: 13.** All on the pullback /
@@ -98,8 +132,11 @@ Quot.sound]`. The `+sorry` column marks `sorryAx` presence; `+LP` marks
 
 ### §2.1 — Top-level public spec (`Jacobian/Solution.lean`, lines 184–285)
 
-This is the **public API** that mirrors `Jacobian/Challenge.lean`. Currently
-defined as `sorry` stubs awaiting jc5's `Type → Type*` widen integration.
+This is the **public API** that mirrors `Jacobian/Challenge.lean`. *(2026-06-01:
+these were `sorry` stubs awaiting jc5's `Type → Type*` widen. As of 2026-06-03
+they are wired to the universe-polymorphic `…U` engine — no longer stubs — but
+the `+sorry`/`+LP` columns below still hold, since the engine retains the same
+upstream sorries and custom axiom.)*
 
 | Decl | STD | +sorry | +LP |
 |---|---|---|---|
@@ -131,13 +168,12 @@ top-level theorems are currently `sorryAx`-blocked.
 > it has an explicit `noncomputable def` body (Solution.lean L264-273)
 > using `Classical.choice` on `BranchedCoverData` existence — no `sorry`.
 
-> 🔴 The custom axiom `localPullbackAt_holomorphic` does **NOT** appear in
-> any of the public top-level `Jacobian.*` decls' axiom sets — because
-> they are gated by `sorryAx` upstream of the trace-pullback chain. After
-> jc5's widen lands and the `pullback`/`pullback_*` decls are wired to the
-> Type-0 implementation, this axiom **will** appear in the comparator
-> targets' axiom sets. The custom axiom IS on the path to the public
-> `pushforward_pullback` anti-hack theorem.
+> 🔴 The custom axiom `localPullbackAt_holomorphic` is on the path to the
+> public `pushforward_pullback` anti-hack theorem via the `pullback` chain.
+> *(2026-06-01 it did not yet appear in the public decls' axiom sets because
+> they were still `sorry` stubs; now that they are wired to the `…U` engine,
+> the `pullback`/`pullback_*`/`pushforward_pullback` decls carry both `sorryAx`
+> and `localPullbackAt_holomorphic` — see §2.3.)*
 
 ### §2.2 — Anti-hack theorems (CLAUDE.md §"Anti-hack theorems")
 
@@ -152,43 +188,50 @@ CLAUDE.md lists four anti-hack mechanisms:
 4. **`pushforward_pullback`** — forces pushforward/pullback/degree to
    interact through the classical trace identity.
 
-| Anti-hack | Public top-level | Solution `Jacobian₀` (Type-0) impl |
+*(2026-06-01 snapshot. The right column was the Type-0 `Jacobian₀` mirror,
+now deleted; its bodies live on the top-level `Jacobian.*` decls as of
+2026-06-03, so the two columns have effectively merged.)*
+
+| Anti-hack | Public top-level (2026-06-01 stub) | Real body (was `Jacobian₀`, now top-level) |
 |---|---|---|
 | `genus_eq_zero_iff_homeo` | `STD + sorry` | `STD + sorry` |
 | `ofCurve_inj` | `STD + sorry` | `STD + sorry` |
-| Lie-group instances | (instances not directly probed; see §2.1 — all instance-stubs `STD + sorry`) | wired through `inferInstanceAs (… ULift …)` per Solution.lean L71-80 |
+| Lie-group instances | (instances not directly probed; see §2.1 — all instance-stubs `STD + sorry`) | wired through `inferInstanceAs (… ULift …)` per Solution.lean |
 | `pushforward_pullback` | `STD + sorry` | **`STD + sorry + LP`** |
 
-The Type-0 mirror's `pushforward_pullback` is the one declaration where the
-custom axiom is load-bearing for an anti-hack theorem. Discharging
-`localPullbackAt_holomorphic` is what makes the trace identity REAL on the
-implementation side.
+`pushforward_pullback` is the one anti-hack theorem where the custom axiom is
+load-bearing. Discharging `localPullbackAt_holomorphic` is what makes the trace
+identity REAL.
 
-### §2.3 — Implementation namespace (`JacobianChallenge.Solution.Jacobian₀.*`)
+### §2.3 — Implementation decls (was `JacobianChallenge.Solution.Jacobian₀.*`)
 
-The sorry-free Type-0 implementation. After jc5's widen, the top-level
-`Jacobian.*` decls will delegate to these.
+> **2026-06-03 update.** The `Jacobian₀` Type-0 namespace was deleted; the
+> bodies catalogued below now live directly on the top-level `Jacobian.*` decls
+> (calling the `…U` engine). The two decls
+> `Jacobian₀.ofCurve_inj_with_meromorphicData` and
+> `Solution.genus_eq_zero_with_routeData_homeo` were removed entirely (their
+> content folded into / superseded by the public `ofCurve_inj` and
+> `genus_eq_zero_iff_homeo`). Rows renamed accordingly; the axiom columns are
+> unchanged in substance.
 
-| Decl | STD | +sorry | +LP |
+| Decl (current name) | STD | +sorry | +LP |
 |---|---|---|---|
-| `Jacobian₀` (type) | ✓ | ✓ | — |
-| `Jacobian₀.ofCurve` | ✓ | ✓ | — |
-| `Jacobian₀.ofCurve_contMDiff` | ✓ | ✓ | — |
-| `Jacobian₀.ofCurve_self` | ✓ | ✓ | — |
-| `Jacobian₀.ofCurve_inj` | ✓ | ✓ | — |
-| `Jacobian₀.ofCurve_inj_with_meromorphicData` | ✓ | ✓ | — |
-| `Jacobian₀.pushforward` | ✓ | ✓ | — |
-| `Jacobian₀.pushforward_contMDiff` | ✓ | ✓ | — |
-| `Jacobian₀.pushforward_id_apply` | ✓ | ✓ | — |
-| `Jacobian₀.pushforward_comp_apply` | ✓ | ✓ | — |
-| `Jacobian₀.pullback` | ✓ | ✓ | ✓ |
-| `Jacobian₀.pullback_contMDiff` | ✓ | ✓ | ✓ |
-| `Jacobian₀.pullback_id_apply` | ✓ | ✓ | ✓ |
-| `Jacobian₀.pullback_comp_apply` | ✓ | ✓ | ✓ |
-| `Jacobian₀.pushforward_pullback` | ✓ | ✓ | ✓ |
+| `Jacobian` (type) | ✓ | ✓ | — |
+| `Jacobian.ofCurve` | ✓ | ✓ | — |
+| `Jacobian.ofCurve_contMDiff` | ✓ | ✓ | — |
+| `Jacobian.ofCurve_self` | ✓ | ✓ | — |
+| `Jacobian.ofCurve_inj` | ✓ | ✓ | — |
+| `Jacobian.pushforward` | ✓ | ✓ | — |
+| `Jacobian.pushforward_contMDiff` | ✓ | ✓ | — |
+| `Jacobian.pushforward_id_apply` | ✓ | ✓ | — |
+| `Jacobian.pushforward_comp_apply` | ✓ | ✓ | — |
+| `Jacobian.pullback` | ✓ | ✓ | ✓ |
+| `Jacobian.pullback_contMDiff` | ✓ | ✓ | ✓ |
+| `Jacobian.pullback_id_apply` | ✓ | ✓ | ✓ |
+| `Jacobian.pullback_comp_apply` | ✓ | ✓ | ✓ |
+| `Jacobian.pushforward_pullback` | ✓ | ✓ | ✓ |
 | `Solution.genus` | ✓ | ✓ | — |
 | `Solution.genus_eq_zero_iff_homeo` | ✓ | ✓ | — |
-| `Solution.genus_eq_zero_with_routeData_homeo` | ✓ | ✓ | — |
 
 **Asymmetry observation:** The `pushforward` chain has NO `LP` dependency,
 but the `pullback` chain has `LP` on every decl. This matches the
@@ -288,13 +331,16 @@ must all be discharged:
 
 **Total: 14 reachable sorries** in non-Solution files.
 
-### §3.2 — The 23 reachable sorries in Solution.lean
-These are the **top-level `Jacobian.*` stubs** awaiting jc5's `Type → Type*`
-widen. Once the widen lands, each is a one-line delegation to the matching
-`Jacobian₀.*` (Type-0) impl. The implementation is already done sorry-free
-on the Type-0 side; this is mechanical wiring.
+### §3.2 — Solution.lean (obsolete as of 2026-06-03)
+*(2026-06-01: 23 top-level `Jacobian.*` `sorry` stubs awaiting jc5's
+`Type → Type*` widen.)* This obligation no longer exists in this form: the widen
+landed, the `Jacobian₀` scaffold was deleted, and the public decls now call the
+`…U` engine directly. The only `:= sorry` left in Solution.lean is the
+`StableChartAt` instance adapter (`Solution.lean:35`), which the smoketest
+tolerates via `sorryAx`. The remaining reachable sorries are the genuine
+upstream engine sorries in §3.1, not Solution-local stubs.
 
-**Total: 23 stubs** in Solution.lean.
+**Total: 1 stub** (`StableChartAt` adapter) in Solution.lean.
 
 ### §3.3 — The custom axiom
 **`JacobianChallenge.HolomorphicForms.localPullbackAt_holomorphic`** must be
@@ -312,34 +358,37 @@ upstream `sorryAx` are discharged.
 To pass `comparator/jacobian.json` (final mode) with zero `sorryAx` and
 zero custom axioms on every public decl:
 
-**14 (non-Solution sorries) + 23 (Solution stubs, via widen) + 1 (custom
-axiom) = 38 obligations.** Net reachable count: 37 (sorries) + 1 (axiom).
+**14 (non-Solution engine sorries) + 1 (`StableChartAt` Solution adapter) + 1
+(custom axiom) = 16 obligations.** *(2026-06-01 counted 38: 14 + 23 Solution
+stubs + 1 axiom. The 23 stubs were eliminated by the widen, replaced by the
+single `StableChartAt` adapter; re-run `scripts/list-sorries.py` for the current
+exact reachable count, which this audit no longer tracks live.)*
 
 ---
 
 ## §4. Alarming items / red flags
 
 ### §4.1 — None of the four anti-hack theorems is currently trivially satisfied
-All four anti-hacks (per CLAUDE.md):
-- `genus_eq_zero_iff_homeo` — `STD + sorry`, NOT proved trivially. The
-  Type-0 mirror `Solution.genus_eq_zero_iff_homeo` is also `STD + sorry`
-  (delegates to `analyticGenus_eq_zero_iff_homeomorphic_sphere` which is
+All four anti-hacks (per CLAUDE.md). *(Decl names updated 2026-06-03 to the
+public `Jacobian.*` decls that replaced the deleted `Jacobian₀` mirror; the
+substance is unchanged.)*
+- `genus_eq_zero_iff_homeo` — `STD + sorry`, NOT proved trivially. It
+  delegates to `analyticGenus_eq_zero_iff_homeomorphic_sphere`, which is
   `STD + sorry` via `exists_contMDiff_homeomorph_to_onePointCx` and the
-  meromorphic-data chain). When all upstream sorries discharge, this WILL
+  meromorphic-data chain. When all upstream sorries discharge, this WILL
   be honest. No trivialization detected.
-- `ofCurve_inj` — same pattern. `Solution.Jacobian₀.ofCurve_inj` delegates
-  to `AbelJacobi.analyticOfCurve_injective` which is sorry-blocked. When
+- `ofCurve_inj` — same pattern. `Jacobian.ofCurve_inj` delegates
+  to `AbelJacobi.analyticOfCurve_injectiveU` which is sorry-blocked. When
   that sorry discharges, this becomes honest.
-- Lie-group instances — `Solution.Jacobian₀` wires through
+- Lie-group instances — the `Jacobian X` instances wire through
   `inferInstanceAs (… ULift …)` to the `ComplexTorus.quotient` type, which
   is built from the period lattice (real construction). No instance is
-  `:= sorry`-only on the implementation side; the public top-level
-  instances at `Solution.lean:207-213` are sorry-stubbed pending jc5's
-  widen but the underlying Type-0 instances are real.
-- `pushforward_pullback` — `Solution.Jacobian₀.pushforward_pullback` is
+  `:= sorry`-only on the implementation side; the carrier and its instances
+  are real (the one remaining `sorry` is the `StableChartAt` adapter).
+- `pushforward_pullback` — `Jacobian.pushforward_pullback` is
   `STD + sorry + LP`. After upstream sorries + axiom discharge, this
   becomes the genuine trace identity. Currently NOT trivially satisfied;
-  delegates to `TraceDegree.analyticPushforward_analyticPullback` which is
+  delegates to `TraceDegree.analyticPushforward_analyticPullbackU` which is
   the real classical-trace proof modulo the same dependencies.
 
 > 🟢 **All four anti-hacks pass the audit.** No trivial fake construction
@@ -399,11 +448,12 @@ trace-degree territory. Substantial work — requires proving holomorphicity
 of a section through the local inverse branch — but the mathematical
 content is bounded and chart-local, similar in shape to DB-B.
 
-### §5.2 — Jc5's `Type → Type*` widen (E2 route-β)
-Unblocks the 23 Solution.lean stubs and makes them one-line delegations
-to the Type-0 implementation. After this lands, the public anti-hack
-theorems inherit their Type-0 axiom sets verbatim. **Highest count
-reduction**; minimal mathematical content.
+### §5.2 — Jc5's `Type → Type*` widen (E2 route-β) — ✅ DONE (2026-06-03)
+Completed. The widen landed, the `Jacobian₀` Type-0 scaffold was deleted, and
+the public `Jacobian.*` decls now carry the real bodies (calling the `…U`
+engine). The 23 Solution.lean stubs this item targeted no longer exist; the only
+remaining Solution-local `sorry` is the `StableChartAt` adapter. The public
+anti-hack theorems now inherit the engine's axiom sets verbatim.
 
 ### §5.3 — `analyticOfCurve_injective` (`AbelJacobi`)
 **One sorry**, unblocks `ofCurve_inj` (anti-hack #2). Lives in
@@ -475,10 +525,10 @@ build target). No source edits.
    record: it is `JacobianChallenge.HolomorphicForms.…`, not
    `JacobianChallenge.TraceDegree.…` (per §1).
 2. **Decide endgame priority** between (a) `localPullbackAt_holomorphic`
-   discharge (one axiom, 13 dependents), (b) jc5's widen (23 stubs, high
-   count, low risk), (c) frontier-sorry discharges in jc0 / Periods turf
-   (14 sorries, long pole). All three streams converge on a
-   sorry-free + axiom-clean public API; the question is sequencing.
+   discharge (one axiom, 13 dependents) and (c) frontier-sorry discharges in
+   jc0 / Periods turf (14 sorries, long pole). *(Item (b), jc5's widen, is
+   DONE — see §5.2.)* Both remaining streams converge on a sorry-free +
+   axiom-clean public API; the question is sequencing.
 3. **Decide if jc3 should take `analyticOfCurve_injective`** (`AbelJacobi`,
    one sorry, unblocks `ofCurve_inj` anti-hack) as a follow-up — it is
    adjacent to jc3's trace-machinery context but currently outside the
