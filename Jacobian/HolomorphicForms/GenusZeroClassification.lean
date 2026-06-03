@@ -1254,9 +1254,24 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Degree-one meromorphic route frontier for the Riemann sphere: construct the
-degree-one meromorphic data whose associated map is a biholomorphic
-uniformization.
+Single-pole meromorphic route frontier for the Riemann sphere: construct the
+single-pole meromorphic route payload used by the degree-one biholomorphic
+uniformization route.
+-/
+theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroSinglePoleMeromorphicRoute X) := by
+  -- Field-specific analytic frontier: construct single-pole meromorphic data
+  -- with compatible branch-cover payload.
+  sorry
+
+/--
+Degree-one meromorphic route assembly for the Riemann sphere: a single-pole
+meromorphic route canonically supplies the degree-one biholomorphic route.
 -/
 theorem genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1265,9 +1280,9 @@ theorem genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroDegreeOneBiholomorphicRoute X) := by
-  -- Field-specific analytic frontier: construct a degree-one meromorphic map
-  -- with compatible branch-cover data.
-  sorry
+  obtain ⟨route⟩ :=
+    genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty X _e
+  exact ⟨route.toDegreeOneBiholomorphicRoute⟩
 
 /--
 Smooth uniformization assembly for the Riemann sphere: degree-one meromorphic
@@ -1424,22 +1439,6 @@ theorem genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonem
   let d : SimplePoleToSphereData X P :=
     SimplePoleToSphereData.of_complexPrincipalPart F P hF
   exact ⟨P, singlePoleAnalyticData_of_simplePoleToSphereData (X := X) P d⟩
-
-/--
-Single-pole meromorphic route assembly for the Riemann sphere: existing
-single-pole analytic data directly supplies the route payload.
--/
-theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroSinglePoleMeromorphicRoute X) := by
-  obtain ⟨P, hdata⟩ :=
-    genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonempty X _e
-  obtain ⟨data⟩ := hdata
-  exact ⟨data.toGenusZeroSinglePoleMeromorphicRoute⟩
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
