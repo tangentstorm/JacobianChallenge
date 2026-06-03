@@ -1254,8 +1254,23 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Holomorphic one-form transport frontier for the Riemann sphere: construct a
-linear equivalence transporting holomorphic one-forms to `OnePoint ℂ`.
+Smooth uniformization frontier for the Riemann sphere: construct a
+biholomorphic homeomorphism to `OnePoint ℂ`.
+-/
+theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroSmoothUniformization X) := by
+  -- Field-specific analytic frontier: construct the genus-zero
+  -- biholomorphic uniformization of the Riemann sphere.
+  sorry
+
+/--
+Holomorphic one-form transport assembly for the Riemann sphere: a smooth
+uniformization transports holomorphic one-forms to `OnePoint ℂ`.
 -/
 theorem genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1264,9 +1279,9 @@ theorem genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
-  -- Field-specific analytic frontier: construct holomorphic one-form transport
-  -- to the Riemann sphere.
-  sorry
+  obtain ⟨smooth⟩ := genusZero_complexStructureUnique_smoothUniformization_nonempty X _e
+  exact ⟨holomorphicOneFormLinearEquivOfContMDiffHomeomorph
+    smooth.uniformization smooth.contMDiff_uniformization smooth.contMDiff_symm⟩
 
 /--
 Holomorphic one-form vanishing assembly for the Riemann sphere: transport to
@@ -1412,43 +1427,6 @@ route data induces the smooth homeomorphism required by the one-form transport
 step.
 -/
 theorem genusZero_complexStructureUnique_smoothUniformization_provider_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroSmoothUniformization X) := by
-  classical
-  obtain ⟨route⟩ :=
-    genusZero_complexStructureUnique_degreeOneBiholomorphicRoute_nonempty X _e
-  have hbij : Function.Bijective route.meromorphicMap.toMap :=
-    degree_one_bijective route.branchedCoverData route.branchedDegree_one
-  let e : X ≃ OnePoint ℂ :=
-    Equiv.ofBijective route.meromorphicMap.toMap hbij
-  have he : Continuous e := by
-    simpa [e] using route.analyticData.continuous_toMap
-  let uniformization : X ≃ₜ OnePoint ℂ :=
-    { e with
-      continuous_toFun := he
-      continuous_invFun := he.continuous_symm_of_equiv_compact_to_t2 }
-  refine ⟨
-    { uniformization := uniformization
-      contMDiff_uniformization := ?_
-      contMDiff_symm := ?_ }⟩
-  · simpa [uniformization, e] using
-      route.meromorphicMap.contMDiff_toMap_of_analyticData route.analyticData
-  · simpa [uniformization, e, hbij] using route.contMDiff_invMap
-
-/--
-Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
-meromorphic route data induces the smooth homeomorphism required by the
-two-chart global-gluing selector.
-
-This is the remaining genuine analytic genus-zero input.  It is narrower than
-the patch-selector/gluing data: once this smooth uniformization is available,
-the selector below is the explicit two-chart packaging.
--/
-theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
