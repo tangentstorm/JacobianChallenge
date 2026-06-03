@@ -8,6 +8,7 @@ import Jacobian.HolomorphicForms.EntireZero
 import Jacobian.HolomorphicForms.InversionChartContinuity
 import Jacobian.HolomorphicForms.ChartSectionContDiff
 import Jacobian.HolomorphicForms.PullbackBundled
+import Jacobian.HolomorphicForms.UniformizationLocal
 import Jacobian.TraceDegree.TraceDefinition
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 import Mathlib.Topology.Compactification.OnePoint.Sphere
@@ -887,6 +888,34 @@ structure GenusZeroSmoothUniformization
   contMDiff_symm :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) (uniformization.symm : OnePoint ℂ → X)
+
+/--
+One local normalized Montel chart used to build the global two-chart selector.
+
+The analytic part is the chart-ball power-series limit together with its
+inverse-function-theorem local homeomorphism.  The target-chart part records
+which public `OnePoint ℂ` chart this local coordinate is assigned to.
+-/
+structure GenusZeroLocalMontelChartPatch where
+  chartBall : ChartBallPowerSeries
+  localChart : chartBall.LocalNormalizedChartHomeomorphData
+  targetChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ
+  targetChart_standard : targetChart = identityChart ∨ targetChart = inversionChart
+
+/--
+A packaged normalized chart-ball limit with a standard `OnePoint ℂ` target
+chart gives the local Montel chart patch data used by the selector frontier.
+-/
+noncomputable def GenusZeroLocalMontelChartPatch.ofChartBallLimit
+    (chartBall : ChartBallPowerSeries)
+    (localChart : chartBall.LocalNormalizedChartHomeomorphData)
+    (targetChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ)
+    (targetChart_standard : targetChart = identityChart ∨ targetChart = inversionChart) :
+    GenusZeroLocalMontelChartPatch where
+  chartBall := chartBall
+  localChart := localChart
+  targetChart := targetChart
+  targetChart_standard := targetChart_standard
 
 /--
 Degree-one meromorphic route data strong enough to give the smooth
