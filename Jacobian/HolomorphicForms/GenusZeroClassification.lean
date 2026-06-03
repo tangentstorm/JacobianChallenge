@@ -1254,19 +1254,35 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Simple-pole principal-part frontier for the Riemann sphere: construct a finite
-complex-valued principal part with one simple pole.
+Fixed-pole principal-part frontier for the Riemann sphere: construct a finite
+complex-valued simple-pole principal part at the point over `∞`.
+-/
+theorem genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (e : X ≃ₜ OnePoint ℂ) :
+    ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F (e.symm OnePoint.infty) := by
+  -- Field-specific analytic frontier: construct the finite complex-valued
+  -- simple-pole principal part at the point over infinity.
+  sorry
+
+/--
+Simple-pole principal-part assembly for the Riemann sphere: the fixed pole over
+`∞` supplies the existential principal-part payload used by the single-pole
+analytic-data route.
 -/
 theorem genusZero_complexStructureUnique_simplePolePrincipalPart_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
+    (e : X ≃ₜ OnePoint ℂ) :
     ∃ P : X, ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F P := by
-  -- Field-specific analytic frontier: construct a finite complex-valued
-  -- simple-pole principal part from the topological sphere witness.
-  sorry
+  obtain ⟨F, hF⟩ :=
+    genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonempty X e
+  exact ⟨e.symm OnePoint.infty, F, hF⟩
 
 /--
 Single-pole analytic-data assembly for the Riemann sphere: a finite
@@ -1420,24 +1436,6 @@ theorem genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty
   exact genusZero_pointRRSection_outside_constants_exists X
     (e.symm OnePoint.infty)
     (genusZero_complexStructureUnique_analyticGenus_eq_zero X e)
-
-/--
-Fixed-pole principal-part assembly for the Riemann sphere: a fixed-pole
-algebraic RR section supplies the simple-pole principal part via the existing
-local Laurent providers.
--/
-theorem genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (e : X ≃ₜ OnePoint ℂ) :
-    ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F (e.symm OnePoint.infty) := by
-  obtain ⟨s⟩ :=
-    genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty X e
-  let rr : RiemannRochSectionAtPoint X (e.symm OnePoint.infty) :=
-    s.toRiemannRochSectionAtPoint
-  exact ⟨rr.finiteLift, rr.hasComplexSimplePolePrincipalPart⟩
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
