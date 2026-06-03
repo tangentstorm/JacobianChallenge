@@ -1254,8 +1254,24 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Fixed-pole principal-part frontier for the Riemann sphere: construct a finite
-complex-valued simple-pole principal part at the point over `∞`.
+Fixed-pole Riemann-Roch section frontier for the Riemann sphere: construct the
+algebraic RR section with prescribed pole at the point corresponding to `∞`.
+-/
+theorem genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (PointRiemannRochSection X (e.symm OnePoint.infty)) := by
+  -- Field-specific algebraic frontier: construct the fixed-pole RR section
+  -- at the point over infinity.
+  sorry
+
+/--
+Fixed-pole principal-part assembly for the Riemann sphere: a fixed-pole
+algebraic RR section supplies the simple-pole principal part via the existing
+local Laurent providers.
 -/
 theorem genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1264,9 +1280,11 @@ theorem genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonemp
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (e : X ≃ₜ OnePoint ℂ) :
     ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F (e.symm OnePoint.infty) := by
-  -- Field-specific analytic frontier: construct the finite complex-valued
-  -- simple-pole principal part at the point over infinity.
-  sorry
+  obtain ⟨s⟩ :=
+    genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty X e
+  let rr : RiemannRochSectionAtPoint X (e.symm OnePoint.infty) :=
+    s.toRiemannRochSectionAtPoint
+  exact ⟨rr.finiteLift, rr.hasComplexSimplePolePrincipalPart⟩
 
 /--
 Simple-pole principal-part assembly for the Riemann sphere: the fixed pole over
@@ -1418,24 +1436,6 @@ theorem genusZero_complexStructureUnique_analyticGenus_eq_zero
   letI : Subsingleton (HolomorphicOneForm ℂ X) :=
     genusZero_complexStructureUnique_holomorphicOneForms_subsingleton X _e
   exact analyticGenus_eq_zero_of_subsingleton
-
-/--
-Fixed-pole Riemann-Roch section assembly for the Riemann sphere: analytic
-genus zero supplies the algebraic RR section with prescribed pole at the point
-corresponding to `∞`.
--/
-theorem genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (PointRiemannRochSection X (e.symm OnePoint.infty)) := by
-  letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
-    compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
-  exact genusZero_pointRRSection_outside_constants_exists X
-    (e.symm OnePoint.infty)
-    (genusZero_complexStructureUnique_analyticGenus_eq_zero X e)
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
