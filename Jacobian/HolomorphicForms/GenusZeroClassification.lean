@@ -1254,7 +1254,21 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Analytic-genus-zero frontier for the Riemann sphere: holomorphic one-form
+Holomorphic one-form vanishing frontier for the Riemann sphere.
+-/
+theorem genusZero_complexStructureUnique_holomorphicOneForms_subsingleton
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Subsingleton (HolomorphicOneForm ℂ X) := by
+  -- Field-specific analytic frontier: prove holomorphic one-form vanishing
+  -- for a compact Riemann surface homeomorphic to the sphere.
+  sorry
+
+/--
+Analytic-genus-zero assembly for the Riemann sphere: holomorphic one-form
 vanishing implies the analytic genus is zero under the canonical
 finite-dimensionality instance.
 -/
@@ -1267,9 +1281,11 @@ theorem genusZero_complexStructureUnique_analyticGenus_eq_zero
     letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
       compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
     analyticGenus ℂ X = 0 := by
-  -- Field-specific analytic frontier: prove analytic genus zero for a compact
-  -- Riemann surface homeomorphic to the sphere.
-  sorry
+  letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+    compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
+  letI : Subsingleton (HolomorphicOneForm ℂ X) :=
+    genusZero_complexStructureUnique_holomorphicOneForms_subsingleton X _e
+  exact analyticGenus_eq_zero_of_subsingleton
 
 /--
 Fixed-pole Riemann-Roch section assembly for the Riemann sphere: analytic
@@ -1420,23 +1436,6 @@ theorem genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty
     genusZero_complexStructureUnique_smoothUniformization_provider_nonempty X _e
   exact ⟨holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     smooth.uniformization smooth.contMDiff_uniformization smooth.contMDiff_symm⟩
-
-/--
-Holomorphic one-form vanishing assembly for the Riemann sphere: transport to
-`OnePoint ℂ`, where holomorphic one-forms already vanish.
--/
-theorem genusZero_complexStructureUnique_holomorphicOneForms_subsingleton
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Subsingleton (HolomorphicOneForm ℂ X) := by
-  obtain ⟨eForms⟩ :=
-    genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty X _e
-  haveI : Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
-    holomorphicOneForm_onePointCx_subsingleton
-  exact eForms.toEquiv.subsingleton
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
