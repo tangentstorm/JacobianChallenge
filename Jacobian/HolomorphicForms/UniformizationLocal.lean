@@ -543,6 +543,50 @@ theorem deriv_limit_center_ne_zero_of_tendstoLocallyUniformlyOn_chartBall
     data hcenter hradius hlim hderiv]
   exact hslope
 
+/--
+Normalized chart-ball limit data extracted from a locally uniformly
+convergent normal family.  This is the local payload needed before promoting a
+Montel limit to a genuine coordinate chart in the global genus-zero gluing
+step.
+-/
+structure NormalizedChartBallLimit
+    (center value slope : ℂ) (radius : NNReal) (limit : ℂ → ℂ) where
+  differentiableOn_limit :
+    DifferentiableOn ℂ limit (Metric.ball center (radius : ℝ))
+  value_at_center : limit center = value
+  deriv_at_center : deriv limit center = slope
+  deriv_ne_zero : deriv limit center ≠ 0
+
+/--
+Locally uniform convergence of equally centered chart-ball maps preserves the
+normalization at the center and packages the resulting nonzero derivative.
+-/
+theorem normalizedChartBallLimit_of_tendstoLocallyUniformlyOn
+    (data : ℕ → ChartBallPowerSeries) {center value slope : ℂ} {radius : NNReal}
+    {limit : ℂ → ℂ}
+    (hcenter : ∀ n, (data n).center = center)
+    (hradius : ∀ n, (data n).radius = radius)
+    (hlim :
+      TendstoLocallyUniformlyOn
+        (fun n z => (data n).toFun z)
+        limit atTop (Metric.ball center (radius : ℝ)))
+    (hvalue : ∀ n, (data n).toFun center = value)
+    (hderiv : ∀ n, deriv (data n).toFun center = slope)
+    (hslope : slope ≠ 0) :
+    NormalizedChartBallLimit center value slope radius limit where
+  differentiableOn_limit :=
+    differentiableOn_limit_of_tendstoLocallyUniformlyOn_chartBall
+      data hcenter hradius hlim
+  value_at_center :=
+    limit_apply_center_of_tendstoLocallyUniformlyOn_chartBall
+      data hcenter hradius hlim hvalue
+  deriv_at_center :=
+    deriv_limit_center_of_tendstoLocallyUniformlyOn_chartBall
+      data hcenter hradius hlim hderiv
+  deriv_ne_zero :=
+    deriv_limit_center_ne_zero_of_tendstoLocallyUniformlyOn_chartBall
+      data hcenter hradius hlim hderiv hslope
+
 /-- The packaged function is analytic at the center of its chart ball. -/
 theorem analyticAt_center (data : ChartBallPowerSeries) :
     AnalyticAt ℂ data.toFun data.center :=
