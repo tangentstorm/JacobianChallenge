@@ -1254,8 +1254,28 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Holomorphic one-form vanishing frontier for the Riemann sphere: prove that all
-holomorphic one-forms on the genus-zero surface coincide.
+Holomorphic one-form transport frontier for the Riemann sphere: from the
+topological sphere witness, construct the linear equivalence that transports
+holomorphic one-forms on `X` to holomorphic one-forms on `OnePoint ℂ`.
+
+This is the concrete complex-structure-uniqueness input needed for one-form
+vanishing. Once it is available, vanishing follows from the already proved
+`holomorphicOneForm_onePointCx_subsingleton`.
+-/
+theorem genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
+  -- Field-specific analytic frontier: construct a smooth uniformization and
+  -- use it to transport holomorphic one-forms to `OnePoint ℂ`.
+  sorry
+
+/--
+Holomorphic one-form vanishing assembly for the Riemann sphere: transport to
+`OnePoint ℂ`, where holomorphic one-forms already vanish.
 -/
 theorem genusZero_complexStructureUnique_holomorphicOneForms_subsingleton
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1264,9 +1284,11 @@ theorem genusZero_complexStructureUnique_holomorphicOneForms_subsingleton
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
-  -- Field-specific analytic frontier: transport holomorphic one-forms to
-  -- `OnePoint ℂ`, where they already vanish.
-  sorry
+  obtain ⟨eForms⟩ :=
+    genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty X _e
+  haveI : Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
+    holomorphicOneForm_onePointCx_subsingleton
+  exact eForms.toEquiv.subsingleton
 
 /--
 Analytic-genus-zero assembly for the Riemann sphere: holomorphic one-form
@@ -1421,27 +1443,6 @@ theorem genusZero_complexStructureUnique_smoothUniformization_provider_nonempty
   · simpa [uniformization, e] using
       route.meromorphicMap.contMDiff_toMap_of_analyticData route.analyticData
   · simpa [uniformization, e, hbij] using route.contMDiff_invMap
-
-/--
-Holomorphic one-form transport frontier for the Riemann sphere: from the
-topological sphere witness, construct the linear equivalence that transports
-holomorphic one-forms on `X` to holomorphic one-forms on `OnePoint ℂ`.
-
-This is the concrete complex-structure-uniqueness input needed for one-form
-vanishing. Once it is available, vanishing follows from the already proved
-`holomorphicOneForm_onePointCx_subsingleton`.
--/
-theorem genusZero_complexStructureUnique_holomorphicOneForm_linearEquiv_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
-  obtain ⟨smooth⟩ :=
-    genusZero_complexStructureUnique_smoothUniformization_provider_nonempty X _e
-  exact ⟨holomorphicOneFormLinearEquivOfContMDiffHomeomorph
-    smooth.uniformization smooth.contMDiff_uniformization smooth.contMDiff_symm⟩
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
