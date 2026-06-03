@@ -1254,9 +1254,24 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Single-pole meromorphic route frontier for the Riemann sphere: construct the
-single-pole meromorphic route payload used by the degree-one biholomorphic
-uniformization route.
+Single-pole analytic-data frontier for the Riemann sphere: construct the
+existing project-wide `SinglePoleMeromorphicAnalyticData` payload at some pole
+from the topological sphere witness.
+-/
+theorem genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ P : X, Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
+  -- Field-specific analytic frontier: construct single-pole meromorphic
+  -- analytic data from the topological sphere witness.
+  sorry
+
+/--
+Single-pole meromorphic route assembly for the Riemann sphere: existing
+single-pole analytic data directly supplies the route payload.
 -/
 theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1265,9 +1280,10 @@ theorem genusZero_complexStructureUnique_singlePoleMeromorphicRoute_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroSinglePoleMeromorphicRoute X) := by
-  -- Field-specific analytic frontier: construct single-pole meromorphic data
-  -- with compatible branch-cover payload.
-  sorry
+  obtain ⟨P, hdata⟩ :=
+    genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonempty X _e
+  obtain ⟨data⟩ := hdata
+  exact ⟨data.toGenusZeroSinglePoleMeromorphicRoute⟩
 
 /--
 Degree-one meromorphic route assembly for the Riemann sphere: a single-pole
@@ -1421,24 +1437,6 @@ theorem genusZero_complexStructureUnique_simplePolePrincipalPart_nonempty
   obtain ⟨F, hF⟩ :=
     genusZero_complexStructureUnique_simplePolePrincipalPart_at_infty_nonempty X e
   exact ⟨e.symm OnePoint.infty, F, hF⟩
-
-/--
-Single-pole analytic-data assembly for the Riemann sphere: a finite
-simple-pole principal part canonically gives the existing project-wide
-`SinglePoleMeromorphicAnalyticData` payload at the same pole.
--/
-theorem genusZero_complexStructureUnique_singlePoleMeromorphicAnalyticData_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    ∃ P : X, Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
-  obtain ⟨P, F, hF⟩ :=
-    genusZero_complexStructureUnique_simplePolePrincipalPart_nonempty X _e
-  let d : SimplePoleToSphereData X P :=
-    SimplePoleToSphereData.of_complexPrincipalPart F P hF
-  exact ⟨P, singlePoleAnalyticData_of_simplePoleToSphereData (X := X) P d⟩
 
 /--
 Complex-structure uniqueness assembly for the Riemann sphere: the degree-one
