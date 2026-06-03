@@ -918,6 +918,23 @@ noncomputable def GenusZeroLocalMontelChartPatch.ofChartBallLimit
   targetChart_standard := targetChart_standard
 
 /--
+Global selector data backed by local normalized Montel chart patches.
+
+This is a stricter provider than `GenusZeroNormalizedMontelPatchSelector`: it
+keeps the already assembled global selector, and additionally records one
+local chart-ball/homeomorphism package for each selected source patch.
+-/
+structure GenusZeroLocalMontelChartSelector
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  selector : GenusZeroNormalizedMontelPatchSelector X
+  localPatch : selector.family.PatchIndex → GenusZeroLocalMontelChartPatch
+  localPatch_targetChart_eq :
+    ∀ i, (localPatch i).targetChart = (selector.family.patch i).targetChart
+
+/--
 Degree-one meromorphic route data strong enough to give the smooth
 uniformization used by the global-gluing selector.
 
@@ -1283,10 +1300,24 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Analytic 2d patch-selection frontier: choose a finite source cover carrying
-the normalized local Montel limits, with each patch assigned to one of the two
-standard target charts on `OnePoint ℂ`, and prove that these local coordinates
-represent the chosen genus-zero uniformization.
+Local-chart-backed patch-selection frontier: construct the normalized global
+selector together with a local normalized Montel chart package over every
+selected source patch.
+-/
+theorem genusZero_localMontelChartSelector_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroLocalMontelChartSelector X) := by
+  -- Field-specific analytic frontier: construct normalized local Montel
+  -- chart-ball limits for every patch and glue them into the global selector.
+  sorry
+
+/--
+Analytic 2d patch-selection assembly: forget the local chart-ball witnesses
+and retain the normalized global selector used by the gluing route.
 -/
 theorem genusZero_normalizedMontelPatchSelector_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1295,9 +1326,8 @@ theorem genusZero_normalizedMontelPatchSelector_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroNormalizedMontelPatchSelector X) := by
-  -- Field-specific analytic frontier: construct the normalized two-chart
-  -- Montel patch selector for the genus-zero Riemann sphere.
-  sorry
+  obtain ⟨data⟩ := genusZero_localMontelChartSelector_nonempty X _e
+  exact ⟨data.selector⟩
 
 /--
 Smooth uniformization assembly for the Riemann sphere: the normalized
