@@ -1031,6 +1031,34 @@ structure GenusZeroChartBallDomainLocalMontelSelector
             ((transitionSelector.coherentSelector.localSelector.localPatch i).chartBall.radius : ℝ)
 
 /--
+Chart-ball-domain local Montel selector with exactly the two public target
+charts of `OnePoint ℂ`.
+
+This is stricter than an arbitrary finite chart-ball-domain cover: it records
+the identity-chart and inversion-chart source patches explicitly and proves
+that every selected patch is one of those two patches.
+-/
+structure GenusZeroTwoChartMontelAtlasSelector
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  chartBallSelector : GenusZeroChartBallDomainLocalMontelSelector X
+  identityIndex :
+    chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.PatchIndex
+  inversionIndex :
+    chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.PatchIndex
+  targetChart_identity :
+    (chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch
+      identityIndex).targetChart = identityChart
+  targetChart_inversion :
+    (chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch
+      inversionIndex).targetChart = inversionChart
+  patch_index_exhausted :
+    ∀ i,
+      i = identityIndex ∨ i = inversionIndex
+
+/--
 Degree-one meromorphic route data strong enough to give the smooth
 uniformization used by the global-gluing selector.
 
@@ -1396,9 +1424,24 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Chart-ball-domain local Montel selector frontier: construct compatible local
-Montel chart packages whose selected source patches are exactly their
-chart-ball domains.
+Two-chart Montel atlas frontier: construct the normalized local Montel atlas
+using exactly the identity and inversion target charts on `OnePoint ℂ`.
+-/
+theorem genusZero_twoChartMontelAtlasSelector_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroTwoChartMontelAtlasSelector X) := by
+  -- Field-specific analytic frontier: choose the two normalized Montel chart
+  -- domains assigned to the public identity and inversion charts and prove
+  -- that they exhaust the selected atlas.
+  sorry
+
+/--
+Chart-ball-domain local Montel selector assembly: forget that the selected
+atlas is exactly the public identity/inversion two-chart atlas.
 -/
 theorem genusZero_chartBallDomainLocalMontelSelector_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1407,10 +1450,8 @@ theorem genusZero_chartBallDomainLocalMontelSelector_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroChartBallDomainLocalMontelSelector X) := by
-  -- Field-specific analytic frontier: choose normalized local Montel limits
-  -- whose chart-ball domains form the selected source cover and whose
-  -- transition identities are compatible on overlaps.
-  sorry
+  obtain ⟨data⟩ := genusZero_twoChartMontelAtlasSelector_nonempty X _e
+  exact ⟨data.chartBallSelector⟩
 
 /--
 Transition-compatible local-chart patch-selection assembly: forget that the
