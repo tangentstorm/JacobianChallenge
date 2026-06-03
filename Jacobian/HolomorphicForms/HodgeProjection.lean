@@ -143,24 +143,45 @@ theorem harmonicProjection1_harmonicEmbed
     harmonicProjection1 X (harmonicEmbed X h) = h := rfl
 
 /--
-**Hodge decomposition provider (degree 1) — NARROWEST ROOT.**
+**Period-payload exactness — MINIMAL SUBSTRATE-FRONTIER ROOT.**
+For a closed 1-form `ω`, the pure period-payload form `(0, ω.2)` (zero
+coefficient, the form's period data) is exact: `(0, ω.2) ∈ ExactForm 0 X`.
+
+This is the *single, projection-free* analytic fact the Hodge decomposition in
+degree 1 reduces to: once the harmonic (coefficient) part is split off, the
+remainder is exactly the period payload, and the content is that this payload is
+realizable as `dθ` for some 0-form `θ`.  It is strictly narrower than
+`harmonicProjection1_hodgeDecomposition` — no projection/embedding wrapper, a
+bare statement about `ω.2`.
+
+NOTE (substrate frontier): on the current zero-differential `SmoothDiffForm`
+surrogate `exteriorDerivative := 0`, so `ExactForm 0 X = ⊥` and this root
+collapses to `ω.2 = 0`, which is not yet true for the period-only forms the
+surrogate admits.  It becomes the honest classical fact once `exteriorDerivative`
+is given real chartwise content (owner of `SmoothDifferentialForm.lean`).  This
+is the exact input that file's owner must supply; see `.sci/result.md`. -/
+theorem hodgeRemainder_periodPayload_exact
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0) :
+    ((0 : SmoothDiffFormCoeff 1 X), ω.2) ∈ ExactForm 0 X := by
+  sorry
+
+/--
+**Hodge decomposition provider (degree 1).**
 Every closed 1-form `ω` differs from the embedded harmonic representative of
 its own projection by an *exact* form:
 `ω - harmonicEmbed X (harmonicProjection1 X ω) ∈ ExactForm 0 X`.
 
-This is the single honest analytic input of the Hodge theorem in degree 1
-(orthogonal splitting `closed = harmonic ⊕ exact`).  It is the strictly
-narrower root obligation produced by the provider-discipline decomposition of
-`harmonicProjection1_kernel_subset_exact`: the *assembly below is sorry-free*
-and reduces the kernel-exactness statement to exactly this splitting.
+This is the orthogonal-splitting input of the Hodge theorem in degree 1
+(`closed = harmonic ⊕ exact`), used by the sorry-free
+`harmonicProjection1_kernel_subset_exact` assembly below.
 
-NOTE (substrate frontier): on the current zero-differential `SmoothDiffForm`
-surrogate `exteriorDerivative := 0`, so `ExactForm 0 X = ⊥` and this provider
-collapses to `ω.2 = 0`, which is not yet true for the period-only forms the
-surrogate admits.  The honest statement becomes true once `exteriorDerivative`
-is given real chartwise content (owner of `SmoothDifferentialForm.lean`); the
-decomposition here is the correct shape to consume that content.  See
-`.sci/result.md`. -/
+**Now sorry-free**: the subtracted form is the embedded harmonic projection
+`(ω.1, 0)`, so the remainder is the pure period payload `(0, ω.2)`, whose
+exactness is supplied by the minimal root `hodgeRemainder_periodPayload_exact`. -/
 theorem harmonicProjection1_hodgeDecomposition
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -168,7 +189,13 @@ theorem harmonicProjection1_hodgeDecomposition
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0) :
     ω - harmonicEmbed X (harmonicProjection1 X ω) ∈ ExactForm 0 X := by
-  sorry
+  have hrem : ω - harmonicEmbed X (harmonicProjection1 X ω)
+      = ((0 : SmoothDiffFormCoeff 1 X), ω.2) := by
+    apply Prod.ext
+    · simp [harmonicEmbed, harmonicProjection1]
+    · simp [harmonicEmbed, harmonicProjection1]
+  rw [hrem]
+  exact hodgeRemainder_periodPayload_exact X ω hclosed
 
 /--
 **Current-model Hodge representative uniqueness.** If a closed
