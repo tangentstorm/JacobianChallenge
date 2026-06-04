@@ -2983,6 +2983,58 @@ theorem genusZero_pointRRSection_outside_constants_of_analyticData
   exact le_of_eq horderP.symm
 
 /--
+Bridge from genus-zero biholomorphic uniformization to a prescribed-pole
+single-pole meromorphic map.
+
+Mathematically, choose the genus-zero biholomorphism `X ≃ OnePoint ℂ`, take
+the standard simple-pole coordinate on `OnePoint ℂ` with pole at the image of
+`P`, and pull it back along the biholomorphism.  The resulting map has pole
+divisor `Divisor.point P`, the required analytic data, and the pole modulus
+data.
+-/
+theorem singlePoleAnalyticData_of_biholomorph_onePoint
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (e : X ≃ₜ OnePoint ℂ)
+    (he :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ))
+    (he_symm :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
+    Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
+  -- Pullback frontier: pull back the standard simple-pole coordinate on
+  -- `OnePoint ℂ` with pole at `e P` along the biholomorphism `e`, and package
+  -- the resulting pole divisor, nonconstancy, modulus, and analytic data.
+  sorry
+
+/--
+Genus-zero analytic uniformization provider in the form needed by the
+prescribed-pole meromorphic-map route.
+
+This is separate from `singlePoleAnalyticData_of_biholomorph_onePoint`: it
+constructs the biholomorphism from the analytic-genus-zero hypothesis, while
+the bridge below consumes explicit biholomorphic data.
+-/
+theorem exists_biholomorph_onePoint_of_analyticGenus_zero
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_h : analyticGenus ℂ X = 0) :
+    ∃ (e : X ≃ₜ OnePoint ℂ),
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ) ∧
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X) := by
+  -- Genus-zero uniformization frontier: construct a biholomorphism
+  -- `X ≃ OnePoint ℂ` from `analyticGenus ℂ X = 0`.
+  sorry
+
+/--
 **Headline missing input.** Genus-zero compact connected Riemann surfaces
 admit an honest analytic simple-pole meromorphic map at `P`.
 
@@ -2998,7 +3050,8 @@ theorem genusZero_singlePoleMeromorphicAnalyticData_nonempty
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
-  sorry
+  obtain ⟨e, he, he_symm⟩ := exists_biholomorph_onePoint_of_analyticGenus_zero X h
+  exact singlePoleAnalyticData_of_biholomorph_onePoint X P e he he_symm
 
 theorem genusZero_pointRRSection_outside_constants_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
