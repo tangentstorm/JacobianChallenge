@@ -1120,6 +1120,32 @@ structure GenusZeroNormalizedTwoChartMontelCoverSelector
       coverSelector.inversionLocalPatch.chartBall.center = 1
 
 /--
+Two-chart Montel cover selector with packaged normalized chart-ball limits.
+
+Instead of carrying only the projected value and derivative equations, this
+records the local Montel/Weierstrass normalized-limit package for each public
+target chart.
+-/
+structure GenusZeroNormalizedLimitTwoChartMontelCoverSelector
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  coverSelector : GenusZeroTwoChartMontelCoverSelector X
+  identity_normalizedLimit :
+    ChartBallPowerSeries.NormalizedChartBallLimit
+      coverSelector.identityLocalPatch.chartBall.center
+      0 1
+      coverSelector.identityLocalPatch.chartBall.radius
+      coverSelector.identityLocalPatch.chartBall.toFun
+  inversion_normalizedLimit :
+    ChartBallPowerSeries.NormalizedChartBallLimit
+      coverSelector.inversionLocalPatch.chartBall.center
+      0 1
+      coverSelector.inversionLocalPatch.chartBall.radius
+      coverSelector.inversionLocalPatch.chartBall.toFun
+
+/--
 Degree-one meromorphic route data strong enough to give the smooth
 uniformization used by the global-gluing selector.
 
@@ -1485,9 +1511,25 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Normalized two-chart Montel cover frontier: construct the identity and
-inversion local Montel charts with standard center value and derivative
-normalization.
+Normalized-limit two-chart Montel cover frontier: construct the identity and
+inversion local Montel charts with their packaged normalized chart-ball limit
+data.
+-/
+theorem genusZero_normalizedLimitTwoChartMontelCoverSelector_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroNormalizedLimitTwoChartMontelCoverSelector X) := by
+  -- Field-specific analytic frontier: extract the normalized local Montel
+  -- limits for the identity and inversion chart domains, with preserved
+  -- center value and nonzero derivative packaged by `NormalizedChartBallLimit`.
+  sorry
+
+/--
+Normalized two-chart Montel cover assembly: project the packaged
+normalized-limit witnesses to their center value and derivative equations.
 -/
 theorem genusZero_normalizedTwoChartMontelCoverSelector_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1496,10 +1538,13 @@ theorem genusZero_normalizedTwoChartMontelCoverSelector_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroNormalizedTwoChartMontelCoverSelector X) := by
-  -- Field-specific analytic frontier: choose normalized identity/inversion
-  -- Montel chart-ball limits with value `0` and derivative `1` at their
-  -- centers, and prove the resulting two-chart cover.
-  sorry
+  obtain ⟨data⟩ := genusZero_normalizedLimitTwoChartMontelCoverSelector_nonempty X _e
+  exact ⟨
+    { coverSelector := data.coverSelector
+      identity_value_at_center := data.identity_normalizedLimit.value_at_center
+      identity_deriv_at_center := data.identity_normalizedLimit.deriv_at_center
+      inversion_value_at_center := data.inversion_normalizedLimit.value_at_center
+      inversion_deriv_at_center := data.inversion_normalizedLimit.deriv_at_center }⟩
 
 /--
 Two-chart Montel cover assembly: forget the center normalizations and retain
