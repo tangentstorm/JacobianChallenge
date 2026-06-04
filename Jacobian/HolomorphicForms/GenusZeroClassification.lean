@@ -890,6 +890,28 @@ structure GenusZeroSmoothUniformization
       (⊤ : WithTop ℕ∞) (uniformization.symm : OnePoint ℂ → X)
 
 /--
+Genus-zero uniformization theorem, stated as the single high-level analytic
+provider needed by this file: a compact connected Riemann surface
+homeomorphic to the Riemann sphere admits a biholomorphism to `OnePoint ℂ`.
+
+The given homeomorphism is only topological; the theorem constructs a possibly
+different homeomorphism that is complex-smooth in both directions.
+-/
+theorem exists_biholomorph_onePoint_of_genus_zero
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (f : X ≃ₜ OnePoint ℂ),
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) f ∧
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) f.symm := by
+  -- Classical uniformization of a genus-zero compact Riemann surface.
+  sorry
+
+/--
 One local normalized Montel chart used to build the global two-chart selector.
 
 The analytic part is the chart-ball power-series limit together with its
@@ -1511,144 +1533,9 @@ noncomputable def holomorphicOneFormLinearEquivOfContMDiffHomeomorph
     exact funext fun x => e.symm_apply_apply x
 
 /--
-Normalized-limit two-chart Montel cover frontier: construct the identity and
-inversion local Montel charts with their packaged normalized chart-ball limit
-data.
--/
-theorem genusZero_normalizedLimitTwoChartMontelCoverSelector_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroNormalizedLimitTwoChartMontelCoverSelector X) := by
-  -- Field-specific analytic frontier: extract the normalized local Montel
-  -- limits for the identity and inversion chart domains, with preserved
-  -- center value and nonzero derivative packaged by `NormalizedChartBallLimit`.
-  sorry
-
-/--
-Normalized two-chart Montel cover assembly: project the packaged
-normalized-limit witnesses to their center value and derivative equations.
--/
-theorem genusZero_normalizedTwoChartMontelCoverSelector_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroNormalizedTwoChartMontelCoverSelector X) := by
-  obtain ⟨data⟩ := genusZero_normalizedLimitTwoChartMontelCoverSelector_nonempty X _e
-  exact ⟨
-    { coverSelector := data.coverSelector
-      identity_value_at_center := data.identity_normalizedLimit.value_at_center
-      identity_deriv_at_center := data.identity_normalizedLimit.deriv_at_center
-      inversion_value_at_center := data.inversion_normalizedLimit.value_at_center
-      inversion_deriv_at_center := data.inversion_normalizedLimit.deriv_at_center }⟩
-
-/--
-Two-chart Montel cover assembly: forget the center normalizations and retain
-the explicit identity/inversion source and target cover facts.
--/
-theorem genusZero_twoChartMontelCoverSelector_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroTwoChartMontelCoverSelector X) := by
-  obtain ⟨data⟩ := genusZero_normalizedTwoChartMontelCoverSelector_nonempty X _e
-  exact ⟨data.coverSelector⟩
-
-/--
-Two-chart Montel atlas assembly: forget the explicit two-chart cover facts
-and retain the two selected public target-chart patches.
--/
-theorem genusZero_twoChartMontelAtlasSelector_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroTwoChartMontelAtlasSelector X) := by
-  obtain ⟨data⟩ := genusZero_twoChartMontelCoverSelector_nonempty X _e
-  exact ⟨data.atlasSelector⟩
-
-/--
-Chart-ball-domain local Montel selector assembly: forget that the selected
-atlas is exactly the public identity/inversion two-chart atlas.
--/
-theorem genusZero_chartBallDomainLocalMontelSelector_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroChartBallDomainLocalMontelSelector X) := by
-  obtain ⟨data⟩ := genusZero_twoChartMontelAtlasSelector_nonempty X _e
-  exact ⟨data.chartBallSelector⟩
-
-/--
-Transition-compatible local-chart patch-selection assembly: forget that the
-selected source patches are exactly chart-ball domains.
--/
-theorem genusZero_transitionCoherentLocalMontelChartSelector_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroTransitionCoherentLocalMontelChartSelector X) := by
-  obtain ⟨data⟩ := genusZero_chartBallDomainLocalMontelSelector_nonempty X _e
-  exact ⟨data.transitionSelector⟩
-
-/--
-Coherent local-chart patch-selection assembly: forget the explicit transition
-identity and retain the realized local chart package over every selected patch.
--/
-theorem genusZero_coherentLocalMontelChartSelector_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroCoherentLocalMontelChartSelector X) := by
-  obtain ⟨data⟩ := genusZero_transitionCoherentLocalMontelChartSelector_nonempty X _e
-  exact ⟨data.coherentSelector⟩
-
-/--
-Local-chart-backed patch-selection assembly: forget the realization equations
-and retain the normalized local chart package attached to every selected
-source patch.
--/
-theorem genusZero_localMontelChartSelector_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroLocalMontelChartSelector X) := by
-  obtain ⟨data⟩ := genusZero_coherentLocalMontelChartSelector_nonempty X _e
-  exact ⟨data.localSelector⟩
-
-/--
-Analytic 2d patch-selection assembly: forget the local chart-ball witnesses
-and retain the normalized global selector used by the gluing route.
--/
-theorem genusZero_normalizedMontelPatchSelector_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroNormalizedMontelPatchSelector X) := by
-  obtain ⟨data⟩ := genusZero_localMontelChartSelector_nonempty X _e
-  exact ⟨data.selector⟩
-
-/--
 Smooth uniformization assembly for the Riemann sphere: the normalized
-Montel patch selector carries the biholomorphic homeomorphism and its smooth
-inverse.
+genus-zero uniformization theorem supplies the biholomorphic homeomorphism
+and its smooth inverse directly.
 -/
 theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1657,11 +1544,11 @@ theorem genusZero_complexStructureUnique_smoothUniformization_nonempty
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroSmoothUniformization X) := by
-  obtain ⟨selector⟩ := genusZero_normalizedMontelPatchSelector_nonempty X _e
+  obtain ⟨f, hf, hf_symm⟩ := exists_biholomorph_onePoint_of_genus_zero X _e
   exact ⟨
-    { uniformization := selector.uniformization
-      contMDiff_uniformization := selector.uniformization_contMDiff
-      contMDiff_symm := selector.inverse_uniformization_contMDiff }⟩
+    { uniformization := f
+      contMDiff_uniformization := hf
+      contMDiff_symm := hf_symm }⟩
 
 /--
 Holomorphic one-form transport assembly for the Riemann sphere: a smooth
@@ -1848,19 +1735,6 @@ theorem genusZero_complexStructureUnique_smoothUniformization_provider_nonempty
   · simpa [uniformization, e] using
       route.meromorphicMap.contMDiff_toMap_of_analyticData route.analyticData
   · simpa [uniformization, e, hbij] using route.contMDiff_invMap
-
-/--
-Global 2d patch-selection assembly: forget the analytic Montel witnesses and
-retain the finite source-cover family used by the downstream gluing leaves.
--/
-theorem genusZeroGlobalPatchFamily_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroGlobalPatchFamily X) := by
-  exact ⟨(Classical.choice (genusZero_normalizedMontelPatchSelector_nonempty X e)).family⟩
 
 /--
 Target-membership frontier for local gluing coordinates: every normalized
@@ -2088,61 +1962,6 @@ theorem genusZeroGlobalGluing_contMDiff_invMap
   exact selector.inverse_uniformization_contMDiff
 
 /--
-Global gluing data assembly from the named field-specific frontiers above.
--/
-theorem genusZeroGlobalGluingData_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (GenusZeroGlobalGluingData X) := by
-  classical
-  let selector : GenusZeroNormalizedMontelPatchSelector X :=
-    Classical.choice (genusZero_normalizedMontelPatchSelector_nonempty X e)
-  let family : GenusZeroGlobalPatchFamily X := selector.family
-  let toMap : X → OnePoint ℂ := genusZeroGlobalGluing_toMap family
-  let invMap : OnePoint ℂ → X := selector.uniformization.symm
-  have htarget :
-      ∀ i x, x ∈ (family.patch i).source →
-        toMap x ∈ (family.patch i).targetChart.source := by
-    exact genusZeroGlobalGluing_toMap_target_mem_on_patch selector
-  have hchart :
-      ∀ i x, x ∈ (family.patch i).source →
-        (family.patch i).targetChart (toMap x) = (family.patch i).coord x := by
-    exact genusZeroGlobalGluing_chart_expression_on_patch selector
-  have hinv_branch :
-      ∀ i z, z ∈ (family.patch i).targetChart.target →
-        invMap ((family.patch i).targetChart.symm z) = (family.patch i).invCoord z := by
-    intro i z hz
-    dsimp [family, invMap] at i z hz ⊢
-    exact (selector.invCoord_represents_uniformization i z hz).symm
-  refine ⟨
-    { PatchIndex := family.PatchIndex
-      patch_fintype := family.patch_fintype
-      patch_nonempty := family.patch_nonempty
-      patch := family.patch
-      patch_cover := family.patch_cover
-      target_chart_cover := family.target_chart_cover
-      toMap := toMap
-      invMap := invMap
-      target_mem_on_patch := htarget
-      chart_expression_on_patch := hchart
-      overlap_compatible :=
-        genusZeroGlobalGluing_overlap_compatible selector
-      inverse_branch_agrees_on_patch := hinv_branch
-      local_left_inverse_on_patch :=
-        genusZeroGlobalGluing_local_left_inverse_on_patch selector
-      local_right_inverse_on_target_chart :=
-        genusZeroGlobalGluing_local_right_inverse_on_target_chart selector
-      contMDiff_toMap :=
-        genusZeroGlobalGluing_contMDiff_toMap selector
-      contMDiff_invMap :=
-        genusZeroGlobalGluing_contMDiff_invMap selector }⟩
-
-
-
-/--
 **Structural axiom (G1a, uniformization at genus 0).** A compact
 connected Riemann surface homeomorphic to `OnePoint ℂ` (= ℂℙ¹) admits a
 *biholomorphism* to `OnePoint ℂ` — i.e. there EXISTS a homeomorphism
@@ -2166,8 +1985,7 @@ theorem exists_contMDiff_homeomorph_to_onePointCx
         (⊤ : WithTop ℕ∞) f ∧
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) f.symm := by
-  obtain ⟨data⟩ := genusZeroGlobalGluingData_nonempty X _e
-  exact data.exists_contMDiff_homeomorph
+  exact exists_biholomorph_onePoint_of_genus_zero X _e
 
 /-
 Construct a `ℂ`-linear equivalence between holomorphic 1-form spaces
