@@ -1,5 +1,6 @@
 import Jacobian.TraceDegree.AnalyticPullbackContMDiffU
 import Jacobian.TraceDegree.TraceFormsIdU
+import Jacobian.TraceDegree.TraceFormsBundledCompU
 
 /-!
 # Universe-polymorphic analytic-pullback functoriality
@@ -93,7 +94,7 @@ theorem traceFormsBundledLM_compU
     traceFormsBundledLM (X := X) (Y := Z) (g ∘ f) (hg.comp hf) =
       (traceFormsBundledLM (X := Y) (Y := Z) g hg).comp
         (traceFormsBundledLM (X := X) (Y := Y) f hf) :=
-  sorry
+  JacobianChallenge.TraceDegree.TraceFormsBundledCompU.traceFormsBundledLM_comp_genuineU f hf g hg
 
 /-!
 ### Genuine downstream assembly (no sorry of its own)
