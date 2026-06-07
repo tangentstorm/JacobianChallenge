@@ -111,6 +111,86 @@ INJECTED_STYLE = """
 </style>
 """
 
+# A client-side node search/filter box: type a substring (or /regex/) and
+# matching nodes are highlighted while the rest dim. Re-applies after every
+# d3-graphviz render (zoom/pan re-attach the SVG) via a MutationObserver.
+INJECTED_SEARCH = """
+<style id="depgraph-search-style">
+#dg-search-box {
+  position: fixed; top: 0.6rem; right: 0.8rem; z-index: 30;
+  display: flex; align-items: center; gap: 0.4em;
+  background: rgba(255,255,255,0.95); border: 1px solid #ccc;
+  border-radius: 6px; padding: 0.3em 0.5em; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font: 13px -apple-system, "Helvetica Neue", sans-serif;
+}
+#dg-search-box input {
+  border: 1px solid #bbb; border-radius: 4px; padding: 0.25em 0.45em;
+  width: 15em; font-size: 13px;
+}
+#dg-search-box .dg-count { color: #666; min-width: 4.5em; text-align: right; }
+#dg-search-box button {
+  border: 1px solid #bbb; border-radius: 4px; background: #fff;
+  cursor: pointer; padding: 0.2em 0.45em; font-size: 13px;
+}
+/* Dim non-matches; highlight matches. Applied as classes on g.node. */
+.node.dg-dim   { opacity: 0.15; }
+.node.dg-hit > ellipse, .node.dg-hit > polygon, .node.dg-hit > path {
+  stroke: #d6336c !important; stroke-width: 3.5 !important;
+}
+.node.dg-hit > text { font-weight: 700; }
+html[data-theme="dark"] #dg-search-box { background: rgba(40,40,40,0.95); color: #ddd; border-color: #555; }
+html[data-theme="dark"] #dg-search-box input,
+html[data-theme="dark"] #dg-search-box button { background: #2b2b2b; color: #ddd; border-color: #555; }
+</style>
+<div id="dg-search-box">
+  <span>🔍</span>
+  <input id="dg-search-input" type="search" placeholder="filter nodes…  (/regex/ ok)" autocomplete="off" />
+  <span class="dg-count" id="dg-search-count"></span>
+  <button id="dg-search-clear" type="button" title="Clear">✕</button>
+</div>
+<script id="depgraph-search-script">
+(function () {
+  function buildMatcher(q) {
+    q = q.trim();
+    if (!q) return null;
+    var m = q.match(/^\\/(.*)\\/([a-z]*)$/);
+    if (m) { try { return new RegExp(m[1], m[2] || "i"); } catch (e) { return null; } }
+    var lc = q.toLowerCase();
+    return { test: function (s) { return s.toLowerCase().indexOf(lc) >= 0; } };
+  }
+  function apply() {
+    var q = document.getElementById("dg-search-input").value;
+    var matcher = buildMatcher(q);
+    var nodes = document.querySelectorAll("g.node");
+    var hits = 0;
+    nodes.forEach(function (n) {
+      n.classList.remove("dg-hit", "dg-dim");
+      if (!matcher) return;
+      var t = n.querySelector("title");
+      var name = t ? t.textContent.trim() : "";
+      if (matcher.test(name)) { n.classList.add("dg-hit"); hits++; }
+      else { n.classList.add("dg-dim"); }
+    });
+    var c = document.getElementById("dg-search-count");
+    c.textContent = matcher ? (hits + " / " + nodes.length) : "";
+  }
+  document.getElementById("dg-search-input").addEventListener("input", apply);
+  document.getElementById("dg-search-clear").addEventListener("click", function () {
+    document.getElementById("dg-search-input").value = ""; apply();
+  });
+  // Re-apply after the graph (re)renders — d3-graphviz re-attaches nodes on
+  // zoom/pan, which would otherwise drop the highlight classes.
+  var graph = document.querySelector("#graph") || document.body;
+  if (window.MutationObserver) {
+    var pending = null;
+    new MutationObserver(function () {
+      clearTimeout(pending); pending = setTimeout(apply, 50);
+    }).observe(graph, { childList: true, subtree: true });
+  }
+})();
+</script>
+"""
+
 def inject(html: str, path: Path, states: dict[str, str]) -> str:
     if MARKER in html:
         return html
@@ -124,9 +204,11 @@ def inject(html: str, path: Path, states: dict[str, str]) -> str:
             html = html.replace(original_dot, recoloured, 1)
 
     new = LEGEND_REPLACE.sub(LEGEND_HTML.strip(), html, count=1)
+    # The node search/filter box only makes sense on the full graph page.
+    search = INJECTED_SEARCH if path.name == "dep_graph_document.html" else ""
     new = new.replace(
         "</body>",
-        f"{INJECTED_STYLE}\n{MARKER}\n</body>",
+        f"{INJECTED_STYLE}{search}\n{MARKER}\n</body>",
         1,
     )
     return new
