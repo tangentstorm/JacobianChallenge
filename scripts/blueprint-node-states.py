@@ -4,30 +4,38 @@ emit node-states.json (label -> state).
 
 The blueprint's node colours are normally driven by hand-written \\leanok
 annotations, which drift from the Lean reality. This script ignores \\leanok
-and derives each node's state from the actual Lean code, so the dependency
-graph can be recoloured to tell the truth (see inject-depgraph-extras.py).
+and derives each node's state from the ACTUAL Lean dependency graph produced by
+scripts/DepGraph.lean (a single fast `lake env lean` pass — see that file), so
+the graph can be recoloured to tell the truth (see inject-depgraph-extras.py /
+blueprint_recolor.py).
 
 Four states (a node citing several decls takes the WORST of them):
 
-  proven       — formalized and the proof's axiom closure is clean:
-                 axioms ⊆ {propext, Classical.choice, Quot.sound}.
-  sorry-dep    — formalized, the decl's own body is not a bare `sorry`, but
-                 it transitively depends on `sorryAx` or any other introduced
-                 axiom (a custom `axiom` decl).
-  sorry        — the decl's own body is a direct `sorry`.
-  unformalized — at least one cited project decl does not exist in Lean yet.
+  proven       — formalized; neither the decl nor any transitive dependency
+                 introduces a sorry / non-standard axiom.
+  sorry-dep    — formalized, its own body is not a direct sorry, but some
+                 transitive dependency does introduce sorryAx / a custom axiom.
+  sorry        — the decl's own body directly introduces sorryAx (a direct sorry).
+  unformalized — the blueprint label's Lean decl does not exist in the graph.
 
-Nodes whose \\lean{...} names are all external (Mathlib/core) are reported as
-`proven` (we cannot inspect Mathlib, and the project treats those as given).
-Nodes with no \\lean{...} at all are omitted (the graph leaves them as-is).
+DepGraph.lean emits, per project decl:  {"n": name, "s": 0|1, "x": 0|1, "d":[deps]}
+  x = 1  the decl directly references a non-standard introduced axiom
+         (`sorryAx` shows up here, since it is an axiom) — the authoritative
+         "this decl itself is unproven" flag.
+  s      direct sorryAx-in-body (kept for reference; x subsumes it for colouring).
+  d      direct project-internal dependency edges.
+
+Transitive "depends on an unproven decl" is a linear propagation over `d`.
 
 Usage:
-    scripts/blueprint-node-states.py [out.json]      # default: blueprint/web/node-states.json
+    scripts/blueprint-node-states.py [out.json] [--depgraph FILE]
+        out.json     default: blueprint/web/node-states.json
+        --depgraph   default: regenerate via `lake env lean --run scripts/DepGraph.lean`,
+                     or read FILE if given (a depgraph.jsonl produced earlier).
 """
 from __future__ import annotations
 
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -36,127 +44,107 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import blueprint_audit as ba  # noqa: E402
 
 ROOT = ba.ROOT
-STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
+DEPGRAPH_LEAN = ROOT / "scripts" / "DepGraph.lean"
 
 
-def axioms_of(names: list[str]) -> dict[str, set[str]]:
-    """`#print axioms` for each name in one elaboration pass.
-    Returns {name -> set of axiom names}; '' for names that fail."""
-    if not names:
-        return {}
-    lines = ["import Jacobian.Solution"]
-    lines += [f"#print axioms {n}" for n in names]
-    scratch = ROOT / "Jacobian" / "_NodeStateAxiomScratch.lean"
-    scratch.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    try:
+def load_depgraph(depgraph_file: str | None) -> list[dict]:
+    """Return the DepGraph records. If `depgraph_file` is given, read it;
+    otherwise run DepGraph.lean (fast, ~one env load — no per-decl work)."""
+    if depgraph_file:
+        text = Path(depgraph_file).read_text(encoding="utf-8")
+    else:
         res = subprocess.run(
-            ["lake", "env", "lean", str(scratch.relative_to(ROOT))],
+            ["lake", "env", "lean", "--run", str(DEPGRAPH_LEAN.relative_to(ROOT))],
             cwd=ROOT, capture_output=True, text=True,
         )
-    finally:
-        scratch.unlink(missing_ok=True)
-    blob = res.stdout + "\n" + res.stderr
-    # Fail loudly on a stale/broken build: if the import itself errors (e.g. a
-    # missing .olean), every `#print axioms` silently yields nothing and the
-    # whole graph would be mis-classified as sorry-dep. Refuse rather than lie.
-    if re.search(r"error:.*(does not exist|unknown (identifier|constant|module)|failed to)", blob):
-        sys.stderr.write(
-            "blueprint-node-states: Lean elaboration failed — the build looks stale.\n"
-            "  Run `lake build Jacobian.Solution` first (oleans must be current).\n"
-            "  First error:\n    "
-            + next((ln for ln in blob.splitlines() if "error:" in ln), "(unknown)")
-            + "\n"
-        )
-        raise SystemExit(2)
-    out: dict[str, set[str]] = {}
-    # 'Name' depends on axioms: [a, b, c]   |   'Name' does not depend on any axioms
-    for m in re.finditer(
-        r"'([^']+)' (?:depends on axioms: \[([^\]]*)\]|does not depend on any axioms)", blob
-    ):
-        name = m.group(1)
-        if m.group(2) is None:
-            out[name] = set()
+        if res.returncode != 0 or not res.stdout.strip():
+            sys.stderr.write(
+                "blueprint-node-states: DepGraph.lean failed — is the build current?\n"
+                "  Run `lake build Jacobian.Solution` (oleans must exist) and retry.\n"
+                + (res.stderr[-600:] if res.stderr else "")
+                + "\n"
+            )
+            raise SystemExit(2)
+        text = res.stdout
+    return [json.loads(l) for l in text.splitlines() if l.strip()]
+
+
+def compute_decl_states(recs: list[dict]) -> dict[str, str]:
+    """Return {decl name -> 'sorry' | 'sorry-dep' | 'proven'} over the full
+    decl graph, propagating the direct unproven flag (`x`) transitively over
+    the dependency edges (`d`)."""
+    by_name = {r["n"]: r for r in recs}
+    # A decl is "tainted" if it transitively reaches any decl with x=1.
+    # Compute reachability of the direct-flag set via memoised DFS.
+    UNKNOWN, CLEAN, TAINTED = 0, 1, 2
+    mark: dict[str, int] = {}
+
+    def taint(name: str, stack: set[str]) -> bool:
+        r = by_name.get(name)
+        if r is None:
+            return False  # external/missing dep: treated as clean (Mathlib given)
+        m = mark.get(name, UNKNOWN)
+        if m == TAINTED:
+            return True
+        if m == CLEAN:
+            return False
+        if name in stack:  # cycle guard: don't recurse, decide on this pass
+            return r["x"] == 1
+        if r["x"] == 1:
+            mark[name] = TAINTED
+            return True
+        stack.add(name)
+        tainted = any(taint(d, stack) for d in r["d"])
+        stack.discard(name)
+        mark[name] = TAINTED if tainted else CLEAN
+        return tainted
+
+    states: dict[str, str] = {}
+    for r in recs:
+        name = r["n"]
+        if r["x"] == 1:
+            states[name] = "sorry"            # direct: own body introduces sorryAx/axiom
+        elif taint(name, set()):
+            states[name] = "sorry-dep"        # transitive
         else:
-            out[name] = {a.strip() for a in m.group(2).split(",") if a.strip()}
-    return out
-
-
-# `Jacobian/Challenge.lean` is the FROZEN PUBLIC SPEC: every decl there is
-# `:= sorry` by design (it states the API to be implemented). The real proof
-# lives in the implementation file (Solution.lean etc.), which is what the
-# graph should judge. A `\lean{}` name typically resolves to BOTH a Challenge
-# spec stub and a Solution implementation; counting the spec stub's `sorry`
-# would mis-rank every public node as a direct sorry. So exclude spec sites
-# from the direct-sorry check. (`#print axioms` already resolves to the real
-# elaborated decl, so the proven-vs-sorry-dep axiom check is unaffected.)
-SPEC_FILE = "Challenge.lean"
-
-
-def decl_has_direct_sorry(name: str, index: dict) -> bool:
-    """True if any *implementation* site for `name` has a literal `sorry`.
-    Frozen-spec stubs in Challenge.lean are ignored. If the ONLY sites are
-    spec stubs (no implementation exists), the decl is treated as a direct
-    sorry — the API is stated but unimplemented."""
-    sites = index.get(name, [])
-    impl_sites = [(f, ln, b) for (f, ln, b) in sites if not f.endswith(SPEC_FILE)]
-    if not impl_sites:
-        # Only a frozen-spec stub exists; no implementation yet.
-        return bool(sites)
-    return any(not ba.body_is_sorry_free(b) for (_f, _ln, b) in impl_sites)
-
-
-def node_state(names: list[str], index: dict, axioms: dict[str, set[str]]) -> str | None:
-    """Aggregate state across a node's cited decls (worst wins). None if the
-    node cites no decls at all."""
-    project = [n for n in names if ba.is_project_name(n)]
-    external = [n for n in names if not ba.is_project_name(n)]
-    if not project and not external:
-        return None
-    # D: any project decl missing from the Lean index.
-    missing = [n for n in project if n not in index]
-    if missing:
-        return "unformalized"
-    # C: any project decl whose own body is a direct sorry.
-    if any(decl_has_direct_sorry(n, index) for n in project):
-        return "sorry"
-    # B: any project decl with a non-standard axiom in its closure.
-    for n in project:
-        ax = axioms.get(n)
-        if ax is None:
-            # Failed to elaborate a #print axioms line: treat conservatively.
-            return "sorry-dep"
-        if not ax.issubset(STANDARD_AXIOMS):
-            return "sorry-dep"
-    # A: all clean (external-only nodes also land here).
-    return "proven"
+            states[name] = "proven"
+    return states
 
 
 def main(argv: list[str]) -> int:
-    out_path = Path(argv[0]) if argv else (ROOT / "blueprint" / "web" / "node-states.json")
-    index = ba.index_lean_decls(ba.LEAN_DIR)
+    depgraph_file = None
+    out_args = []
+    i = 0
+    while i < len(argv):
+        if argv[i] == "--depgraph":
+            depgraph_file = argv[i + 1]; i += 2
+        else:
+            out_args.append(argv[i]); i += 1
+    out_path = Path(out_args[0]) if out_args else (ROOT / "blueprint" / "web" / "node-states.json")
 
-    # Gather (label -> cited decl names) for every blueprint block with a label.
-    nodes: dict[str, list[str]] = {}
+    recs = load_depgraph(depgraph_file)
+    decl_states = compute_decl_states(recs)
+
+    # Map blueprint labels -> their cited decls (from the tex), then to a state.
+    states: dict[str, str] = {}
     for tex_dir in ba.TEX_DIRS:
         for tex in sorted(tex_dir.glob("*.tex")):
             for b in ba.parse_tex_blocks(tex.read_text(encoding="utf-8")):
                 label = b.get("label")
-                names = b.get("lean_names", [])
-                if label and names:
-                    nodes.setdefault(label, [])
-                    nodes[label].extend(names)
-
-    # One #print axioms pass over every project decl we might need.
-    all_project = sorted({
-        n for names in nodes.values() for n in names if ba.is_project_name(n)
-    })
-    axioms = axioms_of(all_project)
-
-    states: dict[str, str] = {}
-    for label, names in nodes.items():
-        st = node_state(names, index, axioms)
-        if st is not None:
-            states[label] = st
+                names = [n for n in b.get("lean_names", []) if ba.is_project_name(n)]
+                if not label or not names:
+                    continue
+                # Worst state across the cited project decls.
+                worst = "proven"
+                for n in names:
+                    st = decl_states.get(n)
+                    if st is None:
+                        worst = "unformalized"; break
+                    if st == "sorry":
+                        worst = "sorry"
+                    elif st == "sorry-dep" and worst != "sorry":
+                        worst = "sorry-dep"
+                states[label] = worst
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(states, indent=2, sort_keys=True) + "\n", encoding="utf-8")

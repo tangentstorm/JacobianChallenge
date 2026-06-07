@@ -150,7 +150,7 @@ LEGEND_HTML = """
   <dt class="legend-swatch legend-orange-fill">Orange fill</dt>
     <dd>the statement's own proof is a direct <span class="ttfamily">sorry</span></dd>
   <dt class="legend-swatch legend-grey-dashed">Grey, dashed</dt>
-    <dd>not yet written in Lean</dd>
+    <dd>not connected to the public build (not written yet, or formalized but not wired into the public path)</dd>
 </dl>
 </details>
 """

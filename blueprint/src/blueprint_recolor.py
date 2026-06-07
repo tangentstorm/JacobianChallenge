@@ -10,7 +10,9 @@ The four states and their swatches:
   proven        green fill   — formalized; axiom closure ⊆ {propext, Classical.choice, Quot.sound}
   sorry-dep     blue fill    — formalized, body not a direct sorry, but depends on sorryAx / a custom axiom
   sorry         orange fill  — the decl's own body is a direct `sorry`
-  unformalized  grey, dashed — no Lean declaration exists yet
+  unformalized  grey, dashed — not reachable from the public Jacobian.Solution
+                               build: either not written in Lean yet, or
+                               formalized but not connected to the public path
 
 `node-states.json` is produced by scripts/blueprint-node-states.py and lives in
 the web output dir; `load_states` reads it (returns {} if absent, leaving the
@@ -36,7 +38,7 @@ LEGEND_ROWS = [
     ("proven",       "Green fill",  "fully proven — no sorry and no introduced axioms"),
     ("sorry-dep",    "Blue fill",   "formalized, but its proof depends on a <code>sorry</code> / extra axiom somewhere upstream"),
     ("sorry",        "Orange fill", "the statement's own proof is a direct <code>sorry</code>"),
-    ("unformalized", "Grey dashed", "not yet written in Lean"),
+    ("unformalized", "Grey dashed", "not connected to the public build — not written yet, or formalized but not wired into the public path"),
 ]
 
 _NODE_PAT = re.compile(r'("([^"]+)")\s*\[([^\]]*)\]')
