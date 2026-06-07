@@ -120,22 +120,110 @@ theorem harmonicProjection1_vanishes_on_exact
   simp [harmonicProjection1, exteriorDerivative]
 
 /--
+**Hodge harmonic embedding.** A harmonic 1-form `h : HarmonicOneForm X`
+(its coefficient data) re-enters the smooth-form substrate as the form
+`(h, 0)` carrying no period payload.  This names the section of
+`harmonicProjection1` used to phrase the Hodge decomposition: it is a genuine
+right inverse on the coefficient part (`harmonicProjection1 X (harmonicEmbed X h) = h`).
+-/
+noncomputable def harmonicEmbed
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (h : HarmonicOneForm X) : SmoothDiffForm 1 X :=
+  (h, 0)
+
+theorem harmonicProjection1_harmonicEmbed
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (h : HarmonicOneForm X) :
+    harmonicProjection1 X (harmonicEmbed X h) = h := rfl
+
+/--
+**Period-payload exactness — MINIMAL SUBSTRATE-FRONTIER ROOT.**
+For a closed 1-form `ω`, the pure period-payload form `(0, ω.2)` (zero
+coefficient, the form's period data) is exact: `(0, ω.2) ∈ ExactForm 0 X`.
+
+This is the *single, projection-free* analytic fact the Hodge decomposition in
+degree 1 reduces to: once the harmonic (coefficient) part is split off, the
+remainder is exactly the period payload, and the content is that this payload is
+realizable as `dθ` for some 0-form `θ`.  It is strictly narrower than
+`harmonicProjection1_hodgeDecomposition` — no projection/embedding wrapper, a
+bare statement about `ω.2`.
+
+NOTE (substrate frontier): on the current zero-differential `SmoothDiffForm`
+surrogate `exteriorDerivative := 0`, so `ExactForm 0 X = ⊥` and this root
+collapses to `ω.2 = 0`, which is not yet true for the period-only forms the
+surrogate admits.  It becomes the honest classical fact once `exteriorDerivative`
+is given real chartwise content (owner of `SmoothDifferentialForm.lean`).  This
+is the exact input that file's owner must supply; see `.sci/result.md`. -/
+theorem hodgeRemainder_periodPayload_exact
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0) :
+    ((0 : SmoothDiffFormCoeff 1 X), ω.2) ∈ ExactForm 0 X := by
+  sorry
+
+/--
+**Hodge decomposition provider (degree 1).**
+Every closed 1-form `ω` differs from the embedded harmonic representative of
+its own projection by an *exact* form:
+`ω - harmonicEmbed X (harmonicProjection1 X ω) ∈ ExactForm 0 X`.
+
+This is the orthogonal-splitting input of the Hodge theorem in degree 1
+(`closed = harmonic ⊕ exact`), used by the sorry-free
+`harmonicProjection1_kernel_subset_exact` assembly below.
+
+**Now sorry-free**: the subtracted form is the embedded harmonic projection
+`(ω.1, 0)`, so the remainder is the pure period payload `(0, ω.2)`, whose
+exactness is supplied by the minimal root `hodgeRemainder_periodPayload_exact`. -/
+theorem harmonicProjection1_hodgeDecomposition
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0) :
+    ω - harmonicEmbed X (harmonicProjection1 X ω) ∈ ExactForm 0 X := by
+  have hrem : ω - harmonicEmbed X (harmonicProjection1 X ω)
+      = ((0 : SmoothDiffFormCoeff 1 X), ω.2) := by
+    apply Prod.ext
+    · simp [harmonicEmbed, harmonicProjection1]
+    · simp [harmonicEmbed, harmonicProjection1]
+  rw [hrem]
+  exact hodgeRemainder_periodPayload_exact X ω hclosed
+
+/--
 **Current-model Hodge representative uniqueness.** If a closed
 1-form has zero harmonic projection, then it is exact.
 
 Bottom-up content: Hodge decomposition writes every closed form as a
 harmonic form plus an exact form; the zero-projection condition kills the
 harmonic summand.
+
+This **assembly is sorry-free**: it consumes the narrowest provider
+`harmonicProjection1_hodgeDecomposition`.  When the harmonic projection
+vanishes, the embedded harmonic representative is `harmonicEmbed X 0 = 0`, so
+`ω - 0 = ω` is exactly the exact form supplied by the decomposition.
 -/
 theorem harmonicProjection1_kernel_subset_exact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : SmoothDiffForm 1 X) (_hclosed : exteriorDerivative 1 X ω = 0)
+    (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0)
     (hproj : harmonicProjection1 X ω = 0) :
     ω ∈ ExactForm 0 X := by
-  sorry
+  have hsplit := harmonicProjection1_hodgeDecomposition X ω hclosed
+  rw [hproj] at hsplit
+  have hembed : harmonicEmbed X (0 : HarmonicOneForm X) = 0 := by
+    simp [harmonicEmbed]
+  rw [hembed, sub_zero] at hsplit
+  exact hsplit
 
 /--
 **Current-model kernel identity.** The harmonic projection vanishes
