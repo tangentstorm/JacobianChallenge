@@ -3061,12 +3061,13 @@ theorem exists_biholomorph_onePoint_of_analyticGenus_zero
   sorry
 
 /--
-**Headline missing input.** Genus-zero compact connected Riemann surfaces
-admit an honest analytic simple-pole meromorphic map at `P`.
+Genus-zero compact connected Riemann surfaces admit an honest analytic
+single-pole meromorphic-map package at any prescribed point.
 
-This is the real upstream gap for the fixed-pole route: discharging it
-requires the uniformization/classification input or an equivalent global
-analytic Riemann-Roch construction, not the cutoff scaffold.
+The proof deliberately routes through the explicit biholomorphic
+uniformization frontier and not through
+`genusZero_pointRRSection_outside_constants_exists` or its downstream
+fixed-pole RR-section chain, which depends on this theorem.
 -/
 theorem genusZero_singlePoleMeromorphicAnalyticData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
