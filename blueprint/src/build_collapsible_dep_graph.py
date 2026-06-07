@@ -732,7 +732,7 @@ def main(argv: list[str]) -> int:
     states = load_states(web)
     if states:
         detail_dots = {k: recolor_dot(v, states) for k, v in detail_dots.items()}
-        print(f"build_collapsible_dep_graph: recoloured detail graphs by node-states.json ({len(states)} nodes)")
+        print(f"build_collapsible_dep_graph: recoloured detail graphs from sorries.jsonl ({len(states)} nodes)")
 
     dots = {"overview": overview_dot, **detail_dots}
     names = display_names(detail_dots, r_to_name)

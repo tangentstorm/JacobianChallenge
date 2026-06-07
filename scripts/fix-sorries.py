@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 import json
 import os
+import re
 import subprocess
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import depgraph_states as dgs
 
 DB_FILE = "sorries.jsonl"
 DB_VER = 1
@@ -87,11 +92,35 @@ def format_row(obj, is_header=False):
                 row[k] = None
     return json.dumps(row, separators=(',', ':'))
 
+def blueprint_data():
+    """Inspect the current blueprint tex. Returns:
+      labels      — set of every \\label{} that currently exists in the tex
+      nodes       — {(file, decl): label} for each blueprint node that has a
+                    project \\lean{} decl (these become graph nodes)
+    Reuses blueprint_audit's parser so the node rule lives in one place."""
+    import blueprint_audit as ba
+    labels = set()
+    nodes = {}
+    label_re = re.compile(r"\\label\{([^}]+)\}")
+    for tex_dir in ba.TEX_DIRS:
+        for tex in sorted(tex_dir.glob("*.tex")):
+            text = tex.read_text(encoding="utf-8")
+            labels.update(label_re.findall(text))
+            for b in ba.parse_tex_blocks(text):
+                label = b.get("label")
+                if not label:
+                    continue
+                for n in b.get("lean_names", []):
+                    if ba.is_project_name(n):
+                        nodes[(str(tex.relative_to(ba.ROOT)), n)] = label
+    return labels, nodes
+
+
 def main():
     header, db, max_id = load_db()
     curr = get_current()
 
-    # Update existing and add new
+    # 1. Refresh sorry rows from list-sorries.py.
     for key, curr_obj in curr.items():
         if key in db:
             db_obj = db[key]
@@ -99,8 +128,6 @@ def main():
             db_obj["o"] = curr_obj.get("o", 0)
             db_obj["r"] = curr_obj.get("r", 0)
             db_obj["k"] = curr_obj.get("k", "unknown")
-            if db_obj.get("c") == "done":
-                db_obj["c"] = "open"
         else:
             max_id += 1
             new_obj = curr_obj.copy()
@@ -110,10 +137,74 @@ def main():
                     new_obj[dk] = dv
             db[key] = new_obj
 
-    # Mark missing ones as done
-    for key, db_obj in db.items():
-        if key not in curr:
-            db_obj["c"] = "done"
+    bp_labels, bp_nodes = blueprint_data()
+
+    # 2. Prune stale blueprint references. The blueprint tex is edited over
+    #    time (sections deleted, labels renamed), leaving rows whose `b` points
+    #    at a label that no longer exists. For each such row:
+    #      * if it is a real sorry (n>0) or names a real Lean decl, keep the row
+    #        but clear the dangling `b`;
+    #      * otherwise it is a pure placeholder for a deleted blueprint label
+    #        (no decl, no sorry) — drop the row entirely.
+    cleared = dropped = 0
+    for key in list(db.keys()):
+        r = db[key]
+        b = r.get("b")
+        if b and b not in bp_labels:
+            if r.get("n", 0) or (key in curr):
+                r["b"] = ""
+                cleared += 1
+            else:
+                del db[key]
+                dropped += 1
+
+    # 3. Ensure every current blueprint \lean{} node has a row (union of
+    #    sorries and blueprint nodes — the same node may be in both lists).
+    for (f, decl), label in bp_nodes.items():
+        key = (f, decl)
+        if key in db:
+            db[key]["b"] = label
+        else:
+            max_id += 1
+            obj = dict(DEFAULTS)
+            obj.update({"i": max_id, "f": f, "k": "blueprint", "s": decl,
+                        "n": 0, "o": 0, "r": 0, "b": label})
+            db[key] = obj
+
+    # 4. Colour every row by the REAL Lean dependency state (DepGraph walk),
+    #    written into the `c` / Status field:
+    #      done | sorry | sorry-dep | unformalized
+    #    `done` keeps its existing meaning (proven) for the other scripts that
+    #    test `c == "done"`; the three non-done values all satisfy `!= "done"`.
+    try:
+        recs = dgs.run_depgraph(os.environ.get("DEPGRAPH_FILE"))
+        states = dgs.decl_states(recs)
+        # DepGraph keys are fully-qualified (JacobianChallenge.…); list-sorries
+        # sometimes reports a short/unqualified `s`. Build a suffix index so we
+        # can still resolve those.
+        suffix = {}
+        for n, st in states.items():
+            suffix.setdefault(n.split(".")[-1], n)
+        for db_obj in db.values():
+            s = db_obj.get("s", "")
+            if s in states:
+                st = states[s]
+            elif s.split(".")[-1] in suffix:
+                st = states[suffix[s.split(".")[-1]]]
+            else:
+                st = "unformalized"
+            # A row that itself carries a sorry is at least `sorry`, regardless
+            # of whether DepGraph (Solution's closure) could resolve its name.
+            if db_obj.get("n", 0) and st in ("done", "unformalized"):
+                st = "sorry"
+            db_obj["c"] = st
+        coloured = True
+    except Exception as exc:
+        print(f"warning: skipping graph colouring ({exc})", file=sys.stderr)
+        # Fall back to the old binary so the DB is still consistent.
+        for key, db_obj in db.items():
+            db_obj["c"] = "done" if key not in curr else "open"
+        coloured = False
 
     # Write back to DB_FILE with precise column order
     with open(DB_FILE, "w") as f:
@@ -121,7 +212,9 @@ def main():
         for obj in sorted(db.values(), key=lambda x: x.get("i", 0)):
             f.write(format_row(obj) + "\n")
 
-    print(f"Successfully fixed/updated {DB_FILE} with {len(db)} records.")
+    print(f"Successfully fixed/updated {DB_FILE} with {len(db)} records"
+          + (" (graph-coloured)" if coloured else " (colouring skipped)")
+          + f"; pruned {dropped} stale rows, cleared {cleared} dangling blueprint refs.")
 
 if __name__ == "__main__":
     main()

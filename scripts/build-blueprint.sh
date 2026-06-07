@@ -97,21 +97,20 @@ if grep -qiE "could not be resolved" "$build_log"; then
   exit 1
 fi
 
-# --- 2. Compute ground-truth node states -----------------------------------
-# Derive each blueprint node's real proof state (proven / sorry-dep / sorry /
-# unformalized) into node-states.json, so the inject/collapsible steps below
-# recolour the graph by reality instead of by hand-written \leanok. The state
-# comes from scripts/DepGraph.lean — a single fast `lake env lean` pass over the
-# compiled Jacobian.Solution environment (no per-decl #print axioms). Requires
-# current oleans, so ensure the public target is built first (a no-op when the
-# build is already current).
-echo "==> [2/4] Computing ground-truth node states"
+# --- 2. Refresh sorries.jsonl + node states --------------------------------
+# fix-sorries.py refreshes the sorry ledger, prunes stale blueprint refs, and
+# colours every node with its real Lean dependency state (done / sorry /
+# sorry-dep / unformalized) via scripts/DepGraph.lean — a single fast
+# `lake env lean` pass. The recolour step below reads those states (the `c`
+# field) straight from sorries.jsonl, keyed by blueprint ref. Requires current
+# oleans, so ensure the public target is built first (a no-op when current).
+echo "==> [2/4] Refreshing sorries.jsonl + node states"
 ( cd "$REPO_ROOT" && lake build Jacobian.Solution ) >/dev/null 2>&1 || {
   echo "error: 'lake build Jacobian.Solution' failed — cannot compute node states." >&2
   echo "       Run 'lake exe cache get' then retry." >&2
   exit 1
 }
-"$PY" "$SRC/../../scripts/blueprint-node-states.py" "$WEB/node-states.json"
+( cd "$REPO_ROOT" && "$PY" scripts/fix-sorries.py )
 
 # --- 3. Inject (order matters) ---------------------------------------------
 echo "==> [3/4] Injecting post-processing extras"

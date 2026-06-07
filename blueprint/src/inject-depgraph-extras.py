@@ -2,7 +2,7 @@
 """Post-process plastex's dep_graph_*.html to:
 
 1. Recolour the dependency-graph nodes by GROUND TRUTH (the four states from
-   scripts/blueprint-node-states.py / blueprint_recolor.py — proven / sorry-dep
+   scripts/fix-sorries.py (DepGraph.lean) / blueprint_recolor.py — proven / sorry-dep
    / sorry / unconnected), overriding the upstream \\leanok colours.
 
 2. Replace the auto-generated legend with a tighter, color-name-led version
@@ -23,7 +23,7 @@ DOT_RENDER_PAT = re.compile(r"\.renderDot\(`(.*?)`\)", re.DOTALL)
 
 MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"
 
-# Node colours are derived from GROUND TRUTH (scripts/blueprint-node-states.py:
+# Node colours are derived from GROUND TRUTH (scripts/fix-sorries.py (DepGraph.lean):
 # #print axioms + decl existence), not from \leanok. The four states match
 # blueprint/src/blueprint_recolor.py STATE_DOT:
 #   green fill  #B0ECA3 / #5cb85c   proven
@@ -140,9 +140,9 @@ def main(argv: list[str]) -> int:
         
     states = load_states(root)
     if states:
-        print(f"inject-depgraph-extras: recolouring by node-states.json ({len(states)} nodes)")
+        print(f"inject-depgraph-extras: recolouring from sorries.jsonl ({len(states)} nodes)")
     else:
-        print("inject-depgraph-extras: no node-states.json — keeping upstream \\leanok colours")
+        print("inject-depgraph-extras: no sorries.jsonl states — keeping upstream \\leanok colours")
 
     n = 0
     for path in root.glob("dep_graph*.html"):
