@@ -386,13 +386,18 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
 <script src="js/hpcc.min.js"></script>
 <script src="js/d3-graphviz.js"></script>
 <style>
-  body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; }
+  html, body { height: 100%; }
+  /* Full-viewport flex column: header takes its natural height, #graph fills
+     the rest exactly — no hardcoded header-height guess (which left a sliver
+     of overflow and a redundant scrollbar). */
+  body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0;
+         height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
   header {
     display: flex; align-items: center; gap: 1em;
     padding: 0.6em 1em;
     border-bottom: 1px solid #ddd;
     background: #fafafa;
-    position: sticky; top: 0; z-index: 10;
+    flex: 0 0 auto; z-index: 10;
   }
   header button {
     padding: 0.35em 0.8em; border: 1px solid #ccc; border-radius: 4px;
@@ -438,8 +443,8 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
   html[data-theme="dark"] #legend-details > summary,
   html[data-theme="dark"] #legend-details .legend-body { background: #2b2b2b; color: #ddd; border-color: #555; }
   html[data-theme="dark"] #legend-details dd { color: #ccc; }
-  #graph { width: 100vw; height: calc(100vh - 50px); overflow: auto; padding: 1em; box-sizing: border-box; }
-  #graph svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  #graph { flex: 1 1 auto; width: 100%; min-height: 0; overflow: hidden; box-sizing: border-box; }
+  #graph svg { display: block; width: 100%; height: 100%; }
   .clickable polygon, .clickable ellipse, .clickable path { cursor: pointer; }
   .clickable:hover > polygon, .clickable:hover > ellipse, .clickable:hover > path {
     stroke-width: 3 !important;
@@ -610,10 +615,26 @@ function render() {
   document.getElementById('breadcrumb').textContent =
     navStack.map(k => NAMES[k] || k).join(' › ');
   document.getElementById('overview').disabled = key === "overview";
+  const container = document.getElementById('graph');
   d3.select("#graph")
     .graphviz()
+    // Render into the full container and emit a scaling viewBox (fit=true)
+    // rather than graphviz's intrinsic pixel box, so the SVG fills the
+    // viewport and zoom scales the whole drawing instead of clipping it to
+    // the original bounding box.
+    .width(container.clientWidth)
+    .height(container.clientHeight)
+    .fit(true)
+    .zoomScaleExtent([0.2, 8])
     .renderDot(DOTS[key])
-    .on("end", tagClickable);
+    .on("end", () => {
+      // d3-graphviz still stamps fixed width/height attrs on the <svg>;
+      // drop them so the CSS (width:100%; height:100%) governs sizing and
+      // the viewBox does the scaling. Zoom then grows content to the edges.
+      const svg = container.querySelector("svg");
+      if (svg) { svg.removeAttribute("width"); svg.removeAttribute("height"); }
+      tagClickable();
+    });
 }
 
 // Browser Back/Forward: rebuild the stack from the popped state (falling back
@@ -622,6 +643,14 @@ window.addEventListener('popstate', e => {
   const key = (e.state && e.state.key) || keyFromHash();
   navStack = stackFor(key);
   render();
+});
+
+// Re-render on resize so the fitted viewBox tracks the new container size
+// (debounced to avoid thrashing the graphviz layout during a drag).
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(render, 150);
 });
 
 document.getElementById('overview').addEventListener('click', () => {
