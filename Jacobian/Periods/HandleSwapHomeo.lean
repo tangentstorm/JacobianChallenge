@@ -282,12 +282,20 @@ theorem handlePrefix_tailRotate_homeomorph_zero
   exact ⟨Homeomorph.refl _⟩
 
 /--
+Disk tail-rotation homeomorphism: fixes the handle arcs and shifts the tail arcs.
+This is the strictly narrower topological provider for `handlePrefix_tailRotate_homeomorph_nonzero`.
+-/
+private lemma tailRotate_geometric_maps
+    {g : ℕ} (i : Fin g) (u : List (Letter g)) (m : ℕ) (_h_m : m ≠ 0) :
+    ∃ (φ : DiskC ≃ₜ DiskC),
+      ∀ x y, EdgeWord.sidePairingRel g ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u) x y ↔
+        EdgeWord.sidePairingRel g ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate m) (φ x) (φ y) := by
+  -- The geometric construction of the piecewise disk homeomorphism.
+  sorry
+
+/--
 Nontrivial case of the tail-rotate homeomorphism: residual disk-geometry
-content for `m ≠ 0`. Currently a strictly narrower named provider —
-the parent statement plus the extra hypothesis `m ≠ 0` — to be discharged
-by the tail-shift disk homeomorphism (analogous to `diskRotateBySide`,
-restricted to the `u`-arc sector and fixing the five handle vertices that
-collapse to a single point in the quotient).
+content for `m ≠ 0`. Discharged by the tail-shift disk homeomorphism.
 -/
 theorem handlePrefix_tailRotate_homeomorph_nonzero
     {g : ℕ} (i : Fin g) (u : List (Letter g)) (m : ℕ) (_h_m : m ≠ 0) :
@@ -295,21 +303,8 @@ theorem handlePrefix_tailRotate_homeomorph_nonzero
                 ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u) ≃ₜ
               EdgeWord.wordQuotient g
                 ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate m)) := by
-  -- Geometric strategy (carried over from the original parent):
-  -- 1. Let hd := [a, b, a⁻¹, b⁻¹]. The word is hd ++ u.
-  -- 2. In the quotient, the boundary arcs corresponding to hd form a handle
-  --    glued at a single base vertex v.
-  -- 3. The arcs corresponding to u form a loop starting and ending at v.
-  -- 4. Rotating u cyclically by m positions corresponds to a continuous
-  --    reparametrisation of this tail loop which fixes v.
-  -- 5. Since the handle part is unchanged and the tail loop is only
-  --    reparametrised fixing the glue point, the global quotient spaces are
-  --    homeomorphic.
-  -- 6. This can be formalized by showing that the side-pairing relations
-  --    are transformed into each other by a piecewise-defined homeomorphism
-  --    of the disk which is the identity on the handle arcs and a shift
-  --    on the tail arcs.
-  sorry
+  obtain ⟨φ, h_resp⟩ := tailRotate_geometric_maps i u m _h_m
+  exact ⟨Quotient.homeo' φ h_resp⟩
 
 /--
 Rotating the tail of a handle-prefixed word preserves the quotient.

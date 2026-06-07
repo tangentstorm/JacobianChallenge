@@ -83,20 +83,24 @@ theorem rawWord_cyclic_reduction
 
 theorem orientable_letterPair_opposite_orientation
     {M : Type} [TopologicalSpace M] [Orientable M]
-    (E : EdgeWordPresentation M) (_w : EdgeWord E.extractedGenus) :
-    Nonempty Unit := ⟨()⟩
-
+    (E : EdgeWordPresentation M) (w : EdgeWord E.extractedGenus)
+    (_hw : EdgeWord.WordEq E.word w) :
+    ∀ ℓ : Letter E.extractedGenus, ℓ ∈ w → ℓ.inv ∈ w := by
+  sorry
 
 theorem orientable_handleSwap_grouping
-    {M : Type} [TopologicalSpace M] [Orientable M]
-    (E : EdgeWordPresentation M) (_w : EdgeWord E.extractedGenus) :
-    Nonempty Unit := ⟨()⟩
-
+    {g : ℕ} (w : EdgeWord g)
+    (_hPairs : ∀ ℓ : Letter g, ℓ ∈ w → ℓ.inv ∈ w)
+    (_hReduced : ∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel w x) :
+    ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧
+      (∃ perm : Equiv.Perm (Fin g), v = (List.finRange g).flatMap (fun i => EdgeWord.handleBlock (perm i))) := by
+  sorry
 
 theorem handleSwap_index_ordering
-    {M : Type} [TopologicalSpace M] [Orientable M]
-    (E : EdgeWordPresentation M) (_w : EdgeWord E.extractedGenus) :
-    Nonempty Unit := ⟨()⟩
+    {g : ℕ} (v : EdgeWord g)
+    (_hGrouped : ∃ perm : Equiv.Perm (Fin g), v = (List.finRange g).flatMap (fun i => EdgeWord.handleBlock (perm i))) :
+    EdgeWord.TietzeEq v (EdgeWord.standardWord g) := by
+  sorry
 
 /--
 **Core Brahana lemma (orientable handle separation).**  Given that
@@ -112,14 +116,13 @@ private lemma brahana_orientable_core
       (⊤ : WithTop ℕ∞) M]
     [Orientable M]
     (E : EdgeWordPresentation M) (w : EdgeWord E.extractedGenus)
-    (_hReduced : ∀ x : EdgeWord E.extractedGenus, ¬ EdgeWord.InverseCancel w x)
-    (_hWordEq : EdgeWord.WordEq E.word w) :
+    (hReduced : ∀ x : EdgeWord E.extractedGenus, ¬ EdgeWord.InverseCancel w x)
+    (hWordEq : EdgeWord.WordEq E.word w) :
     EdgeWord.TietzeEq w (EdgeWord.standardWord E.extractedGenus) := by
-  -- a reduced orientable edge word to the standard commutator word through
-  -- actual TietzeSteps (HandleSwap, InverseCancel, and Rotate).
-  -- The orientability of M ensures that every letter in the presentation word
-  -- appears as part of an matched pair with opposite orientations.
-  sorry
+  have hPairs := orientable_letterPair_opposite_orientation E w hWordEq
+  obtain ⟨v, hwv, hGrouped⟩ := orientable_handleSwap_grouping w hPairs hReduced
+  have hvs := handleSwap_index_ordering v hGrouped
+  exact hwv.trans hvs
 
 
 theorem rawWord_handle_separation_orientable
@@ -160,40 +163,13 @@ theorem rawWord_tietzeEq_standardWord_orientable
   exact step1.trans (hue ▸ hvu)
 
 
-private lemma inverseCancel_geometric_maps
+theorem wordQuotient_homeomorph_of_inverseCancel_step
     {g : ℕ} {w v : EdgeWord g} (h : EdgeWord.InverseCancel w v) :
-    ∃ (φ ψ : DiskC → DiskC),
-      Continuous φ ∧ Continuous ψ ∧
-      (∀ x y, EdgeWord.sidePairingRel g w x y →
-        EdgeWord.sidePairingRel g v (φ x) (φ y)) ∧
-      (∀ x y, EdgeWord.sidePairingRel g v x y →
-        EdgeWord.sidePairingRel g w (ψ x) (ψ y)) ∧
-      (∀ x, EdgeWord.sidePairingRel g v (φ (ψ x)) x) ∧
-      (∀ x, EdgeWord.sidePairingRel g w (ψ (φ x)) x) := by
-  -- collapsing disk map.  The construction requires an explicit piecewise
-  -- reparametrisation of the boundary which identifies the two cancelled arcs
-  -- to a single vertex while stretching the remaining arcs.
-  -- The witness must prove that the generated side-pairing relations
-  -- correspond exactly after this deformation.
+    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
+  -- Topology of inverse cancellation: quotient invariance directly.
+  -- This replaces the false disk-lift `inverseCancel_geometric_maps`.
   sorry
 
-
-theorem wordQuotient_homeomorph_of_inverseCancel_step
-    {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.InverseCancel w v) :
-    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
-  obtain ⟨φ, ψ, hφc, hψc, hφ, hψ, hr1, hr2⟩ := inverseCancel_geometric_maps _h
-  refine' ⟨ _, _, _ ⟩;
-  refine' ⟨ _, _, _, _ ⟩;
-  exact fun x => Quotient.map' φ ( by tauto ) x;
-  exact fun x => Quotient.map' ψ hψ x;
-  all_goals norm_num [ Function.LeftInverse, Function.RightInverse ];
-  · intro x;
-    induction x using Quotient.inductionOn';
-    exact Quotient.sound ( hr2 _ );
-  · intro x; exact (by
-    obtain ⟨ x, rfl ⟩ := Quotient.exists_rep x; exact Quotient.sound ( hr1 x ) ;);
-  · fun_prop;
-  · fun_prop
 
 
 /--
