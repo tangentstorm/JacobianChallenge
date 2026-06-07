@@ -444,10 +444,43 @@ zero. The comparison theorem between analytic genus
 
 \begin{formalizationnote}
 The current Lean target splits this into the two directions in
-\code{Jacobian/HolomorphicForms/GenusZeroClassification.lean}. The forward
-direction needs Riemann-Roch, meromorphic functions, and degree-one map
-classification. The reverse direction needs comparison of analytic and
-topological genus.
+\code{Jacobian/HolomorphicForms/GenusZeroClassification.lean}.
+
+\emph{Forward direction — analytic uniformization route (not Riemann--Roch).}
+Although the classical argument above routes through Riemann--Roch
+(genus \(0\Rightarrow\) a degree-one meromorphic map to \(\CPone\)), the Lean
+development \emph{cannot} take that route: the Riemann--Roch section chain
+(\code{genusZero\_pointRRSection\_*} in \code{RiemannRoch.lean} /
+\code{MeromorphicToBranchedCover.lean}) is circular here --- its
+\code{\_with\_analyticData} exit feeds back through the very genus-zero
+single-pole data it is meant to produce. So the forward direction is instead
+built from a self-contained \emph{local analytic uniformization substrate}:
+\begin{enumerate}
+\item local chart-ball power series for holomorphic chart maps
+  (\code{DiffContOnCl.hasFPowerSeriesOnBall});
+\item open-mapping / inverse-function local charts (nonzero derivative
+  \(\Rightarrow\) locally injective, locally open, normalizable);
+\item a normal-family (Montel / Arzel\`a--Ascoli) extraction selecting
+  compatible normalized local coordinate patches;
+\item gluing the patches through the two-chart \(\CPone\) atlas into a global
+  homeomorphism \(X\simeq\CPone\) that is \code{ContMDiff} in both directions.
+\end{enumerate}
+This is packaged as the single high-level provider
+\code{exists\_biholomorph\_onePoint\_of\_genus\_zero}
+(\code{GenusZeroClassification.lean}), with
+\code{exists\_biholomorph\_onePoint\_of\_analyticGenus\_zero} and
+\code{complexSimplePolePrincipalPart\_of\_biholomorph\_onePoint}
+(\code{MeromorphicToBranchedCover.lean}) the thin layers that recover the
+analytic-genus hypothesis and pull back the standard simple-pole coordinate.
+The simple-pole / degree-one meromorphic map is thus \emph{obtained from} the
+biholomorphism, rather than used to construct it.
+
+\emph{Reverse direction.} A surface homeomorphic to \(\Sphere\) has analytic
+genus zero, via a Liouville-style computation that
+\(H^{0}(\CPone,\Omega^{1})=0\) (a holomorphic 1-form is \(f(z)\,dz\) on the
+identity chart; the inversion-chart transition \(w=z^{-1}\) sending it to
+\(-f(1/w)/w^{2}\,dw\) forces \(f\equiv0\) by Liouville) transported across the
+homeomorphism, plus comparison of analytic and topological genus.
 \end{formalizationnote}
 
 \subsection{Identification with \(\CPone\): coordinate chart details}
@@ -590,7 +623,7 @@ Theorem~\ref{thm:degree-one-bijective} (Sec02, already \(\leanok\)).
 
 \begin{lemma}[Holomorphic 1-form equivalence under sphere homeomorphism]
 \label{lem:holomorphic-one-form-equiv-of-homeo-sphere}
-\uses{lem:uniformization-genus-zero-biholomorphism, lem:holomorphic-one-form-pullback-via-biholo}
+\uses{thm:uniformization-genus-zero-biholomorphism, lem:holomorphic-one-form-pullback-via-biholo}
 If a compact connected complex 1-manifold \(X\) is homeomorphic
 (as a topological space) to the standard \(2\)-sphere, then there
 is a \(\C\)-linear equivalence
@@ -846,21 +879,45 @@ theorem for holomorphic functions or sections.
 \subsection{Uniformization-lite further decomposition}
 \label{sec:uniformization-lite-iter3}
 
-\begin{lemma}[Biholomorphism from sphere homeomorphism]
-\label{lem:uniformization-genus-zero-biholomorphism}
-A compact connected complex 1-manifold homeomorphic to \(S^2\) admits
-a biholomorphism to \(\code{OnePoint}\,\C\).
+\begin{lemma}[Homeomorphism to \(\code{OnePoint}\,\C\) from a sphere homeomorphism]
+\label{lem:uniformization-genus-zero-homeomorphism}
+A compact connected complex 1-manifold homeomorphic to \(S^2\) admits a
+\emph{homeomorphism} to \(\code{OnePoint}\,\C\).
 \lean{JacobianChallenge.HolomorphicForms.exists_biholomorphism_to_OnePointCx_of_homeoSphere}
 \leanok
 \end{lemma}
 \begin{proof}
 \leanok
-Classical uniformisation at genus 0: any complex structure on the
-topological 2-sphere is biholomorphically equivalent to the standard
-one on \(\code{OnePoint}\,\C\). One way to see this is to combine the
-Riemann mapping theorem with a removable-singularities argument: a
-biholomorphism between a chart and a disc in \(\C\) extends across
-\(\infty\) to a global biholomorphism with \(\code{OnePoint}\,\C\).
+Purely topological: compose the given \(X\simeq_{\mathrm{top}}S^2\) with the
+fixed homeomorphism \(S^2\simeq_{\mathrm{top}}\code{OnePoint}\,\C\). This yields
+only a homeomorphism; the complex-smooth upgrade is
+Theorem~\ref{thm:uniformization-genus-zero-biholomorphism}.
+\end{proof}
+
+\begin{theorem}[Biholomorphism from sphere homeomorphism (genus-zero uniformization)]
+\label{thm:uniformization-genus-zero-biholomorphism}
+\uses{lem:uniformization-genus-zero-homeomorphism, lem:holomorphic-one-form-pointwise-limit-exists, lem:holomorphic-one-form-limit-continuous, lem:holomorphic-one-form-limit-holomorphic}
+A compact connected complex 1-manifold homeomorphic to \(S^2\) admits a
+\emph{biholomorphism} to \(\code{OnePoint}\,\C\): a homeomorphism
+\(f:X\simeq\code{OnePoint}\,\C\) with both \(f\) and \(f^{-1}\) complex-smooth
+(\code{ContMDiff}).
+\lean{JacobianChallenge.HolomorphicForms.exists_biholomorph_onePoint_of_genus_zero}
+\end{theorem}
+\begin{proof}
+This is the genus-zero uniformization theorem. Classically it follows from the
+Riemann mapping theorem with a removable-singularities argument, or from
+Riemann--Roch (genus \(0\Rightarrow\) a degree-one meromorphic map to
+\(\code{OnePoint}\,\C\)). \emph{The Lean development takes neither route}: the
+Riemann--Roch section chain (\code{genusZero\_pointRRSection\_*}) is circular
+here, feeding back through the genus-zero single-pole data it is meant to
+produce. Instead the biholomorphism is built from a self-contained local
+analytic uniformization substrate --- local chart-ball power series, an
+open-mapping / inverse-function normalization of local coordinates, a normal
+family (Montel / Arzel\`a--Ascoli) extraction of compatible normalized patches,
+and a gluing through the two-chart \(\code{OnePoint}\,\C\) atlas that is
+\code{ContMDiff} in both directions. The simple-pole / degree-one meromorphic
+data of the classical proof is then \emph{obtained from} this biholomorphism,
+not used to construct it.
 \end{proof}
 
 \begin{lemma}[Pullback of holomorphic 1-forms via biholomorphism]

@@ -2,12 +2,13 @@
 """Post-process plastex's dep_graph_*.html to:
 
 1. Replace the auto-generated legend with a tighter, color-name-led
-   version. Drops leanblueprint's ``Blue background'' entry, which
-   refers to a state ("proof ready to formalize") that doesn't appear
-   in this project's graph; relabels every other entry so the swatch's
-   visible color matches its caption (the upstream legend instead
-   echoes the project-specific ``can_state border'' description text,
-   which doesn't tell a reader what color they're looking at).
+   version. Includes a ``Blue fill'' entry (statement formalized in
+   Lean but its proof is still a `sorry`) — this state does occur in
+   the graph (e.g. open uniformization/universe-bridge obligations);
+   relabels every other entry so the swatch's visible color matches
+   its caption (the upstream legend instead echoes the project-specific
+   ``can_state border'' description text, which doesn't tell a reader
+   what color they're looking at).
 
 2. Add a red-border highlight for the big classical-analysis-input
    umbrellas — Riemann-Roch, Stokes on a 2-manifold with boundary,
@@ -142,6 +143,8 @@ LEGEND_HTML = """
     <dd>blueprint statement still being refined or split into sub-leaves</dd>
   <dt class="legend-swatch legend-green-border">Green border</dt>
     <dd>Lean declaration for the statement exists in this project</dd>
+  <dt class="legend-swatch legend-blue-fill">Blue fill</dt>
+    <dd>statement formalized in Lean, but its proof is not yet complete (still a <span class="ttfamily">sorry</span>)</dd>
   <dt class="legend-swatch legend-green-fill">Green fill</dt>
     <dd>proof formalized in this project</dd>
   <dt class="legend-swatch legend-darkgreen-fill">Dark-green fill</dt>
@@ -205,6 +208,7 @@ INJECTED_STYLE = """
 .legend-red-border::before        { border: 3px solid #d62828; background: white; }
 .legend-orange-border::before     { border: 2px solid #FFAA33; background: white; }
 .legend-blue-border::before       { border: 2px solid #1f77b4; background: white; }
+.legend-blue-fill::before         { border: 2px solid #1f77b4; background: #A3D6FF; }
 .legend-green-border::before      { border: 2px solid #5cb85c; background: white; }
 .legend-green-fill::before        { border: 2px solid #5cb85c; background: #B0ECA3; }
 .legend-darkgreen-fill::before    { border: 2px solid #1CAC78; background: #1CAC78; }

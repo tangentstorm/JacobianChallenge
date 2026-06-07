@@ -405,6 +405,39 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
   #breadcrumb { font-weight: 600; color: #333; }
   #breadcrumb .sep { color: #aaa; margin: 0 0.5em; font-weight: normal; }
   #spacer { flex: 1; }
+  /* Legend — a compact popover matching the full graph's color key. */
+  #legend-details { position: relative; font-size: 0.85em; }
+  #legend-details > summary {
+    cursor: pointer; padding: 0.35em 0.8em; border: 1px solid #ccc;
+    border-radius: 4px; background: white; list-style: none; user-select: none;
+  }
+  #legend-details > summary:hover { background: #f0f0f0; }
+  #legend-details > summary::-webkit-details-marker { display: none; }
+  #legend-details[open] > summary { background: #f0f0f0; }
+  #legend-details .legend-body {
+    position: absolute; right: 0; top: 100%; margin-top: 4px; z-index: 20;
+    background: white; border: 1px solid #ccc; border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 0.6em 0.9em;
+    width: 22em; max-width: 80vw;
+  }
+  #legend-details dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.3em 0.6em; align-items: start; }
+  #legend-details dt { white-space: nowrap; }
+  #legend-details dd { margin: 0; color: #333; }
+  .lg-swatch::before {
+    content: ""; display: inline-block; width: 1.1em; height: 0.8em;
+    vertical-align: middle; margin-right: 0.4em; border-radius: 2px;
+  }
+  .lg-box::before     { border: 2px solid #555; background: transparent; border-radius: 1px; }
+  .lg-ellipse::before { border: 2px solid #555; background: transparent; border-radius: 50%; }
+  .lg-orange::before    { border: 2px solid #FFAA33; background: #fff5e6; }
+  .lg-green-border::before { border: 2px solid #5cb85c; background: white; }
+  .lg-blue::before      { border: 2px solid #1f77b4; background: #A3D6FF; }
+  .lg-green::before     { border: 2px solid #5cb85c; background: #B0ECA3; }
+  .lg-darkgreen::before { border: 2px solid #1CAC78; background: #1CAC78; }
+  .lg-unknown::before   { border: 2px solid #888; background: #f0f0f0; }
+  html[data-theme="dark"] #legend-details > summary,
+  html[data-theme="dark"] #legend-details .legend-body { background: #2b2b2b; color: #ddd; border-color: #555; }
+  html[data-theme="dark"] #legend-details dd { color: #ccc; }
   #graph { width: 100vw; height: calc(100vh - 50px); overflow: auto; padding: 1em; box-sizing: border-box; }
   #graph svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
   .clickable polygon, .clickable ellipse, .clickable path { cursor: pointer; }
@@ -496,12 +529,27 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
 <body>
 
 <header>
-  <button id="back" disabled>← Back</button>
   <button id="overview">Overview</button>
   <span id="breadcrumb">Overview</span>
   <span id="spacer"></span>
   <button id="theme-toggle-btn" type="button" title="Theme: cycle light / dark / system">◐ System</button>
   <a href="dep_graph_document.html">Full graph →</a>
+  <details id="legend-details">
+    <summary>Legend</summary>
+    <div class="legend-body">
+      <dl>
+        <dt class="lg-swatch lg-box">Box</dt><dd>definition</dd>
+        <dt class="lg-swatch lg-ellipse">Ellipse</dt><dd>theorem / lemma</dd>
+        <dt class="lg-swatch lg-orange">Orange</dt><dd>statement still being refined or split into sub-leaves</dd>
+        <dt class="lg-swatch lg-green-border">Green border</dt><dd>Lean declaration for the statement exists</dd>
+        <dt class="lg-swatch lg-blue">Blue fill</dt><dd>statement formalized in Lean, but its proof is not yet complete (still a <code>sorry</code>)</dd>
+        <dt class="lg-swatch lg-green">Green fill</dt><dd>proof formalized in this project</dd>
+        <dt class="lg-swatch lg-darkgreen">Dark-green fill</dt><dd>proof and every ancestor formalized</dd>
+        <dt class="lg-swatch lg-unknown">Grey</dt><dd>state not classified</dd>
+      </dl>
+      <p style="margin:0.6em 0 0; color:#888; font-size:0.92em;">In the overview, each box is a section coloured by its predominant state; click to drill in.</p>
+    </div>
+  </details>
 </header>
 <div id="graph"></div>
 
@@ -510,9 +558,26 @@ const DOTS = __DOTS_JSON__;
 const NAMES = __NAMES_JSON__;
 const DETAIL_KEYS = new Set(Object.keys(DOTS).filter(k => k !== "overview"));
 
-let history = ["overview"];
+// The in-page drilldown stack. It is kept in sync with the browser's
+// history via pushState/popstate so the browser Back/Forward buttons (and
+// deep links via the URL hash) work — see navigate()/popstate below.
+let navStack = ["overview"];
 
-function current() { return history[history.length - 1]; }
+function current() { return navStack[navStack.length - 1]; }
+
+// Derive the drilldown stack from a target key. Detail views sit one level
+// below the overview; "overview" (or anything unknown) resets to the root.
+// This keeps the stack reconstructable from the URL alone, so a back/forward
+// jump or a fresh deep-link both produce a sensible breadcrumb.
+function stackFor(key) {
+  if (key && key !== "overview" && DETAIL_KEYS.has(key)) return ["overview", key];
+  return ["overview"];
+}
+
+function keyFromHash() {
+  const h = (location.hash || "").replace(/^#/, "");
+  return h && DETAIL_KEYS.has(h) ? h : "overview";
+}
 
 function tagClickable() {
   const nodes = document.querySelectorAll('#graph g.node');
@@ -530,21 +595,20 @@ function tagClickable() {
   });
 }
 
+// User-initiated navigation: update the stack, push a browser history entry
+// (so Back returns here), then render.
 function navigate(key) {
   if (key === current()) return;
-  if (key === "overview") {
-    history = ["overview"];
-  } else {
-    history.push(key);
-  }
+  navStack = stackFor(key);
+  const hash = key === "overview" ? "#" : "#" + key;
+  history.pushState({ key: key }, "", hash);
   render();
 }
 
 function render() {
   const key = current();
   document.getElementById('breadcrumb').textContent =
-    history.map(k => NAMES[k] || k).join(' › ');
-  document.getElementById('back').disabled = history.length <= 1;
+    navStack.map(k => NAMES[k] || k).join(' › ');
   document.getElementById('overview').disabled = key === "overview";
   d3.select("#graph")
     .graphviz()
@@ -552,12 +616,14 @@ function render() {
     .on("end", tagClickable);
 }
 
-document.getElementById('back').addEventListener('click', () => {
-  if (history.length > 1) {
-    history.pop();
-    render();
-  }
+// Browser Back/Forward: rebuild the stack from the popped state (falling back
+// to the URL hash) and re-render without pushing a new entry.
+window.addEventListener('popstate', e => {
+  const key = (e.state && e.state.key) || keyFromHash();
+  navStack = stackFor(key);
+  render();
 });
+
 document.getElementById('overview').addEventListener('click', () => {
   navigate("overview");
 });
@@ -584,7 +650,14 @@ document.getElementById('overview').addEventListener('click', () => {
   document.getElementById("theme-toggle-btn").addEventListener("click", function () { setT(NEXT[get()]); });
 })();
 
-render();
+// Initial load: honour a deep-link hash (#<key>), and seed the current
+// history entry with its state so the first Back/Forward is consistent.
+(function () {
+  const key = keyFromHash();
+  navStack = stackFor(key);
+  history.replaceState({ key: key }, "", key === "overview" ? location.pathname + location.search : "#" + key);
+  render();
+})();
 </script>
 </body>
 </html>
