@@ -1,21 +1,12 @@
 #!/usr/bin/env python3
 """Post-process plastex's dep_graph_*.html to:
 
-1. Replace the auto-generated legend with a tighter, color-name-led
-   version. Includes a ``Blue fill'' entry (statement formalized in
-   Lean but its proof is still a `sorry`) — this state does occur in
-   the graph (e.g. open uniformization/universe-bridge obligations);
-   relabels every other entry so the swatch's visible color matches
-   its caption (the upstream legend instead echoes the project-specific
-   ``can_state border'' description text, which doesn't tell a reader
-   what color they're looking at).
+1. Recolour the dependency-graph nodes by GROUND TRUTH (the four states from
+   scripts/blueprint-node-states.py / blueprint_recolor.py — proven / sorry-dep
+   / sorry / unconnected), overriding the upstream \\leanok colours.
 
-2. Add a red-border highlight for the big classical-analysis-input
-   umbrellas — Riemann-Roch, Stokes on a 2-manifold with boundary,
-   Hodge / de Rham, Radó triangulation, Abel's theorem, divisors,
-   degree-one isomorphism, finite-dimensionality, Riemann bilinear.
-   These are each multi-month sub-projects, distinct in scale from
-   ordinary `\notready` lemmas in flight.
+2. Replace the auto-generated legend with a tighter, color-name-led version
+   describing those four states.
 
 Idempotent.
 """
@@ -28,115 +19,17 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from blueprint_recolor import load_states, recolor_dot  # noqa: E402
 
-# Labels that should get the RED-BORDER "major classical-input" highlight.
-# Criteria: huge classical-analysis statement AND not in current Mathlib AND
-# the project has not stubbed a Lean declaration for it (i.e. \notready).
-# `\leanok` umbrellas like `input:riemann-roch`, `input:abel-theorem`,
-# `input:divisors`, `input:finite-dimensionality`, `input:riemann-bilinear`,
-# `input:degree-one-isomorphism`, and `thm:stokes-on-rs-with-boundary` carry
-# at least a project-side Lean stub so they get the regular `\leanok` green
-# border, not the red one — even though their *proofs* are still sorry-bound.
-BIG_UMBRELLAS = [
-    # The original eight red-border umbrellas (existing tex labels).
-    "input:hodge-deRham",
-    "input:rado-triangulation",
-    "input:de-rham-theorem",
-    "input:hodge-decomposition",
-    "input:dolbeault",
-    "input:tietze-normal-form",
-    "thm:polygonal-model",
-    "thm:serre-duality-rs",
-    # New red umbrellas introduced by
-    # tex/sections/12-classical-analysis-gaps.tex when the R5/R7 sub-gaps
-    # `bundled Ω^k` and `Sobolev / elliptic regularity` were promoted to
-    # their own dep-graph nodes.  They are themselves multi-month
-    # mathlib-absent infrastructure pieces, so they get red borders just
-    # like the original eight.
-    "input:bundled-omega-k",
-    "input:sobolev-elliptic-regularity",
-    # Collapsed overview nodes in dep_graph_collapsible.html
-    "gap_R1",
-    "gap_R2",
-    "gap_R3",
-    "gap_R4",
-    "gap_R5",
-    "gap_R6",
-    "gap_R7",
-    "gap_R8",
-    "gap_R9",
-    "gap_R10",
-    "gap_R11",
-]
-
-LABEL_PAT = re.compile(r"\\label\{([^}]+)\}")
 DOT_RENDER_PAT = re.compile(r"\.renderDot\(`(.*?)`\)", re.DOTALL)
-
-HEADLINES = {
-    "input:rado-triangulation",
-    "input:tietze-normal-form",
-    "thm:polygonal-model",
-    "input:de-rham-theorem",
-    "input:hodge-decomposition",
-    "input:hodge-deRham",
-    "input:dolbeault",
-    "thm:serre-duality-rs",
-    "input:bundled-omega-k",
-    "input:sobolev-elliptic-regularity",
-    "lem:uniformization-genus-zero-biholomorphism",
-}
-
-def build_label_maps(repo_root: Path) -> dict[str, str]:
-    label_to_section: dict[str, str] = {}
-    for d in [repo_root / "tex" / "sections", repo_root / "tex" / "statements"]:
-        if not d.is_dir():
-            continue
-        for f in sorted(d.glob("*.tex")):
-            text = f.read_text(encoding="utf-8", errors="replace")
-            for lm in LABEL_PAT.finditer(text):
-                label_to_section[lm.group(1)] = f.stem
-    return label_to_section
-
-def strip_subleaves(dot_text: str, label_to_section: dict[str, str]) -> str:
-    stripped_nodes = set()
-    node_pat = re.compile(r'"([^"]+)"\s*\[([^\]]*)\];')
-    for label, attrs in node_pat.findall(dot_text):
-        sec = label_to_section.get(label)
-        if sec == "12-classical-analysis-gaps" and label not in HEADLINES:
-            stripped_nodes.add(label)
-            
-    new_lines = []
-    edge_pat = re.compile(r'"([^"]+)"\s*->\s*"([^"]+)"')
-    for line in dot_text.splitlines():
-        m_node = node_pat.search(line)
-        if m_node:
-            label = m_node.group(1)
-            if label in stripped_nodes:
-                continue
-                
-        m_edge = edge_pat.search(line)
-        if m_edge:
-            src, tgt = m_edge.group(1), m_edge.group(2)
-            if src in stripped_nodes or tgt in stripped_nodes:
-                continue
-                
-        new_lines.append(line)
-        
-    return "\n".join(new_lines)
-
 
 MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"
 
-# Color reference (must match macros/web.tex + leanblueprint defaults):
-#   blue          = #1f77b4
-#   light blue    = #A3D6FF
-#   orange        = #FFAA33
-#   red           = #d62828
-#   light green   = #B0ECA3 (background) / #5cb85c (border equivalent)
-#   green         = #9CEC8B
-#   dark green    = #1CAC78 (fill) / darkgreen (border)
 # Node colours are derived from GROUND TRUTH (scripts/blueprint-node-states.py:
 # #print axioms + decl existence), not from \leanok. The four states match
-# blueprint/src/blueprint_recolor.py STATE_DOT.
+# blueprint/src/blueprint_recolor.py STATE_DOT:
+#   green fill  #B0ECA3 / #5cb85c   proven
+#   blue fill   #A3D6FF / #1f77b4   sorry-dep
+#   orange fill #fff5e6 / #FFAA33   sorry
+#   grey dashed #f0f0f0 / #888      unconnected
 LEGEND_HTML = """
 <details class="legend-details">
 <summary>Legend</summary>
@@ -207,70 +100,15 @@ INJECTED_STYLE = """
 .legend-box::before     { border: 2px solid #555; background: transparent; }
 .legend-ellipse::before { border: 2px solid #555; border-radius: 50%; background: transparent; }
 
-.legend-red-border::before        { border: 3px solid #d62828; background: white; }
-.legend-orange-border::before     { border: 2px solid #FFAA33; background: white; }
-.legend-blue-border::before       { border: 2px solid #1f77b4; background: white; }
+/* The four ground-truth fill states (see blueprint_recolor.STATE_DOT). */
+.legend-green-fill::before        { border: 2px solid #5cb85c; background: #B0ECA3; }
 .legend-blue-fill::before         { border: 2px solid #1f77b4; background: #A3D6FF; }
 .legend-orange-fill::before       { border: 2px solid #FFAA33; background: #fff5e6; }
 .legend-grey-dashed::before       { border: 2px dashed #888;    background: #f0f0f0; }
-.legend-green-border::before      { border: 2px solid #5cb85c; background: white; }
-.legend-green-fill::before        { border: 2px solid #5cb85c; background: #B0ECA3; }
-.legend-darkgreen-fill::before    { border: 2px solid #1CAC78; background: #1CAC78; }
-
-/* Big-umbrella highlight — applied via JS to specific nodes after the
-   d3-graphviz render finishes. The .big-umbrella class is added to the
-   <g class="node"> element. */
-.node.big-umbrella ellipse,
-.node.big-umbrella polygon,
-.node.big-umbrella path {
-  stroke: #d62828 !important;
-  stroke-width: 3 !important;
-}
 </style>
 """
 
-# JS adds a `.big-umbrella` class to specific node groups so the CSS
-# above can target them. d3-graphviz emits each node as
-# <g class="node"><title>label</title><ellipse/>...</g>, so we look up
-# by <title> text. This runs after every render (the graph viewer
-# re-renders on zoom/pan, but the class survives because we observe
-# DOM mutations).
-INJECTED_SCRIPT = """
-<script id="depgraph-extras-script">
-(function () {
-  var BIG = %s;
-  function tag() {
-    var nodes = document.querySelectorAll('g.node');
-    for (var i = 0; i < nodes.length; i++) {
-      var n = nodes[i];
-      var t = n.querySelector('title');
-      if (!t) continue;
-      var name = t.textContent.trim();
-      if (BIG.indexOf(name) >= 0) n.classList.add('big-umbrella');
-    }
-  }
-  // Run once when the SVG first appears, then re-run on subsequent
-  // d3-graphviz transitions (zoom/pan can cause re-attach).
-  var attempts = 0;
-  function poll() {
-    if (document.querySelector('g.node')) { tag(); }
-    attempts++;
-    if (attempts < 40) setTimeout(poll, 250);
-  }
-  poll();
-  if (window.MutationObserver) {
-    var graph = document.querySelector('#graph');
-    if (graph) {
-      new MutationObserver(tag).observe(graph, { childList: true, subtree: true });
-    }
-  }
-})();
-</script>
-""" % (str(BIG_UMBRELLAS).replace("'", '"'),)
-
-
-def inject(html: str, path: Path, label_to_section: dict[str, str],
-           states: dict[str, str]) -> str:
+def inject(html: str, path: Path, states: dict[str, str]) -> str:
     if MARKER in html:
         return html
 
@@ -278,15 +116,14 @@ def inject(html: str, path: Path, label_to_section: dict[str, str],
         m_dot = DOT_RENDER_PAT.search(html)
         if m_dot:
             original_dot = m_dot.group(1)
-            cleaned_dot = strip_subleaves(original_dot, label_to_section)
             # Recolour by ground-truth node state (overrides \leanok colours).
-            cleaned_dot = recolor_dot(cleaned_dot, states)
-            html = html.replace(original_dot, cleaned_dot, 1)
+            recoloured = recolor_dot(original_dot, states)
+            html = html.replace(original_dot, recoloured, 1)
 
     new = LEGEND_REPLACE.sub(LEGEND_HTML.strip(), html, count=1)
     new = new.replace(
         "</body>",
-        f"{INJECTED_STYLE}{INJECTED_SCRIPT}\n{MARKER}\n</body>",
+        f"{INJECTED_STYLE}\n{MARKER}\n</body>",
         1,
     )
     return new
@@ -301,8 +138,6 @@ def main(argv: list[str]) -> int:
         print(f"error: not a directory: {root}", file=sys.stderr)
         return 1
         
-    repo_root = Path(__file__).resolve().parent.parent
-    label_to_section = build_label_maps(repo_root)
     states = load_states(root)
     if states:
         print(f"inject-depgraph-extras: recolouring by node-states.json ({len(states)} nodes)")
@@ -312,7 +147,7 @@ def main(argv: list[str]) -> int:
     n = 0
     for path in root.glob("dep_graph*.html"):
         original = path.read_text(encoding="utf-8")
-        updated = inject(original, path, label_to_section, states)
+        updated = inject(original, path, states)
         if updated != original:
             path.write_text(updated, encoding="utf-8")
             n += 1
