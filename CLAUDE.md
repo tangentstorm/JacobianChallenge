@@ -21,7 +21,7 @@ lake build Jacobian                              # everything (slow)
 
 Always prefer the narrowest module build after a code change. Single-file builds use the dotted module path (e.g. `lake build Jacobian.ComplexTorus.QuotientMap`).
 
-Pinned to `leanprover/lean4:v4.28.0` and `mathlib v4.28.0` (commit `8f9d9cff6bd728b17a24e163c9402775d9e6a365`). `Jacobian/Challenge.lean` references a slightly later Mathlib commit (`8e3c989...`) but the v4.28.0 tag is what builds; do not unpin without a deliberate decision.
+Pinned to `leanprover/lean4:v4.31.0-rc1` and `mathlib v4.31.0-rc1` (see `lean-toolchain` and `lakefile.toml`). The project was migrated from v4.28.0 to v4.31.0-rc1; the `lean-toolchain`, `lakefile.toml` `rev`, and `lake-manifest.json` `inputRev` are the ground truth for the pin. Do not unpin without a deliberate decision.
 
 ## Architecture
 
