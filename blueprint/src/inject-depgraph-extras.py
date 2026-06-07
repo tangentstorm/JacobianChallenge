@@ -25,6 +25,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from blueprint_recolor import load_states, recolor_dot  # noqa: E402
+
 # Labels that should get the RED-BORDER "major classical-input" highlight.
 # Criteria: huge classical-analysis statement AND not in current Mathlib AND
 # the project has not stubbed a Lean declaration for it (i.e. \notready).
@@ -131,24 +134,23 @@ MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"
 #   light green   = #B0ECA3 (background) / #5cb85c (border equivalent)
 #   green         = #9CEC8B
 #   dark green    = #1CAC78 (fill) / darkgreen (border)
+# Node colours are derived from GROUND TRUTH (scripts/blueprint-node-states.py:
+# #print axioms + decl existence), not from \leanok. The four states match
+# blueprint/src/blueprint_recolor.py STATE_DOT.
 LEGEND_HTML = """
 <details class="legend-details">
 <summary>Legend</summary>
 <dl class="legend">
   <dt class="legend-shape legend-box">Boxes</dt><dd>definitions</dd>
   <dt class="legend-shape legend-ellipse">Ellipses</dt><dd>theorems and lemmas</dd>
-  <dt class="legend-swatch legend-red-border">Red border</dt>
-    <dd>major classical-analysis input — admitted, not in current Mathlib</dd>
-  <dt class="legend-swatch legend-orange-border">Orange border</dt>
-    <dd>blueprint statement still being refined or split into sub-leaves</dd>
-  <dt class="legend-swatch legend-green-border">Green border</dt>
-    <dd>Lean declaration for the statement exists in this project</dd>
-  <dt class="legend-swatch legend-blue-fill">Blue fill</dt>
-    <dd>statement formalized in Lean, but its proof is not yet complete (still a <span class="ttfamily">sorry</span>)</dd>
   <dt class="legend-swatch legend-green-fill">Green fill</dt>
-    <dd>proof formalized in this project</dd>
-  <dt class="legend-swatch legend-darkgreen-fill">Dark-green fill</dt>
-    <dd>proof and every ancestor formalized</dd>
+    <dd>fully proven — no <span class="ttfamily">sorry</span> and no introduced axioms</dd>
+  <dt class="legend-swatch legend-blue-fill">Blue fill</dt>
+    <dd>formalized, but its proof depends on a <span class="ttfamily">sorry</span> / extra axiom somewhere upstream</dd>
+  <dt class="legend-swatch legend-orange-fill">Orange fill</dt>
+    <dd>the statement's own proof is a direct <span class="ttfamily">sorry</span></dd>
+  <dt class="legend-swatch legend-grey-dashed">Grey, dashed</dt>
+    <dd>not yet written in Lean</dd>
 </dl>
 </details>
 """
@@ -209,6 +211,8 @@ INJECTED_STYLE = """
 .legend-orange-border::before     { border: 2px solid #FFAA33; background: white; }
 .legend-blue-border::before       { border: 2px solid #1f77b4; background: white; }
 .legend-blue-fill::before         { border: 2px solid #1f77b4; background: #A3D6FF; }
+.legend-orange-fill::before       { border: 2px solid #FFAA33; background: #fff5e6; }
+.legend-grey-dashed::before       { border: 2px dashed #888;    background: #f0f0f0; }
 .legend-green-border::before      { border: 2px solid #5cb85c; background: white; }
 .legend-green-fill::before        { border: 2px solid #5cb85c; background: #B0ECA3; }
 .legend-darkgreen-fill::before    { border: 2px solid #1CAC78; background: #1CAC78; }
@@ -265,15 +269,18 @@ INJECTED_SCRIPT = """
 """ % (str(BIG_UMBRELLAS).replace("'", '"'),)
 
 
-def inject(html: str, path: Path, label_to_section: dict[str, str]) -> str:
+def inject(html: str, path: Path, label_to_section: dict[str, str],
+           states: dict[str, str]) -> str:
     if MARKER in html:
         return html
-        
+
     if path.name == "dep_graph_document.html":
         m_dot = DOT_RENDER_PAT.search(html)
         if m_dot:
             original_dot = m_dot.group(1)
             cleaned_dot = strip_subleaves(original_dot, label_to_section)
+            # Recolour by ground-truth node state (overrides \leanok colours).
+            cleaned_dot = recolor_dot(cleaned_dot, states)
             html = html.replace(original_dot, cleaned_dot, 1)
 
     new = LEGEND_REPLACE.sub(LEGEND_HTML.strip(), html, count=1)
@@ -296,11 +303,16 @@ def main(argv: list[str]) -> int:
         
     repo_root = Path(__file__).resolve().parent.parent
     label_to_section = build_label_maps(repo_root)
-    
+    states = load_states(root)
+    if states:
+        print(f"inject-depgraph-extras: recolouring by node-states.json ({len(states)} nodes)")
+    else:
+        print("inject-depgraph-extras: no node-states.json — keeping upstream \\leanok colours")
+
     n = 0
     for path in root.glob("dep_graph*.html"):
         original = path.read_text(encoding="utf-8")
-        updated = inject(original, path, label_to_section)
+        updated = inject(original, path, label_to_section, states)
         if updated != original:
             path.write_text(updated, encoding="utf-8")
             n += 1

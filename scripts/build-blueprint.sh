@@ -97,8 +97,22 @@ if grep -qiE "could not be resolved" "$build_log"; then
   exit 1
 fi
 
-# --- 2. Inject (order matters) ---------------------------------------------
-echo "==> [2/3] Injecting post-processing extras"
+# --- 2. Compute ground-truth node states -----------------------------------
+# Derive each blueprint node's real proof state (proven / sorry-dep / sorry /
+# unformalized) from `#print axioms` + decl existence, into node-states.json,
+# so the inject/collapsible steps below recolour the graph by reality instead
+# of by hand-written \leanok. Requires current oleans — the generator aborts
+# loudly if the build is stale, so build the public target first.
+echo "==> [2/4] Computing ground-truth node states"
+( cd "$REPO_ROOT" && lake build Jacobian.Solution ) >/dev/null 2>&1 || {
+  echo "error: 'lake build Jacobian.Solution' failed — cannot compute node states." >&2
+  echo "       Run 'lake exe cache get' then retry." >&2
+  exit 1
+}
+"$PY" "$SRC/../../scripts/blueprint-node-states.py" "$WEB/node-states.json"
+
+# --- 3. Inject (order matters) ---------------------------------------------
+echo "==> [3/4] Injecting post-processing extras"
 "$PY" "$SRC/inject-layman-toggle.py"      "$WEB"
 "$PY" "$SRC/inject-theme-toggle.py"       "$WEB"
 "$PY" "$SRC/inject-depgraph-extras.py"    "$WEB"
@@ -108,7 +122,7 @@ echo "==> [2/3] Injecting post-processing extras"
 # A correct build injects each per-page marker into (almost) every page. If a
 # rebuild→inject ordering bug under-applies, the counts collapse to 0/1 — catch
 # that here rather than discovering it by eye in the browser.
-echo "==> [3/3] Verifying injections"
+echo "==> [4/4] Verifying injections"
 
 total_pages="$(find "$WEB" -maxdepth 1 -name '*.html' | wc -l | tr -d ' ')"
 # Most pages get the toggles; the dep-graph pages and a couple of generated

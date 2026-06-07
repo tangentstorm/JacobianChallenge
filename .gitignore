@@ -19,3 +19,4 @@ goal.md
 result.md
 .swarm-status
 .sci/
+blueprint/src/__pycache__/

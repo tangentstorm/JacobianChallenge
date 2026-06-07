@@ -32,6 +32,9 @@ import re
 import sys
 from collections import defaultdict, Counter
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from blueprint_recolor import load_states, recolor_dot  # noqa: E402
+
 # ---------------------------------------------------------------------------
 # Configuration
 
@@ -440,6 +443,7 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
   .lg-green::before     { border: 2px solid #5cb85c; background: #B0ECA3; }
   .lg-darkgreen::before { border: 2px solid #1CAC78; background: #1CAC78; }
   .lg-unknown::before   { border: 2px solid #888; background: #f0f0f0; }
+  .lg-grey-dashed::before { border: 2px dashed #888; background: #f0f0f0; }
   html[data-theme="dark"] #legend-details > summary,
   html[data-theme="dark"] #legend-details .legend-body { background: #2b2b2b; color: #ddd; border-color: #555; }
   html[data-theme="dark"] #legend-details dd { color: #ccc; }
@@ -545,14 +549,12 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
       <dl>
         <dt class="lg-swatch lg-box">Box</dt><dd>definition</dd>
         <dt class="lg-swatch lg-ellipse">Ellipse</dt><dd>theorem / lemma</dd>
-        <dt class="lg-swatch lg-orange">Orange</dt><dd>statement still being refined or split into sub-leaves</dd>
-        <dt class="lg-swatch lg-green-border">Green border</dt><dd>Lean declaration for the statement exists</dd>
-        <dt class="lg-swatch lg-blue">Blue fill</dt><dd>statement formalized in Lean, but its proof is not yet complete (still a <code>sorry</code>)</dd>
-        <dt class="lg-swatch lg-green">Green fill</dt><dd>proof formalized in this project</dd>
-        <dt class="lg-swatch lg-darkgreen">Dark-green fill</dt><dd>proof and every ancestor formalized</dd>
-        <dt class="lg-swatch lg-unknown">Grey</dt><dd>state not classified</dd>
+        <dt class="lg-swatch lg-green">Green fill</dt><dd>fully proven — no <code>sorry</code> and no introduced axioms</dd>
+        <dt class="lg-swatch lg-blue">Blue fill</dt><dd>formalized, but its proof depends on a <code>sorry</code> / extra axiom somewhere upstream</dd>
+        <dt class="lg-swatch lg-orange">Orange fill</dt><dd>the statement's own proof is a direct <code>sorry</code></dd>
+        <dt class="lg-swatch lg-grey-dashed">Grey, dashed</dt><dd>not yet written in Lean</dd>
       </dl>
-      <p style="margin:0.6em 0 0; color:#888; font-size:0.92em;">In the overview, each box is a section coloured by its predominant state; click to drill in.</p>
+      <p style="margin:0.6em 0 0; color:#888; font-size:0.92em;">Node colours reflect the real Lean state (from <code>#print axioms</code>), not <code>\\leanok</code>. In the overview, each box is a section coloured by its predominant state; click to drill in.</p>
     </div>
   </details>
 </header>
@@ -723,6 +725,14 @@ def main(argv: list[str]) -> int:
     overview_dot, detail_dots, r_to_name = build_dots(
         dot_text, label_to_section, label_to_subsection_r, r_to_name
     )
+
+    # Recolour the per-section detail graphs by ground-truth node state
+    # (overrides \leanok colours). The overview boxes keep their section-
+    # aggregate colouring (a different, majority-based abstraction).
+    states = load_states(web)
+    if states:
+        detail_dots = {k: recolor_dot(v, states) for k, v in detail_dots.items()}
+        print(f"build_collapsible_dep_graph: recoloured detail graphs by node-states.json ({len(states)} nodes)")
 
     dots = {"overview": overview_dot, **detail_dots}
     names = display_names(detail_dots, r_to_name)
