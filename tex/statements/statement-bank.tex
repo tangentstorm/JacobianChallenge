@@ -47,7 +47,7 @@ discrete grid that gets quotiented to form the Jacobian.
 
 \begin{theorem}[Period lattice theorem]
 \label{thm:period-lattice}
-\uses{input:riemann-bilinear, def:period-pairing, thm:analytic-eq-topological-genus, lem:h1-basis-compact-rs-u, lem:riemann-classical-real-li-input-u}
+\uses{input:riemann-bilinear, def:period-pairing, thm:analytic-eq-topological-genus, lem:h1-basis-of-compact-riemann-surface-u, lem:riemann-classical-real-li-input-u}
 The image \(\periods_X := \Pi_X(H_1(X,\Z))\) is a full lattice in the
 real vector space underlying \(\HdualX\).
 \lean{JacobianChallenge.Periods.periodFullComplexLattice}
@@ -63,7 +63,7 @@ to obtain a full lattice in the underlying real vector space.
 % Universe-u companions of the period-lattice content (the public Jacobian
 % universe bridge consumes these); both are open obligations.
 \begin{lemma}[Universe-$u$ $H_1$ basis (open)]
-\label{lem:h1-basis-compact-rs-u}
+\label{lem:h1-basis-of-compact-riemann-surface-u}
 A \(\Z\)-basis of \(H_1\) for a universe-\(u\) compact Riemann surface
 (\(\code{IntegralOneCycleU}\)). Open obligation (\code{sorry}).
 Tracking: \ghissue{240}.

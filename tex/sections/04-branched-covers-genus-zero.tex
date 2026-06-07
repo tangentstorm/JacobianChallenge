@@ -623,7 +623,7 @@ Theorem~\ref{thm:degree-one-bijective} (Sec02, already \(\leanok\)).
 
 \begin{lemma}[Holomorphic 1-form equivalence under sphere homeomorphism]
 \label{lem:holomorphic-one-form-equiv-of-homeo-sphere}
-\uses{thm:uniformization-genus-zero-biholomorphism, lem:holomorphic-one-form-pullback-via-biholo}
+\uses{thm:exists-biholomorph-one-point-of-genus-zero, lem:holomorphic-one-form-pullback-via-biholo}
 If a compact connected complex 1-manifold \(X\) is homeomorphic
 (as a topological space) to the standard \(2\)-sphere, then there
 is a \(\C\)-linear equivalence
@@ -891,11 +891,11 @@ A compact connected complex 1-manifold homeomorphic to \(S^2\) admits a
 Purely topological: compose the given \(X\simeq_{\mathrm{top}}S^2\) with the
 fixed homeomorphism \(S^2\simeq_{\mathrm{top}}\code{OnePoint}\,\C\). This yields
 only a homeomorphism; the complex-smooth upgrade is
-Theorem~\ref{thm:uniformization-genus-zero-biholomorphism}.
+Theorem~\ref{thm:exists-biholomorph-one-point-of-genus-zero}.
 \end{proof}
 
 \begin{theorem}[Biholomorphism from sphere homeomorphism (genus-zero uniformization)]
-\label{thm:uniformization-genus-zero-biholomorphism}
+\label{thm:exists-biholomorph-one-point-of-genus-zero}
 \uses{lem:uniformization-genus-zero-homeomorphism, lem:holomorphic-one-form-pointwise-limit-exists, lem:holomorphic-one-form-limit-continuous, lem:holomorphic-one-form-limit-holomorphic}
 A compact connected complex 1-manifold homeomorphic to \(S^2\) admits a
 \emph{biholomorphism} to \(\code{OnePoint}\,\C\): a homeomorphism
@@ -922,11 +922,11 @@ not used to construct it.
 \end{proof}
 
 \begin{lemma}[Analytic genus zero gives a sphere biholomorphism (open)]
-\label{lem:exists-biholomorph-analyticgenus-zero}
-\uses{thm:uniformization-genus-zero-biholomorphism}
+\label{lem:exists-biholomorph-one-point-of-analytic-genus-zero}
+\uses{thm:exists-biholomorph-one-point-of-genus-zero}
 A compact connected Riemann surface with \(g_{\mathrm{an}}(X)=0\) admits a
 biholomorphism \(X\simeq\code{OnePoint}\,\C\). Packages
-Theorem~\ref{thm:uniformization-genus-zero-biholomorphism} into the
+Theorem~\ref{thm:exists-biholomorph-one-point-of-genus-zero} into the
 \(g_{\mathrm{an}}=0\) hypothesis the meromorphic bridge consumes. Open
 obligation (\code{sorry}) in the Lean development.
 Tracking: \ghissue{233}.
@@ -934,8 +934,8 @@ Tracking: \ghissue{233}.
 \end{lemma}
 
 \begin{lemma}[Simple-pole principal part from a sphere biholomorphism (open)]
-\label{lem:complex-simple-pole-principal-part-biholomorph}
-\uses{thm:uniformization-genus-zero-biholomorphism}
+\label{lem:complex-simple-pole-principal-part-of-biholomorph-one-point}
+\uses{thm:exists-biholomorph-one-point-of-genus-zero}
 Pulling the standard simple-pole coordinate on \(\code{OnePoint}\,\C\) back along
 the biholomorphism yields a map with a simple-pole principal part at the chosen
 point. Open obligation (\code{sorry}).

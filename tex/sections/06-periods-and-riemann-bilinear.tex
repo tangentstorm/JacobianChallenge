@@ -616,14 +616,14 @@ delegating to two named, deeper obligations.
 
 \begin{theorem}[de Rham / Hodge rank computation]
 \label{input:hodge-deRham}
-\uses{lem:derham-zero-period-primitive-exists, lem:hodge-remainder-period-payload-exact}
+\uses{lem:de-rham-comparison-map1-zero-period-primitive-exists-provider, lem:hodge-remainder-period-payload-exact}
 \(\mathrm{rank}_{\Z}H_1(X) = 2g_{\mathrm{an}}(X)\). This decomposes into the two
 exactness inputs below: a closed 1-form with vanishing periods is exact (de Rham),
 and a closed 1-form with zero harmonic projection is exact (Hodge).
 \end{theorem}
 
 \begin{lemma}[Zero-period closed form is exact (open)]
-\label{lem:derham-zero-period-primitive-exists}
+\label{lem:de-rham-comparison-map1-zero-period-primitive-exists-provider}
 A closed \(1\)-form whose de Rham comparison image (all periods) vanishes admits
 a global primitive, hence is exact. Open obligation (\code{sorry}).
 Tracking: \ghissue{242}.

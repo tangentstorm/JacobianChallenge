@@ -412,7 +412,7 @@ alongside Riemann-Roch and Stokes.
 
 \begin{theorem}[Analytic genus equals topological genus]
 \label{thm:analytic-eq-topological-genus}
-\uses{def:topological-genus, input:hodge-deRham, lem:cut-along-nontree-unfolded-disk, lem:polygon4g-quotient-path-finite-lift, lem:polygon4g-partial-side-arc-edge-chain, lem:edgechain-sum-boundary-coeff-zero, lem:handleprefix-tailrotate-homeomorph}
+\uses{def:topological-genus, input:hodge-deRham, lem:cut-along-non-tree-yields-unfolded-disk, lem:polygon4g-quotient-path-finite-lift-subdivision, lem:polygon4g-partial-side-arc-homologous-to-edge-chain, lem:edge-chain-sum-singular-boundary-scalar-coefficient-zero, lem:handleprefix-tailrotate-homeomorph}
 For a compact connected oriented Riemann surface \(X\),
 \[
   g_{\mathrm{an}}(X) = g_{\mathrm{top}}(X).
@@ -442,7 +442,7 @@ Hodge + UCT chain) plus \code{Nat.mul_div_cancel_left} to identify
 % identification; each is a tracked open obligation in the Lean development.
 
 \begin{lemma}[Cut along non-tree edges yields an unfolded disk (open)]
-\label{lem:cut-along-nontree-unfolded-disk}
+\label{lem:cut-along-non-tree-yields-unfolded-disk}
 Cutting a triangulated compact surface along the non-tree edges of a dual
 spanning tree produces a disk (the fundamental polygon). Open obligation
 (\code{sorry}) in the Lean development.
@@ -451,7 +451,7 @@ Tracking: \ghissue{226}.
 \end{lemma}
 
 \begin{lemma}[Polygon quotient path admits a finite chart-lift subdivision (open)]
-\label{lem:polygon4g-quotient-path-finite-lift}
+\label{lem:polygon4g-quotient-path-finite-lift-subdivision}
 A path in the \(4g\)-gon side-pairing quotient subdivides into finitely many
 chart-liftable pieces. Open obligation (\code{sorry}).
 Tracking: \ghissue{228}.
@@ -459,7 +459,7 @@ Tracking: \ghissue{228}.
 \end{lemma}
 
 \begin{lemma}[Partial side arc homologous to an edge chain (open)]
-\label{lem:polygon4g-partial-side-arc-edge-chain}
+\label{lem:polygon4g-partial-side-arc-homologous-to-edge-chain}
 A partial boundary side-arc of the \(4g\)-gon is homologous to the corresponding
 edge chain. Open obligation (\code{sorry}).
 Tracking: \ghissue{229}.
@@ -467,7 +467,7 @@ Tracking: \ghissue{229}.
 \end{lemma}
 
 \begin{lemma}[Edge-chain boundary coefficients vanish (open)]
-\label{lem:edgechain-sum-boundary-coeff-zero}
+\label{lem:edge-chain-sum-singular-boundary-scalar-coefficient-zero}
 If a singular two-boundary is a finite sum of edge chains, every edge
 coefficient is zero (edge independence in \(H_1\)). Open obligation
 (\code{sorry}).
