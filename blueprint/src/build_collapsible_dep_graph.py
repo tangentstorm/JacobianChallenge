@@ -444,6 +444,7 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
   .lg-darkgreen::before { border: 2px solid #1CAC78; background: #1CAC78; }
   .lg-unknown::before   { border: 2px solid #888; background: #f0f0f0; }
   .lg-grey-dashed::before { border: 2px dashed #888; background: #f0f0f0; }
+  .lg-uncoloured::before { border: 2px solid #777; background: transparent; }
   html[data-theme="dark"] #legend-details > summary,
   html[data-theme="dark"] #legend-details .legend-body { background: #2b2b2b; color: #ddd; border-color: #555; }
   html[data-theme="dark"] #legend-details dd { color: #ccc; }
@@ -553,6 +554,7 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
         <dt class="lg-swatch lg-blue">Blue fill</dt><dd>formalized, but its proof depends on a <code>sorry</code> / extra axiom somewhere upstream</dd>
         <dt class="lg-swatch lg-orange">Orange fill</dt><dd>the statement's own proof is a direct <code>sorry</code></dd>
         <dt class="lg-swatch lg-grey-dashed">Grey, dashed</dt><dd>not connected to the public build (not written yet, or formalized but not wired in)</dd>
+        <dt class="lg-swatch lg-uncoloured">No fill</dt><dd>state unknown — no resolvable Lean declaration for this statement</dd>
       </dl>
       <p style="margin:0.6em 0 0; color:#888; font-size:0.92em;">Node colours reflect the real Lean state (from <code>#print axioms</code>), not <code>\\leanok</code>. In the overview, each box is a section coloured by its predominant state; click to drill in.</p>
     </div>

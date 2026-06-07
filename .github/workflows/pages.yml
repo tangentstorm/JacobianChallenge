@@ -76,7 +76,11 @@ jobs:
       - name: Inject light/dark/system theme toggle
         run: python3 blueprint/src/inject-theme-toggle.py blueprint/web
 
-      - name: Rewrite dep-graph legend + tag big-umbrella nodes
+      - name: Recolour dep-graph nodes + rewrite legend
+        # Recolours nodes by their real Lean state (done / sorry / sorry-dep /
+        # unconnected), read from the committed sorries.jsonl (the `c` field,
+        # keyed by blueprint ref). No Lean build needed in CI — the states were
+        # computed and committed by scripts/fix-sorries.py.
         run: python3 blueprint/src/inject-depgraph-extras.py blueprint/web
 
       - name: Build collapsible dep-graph view

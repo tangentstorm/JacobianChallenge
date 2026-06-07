@@ -43,8 +43,11 @@ def main():
     db_keys = set(db.keys())
     curr_keys = set(curr.keys())
 
-    # Only consider it "removed" if it is missing from current codebase AND was "open" in DB
-    removed_keys = {k for k in db_keys - curr_keys if db[k].get("c", "open") == "open"}
+    # Only consider it "removed" if it is missing from current codebase AND was
+    # not already done in the DB. `c` now carries a 4-state value
+    # (done | sorry | sorry-dep | unformalized); "not done" means it was an open
+    # obligation, so test `!= "done"` rather than the old `== "open"`.
+    removed_keys = {k for k in db_keys - curr_keys if db[k].get("c", "sorry") != "done"}
     added_keys = curr_keys - db_keys
 
     # Check for changes in 'n' (number of sorries), 'o' (obligations) and 'r' (reachable)

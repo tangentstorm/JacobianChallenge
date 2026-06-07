@@ -71,11 +71,17 @@ def load_states(web_dir: Path) -> dict[str, str]:
             r = json.loads(line)
             if r.get("i") == "ID":  # header
                 continue
-            label, state = r.get("b"), r.get("c")
-            if not label or state not in STATE_DOT:
+            b, state = r.get("b"), r.get("c")
+            if not b or state not in STATE_DOT:
                 continue
-            if label not in out or rank.get(state, 0) > rank.get(out[label], 0):
-                out[label] = state
+            # `b` may be a comma-joined set of labels (a decl cited by several
+            # blueprint statements) — colour every one of them.
+            for label in b.split(","):
+                label = label.strip()
+                if not label:
+                    continue
+                if label not in out or rank.get(state, 0) > rank.get(out[label], 0):
+                    out[label] = state
     except Exception:
         return {}
     return out

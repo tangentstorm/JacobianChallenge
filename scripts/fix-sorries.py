@@ -95,12 +95,18 @@ def format_row(obj, is_header=False):
 def blueprint_data():
     """Inspect the current blueprint tex. Returns:
       labels      — set of every \\label{} that currently exists in the tex
-      nodes       — {(file, decl): label} for each blueprint node that has a
-                    project \\lean{} decl (these become graph nodes)
+      nodes       — {(file, decl): "label1,label2,..."} for each blueprint node
+                    that has a project \\lean{} decl. A decl cited by several
+                    blueprint statements (12 of them) maps to ALL their labels,
+                    comma-joined, so every citing node gets coloured (one row per
+                    decl, `b` holds the label set). load_states splits on comma.
     Reuses blueprint_audit's parser so the node rule lives in one place."""
     import blueprint_audit as ba
     labels = set()
-    nodes = {}
+    # Aggregate labels by DECL NAME (not (file, decl)) so a decl cited from
+    # several tex files still gets all its labels merged.
+    decl_labels: dict[str, set] = {}
+    decl_file: dict[str, str] = {}
     label_re = re.compile(r"\\label\{([^}]+)\}")
     for tex_dir in ba.TEX_DIRS:
         for tex in sorted(tex_dir.glob("*.tex")):
@@ -112,13 +118,38 @@ def blueprint_data():
                     continue
                 for n in b.get("lean_names", []):
                     if ba.is_project_name(n):
-                        nodes[(str(tex.relative_to(ba.ROOT)), n)] = label
+                        decl_labels.setdefault(n, set()).add(label)
+                        decl_file.setdefault(n, str(tex.relative_to(ba.ROOT)))
+    nodes = {(decl_file[n], n): ",".join(sorted(labs))
+             for n, labs in decl_labels.items()}
     return labels, nodes
 
 
 def main():
     header, db, max_id = load_db()
     curr = get_current()
+
+    # 0. Collapse pre-existing duplicate rows for the same Lean decl. The old
+    #    sync-blueprint-db keyed rows by (tex_file, decl) while list-sorries keys
+    #    by (lean_file, decl), so a public decl can have several rows. Keep one
+    #    per decl (lowest id), merging their blueprint refs and taking the
+    #    max sorry count, so colouring and label attachment are unambiguous.
+    by_decl: dict[str, tuple] = {}
+    for key, r in list(db.items()):
+        decl = r.get("s")
+        if not decl:
+            continue
+        if decl in by_decl:
+            keep_key, keep = by_decl[decl]
+            # merge blueprint refs
+            refs = set(filter(None, (keep.get("b", "").split(",") + r.get("b", "").split(","))))
+            keep["b"] = ",".join(sorted(refs))
+            keep["n"] = max(keep.get("n", 0) or 0, r.get("n", 0) or 0)
+            if r.get("i", 1e9) < keep.get("i", 1e9):
+                keep["i"] = r["i"]
+            del db[key]
+        else:
+            by_decl[decl] = (key, r)
 
     # 1. Refresh sorry rows from list-sorries.py.
     for key, curr_obj in curr.items():
@@ -146,11 +177,17 @@ def main():
     #        but clear the dangling `b`;
     #      * otherwise it is a pure placeholder for a deleted blueprint label
     #        (no decl, no sorry) — drop the row entirely.
+    # `b` may hold several comma-joined labels (a decl cited by multiple
+    # blueprint statements). A row is stale only if NONE of its labels still
+    # exists in the tex.
+    def live_labels(b):
+        return [l for l in (b or "").split(",") if l and l in bp_labels]
+
     cleared = dropped = 0
     for key in list(db.keys()):
         r = db[key]
         b = r.get("b")
-        if b and b not in bp_labels:
+        if b and not live_labels(b):
             if r.get("n", 0) or (key in curr):
                 r["b"] = ""
                 cleared += 1
@@ -158,18 +195,22 @@ def main():
                 del db[key]
                 dropped += 1
 
-    # 3. Ensure every current blueprint \lean{} node has a row (union of
-    #    sorries and blueprint nodes — the same node may be in both lists).
-    for (f, decl), label in bp_nodes.items():
-        key = (f, decl)
+    # 3. Ensure every current blueprint \lean{} node has a row, keyed by the
+    #    Lean decl (so it coincides with the decl's sorry row when there is one).
+    #    `b` is set to the comma-joined label set so a decl backing several
+    #    blueprint statements colours all of them.
+    decl_to_key = {decl: k for k in db for (_f, decl) in [k]}
+    for (f, decl), labelset in bp_nodes.items():
+        key = decl_to_key.get(decl, (f, decl))
         if key in db:
-            db[key]["b"] = label
+            db[key]["b"] = labelset
         else:
             max_id += 1
             obj = dict(DEFAULTS)
             obj.update({"i": max_id, "f": f, "k": "blueprint", "s": decl,
-                        "n": 0, "o": 0, "r": 0, "b": label})
+                        "n": 0, "o": 0, "r": 0, "b": labelset})
             db[key] = obj
+            decl_to_key[decl] = key
 
     # 4. Colour every row by the REAL Lean dependency state (DepGraph walk),
     #    written into the `c` / Status field:

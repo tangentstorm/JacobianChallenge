@@ -44,6 +44,8 @@ LEGEND_HTML = """
     <dd>the statement's own proof is a direct <span class="ttfamily">sorry</span></dd>
   <dt class="legend-swatch legend-grey-dashed">Grey, dashed</dt>
     <dd>not connected to the public build (not written yet, or formalized but not wired into the public path)</dd>
+  <dt class="legend-swatch legend-uncoloured">No fill (plain outline)</dt>
+    <dd>state unknown — this blueprint statement has no resolvable Lean declaration, so it is neither tracked as proven nor as a sorry</dd>
 </dl>
 </details>
 """
@@ -105,6 +107,7 @@ INJECTED_STYLE = """
 .legend-blue-fill::before         { border: 2px solid #1f77b4; background: #A3D6FF; }
 .legend-orange-fill::before       { border: 2px solid #FFAA33; background: #fff5e6; }
 .legend-grey-dashed::before       { border: 2px dashed #888;    background: #f0f0f0; }
+.legend-uncoloured::before        { border: 2px solid #777;    background: transparent; }
 </style>
 """
 
