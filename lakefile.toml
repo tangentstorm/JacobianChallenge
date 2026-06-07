@@ -1,6 +1,6 @@
 name = "jacobianChallenge"
 version = "0.1.0"
-defaultTargets = ["Jacobian"]
+defaultTargets = ["Jacobian.Solution"]
 
 [leanOptions]
 autoImplicit = false
