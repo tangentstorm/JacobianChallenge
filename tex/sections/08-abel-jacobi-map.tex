@@ -454,9 +454,10 @@ If \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
 \begin{lemma}[Abel--Jacobi injectivity for positive genus (open)]
 \label{lem:analytic-ofcurve-injective}
 \uses{thm:abel-point-separation}
-For \(g(X)>0\) the Abel--Jacobi map \(\AJ_P\) is injective. Matches the frozen
-public \code{ofCurve\_inj} signature; open obligation (\lstinline{sorry}) until
-the genus-zero single-pole route lands.
+For \(g(X)>0\) the Abel--Jacobi map \(\AJ_P\) is injective. Follows from the
+point-separation theorem; matches the frozen public \code{ofCurve\_inj}
+signature. Open obligation (\lstinline{sorry}) until the genus-zero single-pole
+route lands. Consumed by the challenge API (\ref{thm:challenge-api}).
 \lean{JacobianChallenge.AbelJacobi.analyticOfCurve_injective}
 \end{lemma}
 
@@ -465,7 +466,7 @@ the genus-zero single-pole route lands.
 \uses{thm:abel-point-separation}
 Universe-\(u\) companion of the point-separation theorem, needed by the public
 \code{ofCurve\_inj} for \(X:\mathrm{Type}\,u\). Open obligation
-(\lstinline{sorry}).
+(\lstinline{sorry}). Consumed by the challenge API (\ref{thm:challenge-api}).
 \lean{JacobianChallenge.AbelJacobi.pathIntegralFunctional_separates_pointsU}
 \end{lemma}
 
