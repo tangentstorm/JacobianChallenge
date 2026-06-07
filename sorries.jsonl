@@ -15,7 +15,7 @@
 {"i":1351,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"lemma","s":"closedForm_pathIntegral_primitive_exists","n":0,"o":1,"r":1,"e":null,"u":[],"d":[2030],"a":"aristotle:d0717941-5047-454b-8fd5-68382a67e40d","c":"done","b":"lem:path-integral-primitive","t":""}
 {"i":1352,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"integral_closed_form_from_cech_eq","n":1,"o":1,"r":0,"e":7,"u":[],"d":[],"a":"aristotle:3d57f254-af04-4476-9699-dde009d44057","c":"done","b":"","t":""}
 {"i":1354,"f":"Jacobian/HolomorphicForms/EvalAtOneHelper.lean","k":"theorem","s":"contMDiff_tangentSection_one","n":1,"o":1,"r":0,"e":3,"u":[],"d":[],"a":"aristotle:d3b3da49-ce4d-462c-87fc-12a7664bf55b","c":"done","b":"","t":""}
-{"i":1355,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"exists_contMDiff_homeomorph_to_onePointCx","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"aristotle:93a3141d-3479-4bc1-883b-e47df40dff1e","c":"open","b":"","t":""}
+{"i":1355,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"exists_contMDiff_homeomorph_to_onePointCx","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"aristotle:93a3141d-3479-4bc1-883b-e47df40dff1e","c":"done","b":"","t":""}
 {"i":1356,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"holomorphicOneForm_chartOverlap_pullback","n":1,"o":1,"r":0,"e":5,"u":[],"d":[],"a":"aristotle:5b1e92ee-43c7-4996-addf-e24b07138855","c":"done","b":"","t":""}
 {"i":1376,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"lemma","s":"isHolomorphic_of_contMDiff","n":0,"o":1,"r":1,"e":null,"u":[1402,1407,1935,1937],"d":[1919],"a":"claude:01AuxnBVoqtmYrKHjAXCfTWv","c":"done","b":"lem:impl-meromorphic-lift","t":""}
 {"i":1377,"f":"Jacobian/HolomorphicForms/InversionChartContinuity.lean","k":"theorem","s":"identityChartCoeff_tendsto_zero","n":1,"o":1,"r":0,"e":4,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
@@ -51,7 +51,7 @@
 {"i":1424,"f":"Jacobian/Periods/CellularChainComplex.lean","k":"lemma","s":"polygon4g_two_cell_boundary_abelianized_relator","n":0,"o":1,"r":0,"e":null,"u":[1420,1423,1425],"d":[2638],"a":"","c":"done","b":"lem:impl-polygon-cellular-boundary-formula","t":""}
 {"i":1425,"f":"Jacobian/Periods/CellularHomologyRS.lean","k":"lemma","s":"polygon4g_finiteCWStructure","n":0,"o":1,"r":0,"e":4,"u":[1416,1417,1418,1419,1421],"d":[1422,1424,1435,1436,1437,1438],"a":"","c":"done","b":"lem:impl-polygon-characteristic-maps","t":""}
 {"i":1426,"f":"Jacobian/Periods/DualGraphCut.lean","k":"theorem","s":"unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms","n":1,"o":1,"r":0,"e":4,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":1427,"f":"Jacobian/Periods/HandleSwapHomeo.lean","k":"theorem","s":"handlePrefix_tailRotate_homeomorph","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1427,"f":"Jacobian/Periods/HandleSwapHomeo.lean","k":"theorem","s":"handlePrefix_tailRotate_homeomorph","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1428,"f":"Jacobian/Periods/HandleSwapHomeo.lean","k":"theorem","s":"wordQuotient_homeomorph_of_rotate","n":1,"o":1,"r":0,"e":4,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1429,"f":"Jacobian/Periods/Hurewicz.lean","k":"lemma","s":"polygon4g_cellular_singular_H1_iso_of_filtered_graded","n":0,"o":1,"r":0,"e":null,"u":[1431,1432,1433],"d":[2073],"a":"","c":"done","b":"lem:impl-cellular-singular-filtered-comparison","t":""}
 {"i":1430,"f":"Jacobian/Periods/Hurewicz.lean","k":"lemma","s":"polygon4g_cellular_singular_associated_graded_H1_iso","n":0,"o":1,"r":0,"e":null,"u":[1431,1432,1433],"d":[2073],"a":"","c":"done","b":"lem:impl-cellular-singular-filtered-comparison","t":""}
@@ -1217,10 +1217,10 @@
 {"i":2723,"f":"Jacobian/Solution.lean","k":"theorem","s":"pushforward_contMDiff","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2724,"f":"Jacobian/Solution.lean","k":"lemma","s":"pushforward_id_apply","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2725,"f":"Jacobian/Solution.lean","k":"lemma","s":"pushforward_pullback","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":2726,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"deRhamComparisonMap1_smooth_local_representatives_period_cycle_axiom_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2727,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"deRhamComparisonMap1_zero_period_exact_axiom_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2728,"f":"Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean","k":"theorem","s":"genusZero_singlePoleMeromorphicAnalyticData_nonempty","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2729,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"genusZero_pointRRSection_meromorphic_getD_exists","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2726,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"deRhamComparisonMap1_smooth_local_representatives_period_cycle_axiom_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2727,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"deRhamComparisonMap1_zero_period_exact_axiom_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2728,"f":"Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean","k":"theorem","s":"genusZero_singlePoleMeromorphicAnalyticData_nonempty","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2729,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"genusZero_pointRRSection_meromorphic_getD_exists","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2730,"f":"Jacobian/HolomorphicForms/SinglePoleLift.lean","k":"def","s":"constMeromorphicMap","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2731,"f":"Jacobian/HolomorphicForms/SinglePoleLift.lean","k":"def","s":"singleZeroSinglePoleMap","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2732,"f":"Jacobian/HolomorphicForms/TraceSpec.lean","k":"theorem","s":"ramifiedKfoldSum_locally_bounded","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
@@ -1229,4 +1229,10 @@
 {"i":2735,"f":"Jacobian/AbelJacobi/AnalyticOfCurveInjectiveU.lean","k":"theorem","s":"pathIntegralFunctional_separates_pointsU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2736,"f":"Jacobian/Periods/H1BasisU.lean","k":"theorem","s":"h1_basis_of_compact_riemann_surfaceU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2737,"f":"Jacobian/Periods/PeriodVectorsLIU.lean","k":"theorem","s":"riemann_classical_real_LI_inputU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2738,"f":"Jacobian/TraceDegree/AnalyticPullbackFunctorialU.lean","k":"theorem","s":"traceFormsBundledLM_compU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2738,"f":"Jacobian/TraceDegree/AnalyticPullbackFunctorialU.lean","k":"theorem","s":"traceFormsBundledLM_compU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2739,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"deRhamComparisonMap1_zero_period_primitiveExists_provider","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2740,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"exists_biholomorph_onePoint_of_genus_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2741,"f":"Jacobian/HolomorphicForms/HodgeProjection.lean","k":"theorem","s":"hodgeRemainder_periodPayload_exact","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2742,"f":"Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean","k":"theorem","s":"complexSimplePolePrincipalPart_of_biholomorph_onePoint","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2743,"f":"Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean","k":"theorem","s":"exists_biholomorph_onePoint_of_analyticGenus_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2744,"f":"Jacobian/Periods/HandleSwapHomeo.lean","k":"theorem","s":"handlePrefix_tailRotate_homeomorph_nonzero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
