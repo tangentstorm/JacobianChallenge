@@ -122,4 +122,14 @@ theorem chartedFormPullback_chartAt_continuousOn
   exact ((cotangent_trivRead_continuousAt ω p₀ hb).comp_continuousWithinAt
     ((chartAt E p₀).continuousOn_symm e he))
 
+/-- `curveIntegrable` for the genuine chart pullback through a `chartAt` chart,
+NO `StableChartAt`. Drop-in for the callers, which all pass `chartAt`. -/
+theorem chartedFormPullback_chartAt_curveIntegrable
+    (p₀ : X) (ω : HolomorphicOneForm E X)
+    {a b : E} (γ : Path a b)
+    (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1))
+    (hrange : ∀ t, γ t ∈ (chartAt E p₀).target) :
+    CurveIntegrable (chartedFormPullback (chartAt E p₀) ω) γ :=
+  (chartedFormPullback_chartAt_continuousOn p₀ ω).curveIntegrable_of_contDiffOn hγ hrange
+
 end JacobianChallenge.Periods.ChartedFormPullbackContinuous

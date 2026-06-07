@@ -4,6 +4,7 @@ import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickSmul
 import Jacobian.Periods.PathIntegralViaCoverWithAdd
 import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
+import Jacobian.Periods.ChartedFormPullbackContinuous
 import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
 import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
@@ -206,8 +207,8 @@ theorem exists_singularSimplex_integration
       exact pathIntegralViaCoverWith_add_of_curveIntegrable
         ω η (simplex_to_path X σ) n hn pickChart hcov
         (fun i =>
-          chartedFormPullback_curveIntegrable
-            (chartAt ℂ (pickChart i)) (IsManifold.chart_mem_maximalAtlas (pickChart i)) ω
+          JacobianChallenge.Periods.ChartedFormPullbackContinuous.chartedFormPullback_chartAt_curveIntegrable
+            (pickChart i) ω
             (chartLift (chartAt ℂ (pickChart i))
               ((simplex_to_path X σ).subpath
                 (divFinIcc n hn i.val (le_of_lt i.isLt))
@@ -254,8 +255,8 @@ theorem exists_singularSimplex_integration
                     exact h2'
                   exact hcov i τ h1 hle2)))
         (fun i =>
-          chartedFormPullback_curveIntegrable
-            (chartAt ℂ (pickChart i)) (IsManifold.chart_mem_maximalAtlas (pickChart i)) η
+          JacobianChallenge.Periods.ChartedFormPullbackContinuous.chartedFormPullback_chartAt_curveIntegrable
+            (pickChart i) η
             (chartLift (chartAt ℂ (pickChart i))
               ((simplex_to_path X σ).subpath
                 (divFinIcc n hn i.val (le_of_lt i.isLt))
