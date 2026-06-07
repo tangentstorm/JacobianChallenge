@@ -492,7 +492,7 @@ reduces to this stand-in once \code{integrateTwoForm} (shared with
 
 \begin{theorem}[Period vectors have full real rank]
 \label{thm:period-vectors-full-real-rank}
-
+\uses{lem:riemann-classical-real-li-input}
 The \(2g\) period vectors
 \(\Pi_X(a_1),\dots,\Pi_X(a_g),\Pi_X(b_1),\dots,\Pi_X(b_g)
    \in\HdualX\)
@@ -501,6 +501,16 @@ are linearly independent over \(\R\).
 \leanok
 \end{theorem}
 \begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Riemann bilinear $\R$-linear-independence input (open)]
+\label{lem:riemann-classical-real-li-input}
+For an injective family of \(2g\) integral \(1\)-cycles, the corresponding
+period functionals are \(\R\)-linearly independent. This is the classical
+Riemann-bilinear / Hermitian-positivity input on which
+Theorem~\ref{thm:period-vectors-full-real-rank} rests; it is currently an open
+obligation (a \lstinline{sorry}) in the Lean development.
+\lean{JacobianChallenge.Periods.riemann_classical_real_LI_input}
+\end{lemma}
 
 \begin{layman}
 A compact genus-\(g\) surface has \(2g\) independent loops in homology
@@ -597,3 +607,30 @@ delegating to two named, deeper obligations.
   positivity \(\code{i} \int_X \omega \wedge \bar\omega > 0\) at the
   level of period functionals. Requires K\"ahler/Hodge theory.
 \end{itemize}
+
+% --- de Rham / Hodge rank input + its open exactness obligations ---
+% `input:hodge-deRham` is referenced by the analytic=topological genus theorem
+% (\ref{thm:analytic-eq-topological-genus} in ch.05) as the de Rham + Hodge rank
+% computation. Define it here, with the two open exactness `sorry`s it rests on.
+
+\begin{definition}[de Rham / Hodge rank input]
+\label{input:hodge-deRham}
+\uses{lem:derham-zero-period-primitive-exists, lem:hodge-remainder-period-payload-exact}
+The de Rham + Hodge computation fixing \(\mathrm{rank}_{\Z}H_1(X) = 2g_{\mathrm{an}}(X)\):
+a closed 1-form with vanishing periods is exact, and a closed 1-form with zero
+harmonic projection is exact.
+\end{definition}
+
+\begin{lemma}[Zero-period closed form is exact (open)]
+\label{lem:derham-zero-period-primitive-exists}
+A closed \(1\)-form whose de Rham comparison image (all periods) vanishes admits
+a global primitive, hence is exact. Open obligation (\lstinline{sorry}).
+\lean{JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_primitiveExists_provider}
+\end{lemma}
+
+\begin{lemma}[Zero-harmonic closed form is exact (open)]
+\label{lem:hodge-remainder-period-payload-exact}
+A closed \(1\)-form with zero harmonic projection is exact (the Hodge-remainder
+exactness payload). Open obligation (\lstinline{sorry}).
+\lean{JacobianChallenge.HolomorphicForms.hodgeRemainder_periodPayload_exact}
+\end{lemma}

@@ -920,6 +920,26 @@ data of the classical proof is then \emph{obtained from} this biholomorphism,
 not used to construct it.
 \end{proof}
 
+\begin{lemma}[Analytic genus zero gives a sphere biholomorphism (open)]
+\label{lem:exists-biholomorph-analyticgenus-zero}
+\uses{thm:uniformization-genus-zero-biholomorphism}
+A compact connected Riemann surface with \(g_{\mathrm{an}}(X)=0\) admits a
+biholomorphism \(X\simeq\code{OnePoint}\,\C\). Packages
+Theorem~\ref{thm:uniformization-genus-zero-biholomorphism} into the
+\(g_{\mathrm{an}}=0\) hypothesis the meromorphic bridge consumes. Open
+obligation (\lstinline{sorry}) in the Lean development.
+\lean{JacobianChallenge.HolomorphicForms.exists_biholomorph_onePoint_of_analyticGenus_zero}
+\end{lemma}
+
+\begin{lemma}[Simple-pole principal part from a sphere biholomorphism (open)]
+\label{lem:complex-simple-pole-principal-part-biholomorph}
+\uses{thm:uniformization-genus-zero-biholomorphism}
+Pulling the standard simple-pole coordinate on \(\code{OnePoint}\,\C\) back along
+the biholomorphism yields a map with a simple-pole principal part at the chosen
+point. Open obligation (\lstinline{sorry}).
+\lean{JacobianChallenge.HolomorphicForms.complexSimplePolePrincipalPart_of_biholomorph_onePoint}
+\end{lemma}
+
 \begin{lemma}[Pullback of holomorphic 1-forms via biholomorphism]
 \label{lem:holomorphic-one-form-pullback-via-biholo}
 A homeomorphism \(e:X\to\code{OnePoint}\,\C\) that is biholomorphic

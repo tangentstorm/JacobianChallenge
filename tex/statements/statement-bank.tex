@@ -47,7 +47,7 @@ discrete grid that gets quotiented to form the Jacobian.
 
 \begin{theorem}[Period lattice theorem]
 \label{thm:period-lattice}
-\uses{input:riemann-bilinear, def:period-pairing, thm:analytic-eq-topological-genus}
+\uses{input:riemann-bilinear, def:period-pairing, thm:analytic-eq-topological-genus, lem:h1-basis-compact-rs-u, lem:riemann-classical-real-li-input-u}
 The image \(\periods_X := \Pi_X(H_1(X,\Z))\) is a full lattice in the
 real vector space underlying \(\HdualX\).
 \lean{JacobianChallenge.Periods.periodFullComplexLattice}
@@ -59,6 +59,22 @@ to obtain a full lattice in the underlying real vector space.
 \begin{proof}
 \leanok
 \end{proof}
+
+% Universe-u companions of the period-lattice content (the public Jacobian
+% universe bridge consumes these); both are open obligations.
+\begin{lemma}[Universe-$u$ $H_1$ basis (open)]
+\label{lem:h1-basis-compact-rs-u}
+A \(\Z\)-basis of \(H_1\) for a universe-\(u\) compact Riemann surface
+(\(\code{IntegralOneCycleU}\)). Open obligation (\lstinline{sorry}).
+\lean{JacobianChallenge.Periods.h1_basis_of_compact_riemann_surfaceU}
+\end{lemma}
+
+\begin{lemma}[Universe-$u$ Riemann-bilinear $\R$-LI input (open)]
+\label{lem:riemann-classical-real-li-input-u}
+Universe-\(u\) companion of the Riemann-bilinear \(\R\)-linear-independence
+input. Open obligation (\lstinline{sorry}).
+\lean{JacobianChallenge.Periods.riemann_classical_real_LI_inputU}
+\end{lemma}
 
 \begin{layman}
 The image of the period pairing --- the set of all integer-coefficient

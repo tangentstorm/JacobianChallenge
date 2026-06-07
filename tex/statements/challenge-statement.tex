@@ -81,7 +81,7 @@ wide open.
 
 \begin{definition}[Analytic Jacobian]
 \label{def:analytic-jacobian}
-\uses{thm:period-lattice, prop:complex-torus-package, def:analytic-genus}
+\uses{thm:period-lattice, prop:complex-torus-package, def:analytic-genus, lem:stable-chart-at-instance}
 The Jacobian of \(X\) is the complex torus
 \[
   \Jac(X) := \HdualX / \periods_X ,
@@ -99,6 +99,15 @@ Use period lattice theorem + complex torus quotient package to construct
 to install all the \code{AddCommGroup}/\code{TopologicalSpace}/\code{T2Space}/\code{CompactSpace}/\code{ChartedSpace}/\code{IsManifold}/\code{LieAddGroup}
 instances required by \code{Jacobian/Challenge.lean}.
 \end{definition}
+
+\begin{lemma}[Chart-stability adapter instance (open)]
+\label{lem:stable-chart-at-instance}
+The \code{StableChartAt} adapter instance threaded through the public manifold /
+Lie structure of \(\Jac(X)\). It currently stands as an open obligation
+(\lstinline{sorry}) in \code{Jacobian/Solution.lean}; the honest route replaces
+it with genuine chart-overlap-derivative continuity (worker jc3).
+\lean{JacobianChallenge.Solution.instStableChartAtComplexOfT2SpaceOfCompactSpaceOfConnectedSpaceOfIsManifoldModelWithCornersSelfTopWithTopENat}
+\end{lemma}
 
 \begin{layman}
 The \emph{Jacobian} of a compact Riemann surface is the quotient: take

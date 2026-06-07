@@ -451,6 +451,24 @@ If \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
 \leanok
 \end{theorem}
 
+\begin{lemma}[Abel--Jacobi injectivity for positive genus (open)]
+\label{lem:analytic-ofcurve-injective}
+\uses{thm:abel-point-separation}
+For \(g(X)>0\) the Abel--Jacobi map \(\AJ_P\) is injective. Matches the frozen
+public \code{ofCurve\_inj} signature; open obligation (\lstinline{sorry}) until
+the genus-zero single-pole route lands.
+\lean{JacobianChallenge.AbelJacobi.analyticOfCurve_injective}
+\end{lemma}
+
+\begin{lemma}[Universe-polymorphic point separation (open)]
+\label{lem:pathintegral-separates-points-u}
+\uses{thm:abel-point-separation}
+Universe-\(u\) companion of the point-separation theorem, needed by the public
+\code{ofCurve\_inj} for \(X:\mathrm{Type}\,u\). Open obligation
+(\lstinline{sorry}).
+\lean{JacobianChallenge.AbelJacobi.pathIntegralFunctional_separates_pointsU}
+\end{lemma}
+
 \begin{layman}
 The point-separation form of Abel's theorem: on a compact Riemann
 surface of positive genus, if two points have the same Abel--Jacobi
