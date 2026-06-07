@@ -1,4 +1,11 @@
 import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
+import Jacobian.HolomorphicForms.Defs
+import Mathlib.Geometry.Manifold.MFDeriv.Atlas
+import Mathlib.Geometry.Manifold.VectorBundle.Hom
+import Mathlib.Geometry.Manifold.VectorBundle.Tangent
+import Mathlib.Topology.VectorBundle.Hom
+import Mathlib.Topology.VectorBundle.Constructions
+import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 
 /-!
 # `chartedFormPullback_continuousOn` without `StableChartAt` (Path 1′ Step 1)
