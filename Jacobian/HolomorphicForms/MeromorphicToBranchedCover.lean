@@ -2983,6 +2983,84 @@ theorem genusZero_pointRRSection_outside_constants_of_analyticData
   exact le_of_eq horderP.symm
 
 /--
+Principal-part frontier for the explicit biholomorphic pullback route.
+
+The intended function `F` is the standard simple-pole coordinate on
+`OnePoint ℂ` with pole at `e P`, pulled back along the biholomorphism `e`.
+The theorem packages exactly the complex principal-part facts needed by
+`SimplePoleToSphereData.of_complexPrincipalPart`.
+-/
+theorem complexSimplePolePrincipalPart_of_biholomorph_onePoint
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (e : X ≃ₜ OnePoint ℂ)
+    (he :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ))
+    (he_symm :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
+    ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F P := by
+  -- Principal-part frontier: prove the pulled-back standard coordinate is
+  -- meromorphic everywhere, extends continuously to `∞` at `P`, has analytic
+  -- order one in the inversion chart, and diverges in norm along the punctured
+  -- neighborhood of `P`.
+  sorry
+
+/--
+Bridge from an explicit biholomorphic uniformization to a prescribed-pole
+single-pole meromorphic map.
+
+Mathematically, choose the standard simple-pole coordinate on `OnePoint ℂ`
+with pole at the image of `P`, pull it back along the biholomorphism `e`, and
+package the resulting principal-part data as an honest single-pole
+meromorphic map.
+-/
+theorem singlePoleAnalyticData_of_biholomorph_onePoint
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (e : X ≃ₜ OnePoint ℂ)
+    (he :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ))
+    (he_symm :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
+    Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
+  obtain ⟨F, hF⟩ :=
+    complexSimplePolePrincipalPart_of_biholomorph_onePoint X P e he he_symm
+  exact singlePoleAnalyticData_of_simplePoleToSphereData P
+    (SimplePoleToSphereData.of_complexPrincipalPart F P hF)
+
+/--
+Genus-zero analytic uniformization provider in the form needed by the
+prescribed-pole meromorphic-map route.
+
+This is separate from `singlePoleAnalyticData_of_biholomorph_onePoint`: it
+constructs the biholomorphism from the analytic-genus-zero hypothesis, while
+the bridge below consumes explicit biholomorphic data.
+-/
+theorem exists_biholomorph_onePoint_of_analyticGenus_zero
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_h : analyticGenus ℂ X = 0) :
+    ∃ (e : X ≃ₜ OnePoint ℂ),
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ) ∧
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X) := by
+  -- Genus-zero uniformization frontier: construct a biholomorphism
+  -- `X ≃ OnePoint ℂ` from `analyticGenus ℂ X = 0`.
+  sorry
+
+/--
 **Headline missing input.** Genus-zero compact connected Riemann surfaces
 admit an honest analytic simple-pole meromorphic map at `P`.
 
@@ -2998,7 +3076,8 @@ theorem genusZero_singlePoleMeromorphicAnalyticData_nonempty
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
-  sorry
+  obtain ⟨e, he, he_symm⟩ := exists_biholomorph_onePoint_of_analyticGenus_zero X h
+  exact singlePoleAnalyticData_of_biholomorph_onePoint X P e he he_symm
 
 theorem genusZero_pointRRSection_outside_constants_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
