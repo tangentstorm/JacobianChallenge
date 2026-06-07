@@ -187,12 +187,33 @@ SO_RAW="$WORK/solution.lean"
 gen_stub "$CHALLENGE_MODULE" "$CH_RAW"
 gen_stub "$SOLUTION_MODULE" "$SO_RAW"
 
+echo "==> building $CHALLENGE_MODULE and $SOLUTION_MODULE ..." >&2
+lake build "$CHALLENGE_MODULE" "$SOLUTION_MODULE"
+
+run_dump() {
+  # $1 = module name, $2 = generated Lean stub, $3 = stdout path, $4 = stderr path
+  local module="$1"
+  local stub="$2"
+  local out="$3"
+  local err="$4"
+  if ! lake env lean "$stub" > "$out" 2> "$err"; then
+    echo "lake env lean failed on $module:" >&2
+    if [ -s "$err" ]; then
+      echo "--- stderr ---" >&2
+      cat "$err" >&2
+    fi
+    if [ -s "$out" ]; then
+      echo "--- stdout ---" >&2
+      cat "$out" >&2
+    fi
+    exit 1
+  fi
+}
+
 echo "==> dumping $CHALLENGE_MODULE ..." >&2
-lake env lean "$CH_RAW" > "$WORK/challenge.out" 2>"$WORK/challenge.err" \
-  || { echo "lake env lean failed on $CHALLENGE_MODULE:" >&2; cat "$WORK/challenge.err" >&2; exit 1; }
+run_dump "$CHALLENGE_MODULE" "$CH_RAW" "$WORK/challenge.out" "$WORK/challenge.err"
 echo "==> dumping $SOLUTION_MODULE ..." >&2
-lake env lean "$SO_RAW" > "$WORK/solution.out" 2>"$WORK/solution.err" \
-  || { echo "lake env lean failed on $SOLUTION_MODULE:" >&2; cat "$WORK/solution.err" >&2; exit 1; }
+run_dump "$SOLUTION_MODULE" "$SO_RAW" "$WORK/solution.out" "$WORK/solution.err"
 
 normalise "$WORK/challenge.out" > "$WORK/challenge.norm"
 normalise "$WORK/solution.out" > "$WORK/solution.norm"

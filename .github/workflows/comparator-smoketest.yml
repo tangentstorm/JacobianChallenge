@@ -39,12 +39,10 @@ jobs:
         run: lake exe cache get
 
       - name: Mini-comparator early gate
-        # Fast, dependency-light stand-in for the official comparator: it loads
-        # Challenge and Solution alone (via `lake env lean`, using the cached
-        # oleans) and diffs each smoketest theorem's stored type. This catches a
-        # Challenge≢Solution mismatch in seconds, BEFORE the expensive comparator
-        # build (clone + `lake build lean4export comparator`) below — so an early
-        # failure is reported fast instead of after the full build.
+        # Fast, dependency-light stand-in for the official comparator: it builds
+        # Challenge/Solution, loads each module alone, and diffs each smoketest
+        # theorem's stored type. This catches a Challenge≢Solution mismatch
+        # before the expensive comparator clone/build below.
         run: scripts/mini-comparator.sh
 
       - name: Build comparator
