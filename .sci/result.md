@@ -676,3 +676,36 @@ basis targets `IntegralOneCycle X`.
   the two Stage providers are direct `c:"sorry"` rows.
 - `python3 scripts/blueprint_audit.py` succeeded with the known existing
   `B:decls-exist-but-no-env-leanok` frontier-node report.
+
+## Phase 2 B6 Result: Type-0 Classical Period-Basis Provider Split
+
+`Jacobian/Periods/PeriodFunctional.lean` now splits the Type-0
+`RiemannClassicalPeriodBasis` provider one step further:
+
+- `h1_basis_periodCoordinate_linearIndependent` is the direct remaining
+  provider for the exact basis-aligned period-coordinate nondegeneracy field.
+- `h1_basis_riemannClassicalPeriodBasis` is now a sorry-free structure assembly
+  from that coordinate-linear-independence provider.
+
+The current Hodge and Riemann-bilinear scaffold does not yet prove this
+coordinate-row independence directly: it still lacks the actual geometric
+bridge from the concrete H₁ basis to the Stokes/Hodge-positive period matrix.
+This split preserves all downstream APIs while making the remaining direct
+obligation the precise field consumed by the local linear-algebra assembly.
+
+## Verification
+
+- `lake build Jacobian.Periods.PeriodFunctional` succeeded.
+- `lake build Jacobian.Periods.PeriodVectorsLIU` succeeded.
+- `lake build Jacobian.Solution` succeeded with existing/expected
+  `declaration uses sorry` warnings.
+- `python3 scripts/list-sorries.py --text` succeeded and now reports
+  `h1_basis_periodCoordinate_linearIndependent` as the reachable
+  `PeriodFunctional.lean` sorry instead of
+  `h1_basis_riemannClassicalPeriodBasis`.
+- `bash scripts/build-blueprint.sh` succeeded and refreshed `sorries.jsonl`
+  with 325 graph-coloured records. The
+  `h1_basis_riemannClassicalPeriodBasis` row is now `c:"sorry-dep"`, and
+  `h1_basis_periodCoordinate_linearIndependent` is the direct `c:"sorry"` row.
+- `python3 scripts/blueprint_audit.py` succeeded with the known existing
+  `B:decls-exist-but-no-env-leanok` frontier-node report.
