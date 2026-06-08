@@ -640,3 +640,39 @@ Proceed to B5: address #240 `h1_basis_of_compact_riemann_surfaceU` in
 `Jacobian/Periods/H1BasisU.lean`, either discharging it or splitting it into the
 narrowest universe-`u` H₁-basis provider coordinated with the Hurewicz/cellular
 substrate.
+
+## Phase 2 B5 Result: #240 Universe-`u` H₁ Basis Split
+
+`Jacobian/Periods/H1BasisU.lean` now mirrors the Type-0 H₁-basis proof shape
+instead of keeping #240 as one broad direct `sorry`.
+
+- `topologicalGenusU` records the universe-`u` topological genus measured from
+  `IntegralOneCycleU X`.
+- `stageA_surface_CW_basisU` is the narrow Stage-A provider for the missing
+  universe-`u` surface-classification / cellular-homology / singular-vs-cellular
+  comparison, producing a `topologicalGenusU`-indexed H₁ basis.
+- `stageB_analytic_eq_topologicalGenusU` is the narrow Stage-B provider for the
+  universe-`u` analytic/topological genus comparison.
+- `h1_basis_of_compact_riemann_surfaceU` is now a sorry-free assembly that
+  reindexes the Stage-A basis along the Stage-B equality.
+
+The existing local substrate is not enough to discharge #240 outright:
+`IntegralOneCycleU X` is built from `singularHomologyFunctor.{u}` with
+`ULift.{u} ℤ` coefficients, while the Type-0 cellular/surface-classification
+basis targets `IntegralOneCycle X`.
+
+## Verification
+
+- `lake build Jacobian.Periods.H1BasisU` succeeded.
+- `lake build Jacobian.Periods.PeriodVectorsLIU` succeeded.
+- `lake build Jacobian.Solution` succeeded with existing/expected
+  `declaration uses sorry` warnings.
+- `python3 scripts/list-sorries.py --text` succeeded and now reports
+  `stageA_surface_CW_basisU` and `stageB_analytic_eq_topologicalGenusU` as the
+  reachable `H1BasisU.lean` sorries instead of a direct
+  `h1_basis_of_compact_riemann_surfaceU` sorry.
+- `bash scripts/build-blueprint.sh` succeeded and refreshed `sorries.jsonl`
+  with 324 graph-coloured records. The #240 Lean row is now `c:"sorry-dep"`;
+  the two Stage providers are direct `c:"sorry"` rows.
+- `python3 scripts/blueprint_audit.py` succeeded with the known existing
+  `B:decls-exist-but-no-env-leanok` frontier-node report.

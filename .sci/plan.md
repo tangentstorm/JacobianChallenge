@@ -98,7 +98,7 @@ the #241 universe-`u` port.
 - [x] **B4.** After #227 is stable, port the result to #241
       `riemann_classical_real_LI_inputU` in
       `Jacobian/Periods/PeriodVectorsLIU.lean`.
-- [ ] **B5.** Discharge or narrowly split #240
+- [x] **B5.** Discharge or narrowly split #240
       `h1_basis_of_compact_riemann_surfaceU` in
       `Jacobian/Periods/H1BasisU.lean`, coordinating with the Hurewicz/cellular
       substrate owned by jc4.
