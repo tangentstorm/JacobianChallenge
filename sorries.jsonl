@@ -208,7 +208,6 @@
 {"i":2734,"f":"Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean","k":"lemma","s":"analyticOfCurve_injective","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":2735,"f":"Jacobian/AbelJacobi/AnalyticOfCurveInjectiveU.lean","k":"theorem","s":"pathIntegralFunctional_separates_pointsU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":2736,"f":"Jacobian/Periods/H1BasisU.lean","k":"theorem","s":"h1_basis_of_compact_riemann_surfaceU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
-{"i":2737,"f":"Jacobian/Periods/PeriodVectorsLIU.lean","k":"theorem","s":"riemann_classical_real_LI_inputU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":2738,"f":"Jacobian/TraceDegree/AnalyticPullbackFunctorialU.lean","k":"theorem","s":"traceFormsBundledLM_compU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":2739,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"deRhamComparisonMap1_zero_period_primitiveExists_provider","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":2740,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"exists_biholomorph_onePoint_of_genus_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
@@ -248,7 +247,7 @@
 {"i":2793,"f":"tex/statements/challenge-statement.tex","k":"blueprint","s":"Jacobian.pullback_contMDiff","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry-dep","b":"thm:push-pull-functoriality","t":""}
 {"i":2794,"f":"tex/statements/challenge-statement.tex","k":"blueprint","s":"Jacobian.pullback_id_apply","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry-dep","b":"thm:push-pull-functoriality","t":""}
 {"i":2795,"f":"tex/statements/challenge-statement.tex","k":"blueprint","s":"Jacobian.pullback_comp_apply","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry-dep","b":"thm:push-pull-functoriality","t":""}
-{"i":2797,"f":"tex/statements/statement-bank.tex","k":"blueprint","s":"JacobianChallenge.Periods.riemann_classical_real_LI_inputU","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"lem:riemann-classical-real-li-input-u","t":""}
+{"i":2797,"f":"tex/statements/statement-bank.tex","k":"blueprint","s":"JacobianChallenge.Periods.riemann_classical_real_LI_inputU","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"lem:riemann-classical-real-li-input-u","t":""}
 {"i":2798,"f":"tex/sections/04-branched-covers-genus-zero.tex","k":"blueprint","s":"JacobianChallenge.HolomorphicForms.exists_biholomorph_onePoint_of_genus_zero","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"thm:exists-biholomorph-one-point-of-genus-zero","t":""}
 {"i":2799,"f":"tex/sections/04-branched-covers-genus-zero.tex","k":"blueprint","s":"JacobianChallenge.HolomorphicForms.exists_biholomorph_onePoint_of_analyticGenus_zero","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"lem:exists-biholomorph-one-point-of-analytic-genus-zero","t":""}
 {"i":2800,"f":"tex/sections/04-branched-covers-genus-zero.tex","k":"blueprint","s":"JacobianChallenge.HolomorphicForms.complexSimplePolePrincipalPart_of_biholomorph_onePoint","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"lem:complex-simple-pole-principal-part-of-biholomorph-one-point","t":""}
@@ -321,3 +320,4 @@
 {"i":2869,"f":"tex/sections/06-periods-and-riemann-bilinear.tex","k":"blueprint","s":"JacobianChallenge.HolomorphicForms.harmonicProjection1_kernel_subset_exact","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry-dep","b":"lem:hodge-zero-projection-exactness-assembly","t":""}
 {"i":2870,"f":"tex/sections/06-periods-and-riemann-bilinear.tex","k":"blueprint","s":"JacobianChallenge.HolomorphicForms.harmonicProjection1_kernel_eq_exact","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry-dep","b":"lem:hodge-zero-projection-exactness-assembly","t":""}
 {"i":2872,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"theorem","s":"h1_basis_riemannClassicalPeriodBasis","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
+{"i":2873,"f":"Jacobian/Periods/PeriodVectorsLIU.lean","k":"theorem","s":"h1_basis_riemannClassicalPeriodBasisU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}

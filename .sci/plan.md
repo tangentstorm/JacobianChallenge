@@ -95,7 +95,7 @@ the #241 universe-`u` port.
       not, replace the broad `sorry` with the narrowest named provider(s) for
       the missing canonical/symplectic-basis or Stokes/Hodge-positivity input,
       preserving the public API where possible.
-- [ ] **B4.** After #227 is stable, port the result to #241
+- [x] **B4.** After #227 is stable, port the result to #241
       `riemann_classical_real_LI_inputU` in
       `Jacobian/Periods/PeriodVectorsLIU.lean`.
 - [ ] **B5.** Discharge or narrowly split #240
