@@ -1,59 +1,64 @@
-SUGGESTED TASK: Milestone B5 narrow #240 `h1_basis_of_compact_riemann_surfaceU`.
+SUGGESTED TASK: Milestone B6 narrow or discharge `h1_basis_riemannClassicalPeriodBasis`.
 
-Objective: address the remaining jc1-owned universe-`u` H₁-basis obligation in
-`Jacobian/Periods/H1BasisU.lean` by either discharging
-`h1_basis_of_compact_riemann_surfaceU` or replacing its broad direct `sorry`
-with the narrowest named provider for the actual universe-`u`
-surface-classification / cellular-homology input.
+Objective: address the remaining Type-0 Riemann-bilinear direct provider in
+`Jacobian/Periods/PeriodFunctional.lean`, either proving
+`h1_basis_riemannClassicalPeriodBasis` from the existing substrate or replacing
+it with the narrowest named provider for the actual missing
+symplectic-basis/Stokes/Hodge-positivity input.
 
 Context:
-- `.sci/plan.md` has B3 and B4 accepted. B5 is the next unchecked
-  Riemann-bilinear / period-rank milestone.
-- #240 currently states that `IntegralOneCycleU X` admits a
-  `Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ`.
-- The Type-0 analogue is `h1_basis_of_compact_riemann_surface` in
-  `Jacobian/Periods/PeriodFunctional.lean`, proved by assembling the
-  surface-classification / polygonal H₁ basis chain.
-- `H1BasisU.lean` documents why the universe-`u` object is not a cheap reuse of
-  the Type-0 basis: `IntegralOneCycleU X` uses the universe-`u`
-  singular-homology functor with `ULift.{u} ℤ` coefficients.
+- B3 replaced broad #227 `riemann_classical_real_LI_input` with
+  `RiemannClassicalPeriodBasis` plus the basis-specific provider
+  `h1_basis_riemannClassicalPeriodBasis`.
+- B4 ported the split to universe-`u`, and B5 split #240 into narrower H₁
+  universe providers.
+- `python3 scripts/list-sorries.py --text` still reports
+  `h1_basis_riemannClassicalPeriodBasis` as a reachable direct sorry in
+  `PeriodFunctional.lean`.
+- This provider is now the Type-0 Riemann-bilinear period-coordinate
+  nondegeneracy frontier, tied to a concrete `Module.Basis` of
+  `IntegralOneCycle X`.
 
 Scope:
-- Work primarily in `Jacobian/Periods/H1BasisU.lean`.
-- Read the Type-0 proof in `Jacobian/Periods/PeriodFunctional.lean` and the
-  underlying declarations in `Jacobian/Periods/SurfaceClassification.lean`,
-  `Jacobian/Periods/Polygon4gCellular.lean`, and
-  `Jacobian/Periods/IntegralOneCycleU.lean`.
+- Work primarily in `Jacobian/Periods/PeriodFunctional.lean`.
+- Read the local declarations around:
+  - `RiemannClassicalPeriodBasis`
+  - `h1_basis_riemannClassicalPeriodBasis`
+  - `riemann_bilinear_identity`
+  - `hodge_form_posDef_on_periods`
+  - `RiemannBilinearRefinement.real_linearIndependent_of_quadratic_pos_def`
+  - `periodPairing_satisfies_bilinear_identity`
 - Do not touch `Jacobian/Challenge.lean`.
 - Do not touch jc2/jc3-owned files (`TietzeReduction.lean`,
   `HandleSwapHomeo.lean`, StableChartAt reroute files).
-- First attempt a direct universe-`u` assembly if existing local substrate is
-  enough.
-- If the universe-`u` surface-classification/cellular bridge is still genuinely
-  missing, replace the single broad #240 `sorry` with a strictly narrower,
-  named provider tied to that precise missing bridge, then prove
-  `h1_basis_of_compact_riemann_surfaceU` from the provider.
-- Preserve downstream APIs where possible, especially callers in
-  `PeriodVectorsLIU.lean` and period lattice `U` files.
+- First attempt a direct assembly if the current Hodge-positivity and
+  Riemann-bilinear substrate is sufficient.
+- If the provider is still genuinely missing analytic/geometric content,
+  replace `h1_basis_riemannClassicalPeriodBasis` with one or more strictly
+  narrower named providers that isolate the precise missing statement, then
+  prove `h1_basis_riemannClassicalPeriodBasis` from them.
+- Preserve downstream APIs where possible, especially
+  `riemann_classical_real_LI_input`, `periodVectors_linearIndependent`, and
+  the universe-`u` mirror.
 
 Verification:
-- Run `lake build Jacobian.Periods.H1BasisU`.
-- Run `lake build Jacobian.Periods.PeriodVectorsLIU` to verify the B4 consumers.
+- Run `lake build Jacobian.Periods.PeriodFunctional`.
+- Run `lake build Jacobian.Periods.PeriodVectorsLIU` to verify the universe
+  mirror still consumes the Type-0 split cleanly.
 - Run `lake build Jacobian.Solution`.
-- Run `python3 scripts/list-sorries.py --text` and confirm #240 is either
-  discharged or moved to a narrower named provider.
+- Run `python3 scripts/list-sorries.py --text` and confirm the direct Type-0
+  provider is either discharged or moved to narrower named provider(s).
 - Run `bash scripts/build-blueprint.sh` if `sorries.jsonl` needs graph refresh.
-- Run `python3 scripts/blueprint_audit.py` if the blueprint/sorry graph is
-  refreshed.
+- Run `python3 scripts/blueprint_audit.py` if the graph was refreshed.
 - Commit the Lean/task/result/sorries updates and set `.sci/status-line` to
-  `READY: Chapter 06 B5 universe H1 basis split`.
+  `READY: Chapter 06 B6 classical period basis provider`.
 
 Checklist:
-- [x] Inspect #240, its consumers, and the Type-0 H₁-basis proof chain.
-- [x] Decide whether existing universe-`u` substrate can prove #240 directly.
+- [x] Inspect the current Type-0 provider and its downstream consumers.
+- [x] Decide whether existing substrate proves the provider directly.
 - [x] Implement the direct proof or the narrowest provider split in
-      `H1BasisU.lean`.
-- [x] Run `lake build Jacobian.Periods.H1BasisU`.
+      `PeriodFunctional.lean`.
+- [x] Run `lake build Jacobian.Periods.PeriodFunctional`.
 - [x] Run `lake build Jacobian.Periods.PeriodVectorsLIU`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `python3 scripts/list-sorries.py --text` and record the reachable
@@ -61,4 +66,4 @@ Checklist:
 - [x] Refresh `sorries.jsonl` with `bash scripts/build-blueprint.sh` if needed.
 - [x] Run `python3 scripts/blueprint_audit.py` if the graph was refreshed.
 - [x] Commit the changes and set `.sci/status-line` to
-      `READY: Chapter 06 B5 universe H1 basis split`.
+      `READY: Chapter 06 B6 classical period basis provider`.

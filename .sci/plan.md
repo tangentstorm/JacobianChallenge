@@ -102,3 +102,8 @@ the #241 universe-`u` port.
       `h1_basis_of_compact_riemann_surfaceU` in
       `Jacobian/Periods/H1BasisU.lean`, coordinating with the Hurewicz/cellular
       substrate owned by jc4.
+- [x] **B6.** Follow up on the Type-0 Riemann-bilinear provider
+      `h1_basis_riemannClassicalPeriodBasis` in
+      `Jacobian/Periods/PeriodFunctional.lean`: either prove it from the
+      existing Riemann-bilinear/Hodge-positivity substrate or split it into
+      strictly narrower named provider(s), preserving downstream APIs.

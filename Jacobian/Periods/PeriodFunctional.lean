@@ -577,13 +577,30 @@ structure RiemannClassicalPeriodBasis
         ((periodPairing ℂ X) (σ i)))
 
 /--
-**Classical period-basis provider for an H₁ basis.** A concrete
-`Module.Basis` supplied by the surface-classification/H₁ construction is the
-canonical period basis for the Riemann-bilinear/Hodge-positivity argument.
+**Classical period-coordinate nondegeneracy provider for an H₁ basis.** A
+concrete `Module.Basis` supplied by the surface-classification/H₁ construction
+has basis-aligned period-coordinate rows that are ℝ-linearly independent.
 
 This is narrower than #227: it does not assert linear independence for an
 arbitrary injective cycle family, only for an H₁ basis carrying the missing
 classical symplectic/Stokes/Hodge structure.
+-/
+theorem h1_basis_periodCoordinate_linearIndependent
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (B : Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
+      (IntegralOneCycle X)) :
+    LinearIndependent ℝ
+      (fun i => (holomorphicOneFormDualEquiv ℂ X)
+        ((periodPairing ℂ X) (B i))) := by
+  sorry
+
+/--
+**Classical period-basis provider for an H₁ basis.** This is now only a
+structure assembly from the precise coordinate nondegeneracy provider above.
 -/
 theorem h1_basis_riemannClassicalPeriodBasis
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -594,7 +611,7 @@ theorem h1_basis_riemannClassicalPeriodBasis
     (B : Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
       (IntegralOneCycle X)) :
     RiemannClassicalPeriodBasis X (fun i => B i) := by
-  sorry
+  exact ⟨h1_basis_periodCoordinate_linearIndependent X B⟩
 
 
 theorem riemann_classical_real_LI_input
