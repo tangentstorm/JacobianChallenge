@@ -599,3 +599,44 @@ Proceed to B4 only after this narrower provider is accepted: port the stable
 #227 public theorem to #241 `riemann_classical_real_LI_inputU` in
 `Jacobian/Periods/PeriodVectorsLIU.lean`, keeping the universe-`u` work as a
 transport layer rather than a second analytic proof.
+
+## Phase 2 B4 Result: #241 Universe-`u` Riemann-Bilinear Split
+
+`Jacobian/Periods/PeriodVectorsLIU.lean` now mirrors the accepted Type-0 split:
+
+- `RiemannClassicalPeriodBasisU` packages the universe-`u` basis-aligned
+  period-coordinate nondegeneracy input.
+- `h1_basis_riemannClassicalPeriodBasisU` is the narrow remaining provider,
+  tied to a concrete `Module.Basis` of `IntegralOneCycleU X`.
+- `riemann_classical_real_LI_inputU` is no longer a direct broad `sorry`; it
+  consumes the explicit classical-basis witness and transports linear
+  independence back through `holomorphicOneFormDualEquiv`.
+- The witness is threaded through
+  `period_functionals_ℝ_linearIndependentU`,
+  `period_vectors_linearIndependent_of_symplecticU`, and
+  `periodVectors_linearIndependentU` via
+  `symplectic_basis_of_cycles_riemannClassicalPeriodBasisU`.
+
+## Verification
+
+- `lake build Jacobian.Periods.PeriodVectorsLIU` succeeded.
+- `lake build Jacobian.Solution` succeeded with existing/expected
+  `declaration uses sorry` warnings.
+- `python3 scripts/list-sorries.py --text` succeeded and now reports
+  `h1_basis_riemannClassicalPeriodBasisU` as the reachable
+  `PeriodVectorsLIU.lean` sorry instead of
+  `riemann_classical_real_LI_inputU`.
+- `bash scripts/build-blueprint.sh` succeeded and refreshed `sorries.jsonl`
+  with 323 graph-coloured records. A stale direct Lean row for the old broad
+  `riemann_classical_real_LI_inputU` sorry was removed; the blueprint row for
+  #241 remains `done`, and the direct provider row for
+  `h1_basis_riemannClassicalPeriodBasisU` remains `c:"sorry"`.
+- `python3 scripts/blueprint_audit.py` succeeded with the known existing
+  `B:decls-exist-but-no-env-leanok` frontier-node report.
+
+## Next Recommended Step
+
+Proceed to B5: address #240 `h1_basis_of_compact_riemann_surfaceU` in
+`Jacobian/Periods/H1BasisU.lean`, either discharging it or splitting it into the
+narrowest universe-`u` H₁-basis provider coordinated with the Hurewicz/cellular
+substrate.
