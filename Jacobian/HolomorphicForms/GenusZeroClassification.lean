@@ -1484,16 +1484,53 @@ theorem exists_contMDiff_homeomorph
 end GenusZeroGlobalGluingData
 
 /--
-Narrow analytic provider for genus-zero uniformization.
+Target-membership for local gluing coordinates: every normalized local
+coordinate value actually lies in the target of the patch's assigned
+`OnePoint ℂ` chart.
+-/
+theorem genusZeroGlobalGluing_coord_mem_target_on_patch
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) :
+    ∀ i x, x ∈ (family.patch i).source →
+      (family.patch i).coord x ∈ (family.patch i).targetChart.target := by
+  intro i x _hx
+  rcases (family.patch i).targetChart_standard with hchart | hchart
+  · rw [hchart]
+    simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+  · rw [hchart]
+    simp [inversionChart]
+
+/--
+Narrow analytic provider for the normalized Montel selector.
 
 Given only a topological homeomorphism `X ≃ₜ OnePoint ℂ`, construct the
-completed global gluing data: finite normalized source patches, the two public
-`OnePoint ℂ` target charts, overlap-compatible local coordinates, inverse
-branches, local inverse laws, and `ContMDiff` regularity of the resulting map
-and inverse.
+finite normalized source patches, their two public `OnePoint ℂ` target charts,
+overlap-compatible local coordinates, inverse branches, and the smooth
+uniformization represented by those local coordinates.
 
-This is the remaining analytic selector/gluing-data existence frontier behind
-the public genus-zero uniformization theorem.
+This is the remaining analytic selector existence frontier behind the public
+genus-zero uniformization theorem.
+-/
+theorem genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroNormalizedMontelPatchSelector X) := by
+  -- Remaining uniformization frontier: extract a finite normalized Montel
+  -- patch selector from the topological sphere identification.
+  sorry
+
+/--
+Completed global gluing data from the normalized Montel selector.
+
+The selector supplies the finite patch family, compatibility with one global
+uniformization, inverse branches, and smoothness. This packages those fields
+into the global gluing-data structure used by the public theorem.
 -/
 theorem genusZeroGlobalGluingData_of_homeomorph_onePoint
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -1502,9 +1539,59 @@ theorem genusZeroGlobalGluingData_of_homeomorph_onePoint
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroGlobalGluingData X) := by
-  -- Remaining uniformization frontier: extract a finite normalized Montel
-  -- patch selector and package it as completed global gluing data.
-  sorry
+  obtain ⟨selector⟩ := genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint X _e
+  refine ⟨
+    { PatchIndex := selector.family.PatchIndex
+      patch_fintype := selector.family.patch_fintype
+      patch_nonempty := selector.family.patch_nonempty
+      patch := selector.family.patch
+      patch_cover := selector.family.patch_cover
+      target_chart_cover := selector.family.target_chart_cover
+      toMap := selector.uniformization
+      invMap := selector.uniformization.symm
+      target_mem_on_patch := ?_
+      chart_expression_on_patch := ?_
+      overlap_compatible := ?_
+      inverse_branch_agrees_on_patch := ?_
+      local_left_inverse_on_patch := ?_
+      local_right_inverse_on_target_chart := ?_
+      contMDiff_toMap := selector.uniformization_contMDiff
+      contMDiff_invMap := selector.inverse_uniformization_contMDiff }⟩
+  · intro i x hx
+    have hcoord :
+        (selector.family.patch i).coord x ∈
+          (selector.family.patch i).targetChart.target :=
+      genusZeroGlobalGluing_coord_mem_target_on_patch selector.family i x hx
+    have hmem :
+        (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) ∈
+          (selector.family.patch i).targetChart.source :=
+      (selector.family.patch i).targetChart.map_target hcoord
+    have hrep :
+        (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) =
+          selector.uniformization x :=
+      selector.coord_represents_uniformization i x hx
+    simpa [hrep] using hmem
+  · intro i x hx
+    have hcoord :
+        (selector.family.patch i).coord x ∈
+          (selector.family.patch i).targetChart.target :=
+      genusZeroGlobalGluing_coord_mem_target_on_patch selector.family i x hx
+    have hrep :
+        (selector.family.patch i).targetChart.symm ((selector.family.patch i).coord x) =
+          selector.uniformization x :=
+      selector.coord_represents_uniformization i x hx
+    rw [← hrep]
+    exact (selector.family.patch i).targetChart.right_inv hcoord
+  · intro i j x hi hj
+    exact (selector.coord_represents_uniformization i x hi).trans
+      (selector.coord_represents_uniformization j x hj).symm
+  · intro i z hz
+    exact (selector.invCoord_represents_uniformization i z hz).symm
+  · intro i x _hx
+    exact selector.uniformization.left_inv x
+  · intro i z hz
+    rw [selector.invCoord_represents_uniformization i z hz]
+    exact selector.uniformization.right_inv ((selector.family.patch i).targetChart.symm z)
 
 /--
 Genus-zero uniformization theorem, stated as the single high-level analytic
@@ -1759,26 +1846,6 @@ theorem genusZero_complexStructureUnique_smoothUniformization_provider_nonempty
   · simpa [uniformization, e] using
       route.meromorphicMap.contMDiff_toMap_of_analyticData route.analyticData
   · simpa [uniformization, e, hbij] using route.contMDiff_invMap
-
-/--
-Target-membership frontier for local gluing coordinates: every normalized
-local coordinate value actually lies in the target of the patch's assigned
-`OnePoint ℂ` chart.
--/
-theorem genusZeroGlobalGluing_coord_mem_target_on_patch
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (family : GenusZeroGlobalPatchFamily X) :
-    ∀ i x, x ∈ (family.patch i).source →
-      (family.patch i).coord x ∈ (family.patch i).targetChart.target := by
-  intro i x _hx
-  rcases (family.patch i).targetChart_standard with hchart | hchart
-  · rw [hchart]
-    simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
-  · rw [hchart]
-    simp [inversionChart]
 
 /--
 The canonical forward candidate obtained by choosing one patch containing each
