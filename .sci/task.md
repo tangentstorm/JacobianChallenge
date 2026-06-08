@@ -1,77 +1,71 @@
-# Worker jc0 — Milestone B1.0: split #232 uniformization interface upstream
+# Worker jc0 — Milestone B1: isolate analytic-genus-zero homeomorphism provider
 
 ## Assignment
 
-Prepare Milestone B1 by making the #232 uniformization theorem available to
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean` without creating an
-import cycle.
+Execute the next B1 step from `.sci/plan.md`: replace the broad #233 `sorry`
+in `exists_biholomorph_onePoint_of_analyticGenus_zero` with a narrower
+topological-homeomorphism provider, then feed that provider to the now-upstream
+#232 theorem `exists_biholomorph_onePoint_of_genus_zero`.
 
-Currently `exists_biholomorph_onePoint_of_analyticGenus_zero` (#233) is in
-`MeromorphicToBranchedCover.lean`, but the theorem it should consume,
-`exists_biholomorph_onePoint_of_genus_zero` (#232), is in
-`GenusZeroClassification.lean`, which already imports
-`MeromorphicToBranchedCover.lean`. This task should extract the minimal
-topological-homeomorphism-to-biholomorphism interface from
-`GenusZeroClassification.lean` into a new upstream helper file under
-`Jacobian/HolomorphicForms/`, then import that helper from both files.
+Introduce a named provider in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`, for example
+`genusZeroHomeomorphOnePoint_of_analyticGenus_zero`, returning
+`Nonempty (X ≃ₜ OnePoint ℂ)` from `analyticGenus ℂ X = 0`. Then prove
+`exists_biholomorph_onePoint_of_analyticGenus_zero` by obtaining this
+topological homeomorphism and applying
+`exists_biholomorph_onePoint_of_genus_zero`.
 
-This is a refactor-only commit. It should preserve all public theorem names and
-signatures, introduce no new `sorry`s, and leave #232’s single reachable root at
-`genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint`.
+This is a Lean-code commit. It should not solve the analytic-genus-zero
+topological classification yet; it should make the remaining #233 frontier
+strictly narrower and keep all public theorem names/signatures unchanged.
 
 ## Scope
 
-- Edit `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
-- Add one new helper file under `Jacobian/HolomorphicForms/`, for example
-  `GenusZeroUniformization.lean`, containing the existing #232 uniformization
-  interface and its local support structures/lemmas.
-- Edit `Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean` only to add
-  the new import if the split succeeds; do not change #233’s body in this step.
+- Edit `Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
 - Edit `.sci/task.md` and local ignored `.sci/plan.md` state.
 - Do not edit `Jacobian/Challenge.lean`.
-- Do not prove or alter `exists_biholomorph_onePoint_of_analyticGenus_zero` yet.
-- Do not use the circular fixed-pole/Riemann--Roch route.
-- Do not add new Lean declarations with `sorry`; move the existing isolated
-  selector provider only if needed for the import split.
+- Do not edit `Jacobian/HolomorphicForms/GenusZeroClassification.lean` unless a
+  minimal import cleanup is forced by the build.
+- Do not add more than one new `sorry`; the new topological-homeomorphism
+  provider must replace the existing #233 `sorry`, not add a second reachable
+  gap.
+- Preserve the public theorem name and signature of
+  `exists_biholomorph_onePoint_of_analyticGenus_zero`.
+- Do not use the circular fixed-pole/Riemann--Roch route through
+  `genusZero_pointRRSection_outside_constants_exists` or its downstream
+  fixed-pole RR-section chain.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks A1.1, A1.2, and A2 complete, and now lists
-      B1.0 as the next unchecked planned milestone before B1.
-- [x] Identify the minimal contiguous #232 block in
-      `GenusZeroClassification.lean`: `GenusZeroGlobalGluingData`,
-      `GenusZeroNormalizedMontelPatchSelector`,
-      `genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint`,
-      `genusZeroGlobalGluingData_of_homeomorph_onePoint`,
-      `exists_biholomorph_onePoint_of_genus_zero`, and the helper lemmas they
-      require.
-- [x] Move that minimal block into the new upstream helper file, preserving the
-      namespace, theorem names, signatures, comments, and the single existing
-      selector-provider `sorry`.
-- [x] Update imports so `GenusZeroClassification.lean` still builds and
+- [x] Confirm `.sci/plan.md` marks B1.0 complete and lists B1 as the next
+      unchecked milestone.
+- [x] Inspect `exists_biholomorph_onePoint_of_analyticGenus_zero` and confirm
       `MeromorphicToBranchedCover.lean` can see
-      `exists_biholomorph_onePoint_of_genus_zero` without importing
-      `GenusZeroClassification.lean`.
-- [x] Run `lake build Jacobian.HolomorphicForms.GenusZeroUniformization` or the
-      chosen new module name.
-- [x] Run `lake build Jacobian.HolomorphicForms.GenusZeroClassification`.
+      `exists_biholomorph_onePoint_of_genus_zero` through
+      `GenusZeroUniformization.lean`.
+- [x] Add `genusZeroHomeomorphOnePoint_of_analyticGenus_zero` with exactly one
+      `sorry`, documenting it as the remaining topological classification
+      provider from analytic genus zero to `X ≃ₜ OnePoint ℂ`.
+- [x] Replace the body of `exists_biholomorph_onePoint_of_analyticGenus_zero`
+      with sorry-free assembly from that provider and
+      `exists_biholomorph_onePoint_of_genus_zero`.
+- [x] Keep downstream
+      `genusZero_singlePoleMeromorphicAnalyticData_nonempty` assembling through
+      `exists_biholomorph_onePoint_of_analyticGenus_zero` unchanged.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
-- [x] Run `scripts/list-sorries.py --text` and confirm there is no net new
-      reachable sorry and the GenusZero root remains
-      `genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint`.
-- [x] Commit exactly the scoped refactor with normalized author/committer
+- [x] Run `scripts/list-sorries.py --text` and confirm the reachable #233 root
+      moved from `exists_biholomorph_onePoint_of_analyticGenus_zero` to the new
+      topological-homeomorphism provider, with no net new reachable sorries.
+- [x] Commit exactly the scoped Lean/SCI edit with normalized author/committer
       metadata and `Co-authored-by: Codex <codex@openai.com>`.
 
 ## Verification
 
-- `lake build Jacobian.HolomorphicForms.GenusZeroUniformization`: succeeds;
-  the module has the moved selector-provider warning.
-- `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`: succeeds
-  and can import `GenusZeroUniformization` without an import cycle.
-- `lake build Jacobian.HolomorphicForms.GenusZeroClassification`: succeeds
-  after consuming the moved declarations from `GenusZeroUniformization`.
+- `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`: succeeds;
+  this file now has warnings at `complexSimplePolePrincipalPart_of_biholomorph_onePoint`
+  and the new `genusZeroHomeomorphOnePoint_of_analyticGenus_zero` provider.
 - `lake build Jacobian.Solution`: succeeds with existing `uses sorry` warnings.
-- `scripts/list-sorries.py --text`: still 20 reachable sorries total; the
-  GenusZero root moved files but remains the same declaration,
-  `genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint`.
+- `scripts/list-sorries.py --text`: still 20 reachable sorries total; the #233
+  root moved from `exists_biholomorph_onePoint_of_analyticGenus_zero` to
+  `genusZeroHomeomorphOnePoint_of_analyticGenus_zero`.

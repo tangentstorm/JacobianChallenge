@@ -3038,6 +3038,26 @@ theorem singlePoleAnalyticData_of_biholomorph_onePoint
     (SimplePoleToSphereData.of_complexPrincipalPart F P hF)
 
 /--
+Genus-zero topological classification provider in the form needed by #233.
+
+This is the remaining topological classification frontier: from
+analytic genus zero, construct a topological homeomorphism to `OnePoint ℂ`.
+The smooth biholomorphism is then supplied by
+`exists_biholomorph_onePoint_of_genus_zero`.
+-/
+theorem genusZeroHomeomorphOnePoint_of_analyticGenus_zero
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_h : analyticGenus ℂ X = 0) :
+    Nonempty (X ≃ₜ OnePoint ℂ) := by
+  -- Remaining topological classification frontier: derive a homeomorphism
+  -- `X ≃ₜ OnePoint ℂ` from analytic genus zero.
+  sorry
+
+/--
 Genus-zero analytic uniformization provider in the form needed by the
 prescribed-pole meromorphic-map route.
 
@@ -3057,9 +3077,8 @@ theorem exists_biholomorph_onePoint_of_analyticGenus_zero
         (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ) ∧
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X) := by
-  -- Genus-zero uniformization frontier: construct a biholomorphism
-  -- `X ≃ OnePoint ℂ` from `analyticGenus ℂ X = 0`.
-  sorry
+  obtain ⟨e⟩ := genusZeroHomeomorphOnePoint_of_analyticGenus_zero X _h
+  exact exists_biholomorph_onePoint_of_genus_zero X e
 
 /--
 Genus-zero compact connected Riemann surfaces admit an honest analytic
