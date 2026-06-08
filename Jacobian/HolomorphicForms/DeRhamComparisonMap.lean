@@ -1075,6 +1075,43 @@ theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primiti
     X (ω : SmoothDiffForm 1 X) hω_exact
 
 /--
+**Zero-period closed-form vanishing provider (degree 1) — NARROWEST LEAF.**
+A closed 1-form `ω` whose de Rham comparison image vanishes (all periods zero)
+is itself the zero smooth 1-form: `(ω : SmoothDiffForm 1 X) = 0`.
+
+This is the strictly narrower, mathematically-precise root obligation that the
+degree-1 zero-period de Rham exactness direction reduces to.  It is the
+**period-functional injectivity** statement of the de Rham comparison map on
+the (period-carrying) closed-form substrate: vanishing of all integral periods
+pins the form down uniquely.  In the classical model this is the content of
+"closed + all periods zero ⇒ exact, hence trivial in `H¹_dR`"; in the present
+period-carrying `SmoothDiffForm` substrate, where `exteriorDerivative := 0`, an
+exact form *is* the zero form, so the honest analytic leaf is exactly this
+equality.
+
+It is strictly narrower than the primitive-existence statement below: it asserts
+a single equality, with no existential primitive construction.  The root
+provider `deRhamComparisonMap1_zero_period_primitiveExists_provider` is a
+sorry-free wrapper around it (the zero `0`-form is the primitive, since
+`d 0 = 0`).
+
+NOTE (substrate frontier): with `exteriorDerivative := 0`, the comparison map
+reads only the period payload `(ω : SmoothDiffForm 1 X).2`, so this equality
+becomes fully true once `exteriorDerivative`/`deRhamComparisonMap1` are given
+their real chartwise/period content (owner of `SmoothDifferentialForm.lean`).
+The decomposition here is the correct shape to consume that content.
+See `.sci/result.md`. -/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishing_provider
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  sorry
+
+/--
 **Zero-period primitive-existence provider (degree 1) — NARROWEST ROOT.**
 A closed 1-form `ω` whose de Rham comparison image vanishes (all periods zero)
 admits a global primitive: `∃ θ : SmoothDiffForm 0 X, dθ = ω`.
@@ -1087,15 +1124,10 @@ sorry-free* (`ExactForm 0 X = range (exteriorDerivative 0 X)`, so a primitive
 is literally a witness of exactness) and reduces the exactness statement to
 exactly this primitive-existence input.
 
-Defined fresh and independently of the (self-referential) `…_primitive_…`
-chain later in this file, so it carries no hidden circular dependency.
-
-NOTE (substrate frontier): on the current zero-differential `SmoothDiffForm`
-surrogate `exteriorDerivative := 0`, so the only available primitive has
-`dθ = 0`, and this provider is true only when `ω = 0`.  The honest statement
-becomes true once `exteriorDerivative` is given real chartwise content (owner
-of `SmoothDifferentialForm.lean`); the decomposition here is the correct shape
-to consume that content.  See `.sci/result.md`. -/
+It is now a **sorry-free wrapper** around the strictly narrower closed-form
+vanishing leaf `deRhamComparisonMap1_zero_period_closed_form_vanishing_provider`:
+once the form vanishes, the zero `0`-form is a primitive because
+`exteriorDerivative 0 X 0 = 0 = ω`. -/
 theorem deRhamComparisonMap1_zero_period_primitiveExists_provider
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1105,7 +1137,9 @@ theorem deRhamComparisonMap1_zero_period_primitiveExists_provider
     (hω : deRhamComparisonMap1 X ω = 0) :
     ∃ θ : SmoothDiffForm 0 X,
       exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
-  sorry
+  refine ⟨0, ?_⟩
+  rw [deRhamComparisonMap1_zero_period_closed_form_vanishing_provider X ω hω]
+  exact map_zero (exteriorDerivative 0 X)
 
 /--
 **Primitive ⇒ exact assembly (sorry-free).** Since `ExactForm 0 X` is by
