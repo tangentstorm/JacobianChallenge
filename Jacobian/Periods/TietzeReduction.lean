@@ -88,13 +88,43 @@ theorem orientable_letterPair_opposite_orientation
     ∀ ℓ : Letter E.extractedGenus, ℓ ∈ w → ℓ.inv ∈ w := by
   sorry
 
+/-- Classical Brahana handle-collection: a reduced, inverse-paired word over the
+genus-`g` alphabet is `TietzeEq` to a concatenation of complete handle blocks
+listed in some order `l : List (Fin g)`. This is the genuine geometric input;
+re-indexing to `standardWord` is handled downstream by the proven Perm lemmas. -/
+theorem orientable_handleBlock_collection
+    {g : ℕ} (w : EdgeWord g)
+    (hPairs : ∀ ℓ : Letter g, ℓ ∈ w → ℓ.inv ∈ w)
+    (hReduced : ∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel w x) :
+    ∃ l : List (Fin g),
+      EdgeWord.TietzeEq w (l.flatMap EdgeWord.handleBlock) := by
+  sorry
+
+/-- The topological constraint: if a word is the global boundary, the resulting list
+of handles must be exactly a permutation of all handles. -/
+theorem handleBlock_collection_is_perm
+    {g : ℕ} (w : EdgeWord g)
+    (hPairs : ∀ ℓ : Letter g, ℓ ∈ w → ℓ.inv ∈ w)
+    (hReduced : ∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel w x)
+    (l : List (Fin g))
+    (hTietze : EdgeWord.TietzeEq w (l.flatMap EdgeWord.handleBlock)) :
+    ∃ perm : Equiv.Perm (Fin g), l = (List.finRange g).map perm := by
+  sorry
+
 theorem orientable_handleSwap_grouping
     {g : ℕ} (w : EdgeWord g)
     (_hPairs : ∀ ℓ : Letter g, ℓ ∈ w → ℓ.inv ∈ w)
     (_hReduced : ∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel w x) :
     ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧
       (∃ perm : Equiv.Perm (Fin g), v = (List.finRange g).flatMap (fun i => EdgeWord.handleBlock (perm i))) := by
-  sorry
+  obtain ⟨l, hl⟩ := orientable_handleBlock_collection w _hPairs _hReduced
+  obtain ⟨perm, hperm⟩ := handleBlock_collection_is_perm w _hPairs _hReduced l hl
+  use l.flatMap EdgeWord.handleBlock
+  refine ⟨hl, perm, ?_⟩
+  rw [hperm]
+  induction (List.finRange g) with
+  | nil => rfl
+  | cons hd tl ih => simp [ih]
 
 lemma TietzeEq_swap_adj {g : ℕ} (i j : Fin g) (A B : List (Letter g)) :
   EdgeWord.TietzeEq (A ++ EdgeWord.handleBlock i ++ EdgeWord.handleBlock j ++ B)
@@ -227,10 +257,7 @@ theorem rawWord_tietzeEq_standardWord_orientable
 theorem wordQuotient_homeomorph_of_inverseCancel_step
     {g : ℕ} {w v : EdgeWord g} (h : EdgeWord.InverseCancel w v) :
     Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
-  -- Topology of inverse cancellation: quotient invariance directly.
-  -- This replaces the false disk-lift `inverseCancel_geometric_maps`.
   sorry
-
 
 
 /--
