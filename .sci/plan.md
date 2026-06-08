@@ -42,7 +42,7 @@ See `goal.md` § FIRST JOB for the full framing and the 3 clusters.
       blueprint nodes wired with `\uses` down to green nodes / Mathlib (Stokes,
       integration, Hodge star). #227 is the keystone — its U-companions #241/#240
       are mechanical ports, so map B before A/C.
-- [ ] **B2.** Wire #227, #241, #240 so each one's only remaining
+- [x] **B2.** Wire #227, #241, #240 so each one's only remaining
       orange/uncoloured dependency is its genuine gap.
 
 ### Milestone A-map — Hurewicz / singular homology
