@@ -34,7 +34,6 @@
 {"i":1444,"f":"Jacobian/Periods/PullbackNaturality.lean","k":"theorem","s":"pathIntegralViaCover_trans_eq_add","n":3,"o":3,"r":0,"e":4,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":1445,"f":"Jacobian/Periods/PullbackNaturality.lean","k":"theorem","s":"periodPairing_pullbackFormsBundledLM","n":2,"o":2,"r":0,"e":5,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":1446,"f":"Jacobian/Periods/TietzeReduction.lean","k":"lemma","s":"brahana_orientable_core","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
-{"i":1447,"f":"Jacobian/Periods/TietzeReduction.lean","k":"lemma","s":"inverseCancel_geometric_maps","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":1448,"f":"Jacobian/Periods/TopologicalGenus.lean","k":"theorem","s":"singularH1_iso_of_homotopyEquiv","n":1,"o":1,"r":0,"e":5,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":1474,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"def","s":"basisAnalyticPullbackBundle","n":1,"o":0,"r":0,"e":6,"u":[],"d":[],"a":"","c":"sorry-dep","b":"","t":""}
 {"i":1475,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"theorem","s":"transfer_functional_mem_periodSubgroup","n":1,"o":1,"r":0,"e":5,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}

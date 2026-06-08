@@ -294,7 +294,6 @@ sorry:
 | `polygon4g_quotient_path_finite_lift_subdivision` | (probed by same name) | ✓ | ✓ | — |
 | `riemann_classical_real_LI_input` | (probed by same name) | ✓ | ✓ | — |
 | `brahana_orientable_core` | **private** — not cross-module probable | — | — | — |
-| `inverseCancel_geometric_maps` | **private** — not cross-module probable | — | — | — |
 | `Solution.lean L29 instance (StableChartAt)` | (instance — present in all `Solution.*` sorryAx sets) | ✓ | ✓ | — |
 | `Solution.lean L33 instance (FiniteDimensionalHolomorphicOneForms)` | (instance — present in all `Solution.*` sorryAx sets) | ✓ | ✓ | — |
 | `Solution.lean L199–283 top-level Jacobian.* sorry stubs` (21 sorries) | per §2.1 — all `STD + sorry` | ✓ | ✓ | — |
@@ -427,10 +426,10 @@ is a **necessary** step but not by itself **sufficient**.
 
 ### §4.5 — The private TietzeReduction sorries are invisible to `#print axioms` cross-module
 
-`brahana_orientable_core` and `inverseCancel_geometric_maps` are declared
-`private` and cannot be probed by name from a separate file. They do show
+`brahana_orientable_core` is declared
+`private` and cannot be probed by name from a separate file. It does show
 up in `scripts/list-sorries.py --text` as REACHABLE, meaning some public
-decl in the import closure depends on them. They cannot be enumerated by
+decl in the import closure depends on it. It cannot be enumerated by
 this audit's methodology — flagged here for completeness. Audit suggestion:
 the manager may want a follow-up where the TietzeReduction sorries are
 locally probed by inserting `#print axioms` in the same file.
