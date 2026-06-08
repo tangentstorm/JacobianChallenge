@@ -584,6 +584,16 @@ has basis-aligned period-coordinate rows that are ℝ-linearly independent.
 This is narrower than #227: it does not assert linear independence for an
 arbitrary injective cycle family, only for an H₁ basis carrying the missing
 classical symplectic/Stokes/Hodge structure.
+
+P0 boundary audit: the local substrate above is not enough to prove this
+provider directly.  `periodPairing` is still implemented through the current
+zero chain-integration placeholder, while `riemann_bilinear_identity` and
+`hodge_form_posDef_on_periods` only give the algebraic coordinate/Hodge
+consequences once a concrete H₁ basis has already been identified with the
+classical symplectic basis and its period sum with the manifold Hodge form.
+Thus this theorem is the narrowest remaining Type-0 #227 provider: the missing
+classical input is exactly the basis-aligned Stokes/Hodge-positive period-matrix
+nondegeneracy for the selected integral H₁ basis.
 -/
 theorem h1_basis_periodCoordinate_linearIndependent
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
