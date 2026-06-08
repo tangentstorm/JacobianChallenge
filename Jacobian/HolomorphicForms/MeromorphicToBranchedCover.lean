@@ -3100,6 +3100,31 @@ theorem onePointExtend_onePointSimplePoleCoordinate_coe_apply_coe_ne
   · simp [hz]
   · exact fun h => hz (OnePoint.coe_injective h)
 
+theorem onePointExtend_onePointSimplePoleCoordinate_infty_eq_id :
+    onePointExtend
+      (onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ))
+      (OnePoint.infty : OnePoint ℂ) = id := by
+  funext x
+  cases x using OnePoint.rec with
+  | infty => simp
+  | coe z => simp
+
+theorem onePointExtend_onePointSimplePoleCoordinate_coe_eq_caseMap
+    (a : ℂ) :
+    onePointExtend
+      (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
+      ((a : ℂ) : OnePoint ℂ) =
+      fun x => x.elim ((0 : ℂ) : OnePoint ℂ)
+        (fun z => if z = a then OnePoint.infty else (((z - a)⁻¹ : ℂ) : OnePoint ℂ)) := by
+  funext x
+  cases x using OnePoint.rec with
+  | infty => simp
+  | coe z =>
+    by_cases hz : z = a
+    · subst hz
+      simp
+    · simp [hz, onePointExtend_onePointSimplePoleCoordinate_coe_apply_coe_ne hz]
+
 /--
 The source coordinate obtained by pulling the explicit `OnePoint ℂ`
 simple-pole coordinate at `e P` back along a biholomorphism `e`.

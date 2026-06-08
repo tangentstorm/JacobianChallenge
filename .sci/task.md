@@ -1,26 +1,26 @@
-# Worker jc0 — Milestone C1.5b: expose target one-point extension normal forms
+# Worker jc0 — Milestone C1.5c: package target extension function normal forms
 
 ## Assignment
 
-Execute a narrow support step for C1.5. After C1.5a corrected
-`onePointSimplePoleCoordinate`, add sorry-free local lemmas describing the
-associated one-point extension
-`onePointExtend (onePointSimplePoleCoordinate Q) Q`.
+Execute a narrow support step for C1.5. After C1.5b added pointwise normal
+forms for
+`onePointExtend (onePointSimplePoleCoordinate Q) Q`, package those facts into
+whole-function normal forms that later continuity/order proofs can rewrite
+with directly.
 
-The goal is to make the target-side continuity/order proof tractable without
-moving the #234 frontier yet. Prove definitional normal forms for the extension
-at the pole and away from the pole, split into the two target cases
-`Q = ∞` and `Q = (a : ℂ)`. In particular, record that:
+Add sorry-free local lemmas in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean` showing:
 
-- at the pole, the one-point extension takes value `∞`;
-- for `Q = ∞`, finite points map to their usual finite coordinate;
-- for `Q = (a : ℂ)`, `∞` maps to `0`, the finite pole maps to `∞` through the
-  extension, and finite off-pole points map to `(z - a)⁻¹`.
+- for `Q = ∞`,
+  `onePointExtend (onePointSimplePoleCoordinate (∞ : OnePoint ℂ)) ∞ = id`;
+- for `Q = (a : ℂ)`, the one-point extension equals the explicit case map
+  `fun x => x.elim ((0 : ℂ) : OnePoint ℂ)
+    (fun z => if z = a then OnePoint.infty else (((z - a)⁻¹ : ℂ) : OnePoint ℂ))`.
 
-This is a Lean-code support commit only. Do not attempt to prove the full
-target-side `HasComplexSimplePolePrincipalPart`, do not split or replace the
-C1.4 field-facts provider, and do not move the reachable #234 root in this
-step.
+This is a Lean-code support commit only. Do not attempt to prove target-side
+continuity, order, meromorphicity, or modulus divergence yet. Do not split or
+replace the C1.4 field-facts provider, and do not move the reachable #234 root
+in this step.
 
 ## Scope
 
@@ -40,18 +40,15 @@ step.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks C1.5a complete and lists C1.5b/C1.5 as the
+- [x] Confirm `.sci/plan.md` marks C1.5b complete and lists C1.5c/C1.5 as the
       next C1 support/proof work.
-- [x] Inspect `onePointExtend`, `onePointSimplePoleCoordinate`, and the C1.4
-      field-facts provider in
+- [x] Inspect the C1.5a coordinate lemmas, C1.5b extension pointwise lemmas,
+      and the C1.4 field-facts provider in
       `Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
-- [x] Add sorry-free `[simp]`/normal-form lemmas for
-      `onePointExtend (onePointSimplePoleCoordinate (∞ : OnePoint ℂ)) ∞` at
-      the pole and finite target points.
-- [x] Add sorry-free `[simp]`/normal-form lemmas for
-      `onePointExtend (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
-      ((a : ℂ) : OnePoint ℂ)` at `∞`, at the finite pole, and at finite
-      off-pole points.
+- [x] Add a sorry-free whole-function identity for the `Q = ∞` extension as
+      `id`, proved by extensionality/cases using the C1.5b pointwise lemmas.
+- [x] Add a sorry-free whole-function identity for the finite-pole extension as
+      the explicit `OnePoint.elim`/`if z = a` case map.
 - [x] Keep the C1.4 field-facts provider as the sole reachable #234 root; do
       not introduce target/source provider splits in this step.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
