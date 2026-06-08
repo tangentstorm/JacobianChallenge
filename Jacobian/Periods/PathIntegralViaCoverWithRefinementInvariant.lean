@@ -1,6 +1,8 @@
 import Jacobian.Periods.PathIntegralViaCoverWithRefine
 import Jacobian.Periods.ChartedFormPullbackChartChange
 import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
+import Jacobian.Periods.ChartedFormPullbackContinuous
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Mathlib.Geometry.Manifold.MFDeriv.FDeriv
 import Mathlib.Analysis.Calculus.FDeriv.RestrictScalars
 
@@ -351,8 +353,9 @@ private lemma segment_integrability
     · fun_prop;
   have h_cont_diff : ContinuousOn (fun t => (chartedFormPullback (chartAt E (pickChart i)) ω) ((chartAt E (pickChart i)) ((γ.subpath (divFinIcc n hn ↑i.val (le_of_lt i.isLt)) (divFinIcc n hn (↑i.val + 1) i.isLt)).extend t)) (derivWithin ((chartAt E (pickChart i)) ∘ ⇑(γ.subpath (divFinIcc n hn ↑i.val (le_of_lt i.isLt)) (divFinIcc n hn (↑i.val + 1) i.isLt)).extend) (Icc 0 1) t)) (Set.Icc 0 1) := by
     refine' ContinuousOn.clm_apply _ _;
-    · refine' ContinuousOn.comp ( chartedFormPullback_continuousOn _ _ _ ) _ _;
-      · exact IsManifold.chart_mem_maximalAtlas (pickChart i);
+    · refine' ContinuousOn.comp
+        ( JacobianChallenge.Periods.ChartedFormPullbackContinuous.chartedFormPullback_chartAt_continuousOn
+            (pickChart i) ω ) _ _;
       · refine' h_cont_diff.continuousOn.mono _;
         intro t ht;
         simp_all +decide [ Path.subpath ];
