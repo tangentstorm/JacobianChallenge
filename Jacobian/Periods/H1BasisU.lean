@@ -87,6 +87,9 @@ theorem stageB_analytic_eq_topologicalGenusU
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     analyticGenus ℂ X = topologicalGenusU X := by
+  have _provider1 := compactRiemannSurface_homeomorph_ulift_polygon4g X
+  have _provider2 := IntegralOneCycleULinearEquivOfHomeo (Homeomorph.refl X)
+  have _provider3 := polygon4g_singularH1U_iso_freeZ.{u} (analyticGenus ℂ X)
   sorry
 
 /--

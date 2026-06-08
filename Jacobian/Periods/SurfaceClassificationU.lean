@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.Periods.SurfaceClassification
+import Jacobian.Periods.IntegralOneCycleU
 
 /-!
 # Universe-polymorphic Surface Classification
@@ -33,6 +34,18 @@ theorem compactRiemannSurface_homeomorph_ulift_polygon4g
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Nonempty (X ≃ₜ ULift.{u} (Polygon4g (analyticGenus ℂ X))) :=
+  sorry
+
+/--
+**Provider (Universe-`u` Polygonal Cellular H₁ Basis).**
+The `IntegralOneCycleU` homology of the lifted fundamental polygon is linearly
+isomorphic to `Fin (2 * g) → ℤ`.
+
+This is a tracked layer-frontier sorry. Its discharge requires coefficient
+and universe transport from the Type-0 `polygon4g_singularH1_iso_freeZ`.
+-/
+theorem polygon4g_singularH1U_iso_freeZ (g : ℕ) :
+    Nonempty (IntegralOneCycleU (ULift.{u} (Polygon4g g)) ≃ₗ[ℤ] (Fin (2 * g) → ℤ)) :=
   sorry
 
 end JacobianChallenge.Periods
