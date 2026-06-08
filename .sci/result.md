@@ -1,7 +1,6 @@
-# Worker jc5 — Result: Issue #240
+# Worker jc5 — Result: Discharge IntegralOneCycleULinearEquivOfHomeo
 
 ## Changes Made
-- Proved `stageB_analytic_eq_topologicalGenusU` in `Jacobian/Periods/H1BasisU.lean` using `compactRiemannSurface_homeomorph_ulift_polygon4g`, `IntegralOneCycleULinearEquivOfHomeo`, and `polygon4g_singularH1U_iso_freeZ`.
-- Left `stageA_surface_CW_basisU` as the remaining tracked provider.
-- Refreshed `sorries.jsonl` graph to track the newly surfaced providers.
-- The reachable graph grew to 23 reachable across 16 files, a net change of +3 reachable sorries, as `stageB` wired to the 3 newly surfaced pre-staged providers.
+- Proved `IntegralOneCycleULinearEquivOfHomeo` in `Jacobian/Periods/IntegralOneCycleU.lean` using Mathlib's singular homology functoriality (`singularHomologyFunctor`) and `TopCat.isoOfHomeo`.
+- Refreshed `sorries.jsonl` graph via `bash scripts/build-blueprint.sh`.
+- The reachable graph dropped by 1 sorry. It is now 22 reachable sorries across 15 files.

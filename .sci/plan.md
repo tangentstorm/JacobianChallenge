@@ -1,9 +1,9 @@
-# Worker jc5 — Plan: Chapter 06 (Issue #240)
+# Worker jc5 — Plan: Chapter 06 (Issue #240 Transport Providers)
 
 ## Objective
-Discharge or narrowly split `h1_basis_of_compact_riemann_surfaceU` against the current upstream `H1BasisU.lean` shape.
+Discharge the transport providers surfaced by `stageB_analytic_eq_topologicalGenusU` to finalize the equivalence machinery for #240.
 
 ## Strategy
-1. **stageB_analytic_eq_topologicalGenusU**: Provide the proof for this sorry using `compactRiemannSurface_homeomorph_ulift_polygon4g X`, `polygon4g_singularH1U_iso_freeZ`, and `IntegralOneCycleULinearEquivOfHomeo`. Use `finrank_eq_card_basis` to show that the analytical and topological genus match.
-2. **stageA_surface_CW_basisU**: Keep this sorry as the topological target frontier to be resolved via the `jc4` cellular substrate.
-3. Refresh the `sorries.jsonl` graph to track the newly surfaced providers.
+1. **IntegralOneCycleULinearEquivOfHomeo**: Use the functoriality of `singularHomologyFunctor` and `TopCat.isoOfHomeo` to show that homeomorphic spaces have isomorphic `IntegralOneCycleU` modules.
+2. Coordinate with `jc2`/`jc4` regarding `compactRiemannSurface_homeomorph_ulift_polygon4g` and `polygon4g_singularH1U_iso_freeZ` so they are not proved in parallel.
+3. Keep `stageA_surface_CW_basisU` as the remaining frontier pending the cellular substrate.

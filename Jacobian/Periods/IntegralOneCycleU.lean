@@ -65,7 +65,10 @@ Mathlib singular homology functoriality.
 -/
 theorem IntegralOneCycleULinearEquivOfHomeo {X Y : Type u}
     [TopologicalSpace X] [TopologicalSpace Y] (h : X ≃ₜ Y) :
-    Nonempty (IntegralOneCycleU X ≃ₗ[ℤ] IntegralOneCycleU Y) :=
-  sorry
+    Nonempty (IntegralOneCycleU X ≃ₗ[ℤ] IntegralOneCycleU Y) := by
+  let F := (AlgebraicTopology.singularHomologyFunctor.{u} (ModuleCat.{u} ℤ) 1).obj (ModuleCat.of ℤ (ULift.{u} ℤ))
+  have isoTop : TopCat.of X ≅ TopCat.of Y := TopCat.isoOfHomeo h
+  have isoMod : F.obj (TopCat.of X) ≅ F.obj (TopCat.of Y) := Functor.mapIso F isoTop
+  exact ⟨isoMod.toLinearEquiv⟩
 
 end JacobianChallenge.Periods

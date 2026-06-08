@@ -1,8 +1,7 @@
-# Worker jc5 — Task: Issue #240 (H1BasisU.lean)
+# Worker jc5 — Task: Discharge IntegralOneCycleULinearEquivOfHomeo
 
 ## Requirements
-- Target: `Jacobian/Periods/H1BasisU.lean`.
-- Objective: Discharge `stageB_analytic_eq_topologicalGenusU` using tracked providers and Mathlib lemmas.
-- Do not modify `Challenge.lean` or purely cellular dependencies from other lanes unless explicitly coordinating.
+- Target: `Jacobian/Periods/IntegralOneCycleU.lean`.
+- Objective: Discharge `IntegralOneCycleULinearEquivOfHomeo` using mathlib's `singularHomologyFunctor` and `TopCat.isoOfHomeo`.
+- Refresh `sorries.jsonl` using the provided blueprint scripts and verify the reduction of one sorry.
 - Ensure the co-authored-by trailer is included in the commit.
-- Refresh `sorries.jsonl` using the provided blueprint scripts and report the changes accurately in `result.md`.
