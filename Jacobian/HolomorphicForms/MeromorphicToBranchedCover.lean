@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.MeromorphicDegree
+import Jacobian.HolomorphicForms.GenusZeroUniformization
 import Jacobian.HolomorphicForms.MeromorphicToCp1
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
