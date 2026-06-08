@@ -694,11 +694,36 @@ JacobianChallenge.Periods.hodge_form_posDef_on_periods}
 
 \begin{theorem}[de Rham / Hodge rank computation]
 \label{input:hodge-deRham}
-\uses{lem:de-rham-comparison-map1-zero-period-primitive-exists-provider, lem:hodge-remainder-period-payload-exact}
+\uses{lem:de-rham-zero-period-exactness-assembly, lem:hodge-zero-projection-exactness-assembly}
 \(\mathrm{rank}_{\Z}H_1(X) = 2g_{\mathrm{an}}(X)\). This decomposes into the two
-exactness inputs below: a closed 1-form with vanishing periods is exact (de Rham),
-and a closed 1-form with zero harmonic projection is exact (Hodge).
+exactness packages below: the de Rham comparison map has exact kernel in
+degree \(1\), and Hodge projection has exact kernel on closed \(1\)-forms.
 \end{theorem}
+
+\begin{lemma}[Zero-period comparison-kernel bookkeeping]
+\label{lem:de-rham-zero-period-kernel-bookkeeping}
+For the degree-\(1\) comparison map, a closed form has zero periods
+exactly when it lies in the kernel. This is the definitional
+\(\ker f = \{x \mid f x = 0\}\) transport used by the de Rham
+injectivity branch.
+\depends{Mathlib's \code{LinearMap.mem_ker} and definitional rewriting.}
+\lean{JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_mem_kernel_frontier,
+JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_comparison_kernel_zero_period_frontier}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Primitive existence gives exactness]
+\label{lem:de-rham-primitive-to-exact-assembly}
+If a zero-period closed form admits a global primitive
+\(\theta\) with \(d\theta=\omega\), then \(\omega\) is exact. This is
+the range-witness unpacking of \(\mathrm{ExactForm}\).
+\depends{The project definition \code{ExactForm 0 X =
+LinearMap.range (exteriorDerivative 0 X)}.}
+\lean{JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_primitiveExists_exact_assembly}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
 
 \begin{lemma}[Zero-period closed form is exact (open)]
 \label{lem:de-rham-comparison-map1-zero-period-primitive-exists-provider}
@@ -708,12 +733,51 @@ Tracking: \ghissue{242}.
 \lean{JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_primitiveExists_provider}
 \end{lemma}
 
+\begin{lemma}[de Rham zero-period exactness assembly]
+\label{lem:de-rham-zero-period-exactness-assembly}
+\uses{lem:de-rham-zero-period-kernel-bookkeeping, lem:de-rham-primitive-to-exact-assembly, lem:de-rham-comparison-map1-zero-period-primitive-exists-provider}
+The de Rham comparison-kernel exactness package composes the
+zero-period/kernel conversion with primitive-existence and the
+primitive-to-exact assembly. Its only analytic frontier is the
+zero-period primitive-existence provider.
+\lean{JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_exact_axiom_frontier,
+JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_mem_exact_frontier,
+JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_comparison_kernel_mem_exact_of_zero_period_frontier,
+JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_comparison_kernel_mem_exact_frontier}
+\end{lemma}
+
+\begin{lemma}[Harmonic projection embedding bookkeeping]
+\label{lem:hodge-harmonic-embed-bookkeeping}
+The harmonic projection has the explicit coefficient-section
+\(\mathrm{harmonicEmbed}(h)=(h,0)\), and this section is a right
+inverse for the projection on harmonic coefficient data.
+\depends{Definitional simplification of \code{harmonicProjection1} and
+\code{harmonicEmbed}.}
+\lean{JacobianChallenge.HolomorphicForms.harmonicEmbed,
+JacobianChallenge.HolomorphicForms.harmonicProjection1_harmonicEmbed}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Zero-harmonic closed form is exact (open)]
 \label{lem:hodge-remainder-period-payload-exact}
 A closed \(1\)-form with zero harmonic projection is exact (the Hodge-remainder
 exactness payload). Open obligation (\code{sorry}).
 Tracking: \ghissue{243}.
 \lean{JacobianChallenge.HolomorphicForms.hodgeRemainder_periodPayload_exact}
+\end{lemma}
+
+\begin{lemma}[Hodge zero-projection exactness assembly]
+\label{lem:hodge-zero-projection-exactness-assembly}
+\uses{lem:hodge-harmonic-embed-bookkeeping, lem:hodge-remainder-period-payload-exact}
+The Hodge exactness package splits a closed \(1\)-form into its embedded
+harmonic projection plus the pure period-payload remainder. When the
+projection vanishes, the embedded harmonic summand is zero, so exactness
+of the period payload gives exactness of the original form. Its only
+analytic frontier is the Hodge-remainder period-payload exactness input.
+\lean{JacobianChallenge.HolomorphicForms.harmonicProjection1_hodgeDecomposition,
+JacobianChallenge.HolomorphicForms.harmonicProjection1_kernel_subset_exact,
+JacobianChallenge.HolomorphicForms.harmonicProjection1_kernel_eq_exact}
 \end{lemma}
 
 % --- Period pairing + period lattice (relocated from the former Statement Bank) ---

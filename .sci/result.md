@@ -364,3 +364,85 @@ primitive-existence frontier and #243 is the unique Hodge closed =
 harmonic + exact frontier, with green surrounding assembly nodes for
 zero-period-to-kernel, primitive-to-exact, and harmonic-projection
 kernel/exact bookkeeping.
+
+# C1 de Rham / Hodge Exactness Frontier Wiring
+
+Status: C1 complete.
+
+## Added Blueprint Nodes
+
+In `tex/sections/06-periods-and-riemann-bilinear.tex`, `input:hodge-deRham`
+now factors through two exactness packages instead of pointing directly at the
+two open providers.
+
+De Rham zero-period substrate:
+
+- `lem:de-rham-zero-period-kernel-bookkeeping`
+  - Lean declarations:
+    `deRhamComparisonMap1_zero_period_mem_kernel_frontier`,
+    `deRhamComparisonMap1_comparison_kernel_zero_period_frontier`.
+  - Role: the definitional `LinearMap.mem_ker` transport between zero periods
+    and comparison-kernel membership.
+- `lem:de-rham-primitive-to-exact-assembly`
+  - Lean declaration:
+    `deRhamComparisonMap1_zero_period_primitiveExists_exact_assembly`.
+  - Role: converts a primitive witness `dθ = ω` into exact-form membership via
+    the project definition of `ExactForm`.
+- `lem:de-rham-zero-period-exactness-assembly`
+  - Lean declarations:
+    `deRhamComparisonMap1_zero_period_exact_axiom_frontier`,
+    `deRhamComparisonMap1_zero_period_mem_exact_frontier`,
+    `deRhamComparisonMap1_comparison_kernel_mem_exact_of_zero_period_frontier`,
+    `deRhamComparisonMap1_comparison_kernel_mem_exact_frontier`.
+  - Role: the ungreen `sorry-dep` package that consumes #242 and the green
+    bookkeeping above.
+
+Hodge exactness substrate:
+
+- `lem:hodge-harmonic-embed-bookkeeping`
+  - Lean declarations:
+    `harmonicEmbed`, `harmonicProjection1_harmonicEmbed`.
+  - Role: the definitional embedding/projection bookkeeping for harmonic
+    coefficient data.
+- `lem:hodge-zero-projection-exactness-assembly`
+  - Lean declarations:
+    `harmonicProjection1_hodgeDecomposition`,
+    `harmonicProjection1_kernel_subset_exact`,
+    `harmonicProjection1_kernel_eq_exact`.
+  - Role: the ungreen `sorry-dep` package that consumes #243 and the harmonic
+    embedding bookkeeping.
+
+## Frontier Wiring
+
+- `input:hodge-deRham` now uses
+  `lem:de-rham-zero-period-exactness-assembly` and
+  `lem:hodge-zero-projection-exactness-assembly`.
+- #242 `lem:de-rham-comparison-map1-zero-period-primitive-exists-provider`
+  remains the unique direct de Rham primitive-existence frontier and is not
+  marked with `\leanok`.
+- #243 `lem:hodge-remainder-period-payload-exact` remains the unique direct
+  Hodge period-payload exactness frontier and is not marked with `\leanok`.
+- The package nodes depending on #242/#243 are intentionally unmarked by
+  proof-level `\leanok`; the refreshed graph colors them `sorry-dep`, not
+  `done`.
+
+## Verification
+
+- `python3 scripts/blueprint_audit.py` succeeded with exit code 0:
+  110 statement-style environments, 109 with `\lean{...}`, 1 `\notready`,
+  90 clean, and 18 expected declaration-only open/sorry-dependent nodes.
+- `bash scripts/build-blueprint.sh` succeeded end-to-end. It refreshed
+  `sorries.jsonl` with 322 graph-coloured records, injected the blueprint web
+  extras, and verified the post-processing hooks.
+- The refreshed `sorries.jsonl` records the new independent bookkeeping nodes
+  as `c:"done"`, the #242/#243 providers as `c:"sorry"`, and the package nodes
+  consuming them as `c:"sorry-dep"`.
+
+## Next Recommended Step
+
+Proceed to the V milestone as one commit-sized planning/verification step:
+audit the full Chapter-06 blueprint-to-Mathlib map, run the final verification
+commands, and write `.sci/result.md` with the jc1/jc4/jc5 execution split. The
+split should keep #227 before #241, schedule Cluster-A lift/side-arc work before
+#230 coefficient independence, and assign #242/#243 separately by de Rham
+primitive existence versus Hodge period-payload exactness.
