@@ -1,31 +1,36 @@
-# Worker jc0 — Milestone C1.1: tighten biholomorphic pullback provider shape
+# Worker jc0 — Milestone C1.2: make target simple-pole coordinate explicit
 
 ## Assignment
 
-Execute C1.1 from `.sci/plan.md`: tighten the #234 pullback provider so the
-source lift is definitionally `targetLift ∘ e`, rather than an arbitrary
-`sourceLift` plus a separate equality proof.
+Execute C1.2 from `.sci/plan.md`: make the target `OnePoint ℂ` simple-pole
+coordinate explicit inside the #234 pullback provider, rather than leaving
+`targetLift` as an arbitrary function chosen by the provider.
 
-Introduce a narrower local facts structure in
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`, for example
-`BiholomorphOnePointSimplePolePullbackFacts`, carrying:
+Add a local noncomputable definition in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`, for example:
 
 ```lean
-targetLift : OnePoint ℂ → ℂ
-targetPrincipalPart : HasComplexSimplePolePrincipalPart targetLift (e P)
-sourcePrincipalPart :
-  HasComplexSimplePolePrincipalPart (targetLift ∘ (e : X → OnePoint ℂ)) P
+onePointSimplePoleCoordinate (Q : OnePoint ℂ) : OnePoint ℂ → ℂ
 ```
 
-Then add a named provider returning `Nonempty` of this facts structure with the
-single remaining `sorry`. Prove
-`biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint` by obtaining
-the facts and assembling `BiholomorphOnePointSimplePolePullbackData` with
-`sourceLift := targetLift ∘ e` and `sourceLift_eq := rfl`.
+The intended function is a concrete Möbius-style coordinate with pole at `Q`.
+For this commit it is acceptable to choose a pragmatic explicit shape using
+the existing `OnePoint` constructors/charts, such as:
 
-This is a Lean-code commit. It should not solve the arbitrary-pole standard
-coordinate or transport proof yet; it should make the remaining #234 frontier
-strictly narrower by removing the arbitrary source-lift choice.
+- if `Q = ∞`, use the finite coordinate `x.getD 0`;
+- if `Q = ↑a`, use `(x.getD 0 - a)⁻¹` away from the pole, with an arbitrary
+  value at the pole since the complex lift value at the pole is irrelevant.
+
+Then tighten `BiholomorphOnePointSimplePolePullbackFacts` so it no longer has a
+free `targetLift` field. Its target and source fields should refer directly to
+`onePointSimplePoleCoordinate (e P)` and
+`onePointSimplePoleCoordinate (e P) ∘ (e : X → OnePoint ℂ)`. Prove
+`biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint` by assembling
+the existing data record with that explicit coordinate and `sourceLift_eq := rfl`.
+
+This is a Lean-code commit. It should not prove the analytic target-coordinate
+or transport facts yet; it should make the remaining #234 frontier strictly
+narrower by naming the concrete target coordinate.
 
 ## Scope
 
@@ -35,9 +40,10 @@ strictly narrower by removing the arbitrary source-lift choice.
 - Do not edit `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
 - Preserve public theorem names and signatures, especially
   `complexSimplePolePrincipalPart_of_biholomorph_onePoint`.
-- Do not add more than one new `sorry`; the new facts provider must replace the
-  existing `biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint`
-  `sorry`, not add a second reachable gap.
+- Do not add more than one new `sorry`; the tightened facts provider must
+  replace the existing
+  `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` `sorry`,
+  not add a second reachable gap.
 - Do not use the circular fixed-pole/Riemann--Roch route through
   `genusZero_pointRRSection_meromorphic_getD_exists`,
   `genusZero_fixedPole_analyticRRWitness_nonempty`,
@@ -47,26 +53,28 @@ strictly narrower by removing the arbitrary source-lift choice.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks C1.0 complete and lists C1.1 as the next
+- [x] Confirm `.sci/plan.md` marks C1.1 complete and lists C1.2 as the next
       unchecked milestone.
-- [x] Inspect `BiholomorphOnePointSimplePolePullbackData` and the current
-      `biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint`
+- [x] Inspect `BiholomorphOnePointSimplePolePullbackFacts` and the current
+      `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint`
       provider.
-- [x] Add the narrower facts structure whose source principal part is stated
-      for `targetLift ∘ (e : X → OnePoint ℂ)`.
-- [x] Add the named facts provider with exactly one `sorry`, documenting it as
-      the remaining target-coordinate plus biholomorphic-transport frontier.
-- [x] Replace the body of
-      `biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint` with
-      sorry-free assembly from the facts provider and `sourceLift_eq := rfl`.
+- [x] Add `onePointSimplePoleCoordinate (Q : OnePoint ℂ) : OnePoint ℂ → ℂ`
+      as a local explicit target-coordinate definition.
+- [x] Tighten `BiholomorphOnePointSimplePolePullbackFacts` so its principal-part
+      fields mention `onePointSimplePoleCoordinate (e P)` directly.
+- [x] Keep exactly one `sorry` in the tightened facts provider, documenting it
+      as the remaining explicit-coordinate plus biholomorphic-transport frontier.
+- [x] Rebuild `BiholomorphOnePointSimplePolePullbackData` using
+      `targetLift := onePointSimplePoleCoordinate (e P)`,
+      `sourceLift := onePointSimplePoleCoordinate (e P) ∘ e`, and
+      `sourceLift_eq := rfl`.
 - [x] Keep `complexSimplePolePrincipalPart_of_biholomorph_onePoint` and
       downstream `singlePoleAnalyticData_of_biholomorph_onePoint` unchanged
       except for any name drift forced by the provider replacement.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root
-      moved from `biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint`
-      to the new facts provider, with no net new reachable sorries.
+      remains the tightened facts provider, with no net new reachable sorries.
 - [x] Commit exactly the scoped Lean/SCI edit with normalized author/committer
       metadata and `Co-authored-by: Codex <codex@openai.com>`.
 
@@ -79,6 +87,4 @@ strictly narrower by removing the arbitrary source-lift choice.
 - `lake build Jacobian.Solution`: succeeds with existing `uses sorry`
   warnings.
 - `scripts/list-sorries.py --text`: still 20 reachable sorries total; the #234
-  root moved from
-  `biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint` to
-  `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint`.
+  root remains `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint`.

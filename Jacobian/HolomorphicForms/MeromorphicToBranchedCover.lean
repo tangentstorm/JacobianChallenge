@@ -3009,11 +3009,24 @@ structure BiholomorphOnePointSimplePolePullbackData
   sourcePrincipalPart : HasComplexSimplePolePrincipalPart sourceLift P
 
 /--
+Explicit simple-pole coordinate on `OnePoint ℂ` with pole at `Q`.
+
+For `Q = ∞`, this is the standard finite coordinate `x.getD 0`. For
+`Q = ↑a`, this is the finite coordinate `(x.getD 0 - a)⁻¹` away from the pole,
+with the value at the pole set arbitrarily to `0`; the complex lift value at
+the pole is irrelevant for the resulting one-point extension.
+-/
+noncomputable def onePointSimplePoleCoordinate (Q : OnePoint ℂ) : OnePoint ℂ → ℂ := by
+  classical
+  exact Q.elim (fun x => x.getD 0)
+    (fun a x => if x = ((a : ℂ) : OnePoint ℂ) then 0 else (x.getD 0 - a)⁻¹)
+
+/--
 Narrow facts for the biholomorphic pullback construction of a simple pole.
 
-This record removes the arbitrary source-lift choice from
-`BiholomorphOnePointSimplePolePullbackData`: the source principal part is
-stated directly for the definitional pullback `targetLift ∘ e`.
+This record fixes the target lift to the explicit coordinate
+`onePointSimplePoleCoordinate (e P)`. The source principal part is stated
+directly for its definitional pullback along `e`.
 -/
 structure BiholomorphOnePointSimplePolePullbackFacts
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -3021,21 +3034,21 @@ structure BiholomorphOnePointSimplePolePullbackFacts
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (P : X) (e : X ≃ₜ OnePoint ℂ) where
-  /-- The target simple-pole coordinate on the Riemann sphere. -/
-  targetLift : OnePoint ℂ → ℂ
-  /-- The target coordinate has a complex simple pole at `e P`. -/
-  targetPrincipalPart : HasComplexSimplePolePrincipalPart targetLift (e P)
-  /-- The definitional pullback of `targetLift` along `e` has a simple pole at `P`. -/
+  /-- The explicit target coordinate has a complex simple pole at `e P`. -/
+  targetPrincipalPart :
+    HasComplexSimplePolePrincipalPart (onePointSimplePoleCoordinate (e P)) (e P)
+  /-- The definitional pullback of the explicit target coordinate has a simple pole at `P`. -/
   sourcePrincipalPart :
-    HasComplexSimplePolePrincipalPart (targetLift ∘ (e : X → OnePoint ℂ)) P
+    HasComplexSimplePolePrincipalPart
+      (onePointSimplePoleCoordinate (e P) ∘ (e : X → OnePoint ℂ)) P
 
 /--
 Narrow principal-part facts provider for the explicit biholomorphic pullback
 route.
 
 This is the remaining target-coordinate plus biholomorphic-transport frontier:
-build the standard simple-pole coordinate on `OnePoint ℂ` at `e P`, and prove
-its definitional pullback along `e` has the complex principal-part facts on `X`.
+prove the explicit simple-pole coordinate on `OnePoint ℂ` at `e P`, and its
+definitional pullback along `e`, have the complex principal-part facts.
 -/
 theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -3050,8 +3063,8 @@ theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
     Nonempty (BiholomorphOnePointSimplePolePullbackFacts X P e) := by
-  -- Principal-part frontier: construct the standard target coordinate on
-  -- `OnePoint ℂ` and transport meromorphicity, continuity, order-one, and
+  -- Principal-part frontier: prove the explicit target coordinate and its
+  -- pullback transport meromorphicity, continuity, order-one, and
   -- punctured-neighborhood divergence across the biholomorphism `e`.
   sorry
 
@@ -3079,9 +3092,9 @@ theorem biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint
   obtain ⟨facts⟩ :=
     biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint X P e he he_symm
   exact ⟨{
-    targetLift := facts.targetLift
+    targetLift := onePointSimplePoleCoordinate (e P)
     targetPrincipalPart := facts.targetPrincipalPart
-    sourceLift := facts.targetLift ∘ (e : X → OnePoint ℂ)
+    sourceLift := onePointSimplePoleCoordinate (e P) ∘ (e : X → OnePoint ℂ)
     sourceLift_eq := rfl
     sourcePrincipalPart := facts.sourcePrincipalPart }⟩
 
