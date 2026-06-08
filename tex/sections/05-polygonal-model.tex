@@ -450,24 +450,81 @@ Tracking: \ghissue{226}.
 \lean{JacobianChallenge.Periods.cut_along_nonTree_yields_unfoldedDisk}
 \end{lemma}
 
+\begin{lemma}[Polygon quotient local-lift substrate]
+\label{lem:polygon4g-quotient-local-lift-substrate}
+\uses{lem:polygon4g-eq-standard-word-quotient}
+The quotient-path lift frontier is isolated above a sorry-free local
+substrate: the finite-subdivision data structure records the required lift
+pieces and adjacent endpoint relations, while interior quotient fibres are
+already singleton fibres of the disk quotient map.
+\lean{JacobianChallenge.Periods.Polygon4gQuotientPathFiniteLiftSubdivision,
+JacobianChallenge.Periods.polygon4g_sideRel_eq_of_norm_lt_one,
+JacobianChallenge.Periods.polygon4g_mk_eq_of_norm_lt_one}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Polygon quotient path admits a finite chart-lift subdivision (open)]
 \label{lem:polygon4g-quotient-path-finite-lift-subdivision}
+\uses{lem:polygon4g-quotient-local-lift-substrate}
 A path in the \(4g\)-gon side-pairing quotient subdivides into finitely many
 chart-liftable pieces. Open obligation (\code{sorry}).
 Tracking: \ghissue{228}.
 \lean{JacobianChallenge.Periods.polygon4g_quotient_path_finite_lift_subdivision}
 \end{lemma}
 
+\begin{lemma}[Endpoint repair and side-arc bookkeeping substrate]
+\label{lem:polygon4g-endpoint-repair-bookkeeping-substrate}
+\uses{lem:polygon4g-quotient-local-lift-substrate}
+Endpoint repair for identified boundary points is expressed by a concrete
+disk-side chain, its quotient pushforward, and the edge-basis coefficient
+bookkeeping. The reflexive repair, quotient pushforward identities, and
+canonical \(a_i\)/\(b_i\) edge-index calculations are already formalized
+without the primitive side-strip geometry.
+\lean{JacobianChallenge.Periods.Polygon4gEndpointRepairData,
+JacobianChallenge.Periods.polygon4gBoundaryArcStep_projected_eq_chainMap,
+JacobianChallenge.Periods.polygon4gBoundaryArcSteps_projected_eq_chainMap,
+JacobianChallenge.Periods.polygon4gEndpointRepair_projected_eq_chainMap,
+JacobianChallenge.Periods.polygon4g_endpoint_pair_repaired_refl,
+JacobianChallenge.Periods.polygon4g_aPair_edgeIndex,
+JacobianChallenge.Periods.polygon4g_bPair_edgeIndex,
+JacobianChallenge.Periods.edgeArcIdx_aPair_edgeIndex,
+JacobianChallenge.Periods.edgeArcIdx_bPair_edgeIndex}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Partial side arc homologous to an edge chain (open)]
 \label{lem:polygon4g-partial-side-arc-homologous-to-edge-chain}
+\uses{lem:polygon4g-endpoint-repair-bookkeeping-substrate}
 A partial boundary side-arc of the \(4g\)-gon is homologous to the corresponding
 edge chain. Open obligation (\code{sorry}).
 Tracking: \ghissue{229}.
 \lean{JacobianChallenge.Periods.polygon4g_partial_side_arc_homologous_to_edge_chain}
 \end{lemma}
 
+\begin{lemma}[Edge-chain finite coefficient substrate]
+\label{lem:edge-chain-finite-coefficient-substrate}
+The scalar edge-boundary frontier is reduced to a finite coefficient
+calculation once a singular two-boundary is expanded into signed
+two-simplex-face terms. The project already proves the comparison from the
+signed target-edge coefficient through the flattened face-sum and
+edge-simplex forms.
+\lean{JacobianChallenge.Periods.EdgeBoundarySignedFaceCoefficientComparison,
+JacobianChallenge.Periods.signedFaceTargetEdgeCoefficient_eq_of_edgeSimplex_sum,
+JacobianChallenge.Periods.edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_coefficient_comparison,
+JacobianChallenge.Periods.edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_scalar_coefficient_zero,
+JacobianChallenge.Periods.edgeChain_sum_singular_boundary_face_terms_edgeSimplex_scalar_coefficient_zero,
+JacobianChallenge.Periods.edgeChain_sum_singular_boundary_faces_edgeSimplex_scalar_coefficient_zero,
+JacobianChallenge.Periods.edgeChain_sum_singular_boundary_faces_scalar_coefficient_zero,
+JacobianChallenge.Periods.edgeChain_sum_singular_boundary_decomposition_scalar_coefficient_zero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Edge-chain boundary coefficients vanish (open)]
 \label{lem:edge-chain-sum-singular-boundary-scalar-coefficient-zero}
+\uses{lem:edge-chain-finite-coefficient-substrate}
 If a singular two-boundary is a finite sum of edge chains, every edge
 coefficient is zero (edge independence in \(H_1\)). Open obligation
 (\code{sorry}).

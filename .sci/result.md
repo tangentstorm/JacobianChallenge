@@ -218,10 +218,88 @@ have an explicit substrate:
   this environment while concurrent sibling-worker Lake builds were active; no
   `jc1` Lean child was visible in `ps` during the no-output interval.
 
+# A1 Hurewicz Substrate Blueprint Map
+
+Status: A1 complete.
+
+## Added Blueprint Nodes
+
+In `tex/sections/05-polygonal-model.tex`, the three Hurewicz frontier nodes
+now have explicit substrate immediately underneath them:
+
+- `lem:polygon4g-quotient-local-lift-substrate`
+  - Lean declarations:
+    `Polygon4gQuotientPathFiniteLiftSubdivision`,
+    `polygon4g_sideRel_eq_of_norm_lt_one`,
+    `polygon4g_mk_eq_of_norm_lt_one`.
+  - Role: records the finite local-lift package expected by #228 and the
+    already-proved interior singleton-fibre facts for the side-pairing quotient.
+- `lem:polygon4g-endpoint-repair-bookkeeping-substrate`
+  - Lean declarations:
+    `Polygon4gEndpointRepairData`,
+    `polygon4gBoundaryArcStep_projected_eq_chainMap`,
+    `polygon4gBoundaryArcSteps_projected_eq_chainMap`,
+    `polygon4gEndpointRepair_projected_eq_chainMap`,
+    `polygon4g_endpoint_pair_repaired_refl`,
+    `polygon4g_aPair_edgeIndex`, `polygon4g_bPair_edgeIndex`,
+    `edgeArcIdx_aPair_edgeIndex`, `edgeArcIdx_bPair_edgeIndex`.
+  - Role: isolates the side-arc endpoint-repair data and chain-map/index
+    bookkeeping that are already formalized before the primitive #229
+    side-strip geometry.
+- `lem:edge-chain-finite-coefficient-substrate`
+  - Lean declarations:
+    `EdgeBoundarySignedFaceCoefficientComparison`,
+    `signedFaceTargetEdgeCoefficient_eq_of_edgeSimplex_sum`,
+    `edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_coefficient_comparison`,
+    `edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_scalar_coefficient_zero`,
+    `edgeChain_sum_singular_boundary_face_terms_edgeSimplex_scalar_coefficient_zero`,
+    `edgeChain_sum_singular_boundary_faces_edgeSimplex_scalar_coefficient_zero`,
+    `edgeChain_sum_singular_boundary_faces_scalar_coefficient_zero`,
+    `edgeChain_sum_singular_boundary_decomposition_scalar_coefficient_zero`.
+  - Role: exposes the finite signed-face coefficient algebra below #230, up to
+    but not including the remaining homological edge-independence frontier.
+
+## Frontier Wiring
+
+- #228 `lem:polygon4g-quotient-path-finite-lift-subdivision` now uses
+  `lem:polygon4g-quotient-local-lift-substrate` and remains unmarked by
+  `\leanok`.
+- #229 `lem:polygon4g-partial-side-arc-homologous-to-edge-chain` now uses
+  `lem:polygon4g-endpoint-repair-bookkeeping-substrate` and remains unmarked by
+  `\leanok`.
+- #230 `lem:edge-chain-sum-singular-boundary-scalar-coefficient-zero` now uses
+  `lem:edge-chain-finite-coefficient-substrate` and remains unmarked by
+  `\leanok`.
+
+The survey also confirmed that
+`singular_one_simplex_subdivision_prism_homologous` is itself a direct
+`sorry` in `sorries.jsonl`, so it was intentionally not used as a green A1
+substrate node.
+
+## Verification
+
+- `rg` over `Jacobian/Periods/Hurewicz.lean` found direct `sorry` bodies only
+  at #228, #229, #230, and the separate
+  `singular_one_simplex_subdivision_prism_homologous` subdivision-prism leaf.
+  The new green substrate declarations are outside those direct sorry bodies.
+- `scripts/blueprint_audit.py` succeeded with exit code 0:
+  103 statement-style environments, 102 with `\lean{...}`, 1 `\notready`,
+  86 clean, and the same 15 expected open/uncolored frontier nodes.
+- A targeted `lake env lean` `#print axioms` probe for representative new
+  substrate declarations was attempted, but it remained silent while unrelated
+  sibling-worker Lake builds were active. The stale probe was terminated and the
+  verification is therefore recorded through `rg`, `sorries.jsonl`, and the
+  blueprint audit.
+- `lake exe cache get` was attempted before `build-blueprint.sh`, but it also
+  remained silent behind concurrent unrelated Lake builds and was terminated
+  after repeated no-output intervals. Per the task instructions, the
+  `bash scripts/build-blueprint.sh` verification is caveated rather than run
+  without the prerequisite cache step.
+
 ## Next Recommended Step
 
-Proceed to Cluster A mapping: survey `Jacobian/Periods/Hurewicz.lean` and the
-Section 05 polygonal-model nodes for #228/#229/#230, then add green substrate
-nodes for the quotient-path subdivision, partial-side-arc, and edge-chain
-independence skeletons. The #228 and #229 lift/side-arc frontiers should be
-mapped before #230, since #230 is the downstream coefficient-independence leaf.
+Proceed to A2: wire #228/#229/#230 to their genuine frontier leaves only.
+In particular, separate #228 into quotient-chart finite-lift topology versus
+the already-isolated subdivision-prism leaf; keep #229 focused on primitive
+side-strip geometry; and keep #230 focused on the homological edge-chain
+independence theorem after the finite coefficient algebra already mapped here.
