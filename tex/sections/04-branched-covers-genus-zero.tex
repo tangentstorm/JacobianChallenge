@@ -681,6 +681,38 @@ specific Mathlib gap is the \emph{chart-trivialisation API for
 in v4.28.0 --- once supplied, the proof is immediate.
 \end{proof}
 
+\begin{lemma}[Direct finite-point coefficient is \(C^{\infty}\)]
+\label{lem:holomorphic-one-form-coeff-contdiff}
+\uses{lem:identity-chart-coeff-contdiff}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), the direct finite-point
+coefficient \(z\mapsto \omega_{z}(1)\) is \(C^{\infty}\) as a function
+\(\C\to\C\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneFormCoeffContDiff}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Lemma~\ref{lem:identity-chart-coeff-contdiff} gives smoothness of the
+coefficient read through the identity-chart local representative. The identity
+chart on finite points has inverse \(z\mapsto z\in\code{OnePoint}\,\C\), so this
+chart-local coefficient agrees with the direct coefficient used in the
+Liouville assembly.
+\end{proof}
+
+\begin{lemma}[Finite-point coefficient is entire]
+\label{lem:holomorphic-one-form-coeff-entire}
+\uses{lem:holomorphic-one-form-coeff-contdiff}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), the direct finite-point
+coefficient \(z\mapsto \omega_{z}(1)\) is complex differentiable on all of
+\(\C\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_coeff_entire}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+This is the standard consequence of
+Lemma~\ref{lem:holomorphic-one-form-coeff-contdiff}: a \(C^{\infty}\) complex
+function is complex differentiable everywhere.
+\end{proof}
+
 \begin{lemma}[Inversion-chart coefficient is continuous at \(0\)]
 \label{lem:inversion-chart-coeff-continuous-at-zero}
 \uses{lem:section-localRepr-inversion-chart-continuous-at-zero}
@@ -844,7 +876,7 @@ given complex differentiable function and its cocompact decay hypothesis.
 
 \begin{lemma}[Finite-point vanishing on \(\code{OnePoint}\,\C\)]
 \label{lem:onepoint-holomorphic-one-form-finite-vanishing}
-\uses{lem:entire-tendsto-zero-eq-zero, lem:identity-chart-coeff-contdiff, lem:inversion-chart-coeff-continuous-at-zero, lem:cotangent-transition-formula}
+\uses{lem:entire-tendsto-zero-eq-zero, lem:holomorphic-one-form-coeff-entire, lem:inversion-chart-coeff-continuous-at-zero, lem:cotangent-transition-formula}
 For a holomorphic \(1\)-form \(\omega\) on \(\CPone\), the value of
 \(\omega\) at every finite point \(z:\C\subset\CPone\) is zero.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_onePointCx_toFun_finite_eq_zero}
@@ -852,7 +884,7 @@ For a holomorphic \(1\)-form \(\omega\) on \(\CPone\), the value of
 \end{lemma}
 \begin{proof}\leanok
 Read \(\omega\) in the identity chart as \(f(z)\,dz\).
-Lemma~\ref{lem:identity-chart-coeff-contdiff} supplies the entire coefficient,
+Lemma~\ref{lem:holomorphic-one-form-coeff-entire} supplies the entire coefficient,
 while Lemma~\ref{lem:cotangent-transition-formula}, together with continuity in
 the inversion chart, gives cocompact decay of \(f\). Applying
 Lemma~\ref{lem:entire-tendsto-zero-eq-zero} gives \(f=0\), hence \(\omega\)
@@ -1039,7 +1071,7 @@ isomorphism because \(de\) is invertible at every point.
 The cotangent-bundle section \(\omega.\code{toFun}\) pulled back through
 \(\code{identityChart}.\code{symm}\) and evaluated at \(1:\C\) gives a
 \(C^{\infty}\) function on \(\C\).
-\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection_localRepr_identityChart_contDiff,identityChartCoeff_contDiff,identityChartCoeff_tendsto_zero}
+\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection_localRepr_identityChart_contDiff}
 \leanok
 \end{lemma}
 \begin{proof}
