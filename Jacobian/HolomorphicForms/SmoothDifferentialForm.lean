@@ -143,38 +143,4 @@ noncomputable def ExactForm.toClosedSubmodule
     Submodule ℂ (ClosedFormSub n.succ X) :=
   (ExactForm n X).comap (ClosedForm n.succ X).subtype
 
-/--
-**Zero-period-payload exactness — the single honest substrate obligation for
-degree-1 de Rham exactness.**
-
-A smooth 1-form whose period payload `ω.2` vanishes lies in `ExactForm 0 X`
-(the range of `exteriorDerivative 0 X`): it is a global exterior derivative.
-
-This is the *mathematically correct* statement of the degree-1 de Rham
-exactness direction on the period-carrying substrate: "all periods zero ⇒
-exact" (`ω = dθ` for a global 0-form `θ`).  It is the honest analytic input
-behind period-vanishing ⇒ trivial in `H¹_dR`.
-
-It is **not** the (false) "all periods zero ⇒ `ω = 0`" claim that the
-zero-differential surrogate `exteriorDerivative := 0` accidentally conflates
-with exactness: a zero-period closed 1-form is classically *exact*, not zero
-(its harmonic/coefficient part is generically nonzero for positive genus).  The
-honest content is therefore exactness (membership in `range (exteriorDerivative
-0 X)`), an existence statement, which becomes provable here once
-`exteriorDerivative 0 X` is given real content whose range realizes the
-zero-period-payload 1-forms.
-
-This is the precisely-typed substrate frontier consumed by the degree-1
-zero-period primitive-existence root in `DeRhamComparisonMap.lean`; once it has
-content, that root and the surrounding `H¹` exactness assembly are sorry-free.
-See `.sci/result.md`. -/
-theorem zeroPeriodPayload_isExact_provider
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : SmoothDiffForm 1 X) (hω : ω.2 = 0) :
-    ω ∈ ExactForm 0 X := by
-  sorry
-
 end JacobianChallenge.HolomorphicForms
