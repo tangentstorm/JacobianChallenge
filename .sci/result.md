@@ -98,3 +98,73 @@ the Section 06 prose, then wire `lem:riemann-classical-real-li-input` so its
 remaining frontier is the actual manifold-level bilinear/positivity gap. After
 that, map the mechanical universe-`u` mirrors #241 and #240 from the statement
 bank into the same dependency story.
+
+# B1 Riemann-Bilinear Substrate Blueprint Map
+
+Status: B1 complete.
+
+## Added Blueprint Nodes
+
+In `tex/sections/06-periods-and-riemann-bilinear.tex`, #227 now uses four
+explicit substrate nodes instead of floating as a single undecomposed input:
+
+- `lem:riemann-bilinear-algebra-skeleton`
+  - Lean declarations:
+    `Q_skeleton_antisym`, `Q_skeleton_diag_zero`, `Q_skeleton_smul_left`,
+    `Q_skeleton_smul_right`, `handleTerm_antisym`, `handleTerm_diag_zero`,
+    `riemann_bilinear_identity_skeleton`.
+  - Role: the finite symplectic handle-sum algebra over `Fin (2*g)`.
+- `lem:quadratic-positivity-linear-independent-skeleton`
+  - Lean declarations:
+    `quadraticSkeleton_nonneg`, `quadraticSkeleton_eq_zero_iff`,
+    `sum_nonneg_eq_zero_iff_pointwise`,
+    `real_linearIndependent_of_quadratic_pos_def`,
+    `quadratic_pos_def_of_real_linearIndependent`.
+  - Role: the finite-dimensional positive-quadratic-form to real-linear
+    independence bridge.
+- `lem:period-pairing-satisfies-bilinear-identity`
+  - Lean declarations:
+    `riemann_bilinear_identity`,
+    `periodPairing_satisfies_bilinear_identity`.
+  - Role: the current project-side period-pairing wrapper for the algebraic
+    bilinear identity stand-in.
+- `lem:hodge-form-pos-def-on-periods`
+  - Lean declarations:
+    `hodge_form_posDef`,
+    `hodge_form_posDef_on_periods`.
+  - Role: the coordinate Hodge-positivity wrapper used by the period-functional
+    stack.
+
+The open #227 node `lem:riemann-classical-real-li-input` now has `\uses` edges
+to these four substrate nodes and remains intentionally unmarked by `\leanok`.
+This preserves the genuine remaining frontier: upgrading the algebraic
+stand-ins to the actual symplectic/canonical homology basis plus
+manifold-level Stokes/Hodge positivity needed by
+`riemann_classical_real_LI_input`.
+
+## Green-Ness Evidence
+
+- `rg '\bsorry\b|axiom|opaque'` over
+  `Jacobian/Periods/PeriodFunctional.lean` and
+  `Jacobian/Periods/RiemannBilinearRefinement.lean` found only the existing
+  #227 `sorry` in `riemann_classical_real_LI_input` (plus an explanatory
+  `opaque` mention in prose).
+- `#print axioms` for representative new green declarations showed only
+  ordinary Lean axioms (`propext`, `Classical.choice`, `Quot.sound`) and no
+  `sorryAx`.
+- `scripts/blueprint_audit.py` succeeded with exit code 0:
+  98 statement-style environments, 97 with `\lean{...}`, 1 `\notready`,
+  81 clean, and the same 15 expected open/uncolored frontier nodes.
+- `bash scripts/build-blueprint.sh` succeeded. It refreshed `sorries.jsonl`
+  with 279 graph-coloured records and verified the web post-processing
+  injections.
+- `sorries.jsonl` records all 16 new B1 Lean declarations as `c:"done"`.
+
+## Next Recommended Step
+
+Proceed to B2: wire the universe-`u` companions #241
+(`riemann_classical_real_LI_inputU`) and #240
+(`h1_basis_of_compact_riemann_surfaceU`) into the same dependency story from
+the statement bank. The B2 task should make the #241 dependency on #227 explicit
+and separate the #240 surface-classification/H1-basis frontier from the
+Riemann-bilinear analytic frontier.

@@ -1,29 +1,46 @@
-SUGGESTED TASK: Milestone 0 baseline audit for Chapter 06 blueprint mapping.
+SUGGESTED TASK: Milestone B1 survey and blueprint-map the #227 Riemann-bilinear substrate.
 
-Objective: inventory the current Chapter-06 blueprint nodes and verification
-state before adding any new proof-tree nodes. This commit should only update
-the planning/audit artifacts needed to record the baseline; it must not edit
-Lean proofs or introduce blueprint rewiring beyond documenting confirmed
-current-state findings.
+Objective: begin the Chapter-06 blueprint-to-Mathlib mapping with the keystone
+cluster. Survey the existing sorry-free project substrate beneath
+`riemann_classical_real_LI_input` and add the first explicit `\lean{}`-tracked
+blueprint nodes for that substrate in
+`tex/sections/06-periods-and-riemann-bilinear.tex`, so #227 no longer hangs as
+an undecomposed single analytical gap.
 
 Scope:
-- Read `tex/sections/06-periods-and-riemann-bilinear.tex` and identify the
-  existing Chapter-06 nodes, especially the nodes corresponding to the 8 open
-  sorries listed in `goal.md`.
-- Check which nodes currently have `\uses`, `\lean{}`, and green/lean-ok
-  markers, and note any floating or under-decomposed proof skeletons.
-- Run the baseline blueprint verification commands:
-  - `bash scripts/build-blueprint.sh`
-  - `scripts/blueprint_audit.py`
-- Record the baseline findings in `.sci/result.md`, including any unresolved
-  labels, audit failures, or confirmation that the baseline is clean.
+- Read `Jacobian/Periods/PeriodFunctional.lean` and the referenced
+  Riemann-bilinear helper files to identify the green declarations already
+  supporting:
+  - the algebraic symplectic-period fold / bilinear stand-in,
+  - Hermitian-positivity stand-ins,
+  - the named frontier obligations feeding `riemann_classical_real_LI_input`.
+- In `tex/sections/06-periods-and-riemann-bilinear.tex`, add a compact set of
+  new lemma nodes with real `\lean{}` declarations for those green helpers and
+  wire them with `\uses` to existing green nodes or named Mathlib facts.
+- Rewire `lem:riemann-classical-real-li-input` to use those new nodes plus the
+  genuine remaining frontier leaves; do not mark #227 itself `\leanok`.
+- Do not edit Lean proof files and do not touch `Jacobian/Challenge.lean`.
+
+Verification:
+- Confirm every new `\lean{}` declaration exists.
+- For every new node marked `\leanok`, verify the corresponding Lean declaration
+  is genuinely sorry-free using the available sorry audit evidence.
+- Run `scripts/blueprint_audit.py`.
+- Run `bash scripts/build-blueprint.sh` if the environment permits a clean
+  return; otherwise record the same build-wrapper caveat in `.sci/result.md`.
+- Update `.sci/result.md` with the B1 mapping summary and the next recommended
+  B2 step for #241/#240.
 
 Checklist:
-- [x] Inventory current Chapter-06 blueprint nodes and the 8 sorry-frontier nodes.
-- [x] Record each frontier node's current `\uses` / `\lean{}` / marker status.
-- [x] Run `bash scripts/build-blueprint.sh` and capture the result.
-- [x] Run `scripts/blueprint_audit.py` and capture the result.
-- [x] Update `.sci/result.md` with the baseline audit summary and next mapping
-      recommendation.
-- [x] Leave `.sci/status-line` as `READY: Chapter 06 baseline blueprint audit`
-      after committing the baseline audit.
+- [x] Survey `PeriodFunctional.lean` and adjacent Riemann-bilinear helper files
+      for green #227 substrate declarations.
+- [x] Add `\lean{}`-tracked B1 blueprint nodes for the sorry-free bilinear and
+      positivity substrate.
+- [x] Rewire `lem:riemann-classical-real-li-input` to those substrate nodes and
+      the genuine remaining frontier leaves.
+- [x] Verify new Lean declarations and green-ness claims.
+- [x] Run `scripts/blueprint_audit.py`.
+- [x] Run or honestly caveat `bash scripts/build-blueprint.sh`.
+- [x] Update `.sci/result.md` with B1 findings and B2 recommendation.
+- [x] Commit the tex/result/task/plan updates and set `.sci/status-line` to
+      `READY: Chapter 06 B1 Riemann-bilinear substrate map`.
