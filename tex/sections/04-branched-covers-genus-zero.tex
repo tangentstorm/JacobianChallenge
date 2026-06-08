@@ -480,7 +480,9 @@ genus zero, via a Liouville-style computation that
 \(H^{0}(\CPone,\Omega^{1})=0\) (a holomorphic 1-form is \(f(z)\,dz\) on the
 identity chart; the inversion-chart transition \(w=z^{-1}\) sending it to
 \(-f(1/w)/w^{2}\,dw\) forces \(f\equiv0\) by Liouville) transported across the
-homeomorphism, plus comparison of analytic and topological genus.
+homeomorphism by
+\code{analyticGenus\_eq\_zero\_of\_homeomorphic\_sphere}, plus comparison of
+analytic and topological genus.
 \end{formalizationnote}
 
 \subsection{Identification with \(\CPone\): coordinate chart details}
@@ -629,17 +631,13 @@ If a compact connected complex 1-manifold \(X\) is homeomorphic
 is a \(\C\)-linear equivalence
 \(H^{0}(X,\Omega^{1}_{X})\cong H^{0}(\CPone,\Omega^{1}_{\CPone})\).
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_linearEquiv_of_homeoSphere_exists}
-\leanok
+This transport step depends on the open genus-zero uniformization frontier:
+Theorem~\ref{thm:uniformization-genus-zero-biholomorphism} upgrades the
+sphere homeomorphism to a biholomorphism \(X\simeq\code{OnePoint}\,\C\).
+Only after that smooth/biholomorphic upgrade does
+Lemma~\ref{lem:holomorphic-one-form-pullback-via-biholo} supply the pullback
+linear equivalence of holomorphic \(1\)-form spaces.
 \end{lemma}
-\begin{proof}\leanok
-This is the genus-zero case of the uniformization theorem. Any
-complex structure on the topological 2-sphere is biholomorphic to
-the standard structure on \(\CPone=\code{OnePoint}\,\C\); the resulting
-biholomorphism \(\psi:X\xrightarrow{\sim}\CPone\) pulls back
-holomorphic 1-forms to holomorphic 1-forms, yielding the
-\(\C\)-linear isomorphism
-\(\psi^{*}:H^{0}(\CPone,\Omega^{1}_{\CPone})\to H^{0}(X,\Omega^{1}_{X})\).
-\end{proof}
 
 \begin{theorem}[Holomorphic 1-forms vanish on the topological sphere]
 \label{thm:homeo-sphere-holomorphic-one-form-vanishing}
@@ -648,15 +646,12 @@ A compact connected Riemann surface homeomorphic to the standard
 \(2\)-sphere has \(\dim_{\C}H^{0}(X,\Omega^{1}_{X})=0\); equivalently,
 the space of holomorphic 1-forms is a subsingleton.
 \lean{JacobianChallenge.HolomorphicForms.homeoSphereHolomorphicOneFormVanishing}
-\leanok
-\end{theorem}
-\begin{proof}\leanok
 By Lemma~\ref{lem:holomorphic-one-form-equiv-of-homeo-sphere}, the
 holomorphic 1-form space on \(X\) is \(\C\)-linearly isomorphic to
 that on \(\CPone\). Lemma~\ref{lem:onepoint-holomorphic-one-form-subsingleton}
 shows that the latter is a subsingleton. Subsingleton transports through
 linear equivalences, so \(H^{0}(X,\Omega^{1}_{X})\) is itself a subsingleton.
-\end{proof}
+\end{theorem}
 
 \subsection{Identity- and inversion-chart coefficient extraction}
 \label{sec:chart-coeff-extraction}
@@ -952,6 +947,30 @@ By Lemma~\ref{lem:onepoint-holomorphic-one-form-subsingleton}, the module of
 holomorphic \(1\)-forms on \(\CPone\) is a subsingleton, hence zero-dimensional.
 The definition of analytic genus is this complex dimension.
 \end{proof}
+
+\begin{lemma}[Analytic genus transported from a sphere homeomorphism]
+\label{lem:analytic-genus-homeomorphic-sphere-eq-onepoint}
+\uses{lem:holomorphic-one-form-equiv-of-homeo-sphere}
+If a compact connected Riemann surface \(X\) is homeomorphic to the standard
+\(2\)-sphere, then its analytic genus equals that of
+\(\code{OnePoint}\,\C\).
+\lean{JacobianChallenge.HolomorphicForms.analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx}
+Lemma~\ref{lem:holomorphic-one-form-equiv-of-homeo-sphere} gives a
+\(\C\)-linear equivalence between the holomorphic \(1\)-form spaces on \(X\)
+and on \(\code{OnePoint}\,\C\). Analytic genus is the complex dimension of this
+space, so the finite ranks are equal.
+\end{lemma}
+
+\begin{theorem}[Analytic genus vanishes for surfaces homeomorphic to \(S^2\)]
+\label{thm:analytic-genus-zero-of-homeomorphic-sphere}
+\uses{lem:analytic-genus-homeomorphic-sphere-eq-onepoint, lem:analytic-genus-onepoint-zero}
+A compact connected Riemann surface homeomorphic to the standard \(2\)-sphere
+has analytic genus zero.
+\lean{JacobianChallenge.HolomorphicForms.analyticGenus_eq_zero_of_homeomorphic_sphere}
+By Lemma~\ref{lem:analytic-genus-homeomorphic-sphere-eq-onepoint}, the analytic
+genus of \(X\) is the analytic genus of \(\code{OnePoint}\,\C\). That value is
+zero by Lemma~\ref{lem:analytic-genus-onepoint-zero}.
+\end{theorem}
 
 \subsection{Sup-norm completeness decomposition (CompactRiemannSurface)}
 \label{sec:sup-norm-completeness-decomp}

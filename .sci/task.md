@@ -1,12 +1,13 @@
-# Worker jc0 — Milestone 0b.3: add inversion/decay blueprint subtree
+# Worker jc0 — Milestone 0b.4: add reverse-transport blueprint subtree
 
 ## Assignment
 
-Add the next GREEN substrate cluster from Milestone 0b to the genus-zero
-blueprint: the inversion-chart / decay chain that turns inversion-chart
-continuity plus the chart-overlap formula into cocompact decay of the finite
-coefficient. This is a blueprint-only commit-sized step that should make the
-route into the Liouville finite-vanishing node explicit.
+Add the next reverse-direction transport chain from Milestone 0b to the
+genus-zero blueprint, recorded honestly as depending on the open #232
+uniformization frontier: the chain moves the
+`OnePoint ℂ` holomorphic-one-form vanishing result across a sphere
+homeomorphism and packages it as `analyticGenus_eq_zero_of_homeomorphic_sphere`.
+This is a blueprint-only commit-sized step.
 
 ## Scope
 
@@ -15,40 +16,35 @@ route into the Liouville finite-vanishing node explicit.
 - Do not edit Lean files.
 - Do not edit `Jacobian/Challenge.lean`.
 - Do not alter the open #232/#233/#234 nodes.
-- Do not mark a node `\leanok` unless the declaration is absent from
-  `scripts/list-sorries.py --text` and is already represented by an existing
-  Lean declaration.
+- Do not mark the transport/genus-zero nodes `\leanok`: manager review confirms
+  they reach open #232 through the uniformization upgrade.
 
 ## Target Nodes
 
-Add or refine `\lean{}`-tracked blueprint nodes for the inversion / decay chain:
+Add or refine `\lean{}`-tracked blueprint nodes for the reverse-direction
+transport chain:
 
-- `ContMDiffSection_localRepr_inversionChart_continuousAt_zero`
-- `holomorphicOneForm_chartOverlap_pullback`
-- `holomorphicOneForm_coeff_tendsto_zero`
+- `exists_biholomorphism_to_OnePointCx_of_homeoSphere`
+- `holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx`
+- `analyticGenus_eq_zero_of_homeomorphic_sphere`
 
-Ensure the existing finite-point vanishing node
-`lem:onepoint-holomorphic-one-form-finite-vanishing` depends on the new
-coefficient-decay node rather than jumping directly through inversion
-continuity and the cotangent transition formula.
-
-The proof text should also cite the Mathlib leaves used by the decay assembly:
-`hasDerivAt_inv`, `tendsto_inv₀_cobounded'`, and
-`Metric.cobounded_eq_cocompact`.
+Wire the existing topological-sphere holomorphic-one-form vanishing node and
+reverse-direction genus-zero discussion through the transport nodes, while
+leaving the open uniformization target #232 visible and unchanged.
 
 ## Checklist
 
-- [x] Inspect existing inversion-chart, overlap-derivative, overlap-pullback,
-      cotangent-transition, and finite-vanishing nodes in
+- [x] Inspect existing nodes for sphere homeomorphism, pullback of one-forms,
+      `OnePoint ℂ` subsingleton, and topological-sphere vanishing in
       `tex/sections/04-branched-covers-genus-zero.tex`.
 - [x] Confirm the target Lean declarations exist in
       `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
-- [x] Run `scripts/list-sorries.py --text` and verify none of the target
-      inversion / decay declarations are listed as reachable sorries.
-- [x] Add or refine the inversion / decay nodes with real `\lean{}` names and
-      honest `\uses` edges.
-- [x] Rewire `lem:onepoint-holomorphic-one-form-finite-vanishing` to depend on
-      the new coefficient-decay node.
+- [x] Recheck manager feedback and source dependencies; the transport/genus
+      nodes reach open #232 and must remain uncoloured.
+- [x] Add or refine the reverse-transport nodes with real `\lean{}` names,
+      honest `\uses` edges, and no false `\leanok`.
+- [x] Rewire the relevant existing reverse-direction node(s) to use
+      `analyticGenus_eq_zero_of_homeomorphic_sphere` where appropriate.
 - [x] Run `scripts/blueprint_audit.py` and fix any new audit issues.
 - [x] Run `bash scripts/build-blueprint.sh`; if the wrapper stalls after the
       web stage, run the post-processing scripts directly and record the
@@ -58,16 +54,19 @@ The proof text should also cite the Mathlib leaves used by the decay assembly:
 
 ## Verification
 
-- `scripts/list-sorries.py --text`: target inversion / decay declarations are
-  not listed as reachable sorries; only the three expected genus-zero target
-  sorries remain in this area.
-- `scripts/blueprint_audit.py`: exits 0; statement blocks increase from 101 to
-  102, clean blocks increase from 84 to 85, and the 15 orange nodes remain the
-  same open obligations.
-- `bash scripts/build-blueprint.sh`: web stage completed through
-  `tex/sections/04-branched-covers-genus-zero.tex` with no unresolved-label
-  errors. The tool session again did not return from node-state generation, so
-  post-processing was run directly against the generated web files: layman
-  toggle on 64/65 pages, theme picker on 64/65 pages, collapsible nav link on
-  63/65 pages, required artifacts present, and `index.html` links
-  `styles/extra_styles.css`.
+- Manager review/source dependency check: the transport declarations route
+  through open #232, so `lem:holomorphic-one-form-equiv-of-homeo-sphere`,
+  `lem:analytic-genus-homeomorphic-sphere-eq-onepoint`, and
+  `thm:analytic-genus-zero-of-homeomorphic-sphere` are deliberately not
+  marked `\leanok`.
+- `python3 scripts/blueprint_audit.py`: 104 statement-style blocks, 103 with
+  `\lean{...}`, 83 clean, 19 open/orange obligations. The four additional
+  orange nodes are the visible reverse-transport chain that reaches open #232.
+- `bash scripts/build-blueprint.sh`: web stage completed; wrapper stalled in the
+  known ground-truth node-state phase and was stopped.
+- Direct post-processing completed:
+  `inject-layman-toggle.py`, `inject-theme-toggle.py`,
+  `inject-depgraph-extras.py`, and `build_collapsible_dep_graph.py`.
+- Generated artifact checks: 65 HTML files, 64 layman-toggle markers, 64
+  theme-toggle markers, 63 collapsible graph links; required generated pages
+  and `extra_styles.css` reference present.
