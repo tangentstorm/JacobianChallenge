@@ -1,20 +1,9 @@
-# Worker jc0 — Milestone C1.5j: prove target meromorphicity helper
+# Worker jc0 — Milestone C1.5k: discharge target meromorphicity field
 
 ## Assignment
 
-Execute one target-side support proof for C1.5. After C1.5i removed the target
-order-one field from the remaining #234 provider, the only target field still
-carried by `BiholomorphOnePointSimplePolePullbackFieldFacts` is target
-meromorphicity:
-
-```lean
-∀ q : OnePoint ℂ,
-  JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
-    (onePointSimplePoleCoordinate Q) q
-```
-
-Prove a local sorry-free helper in
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`:
+Execute a narrow provider-tightening step for C1.5. C1.5j proved the target
+meromorphicity helper:
 
 ```lean
 theorem meromorphicAtX_onePointSimplePoleCoordinate
@@ -24,17 +13,20 @@ theorem meromorphicAtX_onePointSimplePoleCoordinate
         (onePointSimplePoleCoordinate Q) q
 ```
 
-Use the existing explicit coordinate normal forms. For `Q = ∞`, reduce to the
-finite projection `x.getD 0` in the `OnePoint ℂ` charts. For `Q = (a : ℂ)`,
-split the local point `q`; away from the finite pole reduce locally to the
-holomorphic function `(z - a)⁻¹` or the constant `0` near `∞`, and at the pole
-use the inversion/local-coordinate normal form already used by the target
-order-one proof.
+Use that helper to remove the final target-side obligation from the remaining
+#234 field-facts provider in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
 
-This is a support-proof commit only. Do not thread the helper into
-`BiholomorphOnePointSimplePolePullbackFieldFacts` yet, do not remove
-`target_meromorphic_everywhere` from the provider in this step, and do not
-attempt any source transport field.
+Concretely, update `BiholomorphOnePointSimplePolePullbackFieldFacts` so it no
+longer has a `target_meromorphic_everywhere` field. Then update
+`biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` so the
+target `HasComplexSimplePolePrincipalPart.meromorphic_everywhere` field is
+filled directly by
+`meromorphicAtX_onePointSimplePoleCoordinate (e P)`.
+
+This should narrow the reachable #234 frontier from five exposed fields to the
+four source transport fields only. Do not attempt to prove any source transport
+field in this step, and do not change any public theorem signatures.
 
 ## Scope
 
@@ -54,20 +46,18 @@ attempt any source transport field.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks C1.5i complete and lists C1.5/C1 as the
+- [x] Confirm `.sci/plan.md` marks C1.5j complete and lists C1.5/C1 as the
       next C1 proof work.
-- [x] Inspect the local definitions of
-      `MeromorphicAtX`, `onePointSimplePoleCoordinate`, the `onePointExtend`
-      normal forms, and the chart-local helpers used by
-      `mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole`.
-- [x] Prove any narrowly scoped chart-local meromorphicity helpers needed for
-      the `Q = ∞` branch.
-- [x] Prove any narrowly scoped chart-local meromorphicity helpers needed for
-      the finite-pole branch away from and at the pole.
-- [x] Add the public local helper
-      `meromorphicAtX_onePointSimplePoleCoordinate`.
-- [x] Keep the five-field provider as the sole reachable #234 root; do not
-      remove `target_meromorphic_everywhere` from the provider in this step.
+- [x] Inspect `BiholomorphOnePointSimplePolePullbackFieldFacts`,
+      `biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint`,
+      and `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint`.
+- [x] Remove the `target_meromorphic_everywhere` field from
+      `BiholomorphOnePointSimplePolePullbackFieldFacts` and update comments to
+      say the provider now carries four source transport fields.
+- [x] Fill `targetPrincipalPart.meromorphic_everywhere` from
+      `meromorphicAtX_onePointSimplePoleCoordinate (e P)`.
+- [x] Keep the C1.4 field-facts provider as the sole reachable #234 root, but
+      with only the source transport fields remaining.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root
@@ -84,7 +74,7 @@ attempt any source transport field.
 ## Verification
 
 - `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`: succeeds
-  with existing `uses sorry` warnings at the five-field provider and
+  with existing `uses sorry` warnings at the four-source-field provider and
   `genusZeroHomeomorphOnePoint_of_analyticGenus_zero`.
 - `lake build Jacobian.Solution`: succeeds with existing `uses sorry` warnings.
 - `scripts/list-sorries.py --text`: still 20 reachable sorries total; the #234
