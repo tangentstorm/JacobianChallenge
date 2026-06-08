@@ -1,71 +1,95 @@
-# Worker jc0 — Milestone B1: isolate analytic-genus-zero homeomorphism provider
+# Worker jc0 — Milestone C1.0: isolate biholomorphic pullback principal-part provider
 
 ## Assignment
 
-Execute the next B1 step from `.sci/plan.md`: replace the broad #233 `sorry`
-in `exists_biholomorph_onePoint_of_analyticGenus_zero` with a narrower
-topological-homeomorphism provider, then feed that provider to the now-upstream
-#232 theorem `exists_biholomorph_onePoint_of_genus_zero`.
+Execute C1.0 from `.sci/plan.md`: replace the broad #234 `sorry` in
+`complexSimplePolePrincipalPart_of_biholomorph_onePoint` with a narrower
+explicit pullback-data provider for a target `OnePoint ℂ` simple-pole coordinate
+at `e P` and its biholomorphic pullback along `e`.
 
-Introduce a named provider in
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`, for example
-`genusZeroHomeomorphOnePoint_of_analyticGenus_zero`, returning
-`Nonempty (X ≃ₜ OnePoint ℂ)` from `analyticGenus ℂ X = 0`. Then prove
-`exists_biholomorph_onePoint_of_analyticGenus_zero` by obtaining this
-topological homeomorphism and applying
-`exists_biholomorph_onePoint_of_genus_zero`.
+Introduce a small local data structure in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean` recording the
+target lift on `OnePoint ℂ`, its target principal-part facts at `e P`, the
+source lift on `X`, the equality saying the source lift is the target lift
+composed with `e`, and the pulled-back source principal-part facts at `P`.
+Then add a named provider returning `Nonempty` of this structure and prove
+`complexSimplePolePrincipalPart_of_biholomorph_onePoint` by projecting the
+source lift and source principal part from the provider.
 
-This is a Lean-code commit. It should not solve the analytic-genus-zero
-topological classification yet; it should make the remaining #233 frontier
-strictly narrower and keep all public theorem names/signatures unchanged.
+This is a Lean-code commit. It should not solve the full simple-pole coordinate
+construction yet; it should make the remaining #234 frontier strictly narrower
+and keep all public theorem names/signatures unchanged.
 
 ## Scope
 
 - Edit `Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
-- Edit `.sci/task.md` and local ignored `.sci/plan.md` state.
+- Edit `.sci/task.md` and local ignored `.sci/plan.md` state as needed.
 - Do not edit `Jacobian/Challenge.lean`.
-- Do not edit `Jacobian/HolomorphicForms/GenusZeroClassification.lean` unless a
-  minimal import cleanup is forced by the build.
-- Do not add more than one new `sorry`; the new topological-homeomorphism
-  provider must replace the existing #233 `sorry`, not add a second reachable
-  gap.
+- Do not edit `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
 - Preserve the public theorem name and signature of
-  `exists_biholomorph_onePoint_of_analyticGenus_zero`.
+  `complexSimplePolePrincipalPart_of_biholomorph_onePoint`.
+- Do not add more than one new `sorry`; the new explicit pullback-data provider
+  must replace the existing #234 `sorry`, not add a second reachable gap.
 - Do not use the circular fixed-pole/Riemann--Roch route through
-  `genusZero_pointRRSection_outside_constants_exists` or its downstream
-  fixed-pole RR-section chain.
+  `genusZero_pointRRSection_meromorphic_getD_exists`,
+  `genusZero_fixedPole_analyticRRWitness_nonempty`,
+  `genusZero_fixedPole_simplePoleRRSection_nonempty`,
+  `genusZero_fixedPole_rrSection_nonempty`, or
+  `genusZero_pointRRSection_outside_constants_exists`.
+
+## Suggested Shape
+
+One acceptable shape is:
+
+```lean
+structure BiholomorphOnePointSimplePolePullbackData
+    (X : Type*) ... (P : X) (e : X ≃ₜ OnePoint ℂ) where
+  targetLift : OnePoint ℂ → ℂ
+  targetPrincipalPart : HasComplexSimplePolePrincipalPart targetLift (e P)
+  sourceLift : X → ℂ
+  sourceLift_eq : sourceLift = targetLift ∘ (e : X → OnePoint ℂ)
+  sourcePrincipalPart : HasComplexSimplePolePrincipalPart sourceLift P
+
+theorem biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint
+    ... (P : X) (e : X ≃ₜ OnePoint ℂ) (he : ...) (he_symm : ...) :
+    Nonempty (BiholomorphOnePointSimplePolePullbackData X P e) := by
+  sorry
+```
+
+Adjust binder lists and names to match local style and compile cleanly.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks B1.0 complete and lists B1 as the next
-      unchecked milestone.
-- [x] Inspect `exists_biholomorph_onePoint_of_analyticGenus_zero` and confirm
-      `MeromorphicToBranchedCover.lean` can see
-      `exists_biholomorph_onePoint_of_genus_zero` through
-      `GenusZeroUniformization.lean`.
-- [x] Add `genusZeroHomeomorphOnePoint_of_analyticGenus_zero` with exactly one
-      `sorry`, documenting it as the remaining topological classification
-      provider from analytic genus zero to `X ≃ₜ OnePoint ℂ`.
-- [x] Replace the body of `exists_biholomorph_onePoint_of_analyticGenus_zero`
-      with sorry-free assembly from that provider and
-      `exists_biholomorph_onePoint_of_genus_zero`.
-- [x] Keep downstream
-      `genusZero_singlePoleMeromorphicAnalyticData_nonempty` assembling through
-      `exists_biholomorph_onePoint_of_analyticGenus_zero` unchanged.
+- [x] Confirm `.sci/plan.md` marks B1.0 and B1 complete and lists C1.0 as the
+      next unchecked milestone.
+- [x] Inspect `HasComplexSimplePolePrincipalPart` and
+      `complexSimplePolePrincipalPart_of_biholomorph_onePoint`.
+- [x] Add the pullback-data structure exposing target lift, source pullback,
+      and source principal-part data.
+- [x] Add the named pullback-data provider with exactly one `sorry`,
+      documenting it as the remaining explicit `OnePoint ℂ` coordinate
+      pullback construction.
+- [x] Replace the body of
+      `complexSimplePolePrincipalPart_of_biholomorph_onePoint` with sorry-free
+      assembly from the provider.
+- [x] Keep downstream `singlePoleAnalyticData_of_biholomorph_onePoint`
+      unchanged.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
-- [x] Run `scripts/list-sorries.py --text` and confirm the reachable #233 root
-      moved from `exists_biholomorph_onePoint_of_analyticGenus_zero` to the new
-      topological-homeomorphism provider, with no net new reachable sorries.
+- [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root
+      moved from `complexSimplePolePrincipalPart_of_biholomorph_onePoint` to
+      the new pullback-data provider, with no net new reachable sorries.
 - [x] Commit exactly the scoped Lean/SCI edit with normalized author/committer
       metadata and `Co-authored-by: Codex <codex@openai.com>`.
 
 ## Verification
 
 - `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`: succeeds;
-  this file now has warnings at `complexSimplePolePrincipalPart_of_biholomorph_onePoint`
-  and the new `genusZeroHomeomorphOnePoint_of_analyticGenus_zero` provider.
-- `lake build Jacobian.Solution`: succeeds with existing `uses sorry` warnings.
-- `scripts/list-sorries.py --text`: still 20 reachable sorries total; the #233
-  root moved from `exists_biholomorph_onePoint_of_analyticGenus_zero` to
-  `genusZeroHomeomorphOnePoint_of_analyticGenus_zero`.
+  this file now has warnings at
+  `biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint` and the
+  existing `genusZeroHomeomorphOnePoint_of_analyticGenus_zero` provider.
+- `lake build Jacobian.Solution`: succeeds with existing `uses sorry`
+  warnings.
+- `scripts/list-sorries.py --text`: still 20 reachable sorries total; the #234
+  root moved from `complexSimplePolePrincipalPart_of_biholomorph_onePoint` to
+  `biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint`.

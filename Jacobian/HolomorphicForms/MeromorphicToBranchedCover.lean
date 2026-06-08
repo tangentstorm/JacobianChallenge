@@ -2984,6 +2984,57 @@ theorem genusZero_pointRRSection_outside_constants_of_analyticData
   exact le_of_eq horderP.symm
 
 /--
+Explicit data for the biholomorphic pullback construction of a simple pole.
+
+The target lift is the standard simple-pole coordinate on `OnePoint ℂ` with
+pole at `e P`; the source lift is its pullback along `e`. The remaining
+analytic frontier is proving that these data satisfy the complex principal-part
+predicate on both sides.
+-/
+structure BiholomorphOnePointSimplePolePullbackData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (e : X ≃ₜ OnePoint ℂ) where
+  /-- The target simple-pole coordinate on the Riemann sphere. -/
+  targetLift : OnePoint ℂ → ℂ
+  /-- The target coordinate has a complex simple pole at `e P`. -/
+  targetPrincipalPart : HasComplexSimplePolePrincipalPart targetLift (e P)
+  /-- The pulled-back source coordinate on `X`. -/
+  sourceLift : X → ℂ
+  /-- The source coordinate is the target coordinate precomposed with `e`. -/
+  sourceLift_eq : sourceLift = targetLift ∘ (e : X → OnePoint ℂ)
+  /-- The pulled-back coordinate has a complex simple pole at `P`. -/
+  sourcePrincipalPart : HasComplexSimplePolePrincipalPart sourceLift P
+
+/--
+Principal-part provider for the explicit biholomorphic pullback route.
+
+This is the remaining #234 frontier after exposing the intended construction:
+build the standard simple-pole coordinate on `OnePoint ℂ` at `e P`, pull it
+back along the biholomorphism `e`, and prove the pulled-back principal-part
+facts on `X`.
+-/
+theorem biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (e : X ≃ₜ OnePoint ℂ)
+    (he :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ))
+    (he_symm :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
+    Nonempty (BiholomorphOnePointSimplePolePullbackData X P e) := by
+  -- Principal-part frontier: construct the standard target coordinate on
+  -- `OnePoint ℂ`, pull it back along `e`, and transport meromorphicity,
+  -- continuity, order-one, and punctured-neighborhood divergence.
+  sorry
+
+/--
 Principal-part frontier for the explicit biholomorphic pullback route.
 
 The intended function `F` is the standard simple-pole coordinate on
@@ -3004,11 +3055,9 @@ theorem complexSimplePolePrincipalPart_of_biholomorph_onePoint
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
     ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F P := by
-  -- Principal-part frontier: prove the pulled-back standard coordinate is
-  -- meromorphic everywhere, extends continuously to `∞` at `P`, has analytic
-  -- order one in the inversion chart, and diverges in norm along the punctured
-  -- neighborhood of `P`.
-  sorry
+  obtain ⟨d⟩ :=
+    biholomorphOnePointSimplePolePullbackData_of_biholomorph_onePoint X P e he he_symm
+  exact ⟨d.sourceLift, d.sourcePrincipalPart⟩
 
 /--
 Bridge from an explicit biholomorphic uniformization to a prescribed-pole
