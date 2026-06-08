@@ -88,9 +88,17 @@ theorem stageB_analytic_eq_topologicalGenusU
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     analyticGenus ℂ X = topologicalGenusU X := by
   have _provider1 := compactRiemannSurface_homeomorph_ulift_polygon4g X
-  have _provider2 := IntegralOneCycleULinearEquivOfHomeo (Homeomorph.refl X)
-  have _provider3 := polygon4g_singularH1U_iso_freeZ.{u} (analyticGenus ℂ X)
-  sorry
+  have ⟨e1⟩ := IntegralOneCycleULinearEquivOfHomeo (Classical.choice _provider1)
+  have ⟨e2⟩ := polygon4g_singularH1U_iso_freeZ.{u} (analyticGenus ℂ X)
+  have e := e1.trans e2
+  have h_finrank : Module.finrank ℤ (IntegralOneCycleU X) = 2 * analyticGenus ℂ X := by
+    rw [LinearEquiv.finrank_eq e]
+    have h := Module.finrank_eq_card_basis (Pi.basisFun ℤ (Fin (2 * analyticGenus ℂ X)))
+    rw [Fintype.card_fin] at h
+    exact h
+  unfold topologicalGenusU
+  rw [h_finrank]
+  omega
 
 /--
 **Universe-`u` H₁ ℤ-basis (tracked surface-classification obligation).**
