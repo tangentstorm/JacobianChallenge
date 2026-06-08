@@ -1,50 +1,51 @@
-SUGGESTED TASK: Milestone A1 survey and blueprint-map the Hurewicz substrate for #228/#229/#230.
+SUGGESTED TASK: Milestone A2 wire the Hurewicz frontier leaves #228/#229/#230.
 
-Objective: begin the Chapter-06 Cluster A blueprint map by surveying the
-existing sorry-free substrate around the three Hurewicz / singular-homology
-frontiers in `Jacobian/Periods/Hurewicz.lean` and exposing that substrate as
-`\\lean{}`-tracked blueprint nodes. This step should make the green proof
-skeleton beneath #228, #229, and #230 visible before the final A2 frontier
-rewiring pass.
+Objective: complete the Chapter-06 Cluster A blueprint map by refining the
+three open Hurewicz nodes so each exposes only its genuine remaining frontier.
+A1 added the green substrate nodes; this step should wire #228, #229, and #230
+through those substrates and any additional honest frontier leaves already
+visible in `Jacobian/Periods/Hurewicz.lean`, without claiming the open sorries
+are green.
 
 Scope:
-- Read `Jacobian/Periods/Hurewicz.lean` around:
+- Re-read `tex/sections/05-polygonal-model.tex` around the A1 Hurewicz nodes
+  and `Jacobian/Periods/Hurewicz.lean` around:
   - `polygon4g_quotient_path_finite_lift_subdivision` (#228),
+  - `singular_one_simplex_subdivision_prism_homologous`,
   - `polygon4g_partial_side_arc_homologous_to_edge_chain` (#229),
   - `edgeChain_sum_singular_boundary_scalar_coefficient_zero` (#230).
-- Identify sorry-free declarations supporting:
-  - quotient-path finite subdivision / chart-lift structure,
-  - partial-side-arc to edge-chain comparison,
-  - edge-chain / singular-boundary coefficient bookkeeping.
-- Add compact `\\lean{}`-tracked green nodes in the relevant blueprint location
-  (`tex/sections/05-polygonal-model.tex`, and `tex/sections/06-periods-and-riemann-bilinear.tex`
-  only if needed for Chapter-06 cross-linking).
-- Wire those new substrate nodes with `\\uses` to existing green nodes or honest
-  Mathlib/project leaves, without marking the three open frontier nodes
-  `\\leanok`.
+- Refine the blueprint wiring so:
+  - #228 separates quotient-chart finite-lift topology from the independent
+    singular subdivision-prism frontier.
+  - #229 is focused on the primitive side-strip geometry after endpoint-repair
+    bookkeeping.
+  - #230 is focused on homological edge-chain independence after the finite
+    coefficient algebra.
+- Add compact open frontier nodes only if needed to name genuine remaining
+  blockers already present in Lean, especially the subdivision-prism leaf.
+- Do not mark #228/#229/#230 or any other direct `sorry` declaration with
+  proof-level `\\leanok`.
 - Do not edit Lean proof files and do not touch `Jacobian/Challenge.lean`.
 
 Verification:
 - Confirm every new `\\lean{}` declaration exists.
-- For every new node marked `\\leanok`, verify the corresponding Lean
-  declarations are genuinely sorry-free using `rg`, `#print axioms`, and/or
-  `sorries.jsonl` evidence.
-- Run `scripts/blueprint_audit.py`.
-- Run `bash scripts/build-blueprint.sh` if the environment permits a clean
-  return; otherwise record the build-wrapper caveat in `.sci/result.md`.
-- Update `.sci/result.md` with the A1 substrate map and the next A2 frontier
-  wiring recommendation.
+- Confirm every new green node is absent from `sorries.jsonl` or otherwise
+  justified as sorry-free; direct `sorry` frontier nodes must remain ungreen.
+- Run `python3 scripts/blueprint_audit.py`.
+- Run `bash scripts/build-blueprint.sh` and include any generated
+  `sorries.jsonl` update if the build changes it.
+- Update `.sci/result.md` with the final A2 frontier map and the next C1
+  recommendation.
 
 Checklist:
-- [x] Survey `Hurewicz.lean` around #228/#229/#230 and identify green substrate
-      declarations.
-- [x] Add `\\lean{}`-tracked green blueprint nodes for the quotient-path /
-      side-arc / edge-chain substrate.
-- [x] Leave #228/#229/#230 open, but record how the new substrate nodes support
-      their eventual A2 wiring.
-- [x] Verify all new Lean declarations and green-ness claims.
-- [x] Run `scripts/blueprint_audit.py`.
-- [x] Run or honestly caveat `bash scripts/build-blueprint.sh`.
-- [x] Update `.sci/result.md` with A1 findings and A2 recommendation.
-- [x] Commit the tex/result/task/plan/sorries updates and set
-      `.sci/status-line` to `READY: Chapter 06 A1 Hurewicz substrate map`.
+- [x] Inspect the current A1 Hurewicz nodes and relevant Lean declarations.
+- [x] Add or refine open frontier nodes for the genuine #228/#229/#230 leaves.
+- [x] Wire #228/#229/#230 so each depends only on green substrate plus its
+      genuine frontier leaf.
+- [x] Verify new declarations and green/open status.
+- [x] Run `python3 scripts/blueprint_audit.py`.
+- [x] Run `bash scripts/build-blueprint.sh`.
+- [x] Stage any generated `sorries.jsonl` update from the build.
+- [x] Update `.sci/result.md` with A2 findings and C1 recommendation.
+- [x] Commit the tex/result/task/sorries updates and set
+      `.sci/status-line` to `READY: Chapter 06 A2 Hurewicz frontier wiring`.

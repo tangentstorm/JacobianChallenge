@@ -418,7 +418,7 @@ alongside Riemann-Roch and Stokes.
 
 \begin{theorem}[Analytic genus equals topological genus]
 \label{thm:analytic-eq-topological-genus}
-\uses{def:topological-genus, input:hodge-deRham, lem:cut-along-non-tree-yields-unfolded-disk, lem:polygon4g-quotient-path-finite-lift-subdivision, lem:polygon4g-partial-side-arc-homologous-to-edge-chain, lem:edge-chain-sum-singular-boundary-scalar-coefficient-zero, lem:handleprefix-tailrotate-homeomorph}
+\uses{def:topological-genus, input:hodge-deRham, lem:cut-along-non-tree-yields-unfolded-disk, lem:polygon4g-singular-simplex-subdivision-lifts-to-disk, lem:polygon4g-partial-side-arc-homologous-to-edge-chain, lem:edge-chain-sum-singular-boundary-scalar-coefficient-zero, lem:handleprefix-tailrotate-homeomorph}
 For a compact connected oriented Riemann surface \(X\),
 \[
   g_{\mathrm{an}}(X) = g_{\mathrm{top}}(X).
@@ -477,6 +477,18 @@ A path in the \(4g\)-gon side-pairing quotient subdivides into finitely many
 chart-liftable pieces. Open obligation (\code{sorry}).
 Tracking: \ghissue{228}.
 \lean{JacobianChallenge.Periods.polygon4g_quotient_path_finite_lift_subdivision}
+\end{lemma}
+
+\begin{lemma}[Polygon quotient simplex lift package (open)]
+\label{lem:polygon4g-singular-simplex-subdivision-lifts-to-disk}
+\uses{lem:polygon4g-quotient-path-finite-lift-subdivision}
+A singular one-simplex in the polygon quotient admits the full disk-lift
+package: finitely many lifted pieces, adjacent endpoint relations, and the
+singular two-chain witnessing that the subdivided projected chain is homologous
+to the original simplex. Besides the quotient-chart finite-lift topology, this
+package also depends on the singular-chain subdivision-prism frontier in
+`Hurewicz.lean`; that frontier remains open and is not marked green here.
+\lean{JacobianChallenge.Periods.polygon4g_singularSimplex_subdivision_lifts_to_disk}
 \end{lemma}
 
 \begin{lemma}[Endpoint repair and side-arc bookkeeping substrate]
