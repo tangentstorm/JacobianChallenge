@@ -62,18 +62,65 @@ to obtain a full lattice in the underlying real vector space.
 
 % Universe-u companions of the period-lattice content (the public Jacobian
 % universe bridge consumes these); both are open obligations.
+\begin{lemma}[Universe-$u$ singular homology and period-pairing shape]
+\label{lem:universe-u-singular-homology-period-pairing-shape}
+For a surface \(X : \mathrm{Type}\ u\), the project has a separate
+universe-\(u\) singular chain complex, integral \(1\)-cycle object, period
+pairing, and basis-aligned period subgroup. These are the shape-level
+transport layer used by the universe-\(u\) period lattice route.
+\depends{Project-side universe transport in
+\code{Jacobian/Blueprint/Sec03/SingularChainComplexZU.lean},
+\code{Jacobian/Periods/IntegralOneCycleU.lean},
+\code{Jacobian/Periods/PeriodFunctionalU.lean}, and
+\code{Jacobian/Periods/BasisAlignedPeriodSubgroupU.lean}; it is grounded in
+Mathlib's singular chain and singular homology functors at universe \(u\)
+with coefficients \(\mathrm{ULift}\,\Z\).}
+\lean{JacobianChallenge.Blueprint.Sec03.singularChainComplexZU,
+JacobianChallenge.Blueprint.Sec03.SingularOneChainU,
+JacobianChallenge.Blueprint.Sec03.SingularTwoChainU,
+JacobianChallenge.Periods.IntegralOneCycleU,
+JacobianChallenge.Periods.periodPairing_descent_auxU,
+JacobianChallenge.Periods.periodPairingComplexU,
+JacobianChallenge.Periods.basisAlignedPeriodSubgroupConcreteU}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Type-0 H1 basis and symplectic cycle substrate]
+\label{lem:type-zero-h1-basis-symplectic-cycle-substrate}
+\uses{thm:analytic-eq-topological-genus}
+At universe \(0\), the Periods layer supplies a \(\Z\)-basis of integral
+first homology indexed by \(2g_{\mathrm{an}}\) and extracts an injective
+family of \(2g\) cycles from it. This is the surface-classification/H1
+substrate mirrored by the universe-\(u\) H1-basis frontier.
+\depends{Project-side Type-0 assembly in
+\code{Jacobian/Periods/PeriodFunctional.lean}; it routes through the
+surface-classification and analytic-equals-topological-genus bridge already
+tracked by \ref{thm:analytic-eq-topological-genus}.}
+\lean{JacobianChallenge.Periods.h1_basis_of_compact_riemann_surface,
+JacobianChallenge.Periods.symplectic_basis_of_cycles}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Universe-$u$ $H_1$ basis (open)]
 \label{lem:h1-basis-of-compact-riemann-surface-u}
+\uses{lem:universe-u-singular-homology-period-pairing-shape, lem:type-zero-h1-basis-symplectic-cycle-substrate}
 A \(\Z\)-basis of \(H_1\) for a universe-\(u\) compact Riemann surface
-(\(\code{IntegralOneCycleU}\)). Open obligation (\code{sorry}).
+(\(\code{IntegralOneCycleU}\)). This is the universe-\(u\) rerun of the
+surface-classification/cellular-homology rank-\(2g\) argument, not another
+Riemann-bilinear analytic gap. Open obligation (\code{sorry}).
 Tracking: \ghissue{240}.
 \lean{JacobianChallenge.Periods.h1_basis_of_compact_riemann_surfaceU}
 \end{lemma}
 
 \begin{lemma}[Universe-$u$ Riemann-bilinear $\R$-LI input (open)]
 \label{lem:riemann-classical-real-li-input-u}
+\uses{lem:riemann-classical-real-li-input, lem:universe-u-singular-homology-period-pairing-shape}
 Universe-\(u\) companion of the Riemann-bilinear \(\R\)-linear-independence
-input. Open obligation (\code{sorry}).
+input. Its analytic content is the same Riemann-bilinear / Hodge-positivity
+frontier as the Type-0 input, now stated for \(\code{IntegralOneCycleU}\) and
+\(\code{periodPairingComplexU}\). Open obligation (\code{sorry}).
 Tracking: \ghissue{241}.
 \lean{JacobianChallenge.Periods.riemann_classical_real_LI_inputU}
 \end{lemma}

@@ -168,3 +168,60 @@ Proceed to B2: wire the universe-`u` companions #241
 the statement bank. The B2 task should make the #241 dependency on #227 explicit
 and separate the #240 surface-classification/H1-basis frontier from the
 Riemann-bilinear analytic frontier.
+
+# B2 Universe-u Period-Rank Blueprint Map
+
+Status: B2 complete.
+
+## Added Blueprint Nodes
+
+In `tex/statements/statement-bank.tex`, the two universe-`u` frontier nodes now
+have an explicit substrate:
+
+- `lem:universe-u-singular-homology-period-pairing-shape`
+  - Lean declarations:
+    `singularChainComplexZU`, `SingularOneChainU`, `SingularTwoChainU`,
+    `IntegralOneCycleU`, `periodPairing_descent_auxU`,
+    `periodPairingComplexU`, `basisAlignedPeriodSubgroupConcreteU`.
+  - Role: the shape-level universe-`u` singular-chain, homology, period-pairing,
+    and basis-aligned period-subgroup transport layer.
+- `lem:type-zero-h1-basis-symplectic-cycle-substrate`
+  - Lean declarations:
+    `h1_basis_of_compact_riemann_surface`, `symplectic_basis_of_cycles`.
+  - Role: the Type-0 H1-basis/symplectic-cycle substrate that the universe-`u`
+    H1-basis obligation mirrors.
+
+## Frontier Wiring
+
+- #240 `lem:h1-basis-of-compact-riemann-surface-u` now uses the universe-`u`
+  homology/pairing shape node plus the Type-0 H1-basis substrate. Its prose now
+  identifies the genuine remaining gap as the universe-`u`
+  surface-classification/cellular-homology rank-`2g` rerun, not a
+  Riemann-bilinear analytic gap.
+- #241 `lem:riemann-classical-real-li-input-u` now uses the Type-0 #227 node
+  `lem:riemann-classical-real-li-input` plus the universe-`u`
+  homology/pairing shape node. Its prose now identifies the genuine remaining
+  gap as the same Riemann-bilinear/Hodge-positivity frontier as #227, stated for
+  `IntegralOneCycleU` and `periodPairingComplexU`.
+- `thm:period-lattice` still consumes the public #240/#241 nodes, but those
+  nodes no longer float without a proof skeleton.
+
+## Verification So Far
+
+- `scripts/blueprint_audit.py` succeeded with exit code 0:
+  100 statement-style environments, 99 with `\lean{...}`, 1 `\notready`,
+  83 clean, and the same 15 expected open/uncolored frontier nodes.
+- `sorries.jsonl` still marks #240 and #241 as `c:"sorry"` before the pending
+  `build-blueprint.sh` refresh, as expected.
+- `bash scripts/build-blueprint.sh` rendered the web pages and reached the
+  Lake-backed state-refresh step. That refresh did not return a final status in
+  this environment while concurrent sibling-worker Lake builds were active; no
+  `jc1` Lean child was visible in `ps` during the no-output interval.
+
+## Next Recommended Step
+
+Proceed to Cluster A mapping: survey `Jacobian/Periods/Hurewicz.lean` and the
+Section 05 polygonal-model nodes for #228/#229/#230, then add green substrate
+nodes for the quotient-path subdivision, partial-side-arc, and edge-chain
+independence skeletons. The #228 and #229 lift/side-arc frontiers should be
+mapped before #230, since #230 is the downstream coefficient-independence leaf.
