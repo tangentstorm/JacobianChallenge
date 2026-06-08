@@ -282,20 +282,20 @@ theorem handlePrefix_tailRotate_homeomorph_zero
   exact ⟨Homeomorph.refl _⟩
 
 /--
-Disk tail-rotation homeomorphism: fixes the handle arcs and shifts the tail arcs.
-This is the strictly narrower topological provider for `handlePrefix_tailRotate_homeomorph_nonzero`.
+Narrow quotient-level surgery provider: collapse the handle vertex and
+rotate the tail arcs in the quotient, not by a disk homeomorphism.
 -/
-private lemma tailRotate_geometric_maps
+private theorem handlePrefix_tailRotate_quotient_provider
     {g : ℕ} (i : Fin g) (u : List (Letter g)) (m : ℕ) (_h_m : m ≠ 0) :
-    ∃ (φ : DiskC ≃ₜ DiskC),
-      ∀ x y, EdgeWord.sidePairingRel g ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u) x y ↔
-        EdgeWord.sidePairingRel g ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate m) (φ x) (φ y) := by
-  -- The geometric construction of the piecewise disk homeomorphism.
+    Nonempty (EdgeWord.wordQuotient g
+              ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u) ≃ₜ
+            EdgeWord.wordQuotient g
+              ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate m)) := by
   sorry
 
 /--
-Nontrivial case of the tail-rotate homeomorphism: residual disk-geometry
-content for `m ≠ 0`. Discharged by the tail-shift disk homeomorphism.
+Nontrivial case of the tail-rotate homeomorphism: residual topology
+content for `m ≠ 0`. Discharged by the tail-shift quotient provider.
 -/
 theorem handlePrefix_tailRotate_homeomorph_nonzero
     {g : ℕ} (i : Fin g) (u : List (Letter g)) (m : ℕ) (_h_m : m ≠ 0) :
@@ -303,8 +303,8 @@ theorem handlePrefix_tailRotate_homeomorph_nonzero
                 ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u) ≃ₜ
               EdgeWord.wordQuotient g
                 ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate m)) := by
-  obtain ⟨φ, h_resp⟩ := tailRotate_geometric_maps i u m _h_m
-  exact ⟨Quotient.homeo' φ h_resp⟩
+  exact handlePrefix_tailRotate_quotient_provider i u m _h_m
+
 
 /--
 Rotating the tail of a handle-prefixed word preserves the quotient.
