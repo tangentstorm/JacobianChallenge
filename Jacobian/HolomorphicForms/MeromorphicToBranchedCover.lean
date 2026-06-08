@@ -3335,8 +3335,9 @@ structure BiholomorphOnePointSimplePolePullbackFacts
 Field-level facts for the biholomorphic pullback construction of a simple pole.
 
 This is the exposed shape of the remaining #234 analytic frontier after the
-target continuity field has been discharged locally: three remaining fields for
-the explicit target coordinate and four fields for its named pullback along `e`.
+target continuity and modulus-divergence fields have been discharged locally:
+two remaining fields for the explicit target coordinate and four fields for
+its named pullback along `e`.
 -/
 structure BiholomorphOnePointSimplePolePullbackFieldFacts
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -3353,10 +3354,6 @@ structure BiholomorphOnePointSimplePolePullbackFieldFacts
   target_orderAt_pole :
     JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
       (onePointExtend (onePointSimplePoleCoordinate (e P)) (e P)) (e P) = 1
-  /-- The target coordinate diverges in norm toward the target pole. -/
-  target_modulus_tendsto :
-    Filter.Tendsto (fun q => ‖onePointSimplePoleCoordinate (e P) q‖)
-      (nhdsWithin (e P) ({e P}ᶜ : Set (OnePoint ℂ))) Filter.atTop
   /-- The pulled-back coordinate is meromorphic at every source point. -/
   source_meromorphic_everywhere :
     ∀ p : X,
@@ -3378,7 +3375,7 @@ structure BiholomorphOnePointSimplePolePullbackFieldFacts
 Field-level principal-part facts provider for the explicit biholomorphic
 pullback route.
 
-This is the remaining explicit-coordinate analytic frontier: prove the seven
+This is the remaining explicit-coordinate analytic frontier: prove the six
 field-level target/source coordinate facts still not discharged locally and
 transport the source facts along the biholomorphism `e`.
 -/
@@ -3430,7 +3427,7 @@ theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
       continuous_extension :=
         continuous_onePointExtend_onePointSimplePoleCoordinate (e P)
       orderAt_pole := h.target_orderAt_pole
-      modulus_tendsto := h.target_modulus_tendsto }
+      modulus_tendsto := tendsto_norm_onePointSimplePoleCoordinate_atTop (e P) }
     sourcePrincipalPart := {
       meromorphic_everywhere := h.source_meromorphic_everywhere
       continuous_extension := h.source_continuous_extension
