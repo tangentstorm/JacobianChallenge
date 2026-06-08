@@ -323,4 +323,6 @@
 {"i":2873,"f":"Jacobian/Periods/PeriodVectorsLIU.lean","k":"theorem","s":"h1_basis_riemannClassicalPeriodBasisU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":2874,"f":"Jacobian/Periods/H1BasisU.lean","k":"theorem","s":"stageA_surface_CW_basisU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
 {"i":2875,"f":"Jacobian/Periods/H1BasisU.lean","k":"theorem","s":"stageB_analytic_eq_topologicalGenusU","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
-{"i":2876,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"theorem","s":"h1_basis_periodCoordinate_linearIndependent","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
+{"i":2876,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"theorem","s":"h1_basis_periodCoordinate_linearIndependent","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry-dep","b":"","t":""}
+{"i":2877,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"theorem","s":"h1_basis_periodMatrix_realKernel_trivial","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"","t":""}
+{"i":2878,"f":"tex/sections/06-periods-and-riemann-bilinear.tex","k":"blueprint","s":"JacobianChallenge.Periods.h1_basis_periodMatrix_realKernel_trivial","n":0,"o":0,"r":0,"e":null,"u":[],"d":[],"a":"","c":"sorry","b":"lem:riemann-classical-real-li-input","t":""}

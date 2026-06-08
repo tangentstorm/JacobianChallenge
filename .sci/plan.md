@@ -57,13 +57,13 @@ period-coordinate nondegeneracy provider.
       `h1_basis_periodCoordinate_linearIndependent` from it sorry-free.
 
 ### Milestone P2 — Thread the Provider Through the Existing API
-- [ ] **P2.** Keep `h1_basis_riemannClassicalPeriodBasis` and
+- [x] **P2.** Keep `h1_basis_riemannClassicalPeriodBasis` and
       `riemann_classical_real_LI_input` as sorry-free assemblies. Verify
       downstream Type-0 period-vector and lattice declarations still consume
       the provider without weakening statements.
 
 ### Milestone P3 — Blueprint and Sorry Graph Refresh
-- [ ] **P3.** If the reachable root name or dependency boundary changes,
+- [x] **P3.** If the reachable root name or dependency boundary changes,
       refresh `sorries.jsonl` and update the Chapter-06 blueprint wording so
       #227 points at the current precise frontier. Do not mark any open provider
       green.

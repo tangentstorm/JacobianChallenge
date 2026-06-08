@@ -502,16 +502,23 @@ are linearly independent over \(\R\).
 \end{theorem}
 \begin{proof}\leanok\end{proof}
 
-\begin{lemma}[Riemann bilinear $\R$-linear-independence input (open)]
+\begin{lemma}[H1-basis period-matrix real-kernel provider (open)]
 \label{lem:riemann-classical-real-li-input}
 \uses{lem:period-pairing-satisfies-bilinear-identity, lem:hodge-form-pos-def-on-periods, lem:riemann-bilinear-algebra-skeleton, lem:quadratic-positivity-linear-independent-skeleton}
-For an injective family of \(2g\) integral \(1\)-cycles, the corresponding
-period functionals are \(\R\)-linearly independent. This is the classical
-Riemann-bilinear / Hermitian-positivity input on which
-Theorem~\ref{thm:period-vectors-full-real-rank} rests; it is currently an open
-obligation (a \code{sorry}) in the Lean development.
+For the concrete integral \(H_1\)-basis \(B\) supplied by the
+surface-classification construction, the basis-aligned period matrix has
+trivial real kernel: if real coefficients \(c_i\) kill every holomorphic
+coordinate,
+\[
+  \sum_i c_i\,\Pi_X(B_i)_j = 0 \quad\text{for all } j<g,
+\]
+then all \(c_i\) vanish. This is the current precise Type-0
+Riemann-bilinear / Hermitian-positivity frontier. The public
+\code{riemann\_classical\_real\_LI\_input} theorem and the
+\code{h1\_basis\_periodCoordinate\_linearIndependent} provider are now
+sorry-free assemblies from this narrower kernel statement.
 Tracking: \ghissue{227}.
-\lean{JacobianChallenge.Periods.riemann_classical_real_LI_input}
+\lean{JacobianChallenge.Periods.h1_basis_periodMatrix_realKernel_trivial}
 \end{lemma}
 
 \begin{layman}
@@ -587,18 +594,21 @@ project side. The full ledger lives in
 named passes.
 
 The headline linear independence theorem \code{riemann_classical_real_LI_input}
-is now a sorry-free assembly over two explicit analytic obligations:
-the Riemann Bilinear Relation and Hermitian Positivity on the actual
-integrals. This reduces the large analytical gap to two precisely
-stated leaf sorries.
+is now a sorry-free assembly from an explicit
+\code{RiemannClassicalPeriodBasis} witness.  The concrete H1-basis route
+factors further through the real-kernel statement
+\code{h1\_basis\_periodMatrix\_realKernel\_trivial}; this is the direct
+remaining Type-0 #227 frontier tying the selected integral basis to the
+classical symplectic Stokes/Hodge-positive period matrix.
 
 \subsection{Named obligations from the period-functional decomposition}
 \label{subsec:named-obligations-period-functional}
 
 The decomposition of \code{Jacobian/Periods/PeriodFunctional.lean}
-replaces the original single \code{sorry} in
-\code{riemann_classical_real_LI_input} into explicit algebraic and
-positivity substrate nodes plus the remaining geometric frontier.
+replaces the original single \code{sorry} in the public
+\code{riemann_classical_real_LI_input} path by explicit algebraic and
+positivity substrate nodes plus the remaining geometric real-kernel frontier
+\code{h1\_basis\_periodMatrix\_realKernel\_trivial}.
 
 \begin{lemma}[Algebraic symplectic-period fold skeleton]
 \label{lem:riemann-bilinear-algebra-skeleton}
