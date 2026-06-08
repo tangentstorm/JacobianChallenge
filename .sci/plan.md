@@ -60,17 +60,17 @@ See `goal.md` § FIRST JOB for the full framing and the 3 clusters.
       kernel/exact) and cite the classical/Mathlib bottom leaves honestly.
 
 ### Milestone V — Verify + split
-- [ ] **V1.** Green-ness audit: every new `\lean{}` node's decl exists and is
+- [x] **V1.** Green-ness audit: every new `\lean{}` node's decl exists and is
       genuinely sorry-free if green (`scripts/list-sorries.py --text`,
       `#print axioms`); never `\leanok` an open frontier node.
-- [ ] **V2.** `bash scripts/build-blueprint.sh` (fails on unresolved labels) and
+- [x] **V2.** `bash scripts/build-blueprint.sh` (fails on unresolved labels) and
       `scripts/blueprint_audit.py` both clean; `lake build Jacobian.Solution`
       green (no new sorries).
-- [ ] **V3.** Write `.sci/result.md`: the jc1/jc4/jc5 execution split with
+- [x] **V3.** Write `.sci/result.md`: the jc1/jc4/jc5 execution split with
       ordering — **#227 before #241**; Cluster-A lift/side-arc before #230
       coefficient independence; #242/#243 split by de Rham vs Hodge frontier;
       plus cross-worker coordination notes from the dependency graph.
-- [ ] **V4.** Commit the tex/result/task updates; set status
+- [x] **V4.** Commit the tex/result/task updates; set status
       `READY: Chapter 06 blueprint-to-Mathlib plan`.
 
 ## 3. Notes
