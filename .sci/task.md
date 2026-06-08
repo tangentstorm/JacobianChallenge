@@ -1,60 +1,70 @@
-SUGGESTED TASK: Milestone P0 audit the current #227 provider boundary.
+SUGGESTED TASK: Milestone P1 split #227 through a period-matrix kernel provider.
 
-Objective: start the issue #227 execution assignment by auditing the current
-reachable Type-0 provider in `Jacobian/Periods/PeriodFunctional.lean`:
+Objective: refine the current Type-0 #227 root in
+`Jacobian/Periods/PeriodFunctional.lean` by replacing the direct `sorry` in
 
 ```lean
 h1_basis_periodCoordinate_linearIndependent
 ```
 
-The original `riemann_classical_real_LI_input` issue has already been made
-honest by requiring `RiemannClassicalPeriodBasis`; the remaining root is the
-basis-specific period-coordinate nondegeneracy provider. This first step should
-decide whether the current scaffold can prove that provider directly, or name
-the exact smaller classical input still missing.
+with a sorry-free linear-algebra assembly from a strictly narrower classical
+provider: triviality of the real kernel of the H₁-basis period matrix.
+
+Current P0 audit result: the local scaffold cannot prove the current provider
+directly. `periodPairing` is still backed by the zero chain-integration
+placeholder, and the missing geometric input is the basis-aligned
+Stokes/Hodge-positive period-matrix nondegeneracy for the selected integral H₁
+basis. The next step should isolate that input in coefficient/kernel form and
+prove the existing linear-independence theorem from it.
 
 Scope:
 - Work primarily in `Jacobian/Periods/PeriodFunctional.lean`.
-- Read the local declarations around:
-  - `RiemannClassicalPeriodBasis`
-  - `h1_basis_periodCoordinate_linearIndependent`
-  - `h1_basis_riemannClassicalPeriodBasis`
-  - `riemann_classical_real_LI_input`
-  - `riemann_bilinear_identity`
-  - `periodPairing_satisfies_bilinear_identity`
-  - `hodge_form_posDef_on_periods`
-  - `RiemannBilinearRefinement.real_linearIndependent_of_quadratic_pos_def`
+- Add one narrowly named provider near
+  `h1_basis_periodCoordinate_linearIndependent`, with a statement equivalent to
+  the classical period-matrix real-kernel fact:
+  for a concrete
+  `B : Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ (IntegralOneCycle X)`,
+  if real coefficients `c : Fin (2 * analyticGenus ℂ X) → ℝ` satisfy
+  ```lean
+  ∀ j : Fin (analyticGenus ℂ X),
+    ∑ i, (c i : ℂ) *
+      (holomorphicOneFormDualEquiv ℂ X ((periodPairing ℂ X) (B i))) j = 0
+  ```
+  then `∀ i, c i = 0`.
+- Prove `h1_basis_periodCoordinate_linearIndependent` sorry-free from that
+  provider using `Fintype.linearIndependent_iff`, `Finset.sum_apply`, and
+  `Complex.real_smul`/basis-coordinate simplification.
+- Keep `h1_basis_riemannClassicalPeriodBasis`,
+  `riemann_classical_real_LI_input`, `periodVectors_linearIndependent`, and the
+  universe-`u` mirror APIs unchanged.
 - Do not edit `Jacobian/Challenge.lean`.
 - Do not edit jc2/jc3/jc4/jc5 active files.
-- Do not try to solve the entire Riemann-bilinear theorem in this first commit.
-- If the exact missing statement is clear, add only a narrowly scoped provider
-  name/comment or tiny structural split, then prove any surrounding assembly
-  sorry-free.
-- Preserve downstream APIs where possible, especially
-  `riemann_classical_real_LI_input`, `periodVectors_linearIndependent`, and
-  the universe-`u` mirror.
+- Do not introduce `axiom`, `unsafe`, or a broader provider parallel to the
+  current one.
 
 Verification:
 - Run `lake build Jacobian.Periods.PeriodFunctional`.
 - Run `lake build Jacobian.Periods.PeriodVectorsLIU`.
 - Run `lake build Jacobian.Solution`.
-- Run `python3 scripts/list-sorries.py --text` and record whether #227 is still
-  rooted at `h1_basis_periodCoordinate_linearIndependent` or a narrower provider.
+- Run `python3 scripts/list-sorries.py --text` and confirm #227 is rooted at
+  the new period-matrix kernel provider, while
+  `h1_basis_periodCoordinate_linearIndependent` is only `sorry-dep` or absent
+  from the direct reachable-sorry list.
 - Run `rg -n "\\baxiom\\b|unsafe|sorry" Jacobian/Periods/PeriodFunctional.lean`
-  and confirm no new axiom/unsafe declarations and no accidental new broad
-  sorry.
+  and confirm the only intended PeriodFunctional `sorry` is the new narrow
+  kernel provider.
 - Commit exactly the scoped SCI/Lean edit with normalized author/committer
   metadata and `Co-authored-by: Codex <codex@openai.com>`.
 
 Checklist:
-- [ ] Inspect the current Type-0 provider and downstream consumers.
-- [ ] Decide whether existing substrate proves the provider directly.
-- [ ] If not direct, identify the narrowest missing classical provider.
-- [ ] Make only the scoped P0 edit needed to record or isolate that boundary.
-- [ ] Run `lake build Jacobian.Periods.PeriodFunctional`.
-- [ ] Run `lake build Jacobian.Periods.PeriodVectorsLIU`.
-- [ ] Run `lake build Jacobian.Solution`.
-- [ ] Run `python3 scripts/list-sorries.py --text`.
-- [ ] Run the PeriodFunctional axiom/unsafe/sorry scan.
-- [ ] Commit the scoped edit and set `.sci/status-line` to
-      `READY: Chapter 06 P0 #227 provider boundary audit`.
+- [x] Introduce the narrow H₁-basis period-matrix real-kernel provider.
+- [x] Prove `h1_basis_periodCoordinate_linearIndependent` from the provider
+      without `sorry`.
+- [x] Confirm downstream Type-0 API declarations remain unchanged.
+- [x] Run `lake build Jacobian.Periods.PeriodFunctional`.
+- [x] Run `lake build Jacobian.Periods.PeriodVectorsLIU`.
+- [x] Run `lake build Jacobian.Solution`.
+- [x] Run `python3 scripts/list-sorries.py --text`.
+- [x] Run the PeriodFunctional axiom/unsafe/sorry scan.
+- [x] Commit the scoped edit and set `.sci/status-line` to
+      `READY: Chapter 06 P1 #227 period-matrix kernel split`.

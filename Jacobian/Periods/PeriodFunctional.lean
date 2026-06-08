@@ -595,6 +595,25 @@ Thus this theorem is the narrowest remaining Type-0 #227 provider: the missing
 classical input is exactly the basis-aligned Stokes/Hodge-positive period-matrix
 nondegeneracy for the selected integral H₁ basis.
 -/
+theorem h1_basis_periodMatrix_realKernel_trivial
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (B : Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
+      (IntegralOneCycle X)) :
+    ∀ c : Fin (2 * analyticGenus ℂ X) → ℝ,
+      (∀ j : Fin (analyticGenus ℂ X),
+        ∑ i, (c i : ℂ) *
+          (holomorphicOneFormDualEquiv ℂ X ((periodPairing ℂ X) (B i))) j = 0) →
+      ∀ i, c i = 0 := by
+  sorry
+
+/--
+**Classical period-coordinate nondegeneracy provider for an H₁ basis.** This is
+now a linear-algebra assembly from the narrower real-kernel provider above.
+-/
 theorem h1_basis_periodCoordinate_linearIndependent
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -606,7 +625,23 @@ theorem h1_basis_periodCoordinate_linearIndependent
     LinearIndependent ℝ
       (fun i => (holomorphicOneFormDualEquiv ℂ X)
         ((periodPairing ℂ X) (B i))) := by
-  sorry
+  classical
+  rw [Fintype.linearIndependent_iff]
+  intro c hc i
+  exact h1_basis_periodMatrix_realKernel_trivial X B c (fun j => by
+    have hj : (∑ i, c i •
+        (holomorphicOneFormDualEquiv ℂ X ((periodPairing ℂ X) (B i)))) j = 0 := by
+      rw [hc]
+      rfl
+    calc
+      ∑ i, (c i : ℂ) *
+          (holomorphicOneFormDualEquiv ℂ X ((periodPairing ℂ X) (B i))) j =
+          (∑ i, c i •
+            (holomorphicOneFormDualEquiv ℂ X ((periodPairing ℂ X) (B i)))) j := by
+        rw [Finset.sum_apply]
+        refine Finset.sum_congr rfl (fun i _ => ?_)
+        rw [Pi.smul_apply, Complex.real_smul]
+      _ = 0 := hj) i
 
 /--
 **Classical period-basis provider for an H₁ basis.** This is now only a

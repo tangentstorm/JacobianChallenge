@@ -39,7 +39,7 @@ period-coordinate nondegeneracy provider.
 ## 2. Commit Sequence
 
 ### Milestone P0 — Audit the Current Provider Boundary
-- [ ] **P0.** Inspect `h1_basis_periodCoordinate_linearIndependent`,
+- [x] **P0.** Inspect `h1_basis_periodCoordinate_linearIndependent`,
       `h1_basis_riemannClassicalPeriodBasis`,
       `riemann_classical_real_LI_input`, and downstream consumers. Decide and
       record whether the current provider can be proved directly from existing
@@ -48,7 +48,7 @@ period-coordinate nondegeneracy provider.
       public API churn unless a tiny signature/comment clarification is required.
 
 ### Milestone P1 — Build the Local Linear-Algebra Assembly
-- [ ] **P1.** If direct assembly is feasible, prove the finite-dimensional
+- [x] **P1.** If direct assembly is feasible, prove the finite-dimensional
       linear-algebra bridge from period-coordinate nondegeneracy to the current
       target using `holomorphicOneFormDualEquiv` and
       `RiemannBilinearRefinement.real_linearIndependent_of_quadratic_pos_def`.
