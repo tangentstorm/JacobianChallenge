@@ -46,7 +46,7 @@ See `goal.md` § FIRST JOB for the full framing and the 3 clusters.
       orange/uncoloured dependency is its genuine gap.
 
 ### Milestone A-map — Hurewicz / singular homology
-- [ ] **A1.** Survey the green substrate beneath the 3 Hurewicz sorries
+- [x] **A1.** Survey the green substrate beneath the 3 Hurewicz sorries
       (4g-gon quotient charts, edge-chain cellular model, singular-chain
       subdivision) and add green nodes with `\uses` down to Mathlib (Arzelà–Ascoli
       / quotient-map / cellular-homology facts) or green project lemmas.
