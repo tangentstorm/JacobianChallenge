@@ -3125,6 +3125,132 @@ theorem onePointExtend_onePointSimplePoleCoordinate_coe_eq_caseMap
       simp
     · simp [hz, onePointExtend_onePointSimplePoleCoordinate_coe_apply_coe_ne hz]
 
+lemma continuousAt_onePoint_getD_coe (c : ℂ) :
+    ContinuousAt (fun y : OnePoint ℂ => y.getD 0) (c : OnePoint ℂ) := by
+  rw [OnePoint.continuousAt_coe]
+  have h_eq : (fun y : OnePoint ℂ => y.getD 0) ∘ OnePoint.some = (fun x : ℂ => x) := by
+    funext x
+    rfl
+  rw [Function.comp_def] at h_eq ⊢
+  rw [h_eq]
+  exact continuousAt_id
+
+noncomputable def onePointSphereInversion : OnePoint ℂ → OnePoint ℂ :=
+  fun x => x.elim ((0 : ℂ) : OnePoint ℂ) invBwd
+
+@[simp] lemma onePointSphereInversion_apply_infty :
+    onePointSphereInversion (OnePoint.infty : OnePoint ℂ) = ((0 : ℂ) : OnePoint ℂ) := rfl
+
+@[simp] lemma onePointSphereInversion_apply_coe (z : ℂ) :
+    onePointSphereInversion ((z : ℂ) : OnePoint ℂ) = invBwd z := rfl
+
+lemma continuous_onePointSphereInversion :
+    Continuous onePointSphereInversion := by
+  rw [continuous_iff_continuousAt]
+  intro x
+  cases x using OnePoint.rec with
+  | infty =>
+      have h_invFwd : Filter.Tendsto invFwd (𝓝 (OnePoint.infty : OnePoint ℂ)) (𝓝 (0 : ℂ)) := by
+        rw [OnePoint.tendsto_nhds_infty']
+        exact ⟨tendsto_pure_nhds _ _, by
+          simpa [Function.comp_def, invFwd] using tendsto_inv_zero_coclosedCompact⟩
+      have h_coe :
+          Filter.Tendsto (fun x : OnePoint ℂ => ((invFwd x : ℂ) : OnePoint ℂ))
+            (𝓝 (OnePoint.infty : OnePoint ℂ)) (𝓝 ((0 : ℂ) : OnePoint ℂ)) :=
+        OnePoint.continuous_coe.continuousAt.comp h_invFwd
+      refine h_coe.congr' ?_
+      have hne_nhds :
+          ({((0 : ℂ) : OnePoint ℂ)}ᶜ : Set (OnePoint ℂ)) ∈ 𝓝 (OnePoint.infty : OnePoint ℂ) :=
+        isClosed_singleton.isOpen_compl.mem_nhds (OnePoint.infty_ne_coe 0)
+      filter_upwards [hne_nhds] with y hy
+      cases y using OnePoint.rec with
+      | infty => simp [onePointSphereInversion, invFwd]
+      | coe z =>
+          have hz : z ≠ 0 := by
+            intro hz
+            apply hy
+            simp [hz]
+          simp [onePointSphereInversion, invFwd, invBwd_ne_zero hz]
+  | coe z =>
+      by_cases hz : z = 0
+      · subst hz
+        have h_getD := continuousAt_onePoint_getD_coe 0
+        have h_invBwd : ContinuousAt (fun w : ℂ => invBwd w) (0 : ℂ) :=
+          continuousOn_invBwd.continuousAt (by simp)
+        have h_comp : ContinuousAt (fun y : OnePoint ℂ => invBwd (y.getD 0))
+            (((0 : ℂ) : OnePoint ℂ)) :=
+          show ContinuousAt ((fun w : ℂ => invBwd w) ∘
+              (fun y : OnePoint ℂ => y.getD 0)) (((0 : ℂ) : OnePoint ℂ)) from
+            h_invBwd.comp_of_eq h_getD rfl
+        refine h_comp.congr_of_eventuallyEq ?_
+        have hfinite_nhds :
+            ({OnePoint.infty}ᶜ : Set (OnePoint ℂ)) ∈ 𝓝 (((0 : ℂ) : OnePoint ℂ)) :=
+          isClosed_singleton.isOpen_compl.mem_nhds (OnePoint.coe_ne_infty 0)
+        filter_upwards [hfinite_nhds] with y hy
+        cases y using OnePoint.rec with
+        | infty => exact (hy rfl).elim
+        | coe w => rfl
+      · have h_getD := continuousAt_onePoint_getD_coe z
+        have h_inv : ContinuousAt (fun w : ℂ => w⁻¹) z :=
+          ContinuousAt.inv₀ continuousAt_id hz
+        have h_coe :
+            ContinuousAt (fun y : OnePoint ℂ => (((y.getD 0)⁻¹ : ℂ) : OnePoint ℂ))
+              ((z : ℂ) : OnePoint ℂ) :=
+          OnePoint.continuous_coe.continuousAt.comp (h_inv.comp h_getD)
+        refine h_coe.congr_of_eventuallyEq ?_
+        have hfinite_nhds :
+            ({OnePoint.infty}ᶜ : Set (OnePoint ℂ)) ∈ 𝓝 ((z : ℂ) : OnePoint ℂ) :=
+          isClosed_singleton.isOpen_compl.mem_nhds (OnePoint.coe_ne_infty z)
+        have hzero_nhds :
+            ({((0 : ℂ) : OnePoint ℂ)}ᶜ : Set (OnePoint ℂ)) ∈ 𝓝 ((z : ℂ) : OnePoint ℂ) :=
+          isClosed_singleton.isOpen_compl.mem_nhds (by
+            intro h
+            exact hz (OnePoint.coe_injective h))
+        filter_upwards [hfinite_nhds, hzero_nhds] with y hyfinite hyzero
+        cases y using OnePoint.rec with
+        | infty => exact (hyfinite rfl).elim
+        | coe w =>
+            have hw : w ≠ 0 := by
+              intro hw
+              apply hyzero
+              simp [hw]
+            change onePointSphereInversion ((w : ℂ) : OnePoint ℂ) =
+              (((w)⁻¹ : ℂ) : OnePoint ℂ)
+            simp [onePointSphereInversion, invBwd_ne_zero hw]
+
+lemma onePointExtend_onePointSimplePoleCoordinate_coe_eq_comp
+    (a : ℂ) :
+    onePointExtend
+      (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
+      ((a : ℂ) : OnePoint ℂ) =
+      onePointSphereInversion ∘ OnePoint.map (fun z : ℂ => z - a) := by
+  funext x
+  cases x using OnePoint.rec with
+  | infty => simp [onePointSphereInversion]
+  | coe z =>
+      by_cases hz : z = a
+      · subst hz
+        simp [onePointSphereInversion, invBwd]
+      · have hza : z - a ≠ 0 := sub_ne_zero.mpr hz
+        simp [onePointSphereInversion, invBwd_ne_zero hza,
+          onePointExtend_onePointSimplePoleCoordinate_coe_apply_coe_ne hz]
+
+theorem continuous_onePointExtend_onePointSimplePoleCoordinate
+    (Q : OnePoint ℂ) :
+    Continuous (onePointExtend (onePointSimplePoleCoordinate Q) Q) := by
+  cases Q using OnePoint.rec with
+  | infty =>
+      rw [onePointExtend_onePointSimplePoleCoordinate_infty_eq_id]
+      exact continuous_id
+  | coe a =>
+      rw [onePointExtend_onePointSimplePoleCoordinate_coe_eq_comp a]
+      refine continuous_onePointSphereInversion.comp ?_
+      refine OnePoint.continuous_map ?_ ?_
+      · exact continuous_id.sub continuous_const
+      · rw [Filter.coclosedCompact_eq_cocompact]
+        change Filter.map (fun z : ℂ => z - a) (Filter.cocompact ℂ) ≤ Filter.cocompact ℂ
+        simpa [sub_eq_add_neg] using (Homeomorph.addRight (-a : ℂ)).map_coclosedCompact.le
+
 /--
 The source coordinate obtained by pulling the explicit `OnePoint ℂ`
 simple-pole coordinate at `e P` back along a biholomorphism `e`.
