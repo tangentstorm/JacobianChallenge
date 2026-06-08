@@ -96,11 +96,72 @@ theorem orientable_handleSwap_grouping
       (∃ perm : Equiv.Perm (Fin g), v = (List.finRange g).flatMap (fun i => EdgeWord.handleBlock (perm i))) := by
   sorry
 
+lemma TietzeEq_swap_adj {g : ℕ} (i j : Fin g) (A B : List (Letter g)) :
+  EdgeWord.TietzeEq (A ++ EdgeWord.handleBlock i ++ EdgeWord.handleBlock j ++ B)
+                    (A ++ EdgeWord.handleBlock j ++ EdgeWord.handleBlock i ++ B) := by
+  let hi := EdgeWord.handleBlock i
+  let hj := EdgeWord.handleBlock j
+  have s1 : EdgeWord.TietzeStep (A ++ hi ++ hj ++ B) ((A ++ hi ++ hj ++ B).rotate (A ++ hi ++ hj).length) :=
+    EdgeWord.TietzeStep.rotate _
+  have eq1 : (A ++ hi ++ hj ++ B).rotate (A ++ hi ++ hj).length = B ++ A ++ hi ++ hj := by
+    have : A ++ hi ++ hj ++ B = (A ++ hi ++ hj) ++ B := by simp
+    rw [this, List.rotate_append_length_eq]
+    simp
+  have s1_rel : EdgeWord.TietzeEq (A ++ hi ++ hj ++ B) (B ++ A ++ hi ++ hj) := by
+    rw [←eq1]
+    exact Relation.ReflTransGen.head s1 Relation.ReflTransGen.refl
+
+  have s2_swap : EdgeWord.HandleSwap (B ++ A ++ hi ++ hj) (hj ++ hi ++ B ++ A) :=
+    EdgeWord.HandleSwap.move i (B ++ A) hj _ rfl
+  have s2_rel : EdgeWord.TietzeEq (B ++ A ++ hi ++ hj) (hj ++ hi ++ B ++ A) :=
+    Relation.ReflTransGen.head (EdgeWord.TietzeStep.swap s2_swap) Relation.ReflTransGen.refl
+
+  have s3 : EdgeWord.TietzeStep (hj ++ hi ++ B ++ A) ((hj ++ hi ++ B ++ A).rotate (hj ++ hi ++ B).length) :=
+    EdgeWord.TietzeStep.rotate _
+  have eq3 : (hj ++ hi ++ B ++ A).rotate (hj ++ hi ++ B).length = A ++ hj ++ hi ++ B := by
+    have : hj ++ hi ++ B ++ A = (hj ++ hi ++ B) ++ A := by simp
+    rw [this, List.rotate_append_length_eq]
+    simp
+  have s3_rel : EdgeWord.TietzeEq (hj ++ hi ++ B ++ A) (A ++ hj ++ hi ++ B) := by
+    rw [←eq3]
+    exact Relation.ReflTransGen.head s3 Relation.ReflTransGen.refl
+
+  exact s1_rel.trans (s2_rel.trans s3_rel)
+
+lemma TietzeEq_of_Perm_handleBlocks_context {g : ℕ} (l1 l2 : List (Fin g)) (h : List.Perm l1 l2) (A B : List (Letter g)) :
+  EdgeWord.TietzeEq (A ++ l1.flatMap EdgeWord.handleBlock ++ B) (A ++ l2.flatMap EdgeWord.handleBlock ++ B) := by
+  induction h generalizing A B with
+  | nil =>
+    exact EdgeWord.TietzeEq.refl _
+  | cons x h IH =>
+    have IH_inst := IH (A ++ EdgeWord.handleBlock x) B
+    rw [List.flatMap_cons, List.flatMap_cons, ←List.append_assoc, ←List.append_assoc]
+    exact IH_inst
+  | swap x y l =>
+    have eq1 : A ++ (y :: x :: l).flatMap EdgeWord.handleBlock ++ B = A ++ EdgeWord.handleBlock y ++ EdgeWord.handleBlock x ++ (l.flatMap EdgeWord.handleBlock ++ B) := by simp
+    have eq2 : A ++ (x :: y :: l).flatMap EdgeWord.handleBlock ++ B = A ++ EdgeWord.handleBlock x ++ EdgeWord.handleBlock y ++ (l.flatMap EdgeWord.handleBlock ++ B) := by simp
+    rw [eq1, eq2]
+    exact TietzeEq_swap_adj y x A (l.flatMap EdgeWord.handleBlock ++ B)
+  | trans h1 h2 IH1 IH2 =>
+    exact (IH1 A B).trans (IH2 A B)
+
+lemma TietzeEq_of_Perm_handleBlocks {g : ℕ} (l1 l2 : List (Fin g)) (h : List.Perm l1 l2) :
+  EdgeWord.TietzeEq (l1.flatMap EdgeWord.handleBlock) (l2.flatMap EdgeWord.handleBlock) := by
+  have res := TietzeEq_of_Perm_handleBlocks_context l1 l2 h [] []
+  simp at res
+  exact res
+
 theorem handleSwap_index_ordering
     {g : ℕ} (v : EdgeWord g)
     (_hGrouped : ∃ perm : Equiv.Perm (Fin g), v = (List.finRange g).flatMap (fun i => EdgeWord.handleBlock (perm i))) :
     EdgeWord.TietzeEq v (EdgeWord.standardWord g) := by
-  sorry
+  rcases _hGrouped with ⟨perm, rfl⟩
+  have hPerm : List.Perm ((List.finRange g).map perm) (List.finRange g) := by
+    exact Equiv.Perm.map_finRange_perm perm
+  have hFlatMap : ((List.finRange g).map perm).flatMap EdgeWord.handleBlock = (List.finRange g).flatMap (fun i => EdgeWord.handleBlock (perm i)) := by
+    exact List.flatMap_map _ _ _
+  rw [←hFlatMap]
+  exact TietzeEq_of_Perm_handleBlocks _ _ hPerm
 
 /--
 **Core Brahana lemma (orientable handle separation).**  Given that

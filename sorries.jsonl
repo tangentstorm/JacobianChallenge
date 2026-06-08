@@ -13,7 +13,6 @@
 {"f": "Jacobian/Periods/Hurewicz.lean", "l": 1691, "k": "theorem", "s": "polygon4g_quotient_path_finite_lift_subdivision", "n": 1, "o": 1, "r": 1}
 {"f": "Jacobian/Periods/PeriodFunctional.lean", "l": 555, "k": "theorem", "s": "riemann_classical_real_LI_input", "n": 1, "o": 1, "r": 0}
 {"f": "Jacobian/Periods/PeriodVectorsLIU.lean", "l": 57, "k": "theorem", "s": "riemann_classical_real_LI_inputU", "n": 1, "o": 1, "r": 1}
-{"f": "Jacobian/Periods/TietzeReduction.lean", "l": 98, "k": "theorem", "s": "handleSwap_index_ordering", "n": 1, "o": 1, "r": 1}
 {"f": "Jacobian/Periods/TietzeReduction.lean", "l": 90, "k": "theorem", "s": "orientable_handleSwap_grouping", "n": 1, "o": 1, "r": 1}
 {"f": "Jacobian/Periods/TietzeReduction.lean", "l": 82, "k": "theorem", "s": "orientable_letterPair_opposite_orientation", "n": 1, "o": 1, "r": 1}
 {"f": "Jacobian/Periods/TietzeReduction.lean", "l": 164, "k": "theorem", "s": "wordQuotient_homeomorph_of_inverseCancel_step", "n": 1, "o": 1, "r": 1}
