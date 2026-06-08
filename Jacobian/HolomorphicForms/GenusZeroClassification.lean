@@ -890,28 +890,6 @@ structure GenusZeroSmoothUniformization
       (⊤ : WithTop ℕ∞) (uniformization.symm : OnePoint ℂ → X)
 
 /--
-Genus-zero uniformization theorem, stated as the single high-level analytic
-provider needed by this file: a compact connected Riemann surface
-homeomorphic to the Riemann sphere admits a biholomorphism to `OnePoint ℂ`.
-
-The given homeomorphism is only topological; the theorem constructs a possibly
-different homeomorphism that is complex-smooth in both directions.
--/
-theorem exists_biholomorph_onePoint_of_genus_zero
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_e : X ≃ₜ OnePoint ℂ) :
-    ∃ (f : X ≃ₜ OnePoint ℂ),
-      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-        (⊤ : WithTop ℕ∞) f ∧
-      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-        (⊤ : WithTop ℕ∞) f.symm := by
-  -- Classical uniformization of a genus-zero compact Riemann surface.
-  sorry
-
-/--
 One local normalized Montel chart used to build the global two-chart selector.
 
 The analytic part is the chart-ball power-series limit together with its
@@ -1504,6 +1482,52 @@ theorem exists_contMDiff_homeomorph
   · exact data.contMDiff_invMap
 
 end GenusZeroGlobalGluingData
+
+/--
+Narrow analytic provider for genus-zero uniformization.
+
+Given only a topological homeomorphism `X ≃ₜ OnePoint ℂ`, construct the
+completed global gluing data: finite normalized source patches, the two public
+`OnePoint ℂ` target charts, overlap-compatible local coordinates, inverse
+branches, local inverse laws, and `ContMDiff` regularity of the resulting map
+and inverse.
+
+This is the remaining analytic selector/gluing-data existence frontier behind
+the public genus-zero uniformization theorem.
+-/
+theorem genusZeroGlobalGluingData_of_homeomorph_onePoint
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (GenusZeroGlobalGluingData X) := by
+  -- Remaining uniformization frontier: extract a finite normalized Montel
+  -- patch selector and package it as completed global gluing data.
+  sorry
+
+/--
+Genus-zero uniformization theorem, stated as the single high-level analytic
+provider needed by this file: a compact connected Riemann surface
+homeomorphic to the Riemann sphere admits a biholomorphism to `OnePoint ℂ`.
+
+The given homeomorphism is only topological; the theorem constructs a possibly
+different homeomorphism that is complex-smooth in both directions. The remaining
+analytic work is isolated in `genusZeroGlobalGluingData_of_homeomorph_onePoint`.
+-/
+theorem exists_biholomorph_onePoint_of_genus_zero
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (f : X ≃ₜ OnePoint ℂ),
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) f ∧
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) f.symm := by
+  obtain ⟨data⟩ := genusZeroGlobalGluingData_of_homeomorph_onePoint X _e
+  exact GenusZeroGlobalGluingData.exists_contMDiff_homeomorph data
 
 /-
 Early form-transport helper used by the top-down genus-zero route.  This is
