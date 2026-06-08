@@ -3055,6 +3055,51 @@ theorem onePointSimplePoleCoordinate_coe_apply_coe_ne
       ((z : ℂ) : OnePoint ℂ) = (z - a)⁻¹ := by
   simp [hz]
 
+@[simp] theorem onePointExtend_onePointSimplePoleCoordinate_infty_apply_infty :
+    onePointExtend
+      (onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ))
+      (OnePoint.infty : OnePoint ℂ)
+      (OnePoint.infty : OnePoint ℂ) = OnePoint.infty := by
+  simp
+
+@[simp] theorem onePointExtend_onePointSimplePoleCoordinate_infty_apply_coe
+    (z : ℂ) :
+    onePointExtend
+      (onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ))
+      (OnePoint.infty : OnePoint ℂ)
+      ((z : ℂ) : OnePoint ℂ) = ((z : ℂ) : OnePoint ℂ) := by
+  rw [onePointExtend_off]
+  · rw [onePointSimplePoleCoordinate_infty_apply_coe]
+  · exact OnePoint.coe_ne_infty z
+
+@[simp] theorem onePointExtend_onePointSimplePoleCoordinate_coe_apply_infty
+    (a : ℂ) :
+    onePointExtend
+      (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
+      ((a : ℂ) : OnePoint ℂ)
+      (OnePoint.infty : OnePoint ℂ) = (0 : ℂ) := by
+  rw [onePointExtend_off]
+  · simp
+  · exact OnePoint.infty_ne_coe a
+
+@[simp] theorem onePointExtend_onePointSimplePoleCoordinate_coe_apply_pole
+    (a : ℂ) :
+    onePointExtend
+      (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
+      ((a : ℂ) : OnePoint ℂ)
+      ((a : ℂ) : OnePoint ℂ) = OnePoint.infty := by
+  simp
+
+theorem onePointExtend_onePointSimplePoleCoordinate_coe_apply_coe_ne
+    {a z : ℂ} (hz : z ≠ a) :
+    onePointExtend
+      (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
+      ((a : ℂ) : OnePoint ℂ)
+      ((z : ℂ) : OnePoint ℂ) = (((z - a)⁻¹ : ℂ) : OnePoint ℂ) := by
+  rw [onePointExtend_off]
+  · simp [hz]
+  · exact fun h => hz (OnePoint.coe_injective h)
+
 /--
 The source coordinate obtained by pulling the explicit `OnePoint ℂ`
 simple-pole coordinate at `e P` back along a biholomorphism `e`.

@@ -1,23 +1,26 @@
-# Worker jc0 — Milestone C1.5a: correct finite-pole target coordinate normal form
+# Worker jc0 — Milestone C1.5b: expose target one-point extension normal forms
 
 ## Assignment
 
-Execute a smaller prerequisite step before retrying C1.5. The rejected C1.5
-attempt exposed that the current finite-pole branch of
-`onePointSimplePoleCoordinate` is not the continuous target coordinate at
-`∞`: for `Q = (a : ℂ)`, it currently evaluates the generic `getD 0` formula at
-`∞`, giving `(-a)⁻¹` instead of the correct limiting value `0`.
+Execute a narrow support step for C1.5. After C1.5a corrected
+`onePointSimplePoleCoordinate`, add sorry-free local lemmas describing the
+associated one-point extension
+`onePointExtend (onePointSimplePoleCoordinate Q) Q`.
 
-Change the finite-pole branch of
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean` so it explicitly
-handles `∞` by `0`, for example by using
-`x.elim 0 (fun z => if z = a then 0 else (z - a)⁻¹)`.
+The goal is to make the target-side continuity/order proof tractable without
+moving the #234 frontier yet. Prove definitional normal forms for the extension
+at the pole and away from the pole, split into the two target cases
+`Q = ∞` and `Q = (a : ℂ)`. In particular, record that:
 
-Then add small sorry-free local normal-form lemmas for the explicit coordinate:
-evaluation at `∞`, evaluation at a finite pole, and evaluation at finite
-off-pole points. This task is only the coordinate correction plus basic
-supporting lemmas; do not attempt to prove the target-side simple-pole field
-facts or move the #234 frontier in this commit.
+- at the pole, the one-point extension takes value `∞`;
+- for `Q = ∞`, finite points map to their usual finite coordinate;
+- for `Q = (a : ℂ)`, `∞` maps to `0`, the finite pole maps to `∞` through the
+  extension, and finite off-pole points map to `(z - a)⁻¹`.
+
+This is a Lean-code support commit only. Do not attempt to prove the full
+target-side `HasComplexSimplePolePrincipalPart`, do not split or replace the
+C1.4 field-facts provider, and do not move the reachable #234 root in this
+step.
 
 ## Scope
 
@@ -37,18 +40,20 @@ facts or move the #234 frontier in this commit.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks reverted C1.5 unchecked and lists C1.5a as
-      the next unchecked milestone.
-- [x] Inspect the current `onePointSimplePoleCoordinate` definition and nearby
-      provider stack in
+- [x] Confirm `.sci/plan.md` marks C1.5a complete and lists C1.5b/C1.5 as the
+      next C1 support/proof work.
+- [x] Inspect `onePointExtend`, `onePointSimplePoleCoordinate`, and the C1.4
+      field-facts provider in
       `Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
-- [x] Change the finite-pole coordinate branch so `∞` maps to `0` and finite
-      values are `if z = a then 0 else (z - a)⁻¹`.
-- [x] Add sorry-free normal-form/evaluation lemmas for the infinite-pole
-      coordinate, finite-pole coordinate at `∞`, finite-pole coordinate at the
-      pole, and finite-pole coordinate away from the pole.
+- [x] Add sorry-free `[simp]`/normal-form lemmas for
+      `onePointExtend (onePointSimplePoleCoordinate (∞ : OnePoint ℂ)) ∞` at
+      the pole and finite target points.
+- [x] Add sorry-free `[simp]`/normal-form lemmas for
+      `onePointExtend (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
+      ((a : ℂ) : OnePoint ℂ)` at `∞`, at the finite pole, and at finite
+      off-pole points.
 - [x] Keep the C1.4 field-facts provider as the sole reachable #234 root; do
-      not replace it with target/source transport providers in this step.
+      not introduce target/source provider splits in this step.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root
