@@ -1,11 +1,9 @@
-# Worker jc0 — Milestone C1.5h: prove target coordinate order-one helper
+# Worker jc0 — Milestone C1.5i: discharge target order field in #234 provider
 
 ## Assignment
 
-Execute one target-side support proof for C1.5. After C1.5g discharged the
-target modulus-divergence field from the remaining #234 provider, prove a local
-sorry-free helper in
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`:
+Execute a narrow provider-tightening step for C1.5. C1.5h proved the target
+order-one helper:
 
 ```lean
 theorem mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole
@@ -14,19 +12,20 @@ theorem mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole
       (onePointExtend (onePointSimplePoleCoordinate Q) Q) Q = 1
 ```
 
-Use the existing target extension normal forms. For `Q = ∞`, reduce the
-one-point extension to `id` and prove order one in the infinity chart. For
-`Q = (a : ℂ)`, use the finite-pole extension normal form as
-`onePointSphereInversion ∘ OnePoint.map (fun z : ℂ => z - a)` and prove the
-local order is one at `↑a` by reducing to the standard local coordinate.
+Use that helper to remove the target order-one obligation from the remaining
+#234 field-facts provider in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
 
-If needed, add small local sorry-free helper lemmas for the exact chart/order
-translation on `OnePoint ℂ`, but keep them scoped to this target coordinate.
+Concretely, update `BiholomorphOnePointSimplePolePullbackFieldFacts` so it no
+longer has a `target_orderAt_pole` field. Then update
+`biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` so the
+target `HasComplexSimplePolePrincipalPart.orderAt_pole` field is filled
+directly by
+`mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole (e P)`.
 
-This is a Lean-code support commit for one target field only. Do not thread the
-helper into `BiholomorphOnePointSimplePolePullbackFieldFacts` yet. Do not
-attempt to prove target meromorphicity or any source transport field in this
-step, and do not move the reachable #234 root.
+This should narrow the reachable #234 frontier from six exposed fields to five
+exposed fields. Do not attempt to prove target meromorphicity or any source
+transport field in this step, and do not change any public theorem signatures.
 
 ## Scope
 
@@ -46,22 +45,18 @@ step, and do not move the reachable #234 root.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks C1.5g complete and lists C1.5h/C1.5 as the
-      next C1 support/proof work.
-- [x] Inspect the definitions and local API for
-      `mapAnalyticOrderAt`, `onePointExtend`, `onePointSimplePoleCoordinate`,
-      `onePointExtend_onePointSimplePoleCoordinate_infty_eq_id`, and
-      `onePointExtend_onePointSimplePoleCoordinate_coe_eq_comp`.
-- [x] Inspect the relevant `OnePoint ℂ` chart/inversion order lemmas already in
-      `MeromorphicToBranchedCover.lean`, `OnePointCxChartedSpace.lean`, and
-      local analytic-order files before adding any helper.
-- [x] Prove the `Q = ∞` order-one case.
-- [x] Prove the finite-pole order-one case, adding only narrowly scoped
-      sorry-free helper lemmas if needed.
-- [x] Add the public local helper
-      `mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole`.
-- [x] Keep the six-field provider as the sole reachable #234 root; do not
-      remove `target_orderAt_pole` from the provider in this step.
+- [x] Confirm `.sci/plan.md` marks C1.5h complete and lists C1.5i/C1.5 as the
+      next C1 support/provider-tightening work.
+- [x] Inspect `BiholomorphOnePointSimplePolePullbackFieldFacts`,
+      `biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint`,
+      and `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint`.
+- [x] Remove the `target_orderAt_pole` field from
+      `BiholomorphOnePointSimplePolePullbackFieldFacts` and update comments to
+      say the provider now carries five remaining fields.
+- [x] Fill `targetPrincipalPart.orderAt_pole` from
+      `mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole (e P)`.
+- [x] Keep the C1.4 field-facts provider as the sole reachable #234 root, but
+      with one fewer required target field.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root
@@ -78,7 +73,7 @@ step, and do not move the reachable #234 root.
 ## Verification
 
 - `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`: succeeds
-  with existing `uses sorry` warnings at the six-field provider and
+  with existing `uses sorry` warnings at the five-field provider and
   `genusZeroHomeomorphOnePoint_of_analyticGenus_zero`.
 - `lake build Jacobian.Solution`: succeeds with existing `uses sorry` warnings.
 - `scripts/list-sorries.py --text`: still 20 reachable sorries total; the #234
