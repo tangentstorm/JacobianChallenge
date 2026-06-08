@@ -1229,27 +1229,106 @@ simple-pole / degree-one meromorphic data of the classical proof is then
 \emph{obtained from} this biholomorphism, not used to construct it.
 \end{proof}
 
+\begin{lemma}[Analytic genus zero gives a sphere homeomorphism]
+\label{lem:analytic-genus-zero-homeomorphic-sphere}
+\uses{lem:meromorphic-to-branched-cover-data, thm:degree-one-bijective}
+If a compact connected Riemann surface has analytic genus zero, then it is
+homeomorphic to the standard \(2\)-sphere.
+\lean{JacobianChallenge.HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+This is the topological classification route: construct a genus-zero
+single-pole meromorphic map, use the meromorphic-to-branched-cover bridge and
+degree-one bijectivity to identify \(X\) homeomorphically with
+\(\code{OnePoint}\,\C\), then compose with the fixed homeomorphism from
+\(\code{OnePoint}\,\C\) to \(S^2\).
+\end{proof}
+
 \begin{lemma}[Analytic genus zero gives a sphere biholomorphism (open)]
 \label{lem:exists-biholomorph-analyticgenus-zero}
-\uses{thm:uniformization-genus-zero-biholomorphism}
+\uses{lem:analytic-genus-zero-homeomorphic-sphere, thm:uniformization-genus-zero-biholomorphism}
 A compact connected Riemann surface with \(g_{\mathrm{an}}(X)=0\) admits a
-biholomorphism \(X\simeq\code{OnePoint}\,\C\). Packages
-Theorem~\ref{thm:uniformization-genus-zero-biholomorphism} into the
-\(g_{\mathrm{an}}=0\) hypothesis the meromorphic bridge consumes. Open
-obligation (\lstinline{sorry}) in the Lean development.
+biholomorphism \(X\simeq\code{OnePoint}\,\C\). This is the thin packaging
+layer that first gets the topological sphere homeomorphism from
+Lemma~\ref{lem:analytic-genus-zero-homeomorphic-sphere}, then feeds it to
+Theorem~\ref{thm:uniformization-genus-zero-biholomorphism}. Open obligation
+(\lstinline{sorry}) in the Lean development.
 Tracking: \ghissue{233}.
 \lean{JacobianChallenge.HolomorphicForms.exists_biholomorph_onePoint_of_analyticGenus_zero}
 \end{lemma}
 
+\begin{definition}[Complex simple-pole principal part]
+\label{def:complex-simple-pole-principal-part}
+For a complex function \(F:X\to\C\) and a point \(P\), the predicate
+\(\code{HasComplexSimplePolePrincipalPart}\,F\,P\) bundles the four analytic
+facts needed for a simple-pole map to the sphere: meromorphicity everywhere,
+continuity of the \(\code{OnePoint}\)-extension, chart-local order \(1\) at
+\(P\), and norm divergence along the punctured neighbourhood of \(P\).
+\lean{JacobianChallenge.HolomorphicForms.HasComplexSimplePolePrincipalPart}
+\leanok
+\end{definition}
+
+\begin{definition}[Simple-pole sphere data from a complex principal part]
+\label{def:simple-pole-to-sphere-data-of-complex-principal-part}
+\uses{def:complex-simple-pole-principal-part}
+A complex simple-pole principal part \(F\) at \(P\) canonically packages as
+\(\code{SimplePoleToSphereData}\) by using the \(\code{OnePoint}\)-extension of
+\(F\) as the map to the sphere.
+\lean{JacobianChallenge.HolomorphicForms.SimplePoleToSphereData.of_complexPrincipalPart}
+\leanok
+\end{definition}
+
 \begin{lemma}[Simple-pole principal part from a sphere biholomorphism (open)]
 \label{lem:complex-simple-pole-principal-part-biholomorph}
-\uses{thm:uniformization-genus-zero-biholomorphism}
+\uses{def:complex-simple-pole-principal-part}
 Pulling the standard simple-pole coordinate on \(\code{OnePoint}\,\C\) back along
 the biholomorphism yields a map with a simple-pole principal part at the chosen
-point. Open obligation (\lstinline{sorry}).
+point. This is the explicit-input principal-part frontier: prove the pulled-back
+coordinate is meromorphic everywhere, extends continuously to \(\infty\) at
+\(P\), has chart-local order \(1\), and diverges in norm near \(P\). Open
+obligation (\lstinline{sorry}).
 Tracking: \ghissue{234}.
 \lean{JacobianChallenge.HolomorphicForms.complexSimplePolePrincipalPart_of_biholomorph_onePoint}
 \end{lemma}
+
+\begin{lemma}[Single-pole analytic data from simple-pole sphere data]
+\label{lem:single-pole-analytic-data-of-simple-pole-to-sphere}
+\uses{def:simple-pole-to-sphere-data-of-complex-principal-part}
+A concrete \(\code{SimplePoleToSphereData}\) package at \(P\) gives the
+single-pole meromorphic analytic data used by the genus-zero meromorphic route.
+\lean{JacobianChallenge.HolomorphicForms.singlePoleAnalyticData_of_simplePoleToSphereData}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+The construction fills the meromorphic map fields directly from
+\(\code{SimplePoleToSphereData}\), records pole divisor \([P]\), and packages
+the degree-one branched-cover data supplied by the simple-pole order.
+\end{proof}
+
+\begin{lemma}[Single-pole analytic data from a biholomorphism (open)]
+\label{lem:single-pole-analytic-data-of-biholomorph}
+\uses{lem:complex-simple-pole-principal-part-biholomorph, def:simple-pole-to-sphere-data-of-complex-principal-part, lem:single-pole-analytic-data-of-simple-pole-to-sphere}
+An explicit biholomorphism \(X\simeq\code{OnePoint}\,\C\) gives the prescribed
+single-pole analytic meromorphic data at any point \(P\), once the pulled-back
+standard coordinate has the complex simple-pole principal part of
+Lemma~\ref{lem:complex-simple-pole-principal-part-biholomorph}.
+\lean{JacobianChallenge.HolomorphicForms.singlePoleAnalyticData_of_biholomorph_onePoint}
+\end{lemma}
+
+\begin{theorem}[Genus-zero single-pole analytic data (open)]
+\label{thm:genus-zero-single-pole-analytic-data}
+\uses{lem:exists-biholomorph-analyticgenus-zero, lem:single-pole-analytic-data-of-biholomorph}
+A compact connected Riemann surface of analytic genus zero admits the
+single-pole meromorphic analytic data needed for the prescribed-pole route at
+any chosen point \(P\).
+\lean{JacobianChallenge.HolomorphicForms.genusZero_singlePoleMeromorphicAnalyticData_nonempty}
+This is downstream assembly through the explicit biholomorphic uniformization
+frontier and the principal-part frontier. It is deliberately \emph{not} proved
+from \(\code{genusZero\_pointRRSection\_*}\) or the fixed-pole
+Riemann--Roch section chain, because that route depends on this single-pole
+package and would be circular.
+\end{theorem}
 
 \begin{lemma}[Pullback of holomorphic 1-forms via biholomorphism]
 \label{lem:holomorphic-one-form-pullback-via-biholo}
