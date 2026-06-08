@@ -643,7 +643,7 @@ holomorphic 1-forms to holomorphic 1-forms, yielding the
 
 \begin{theorem}[Holomorphic 1-forms vanish on the topological sphere]
 \label{thm:homeo-sphere-holomorphic-one-form-vanishing}
-\uses{lem:holomorphic-one-form-equiv-of-homeo-sphere, lem:identity-chart-coeff-contdiff, lem:inversion-chart-coeff-continuous-at-zero, lem:cotangent-transition-formula}
+\uses{lem:holomorphic-one-form-equiv-of-homeo-sphere, lem:onepoint-holomorphic-one-form-subsingleton}
 A compact connected Riemann surface homeomorphic to the standard
 \(2\)-sphere has \(\dim_{\C}H^{0}(X,\Omega^{1}_{X})=0\); equivalently,
 the space of holomorphic 1-forms is a subsingleton.
@@ -653,10 +653,9 @@ the space of holomorphic 1-forms is a subsingleton.
 \begin{proof}\leanok
 By Lemma~\ref{lem:holomorphic-one-form-equiv-of-homeo-sphere}, the
 holomorphic 1-form space on \(X\) is \(\C\)-linearly isomorphic to
-that on \(\CPone\). The latter is a subsingleton (it is in fact
-zero, since \(\CPone\) has genus 0). Subsingleton transports
-through linear equivalences, so \(H^{0}(X,\Omega^{1}_{X})\) is
-itself a subsingleton.
+that on \(\CPone\). Lemma~\ref{lem:onepoint-holomorphic-one-form-subsingleton}
+shows that the latter is a subsingleton. Subsingleton transports through
+linear equivalences, so \(H^{0}(X,\Omega^{1}_{X})\) is itself a subsingleton.
 \end{proof}
 
 \subsection{Identity- and inversion-chart coefficient extraction}
@@ -828,6 +827,80 @@ Apply the chain rule for cotangent vectors under
 \(z\leftrightarrow w=z^{-1}\):
 \(f(z)\,dz=f(w^{-1})\,d(w^{-1})=-f(w^{-1})\,w^{-2}\,dw\). Equating
 with \(g(w)\,dw\) yields the identity.
+\end{proof}
+
+\begin{lemma}[Liouville vanishing for entire functions decaying at infinity]
+\label{lem:entire-tendsto-zero-eq-zero}
+An entire function \(f:\C\to\C\) which tends to \(0\) along the
+cocompact filter is identically zero.
+\lean{JacobianChallenge.HolomorphicForms.entire_tendsto_zero_eq_zero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+This is Mathlib's Liouville-style lemma
+\code{Differentiable.eq\_zero\_of\_tendsto\_zero\_cocompact}, applied to the
+given complex differentiable function and its cocompact decay hypothesis.
+\end{proof}
+
+\begin{lemma}[Finite-point vanishing on \(\code{OnePoint}\,\C\)]
+\label{lem:onepoint-holomorphic-one-form-finite-vanishing}
+\uses{lem:entire-tendsto-zero-eq-zero, lem:identity-chart-coeff-contdiff, lem:inversion-chart-coeff-continuous-at-zero, lem:cotangent-transition-formula}
+For a holomorphic \(1\)-form \(\omega\) on \(\CPone\), the value of
+\(\omega\) at every finite point \(z:\C\subset\CPone\) is zero.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_onePointCx_toFun_finite_eq_zero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Read \(\omega\) in the identity chart as \(f(z)\,dz\).
+Lemma~\ref{lem:identity-chart-coeff-contdiff} supplies the entire coefficient,
+while Lemma~\ref{lem:cotangent-transition-formula}, together with continuity in
+the inversion chart, gives cocompact decay of \(f\). Applying
+Lemma~\ref{lem:entire-tendsto-zero-eq-zero} gives \(f=0\), hence \(\omega\)
+vanishes at all finite points.
+\end{proof}
+
+\begin{lemma}[Pointwise vanishing on \(\code{OnePoint}\,\C\)]
+\label{lem:onepoint-holomorphic-one-form-pointwise-vanishing}
+\uses{lem:onepoint-holomorphic-one-form-finite-vanishing, lem:inversion-chart-coeff-continuous-at-zero}
+Every holomorphic \(1\)-form on \(\CPone\) evaluates to zero at every point,
+including the point at infinity.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_onePointCx_toFun_eq_zero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Finite points are covered by
+Lemma~\ref{lem:onepoint-holomorphic-one-form-finite-vanishing}. At infinity,
+the inversion-chart coefficient is continuous at \(0\) by
+Lemma~\ref{lem:inversion-chart-coeff-continuous-at-zero}; since it vanishes on
+the punctured neighbourhood by finite-point vanishing, continuity forces the
+value at \(0\), i.e. the value at \(\infty\), to vanish as well.
+\end{proof}
+
+\begin{lemma}[Holomorphic \(1\)-forms on \(\code{OnePoint}\,\C\) are subsingletons]
+\label{lem:onepoint-holomorphic-one-form-subsingleton}
+\uses{lem:onepoint-holomorphic-one-form-pointwise-vanishing}
+The space \(H^{0}(\CPone,\Omega^{1}_{\CPone})\) is a subsingleton.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_onePointCx_subsingleton}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Two holomorphic \(1\)-forms on \(\CPone\) have the same pointwise value, since
+both vanish everywhere by
+Lemma~\ref{lem:onepoint-holomorphic-one-form-pointwise-vanishing}. Hence the
+forms are equal.
+\end{proof}
+
+\begin{lemma}[Analytic genus of \(\code{OnePoint}\,\C\)]
+\label{lem:analytic-genus-onepoint-zero}
+\uses{lem:onepoint-holomorphic-one-form-subsingleton}
+The analytic genus of \(\CPone=\code{OnePoint}\,\C\) is zero.
+\lean{JacobianChallenge.HolomorphicForms.analyticGenus_onePointCx_eq_zero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+By Lemma~\ref{lem:onepoint-holomorphic-one-form-subsingleton}, the module of
+holomorphic \(1\)-forms on \(\CPone\) is a subsingleton, hence zero-dimensional.
+The definition of analytic genus is this complex dimension.
 \end{proof}
 
 \subsection{Sup-norm completeness decomposition (CompactRiemannSurface)}
