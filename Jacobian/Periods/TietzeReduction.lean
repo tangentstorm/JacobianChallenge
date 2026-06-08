@@ -102,10 +102,119 @@ theorem handle_collection_substep {g : ℕ} (w : EdgeWord g)
       u.length < w.length := by
   sorry
 
-/-- Tietze equivalence is preserved under left-append. -/
-theorem TietzeEq_append_left {g : ℕ} {A B : EdgeWord g} (C : EdgeWord g) (h : EdgeWord.TietzeEq A B) :
-    EdgeWord.TietzeEq (C ++ A) (C ++ B) := by
-  sorry
+lemma InverseCancel_append_left {g : ℕ} (C : EdgeWord g) {A B : EdgeWord g} (h : EdgeWord.InverseCancel A B) :
+    EdgeWord.InverseCancel (C ++ A) (C ++ B) := by
+  cases h
+  · rename_i i xs ys
+    have h1 : C ++ (xs ++ [Letter.a i, Letter.aInv i] ++ ys) = (C ++ xs) ++ [Letter.a i, Letter.aInv i] ++ ys := by simp [List.append_assoc]
+    have h2 : C ++ (xs ++ ys) = (C ++ xs) ++ ys := by simp [List.append_assoc]
+    rw [h1, h2]
+    exact EdgeWord.InverseCancel.ax_aInv i (C ++ xs) ys
+  · rename_i i xs ys
+    have h1 : C ++ (xs ++ [Letter.aInv i, Letter.a i] ++ ys) = (C ++ xs) ++ [Letter.aInv i, Letter.a i] ++ ys := by simp [List.append_assoc]
+    have h2 : C ++ (xs ++ ys) = (C ++ xs) ++ ys := by simp [List.append_assoc]
+    rw [h1, h2]
+    exact EdgeWord.InverseCancel.aInv_a i (C ++ xs) ys
+  · rename_i i xs ys
+    have h1 : C ++ (xs ++ [Letter.b i, Letter.bInv i] ++ ys) = (C ++ xs) ++ [Letter.b i, Letter.bInv i] ++ ys := by simp [List.append_assoc]
+    have h2 : C ++ (xs ++ ys) = (C ++ xs) ++ ys := by simp [List.append_assoc]
+    rw [h1, h2]
+    exact EdgeWord.InverseCancel.bx_bInv i (C ++ xs) ys
+  · rename_i i xs ys
+    have h1 : C ++ (xs ++ [Letter.bInv i, Letter.b i] ++ ys) = (C ++ xs) ++ [Letter.bInv i, Letter.b i] ++ ys := by simp [List.append_assoc]
+    have h2 : C ++ (xs ++ ys) = (C ++ xs) ++ ys := by simp [List.append_assoc]
+    rw [h1, h2]
+    exact EdgeWord.InverseCancel.bInv_b i (C ++ xs) ys
+
+lemma TietzeEq_commute_handleBlock {g : ℕ} (i : Fin g) (A B : EdgeWord g) :
+    EdgeWord.TietzeEq (A ++ EdgeWord.handleBlock i ++ B) (EdgeWord.handleBlock i ++ A ++ B) := by
+  let H := EdgeWord.handleBlock i
+  have s1 : EdgeWord.HandleSwap (A ++ H ++ B) (B ++ H ++ A) := EdgeWord.HandleSwap.move i A B H rfl
+  have eq1 : (B ++ H ++ A).rotate B.length = H ++ A ++ B := by
+    have h1 : B ++ (H ++ A) = B ++ H ++ A := by simp [List.append_assoc]
+    have h2 : (H ++ A) ++ B = H ++ A ++ B := by simp [List.append_assoc]
+    rw [←h1, List.rotate_append_length_eq, h2]
+  have s2 : EdgeWord.TietzeStep (B ++ H ++ A) (H ++ A ++ B) := by
+    rw [←eq1]
+    exact EdgeWord.TietzeStep.rotate _
+  exact Relation.ReflTransGen.trans (Relation.ReflTransGen.single (EdgeWord.TietzeStep.swap s1)) (Relation.ReflTransGen.single s2)
+
+lemma TietzeEq_commute_handleBlock_inv {g : ℕ} (i : Fin g) (A B : EdgeWord g) :
+    EdgeWord.TietzeEq (EdgeWord.handleBlock i ++ A ++ B) (A ++ EdgeWord.handleBlock i ++ B) := by
+  let H := EdgeWord.handleBlock i
+  have eq1 : (H ++ A ++ B).rotate (H ++ A).length = B ++ H ++ A := by
+    have h1 : (H ++ A) ++ B = H ++ A ++ B := by simp [List.append_assoc]
+    have h2 : B ++ (H ++ A) = B ++ H ++ A := by simp [List.append_assoc]
+    rw [←h1, List.rotate_append_length_eq, h2]
+  have s1 : EdgeWord.TietzeStep (H ++ A ++ B) (B ++ H ++ A) := by
+    rw [←eq1]
+    exact EdgeWord.TietzeStep.rotate _
+  have s2 : EdgeWord.HandleSwap (B ++ H ++ A) (A ++ H ++ B) := EdgeWord.HandleSwap.move i B A H rfl
+  exact Relation.ReflTransGen.trans (Relation.ReflTransGen.single s1) (Relation.ReflTransGen.single (EdgeWord.TietzeStep.swap s2))
+
+lemma TietzeEq_append_handleBlock_swap {g : ℕ} (i : Fin g) (A_ B_ : EdgeWord g) (h : EdgeWord.HandleSwap A_ B_) :
+    EdgeWord.TietzeEq (EdgeWord.handleBlock i ++ A_) (EdgeWord.handleBlock i ++ B_) := by
+  cases h
+  rename_i j xs ys h_block hh
+  let C := EdgeWord.handleBlock i
+  
+  have s1 : EdgeWord.TietzeStep (C ++ (xs ++ h_block ++ ys)) ((C ++ (xs ++ h_block ++ ys)).rotate C.length) := EdgeWord.TietzeStep.rotate _
+  have eq1 : (C ++ (xs ++ h_block ++ ys)).rotate C.length = (xs ++ h_block ++ ys) ++ C := by exact List.rotate_append_length_eq C _
+  have st1 : EdgeWord.TietzeEq (C ++ (xs ++ h_block ++ ys)) ((xs ++ h_block ++ ys) ++ C) := by
+    rw [←eq1]; exact Relation.ReflTransGen.single s1
+
+  have eqAC : (xs ++ h_block ++ ys) ++ C = xs ++ h_block ++ (ys ++ C) := by simp [List.append_assoc]
+  have s2_swap : EdgeWord.HandleSwap (xs ++ h_block ++ (ys ++ C)) ((ys ++ C) ++ h_block ++ xs) := EdgeWord.HandleSwap.move j xs (ys ++ C) h_block hh
+  have st2 : EdgeWord.TietzeEq ((xs ++ h_block ++ ys) ++ C) ((ys ++ C) ++ h_block ++ xs) := by
+    rw [eqAC]; exact Relation.ReflTransGen.single (EdgeWord.TietzeStep.swap s2_swap)
+
+  have eq_ys_C : (ys ++ C) ++ h_block ++ xs = ys ++ C ++ (h_block ++ xs) := by simp [List.append_assoc]
+  have st2_1 : EdgeWord.TietzeEq ((xs ++ h_block ++ ys) ++ C) (ys ++ C ++ (h_block ++ xs)) := by
+    rw [←eq_ys_C]; exact st2
+
+  have st3 : EdgeWord.TietzeEq (ys ++ C ++ (h_block ++ xs)) (C ++ ys ++ (h_block ++ xs)) := TietzeEq_commute_handleBlock i ys (h_block ++ xs)
+  have ht1 := Relation.ReflTransGen.trans st2_1 st3
+
+  have eq_CB : C ++ ys ++ (h_block ++ xs) = C ++ (ys ++ h_block ++ xs) := by simp [List.append_assoc]
+  have step23 : EdgeWord.TietzeEq ((xs ++ h_block ++ ys) ++ C) (C ++ (ys ++ h_block ++ xs)) := by
+    rw [←eq_CB]; exact ht1
+
+  exact Relation.ReflTransGen.trans st1 step23
+
+lemma TietzeEq_append_handleBlock_rotate {g : ℕ} (i : Fin g) (A : EdgeWord g) (k : ℕ) :
+    EdgeWord.TietzeEq (EdgeWord.handleBlock i ++ A) (EdgeWord.handleBlock i ++ A.rotate k) := by
+  let k' := k % A.length
+  let X := A.take k'
+  let Y := A.drop k'
+  have hA : A = X ++ Y := (List.take_append_drop k' A).symm
+  have hB : A.rotate k = Y ++ X := List.rotate_eq_drop_append_take_mod
+  have h1 : EdgeWord.handleBlock i ++ A = EdgeWord.handleBlock i ++ X ++ Y := by rw [hA]; simp [List.append_assoc]
+  have h2 : EdgeWord.handleBlock i ++ A.rotate k = EdgeWord.handleBlock i ++ Y ++ X := by rw [hB]; simp [List.append_assoc]
+  rw [h1, h2]
+  have st1 := TietzeEq_commute_handleBlock_inv i X Y
+  have s_swap : EdgeWord.HandleSwap (X ++ EdgeWord.handleBlock i ++ Y) (Y ++ EdgeWord.handleBlock i ++ X) := EdgeWord.HandleSwap.move i X Y _ rfl
+  have st2 := Relation.ReflTransGen.single (EdgeWord.TietzeStep.swap s_swap)
+  have st3 := TietzeEq_commute_handleBlock i Y X
+  exact Relation.ReflTransGen.trans st1 (Relation.ReflTransGen.trans st2 st3)
+
+lemma TietzeEq_append_handleBlock_step {g : ℕ} (i : Fin g) {A B : EdgeWord g} (h : EdgeWord.TietzeStep A B) :
+    EdgeWord.TietzeEq (EdgeWord.handleBlock i ++ A) (EdgeWord.handleBlock i ++ B) := by
+  cases h
+  · rename_i hc
+    exact EdgeWord.WordEq.toTietzeEq (Relation.ReflTransGen.single (InverseCancel_append_left _ hc))
+  · rename_i hs
+    exact TietzeEq_append_handleBlock_swap i _ _ hs
+  · rename_i k
+    exact TietzeEq_append_handleBlock_rotate i _ k
+
+/-- Tietze equivalence is preserved under left-append of a handle block. -/
+theorem TietzeEq_append_left_handleBlock {g : ℕ} (i : Fin g) {A B : EdgeWord g} (h : EdgeWord.TietzeEq A B) :
+    EdgeWord.TietzeEq (EdgeWord.handleBlock i ++ A) (EdgeWord.handleBlock i ++ B) := by
+  induction h with
+  | refl => exact Relation.ReflTransGen.refl
+  | tail _ h_eq ih =>
+    have s1 := TietzeEq_append_handleBlock_step i h_eq
+    exact Relation.ReflTransGen.trans ih s1
 
 /-- Classical Brahana handle-collection: a reduced, inverse-paired word over the
 genus-`g` alphabet is `TietzeEq` to a concatenation of complete handle blocks
@@ -133,7 +242,7 @@ theorem orientable_handleBlock_collection
       use i :: l
       have h_bind : (i :: l).flatMap EdgeWord.handleBlock = EdgeWord.handleBlock i ++ l.flatMap EdgeWord.handleBlock := rfl
       rw [h_bind]
-      have h2 := TietzeEq_append_left (EdgeWord.handleBlock i) hl
+      have h2 := TietzeEq_append_left_handleBlock i hl
       exact hTietze.trans h2
 
 /-- The topological constraint: if a word is the global boundary, the resulting list
