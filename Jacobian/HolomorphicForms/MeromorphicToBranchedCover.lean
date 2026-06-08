@@ -3251,6 +3251,57 @@ theorem continuous_onePointExtend_onePointSimplePoleCoordinate
         change Filter.map (fun z : ℂ => z - a) (Filter.cocompact ℂ) ≤ Filter.cocompact ℂ
         simpa [sub_eq_add_neg] using (Homeomorph.addRight (-a : ℂ)).map_coclosedCompact.le
 
+lemma tendsto_norm_atTop_of_tendsto_onePoint_coe_infty
+    {α : Type*} {l : Filter α} {g : α → ℂ}
+    (h : Filter.Tendsto (fun x => ((g x : ℂ) : OnePoint ℂ)) l
+      (𝓝 (OnePoint.infty : OnePoint ℂ))) :
+    Filter.Tendsto (fun x => ‖g x‖) l Filter.atTop := by
+  rw [Filter.tendsto_atTop]
+  intro R
+  let K : Set ℂ := Metric.closedBall (0 : ℂ) R
+  have hU : ((fun z : ℂ => ((z : ℂ) : OnePoint ℂ)) '' Kᶜ ∪
+        {OnePoint.infty}) ∈ 𝓝 (OnePoint.infty : OnePoint ℂ) := by
+    exact (OnePoint.le_nhds_infty (f := 𝓝 (OnePoint.infty : OnePoint ℂ))).mp
+      le_rfl K Metric.isClosed_closedBall (isCompact_closedBall (0 : ℂ) R)
+  filter_upwards [h hU] with x hx
+  rcases hx with hx | hx
+  · rcases hx with ⟨z, hz, hzg⟩
+    have hzg' : z = g x := OnePoint.coe_injective hzg
+    subst z
+    have hnot_ball : g x ∉ K := hz
+    have hnot_le : ¬ ‖g x‖ ≤ R := by
+      intro hle
+      exact hnot_ball (by simp [K, Metric.mem_closedBall, dist_eq_norm, hle])
+    exact le_of_lt (lt_of_not_ge hnot_le)
+  · have hginfty : ((g x : ℂ) : OnePoint ℂ) = OnePoint.infty := by
+      exact Set.mem_singleton_iff.mp hx
+    exact (OnePoint.coe_ne_infty (g x) hginfty).elim
+
+theorem tendsto_norm_onePointSimplePoleCoordinate_atTop
+    (Q : OnePoint ℂ) :
+    Filter.Tendsto (fun q => ‖onePointSimplePoleCoordinate Q q‖)
+      (nhdsWithin Q ({Q}ᶜ : Set (OnePoint ℂ))) Filter.atTop := by
+  let F := onePointSimplePoleCoordinate Q
+  have hcontinuous :
+      Filter.Tendsto (onePointExtend F Q) (𝓝 Q)
+        (𝓝 (OnePoint.infty : OnePoint ℂ)) := by
+    simpa [F] using
+      ((continuous_onePointExtend_onePointSimplePoleCoordinate Q).continuousAt (x := Q)).tendsto
+  have hwithin :
+      Filter.Tendsto (onePointExtend F Q) (nhdsWithin Q ({Q}ᶜ : Set (OnePoint ℂ)))
+        (𝓝 (OnePoint.infty : OnePoint ℂ)) :=
+    hcontinuous.mono_left nhdsWithin_le_nhds
+  have hcoe :
+      Filter.Tendsto (fun q => ((F q : ℂ) : OnePoint ℂ))
+        (nhdsWithin Q ({Q}ᶜ : Set (OnePoint ℂ)))
+        (𝓝 (OnePoint.infty : OnePoint ℂ)) := by
+    refine hwithin.congr' ?_
+    filter_upwards [eventually_nhdsWithin_of_forall
+        (s := ({Q}ᶜ : Set (OnePoint ℂ))) (a := Q)
+        (fun q hq => by simpa using hq)] with q hq
+    exact onePointExtend_off (F := F) (P := Q) (x := q) hq
+  simpa [F] using tendsto_norm_atTop_of_tendsto_onePoint_coe_infty hcoe
+
 /--
 The source coordinate obtained by pulling the explicit `OnePoint ℂ`
 simple-pole coordinate at `e P` back along a biholomorphism `e`.

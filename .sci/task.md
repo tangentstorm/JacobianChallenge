@@ -1,31 +1,33 @@
-# Worker jc0 — Milestone C1.5e: discharge target continuity field in #234 provider
+# Worker jc0 — Milestone C1.5f: prove target modulus divergence helper
 
 ## Assignment
 
-Execute a narrow provider-tightening step for C1.5. C1.5d proved the target
-continuity helper:
+Execute one target-side support proof for C1.5. After C1.5e discharged the
+target continuity field from the remaining #234 provider, prove a local
+sorry-free helper in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`:
 
 ```lean
-continuous_onePointExtend_onePointSimplePoleCoordinate
+theorem tendsto_norm_onePointSimplePoleCoordinate_atTop
     (Q : OnePoint ℂ) :
-    Continuous (onePointExtend (onePointSimplePoleCoordinate Q) Q)
+    Filter.Tendsto (fun q => ‖onePointSimplePoleCoordinate Q q‖)
+      (nhdsWithin Q ({Q}ᶜ : Set (OnePoint ℂ))) Filter.atTop
 ```
 
-Use that helper to remove the target continuity obligation from the remaining
-#234 field-facts provider in
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
+Use the existing case split on `Q`. For `Q = ∞`, use the normal form
+`onePointSimplePoleCoordinate ∞ q = q.getD 0` and prove that `‖z‖ → ∞` along
+the cocompact/punctured neighborhood of `∞`. For `Q = (a : ℂ)`, use the finite
+normal form `(z - a)⁻¹` off the pole and prove the norm tends to `∞` along the
+punctured finite neighborhood of `a`.
 
-Concretely, update `BiholomorphOnePointSimplePolePullbackFieldFacts` so it no
-longer has a `target_continuous_extension` field. Then update
-`biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` so the
-target `HasComplexSimplePolePrincipalPart.continuous_extension` field is filled
-directly by
-`continuous_onePointExtend_onePointSimplePoleCoordinate (e P)`.
+If needed, add small local sorry-free filter lemmas for translating between
+`OnePoint ℂ` punctured neighborhoods and the corresponding complex filters,
+but keep them scoped to this target coordinate.
 
-This should narrow the reachable #234 frontier from eight exposed fields to
-seven exposed fields. Do not attempt to prove target meromorphicity, order, or
-modulus divergence in this step, and do not change any public theorem
-signatures.
+This is a Lean-code support commit for one target field only. Do not thread the
+helper into `BiholomorphOnePointSimplePolePullbackFieldFacts` yet. Do not
+attempt to prove target meromorphicity or order in this step, and do not move
+the reachable #234 root.
 
 ## Scope
 
@@ -45,18 +47,19 @@ signatures.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks C1.5d complete and lists C1.5e/C1.5 as the
+- [x] Confirm `.sci/plan.md` marks C1.5e complete and lists C1.5f/C1.5 as the
       next C1 support/proof work.
-- [x] Inspect `BiholomorphOnePointSimplePolePullbackFieldFacts`,
-      `biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint`,
-      and `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint`.
-- [x] Remove the `target_continuous_extension` field from
-      `BiholomorphOnePointSimplePolePullbackFieldFacts` and update comments to
-      say the provider now carries seven remaining fields.
-- [x] Fill `targetPrincipalPart.continuous_extension` from
-      `continuous_onePointExtend_onePointSimplePoleCoordinate (e P)`.
-- [x] Keep the C1.4 field-facts provider as the sole reachable #234 root, but
-      with one fewer required target field.
+- [x] Inspect the coordinate normal-form lemmas and available `OnePoint` filter
+      facts for finite points and `∞` in
+      `Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean` and
+      `OnePointCxChartedSpace.lean`.
+- [x] Prove the `Q = ∞` modulus-divergence case.
+- [x] Prove the finite-pole modulus-divergence case, adding only narrowly
+      scoped sorry-free filter helper lemmas if needed.
+- [x] Add the public local helper
+      `tendsto_norm_onePointSimplePoleCoordinate_atTop`.
+- [x] Keep the seven-field provider as the sole reachable #234 root; do not
+      remove `target_modulus_tendsto` from the provider in this step.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root
