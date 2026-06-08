@@ -446,3 +446,108 @@ commands, and write `.sci/result.md` with the jc1/jc4/jc5 execution split. The
 split should keep #227 before #241, schedule Cluster-A lift/side-arc work before
 #230 coefficient independence, and assign #242/#243 separately by de Rham
 primitive existence versus Hodge period-payload exactness.
+
+# V Final Verification and Execution Split
+
+Status: Phase 1 complete.
+
+## Final Graph Audit
+
+The eight Chapter-06 frontier declarations remain open and unmarked by
+proof-level `\leanok`:
+
+- #227 `riemann_classical_real_LI_input`:
+  `sorries.jsonl` has the Lean row and blueprint row as `c:"sorry"`.
+- #228 `polygon4g_quotient_path_finite_lift_subdivision`:
+  Lean row and blueprint row are `c:"sorry"`.
+- #229 `polygon4g_partial_side_arc_homologous_to_edge_chain`:
+  Lean row and blueprint row are `c:"sorry"`.
+- #230 `edgeChain_sum_singular_boundary_scalar_coefficient_zero`:
+  Lean row and blueprint row are `c:"sorry"`.
+- #240 `h1_basis_of_compact_riemann_surfaceU`:
+  Lean row and blueprint row are `c:"sorry"`.
+- #241 `riemann_classical_real_LI_inputU`:
+  Lean row and blueprint row are `c:"sorry"`.
+- #242 `deRhamComparisonMap1_zero_period_primitiveExists_provider`:
+  Lean row and blueprint row are `c:"sorry"`.
+- #243 `hodgeRemainder_periodPayload_exact`:
+  Lean row and blueprint row are `c:"sorry"`.
+
+The mapped substrate nodes introduced in B1/B2/A1/A2/C1 are either
+graph-coloured `done`, or intentionally `sorry-dep` package nodes whose only
+open dependency is one of the frontier providers above. No direct frontier node
+was marked green.
+
+## Verification
+
+- `python3 scripts/blueprint_audit.py` succeeded with exit code 0:
+  110 statement-style environments, 109 with `\lean{...}`, 1 `\notready`,
+  90 clean, and 18 expected declaration-only open/sorry-dependent nodes.
+- `python3 scripts/list-sorries.py --text` succeeded and reported 20 reachable
+  sorries total, including exactly the 8 Chapter-06 frontiers listed above.
+- `bash scripts/build-blueprint.sh` succeeded end-to-end. It rebuilt the web
+  blueprint, refreshed `sorries.jsonl` with 322 graph-coloured records, and
+  verified the post-processing injections.
+- `lake build Jacobian.Solution` succeeded with the existing `declaration uses
+  sorry` warnings only; no new build errors were introduced.
+
+## Execution Split
+
+### jc1: Riemann bilinear / period-rank cluster
+
+Own #227, #241, and #240:
+
+- First discharge #227 `riemann_classical_real_LI_input` in
+  `Jacobian/Periods/PeriodFunctional.lean`. This is the keystone analytic
+  input: upgrade the algebraic bilinear and Hodge-positivity substrate to the
+  classical Riemann bilinear/positivity statement over the chosen period basis.
+- Then discharge #241 `riemann_classical_real_LI_inputU` in
+  `Jacobian/Periods/PeriodVectorsLIU.lean` as the universe-`u` transport of
+  #227. Do not start #241 before #227 is stable.
+- Discharge #240 `h1_basis_of_compact_riemann_surfaceU` in
+  `Jacobian/Periods/H1BasisU.lean` alongside the period-rank work. It is the
+  universe-`u` H1 basis/surface-classification port needed by the period
+  lattice node; coordinate with jc4 on any shared cellular-homology substrate.
+
+### jc4: Hurewicz / singular-homology cluster
+
+Own #228, #229, and #230:
+
+- First discharge #228 `polygon4g_quotient_path_finite_lift_subdivision` in
+  `Jacobian/Periods/Hurewicz.lean`, using the quotient local-lift substrate and
+  the downstream polygon-simplex lift package.
+- In parallel or next, discharge #229
+  `polygon4g_partial_side_arc_homologous_to_edge_chain`, after the endpoint
+  repair bookkeeping substrate is stable.
+- Discharge #230 `edgeChain_sum_singular_boundary_scalar_coefficient_zero`
+  only after the lift/side-arc inputs are stable. Its finite signed-face
+  coefficient algebra is already mapped; the remaining work is homological
+  edge-chain independence.
+
+### jc5: de Rham / Hodge exactness cluster
+
+Own #242 and #243:
+
+- Discharge #242
+  `deRhamComparisonMap1_zero_period_primitiveExists_provider` in
+  `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean`. The surrounding
+  zero-period/kernel and primitive-to-exact assemblies are already mapped; the
+  remaining frontier is period-vanishing implies global primitive.
+- Discharge #243 `hodgeRemainder_periodPayload_exact` in
+  `Jacobian/HolomorphicForms/HodgeProjection.lean`. The harmonic embedding and
+  kernel/exact wrappers are already mapped; the remaining frontier is exactness
+  of the period-payload remainder.
+
+## Coordination Notes
+
+- #227 is upstream of #241. Treat #241 as a port, not as an independent analytic
+  proof.
+- #240 can progress independently of #227, but its H1 basis/cellular-homology
+  interpretation should stay compatible with jc4's Hurewicz model.
+- #230 should not be attempted as a standalone finite-algebra proof; it consumes
+  the finite coefficient substrate plus the topological edge-chain independence
+  supplied after #228/#229.
+- #242 and #243 both depend on giving `SmoothDiffForm`/`exteriorDerivative`
+  real chartwise content. Keep the providers separate: #242 is the de Rham
+  zero-period primitive theorem; #243 is the Hodge period-payload exactness
+  theorem.
