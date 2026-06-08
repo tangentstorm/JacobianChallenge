@@ -591,9 +591,26 @@ zero chain-integration placeholder, while `riemann_bilinear_identity` and
 `hodge_form_posDef_on_periods` only give the algebraic coordinate/Hodge
 consequences once a concrete H₁ basis has already been identified with the
 classical symplectic basis and its period sum with the manifold Hodge form.
-Thus this theorem is the narrowest remaining Type-0 #227 provider: the missing
-classical input is exactly the basis-aligned Stokes/Hodge-positive period-matrix
-nondegeneracy for the selected integral H₁ basis.
+Thus the remaining Type-0 #227 provider must be a basis-aligned
+Stokes/Hodge-positive separation theorem for the selected integral H₁ basis.
+-/
+theorem h1_basis_periodPairing_realKernel_trivial
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (B : Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
+      (IntegralOneCycle X)) :
+    ∀ c : Fin (2 * analyticGenus ℂ X) → ℝ,
+      (∑ i, c i • (periodPairing ℂ X) (B i) = 0) →
+      ∀ i, c i = 0 := by
+  sorry
+
+/--
+**Coordinate form of the H₁-basis period-kernel provider.** This is a
+sorry-free transport of the functional-kernel provider through the
+basis-aligned dual equivalence.
 -/
 theorem h1_basis_periodMatrix_realKernel_trivial
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -608,7 +625,35 @@ theorem h1_basis_periodMatrix_realKernel_trivial
         ∑ i, (c i : ℂ) *
           (holomorphicOneFormDualEquiv ℂ X ((periodPairing ℂ X) (B i))) j = 0) →
       ∀ i, c i = 0 := by
-  sorry
+  classical
+  intro c hc
+  exact h1_basis_periodPairing_realKernel_trivial X B c (by
+    let e := (holomorphicOneFormDualEquiv ℂ X).restrictScalars ℝ
+    apply e.injective
+    ext j
+    calc
+      e (∑ i, c i • (periodPairing ℂ X) (B i)) j =
+          (∑ i, c i • e ((periodPairing ℂ X) (B i))) j := by
+        have hmap :
+            e (∑ i, c i • (periodPairing ℂ X) (B i)) =
+              ∑ i, c i • e ((periodPairing ℂ X) (B i)) := by
+          rw [map_sum]
+          refine Finset.sum_congr rfl (fun i _ => ?_)
+          rw [map_smul]
+        exact congrArg (fun v => v j) hmap
+      _ = ∑ i, (c i : ℂ) *
+          (holomorphicOneFormDualEquiv ℂ X ((periodPairing ℂ X) (B i))) j := by
+        rw [Finset.sum_apply]
+        refine Finset.sum_congr rfl (fun i _ => ?_)
+        rw [Pi.smul_apply, Complex.real_smul]
+        change (c i : ℂ) *
+            (holomorphicOneFormDualEquiv ℂ X ((periodPairing ℂ X) (B i))) j =
+          (c i : ℂ) *
+            (holomorphicOneFormDualEquiv ℂ X ((periodPairing ℂ X) (B i))) j
+        rfl
+      _ = 0 := hc j
+      _ = e 0 j := by
+        exact (congrArg (fun v => v j) (map_zero e)).symm)
 
 /--
 **Classical period-coordinate nondegeneracy provider for an H₁ basis.** This is

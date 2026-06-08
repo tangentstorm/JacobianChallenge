@@ -1,17 +1,17 @@
 # Worker jc1 — Plan: Issue #227 Type-0 Riemann Classical Period-Coordinate Frontier
 
-Discharge the current reachable Type-0 #227 root in
+Discharge or maximally narrow the current reachable Type-0 #227 root in
 `Jacobian/Periods/PeriodFunctional.lean`:
 
 ```lean
-h1_basis_periodCoordinate_linearIndependent
+h1_basis_periodPairing_realKernel_trivial
 ```
 
 This is the narrowed replacement for the original broad
-`riemann_classical_real_LI_input` sorry. The public theorem now consumes a
-`RiemannClassicalPeriodBasis` hypothesis and is sorry-free; the remaining work
-is to prove, or maximally narrow, the basis-specific classical
-period-coordinate nondegeneracy provider.
+`riemann_classical_real_LI_input` sorry and the subsequent coordinate
+providers. The public theorem now consumes a `RiemannClassicalPeriodBasis`
+hypothesis and is sorry-free; the remaining work is the basis-specific
+classical period-pairing nondegeneracy provider.
 
 ## 0. Allowed Write Scope
 
@@ -33,8 +33,14 @@ period-coordinate nondegeneracy provider.
       sorry-free from that predicate.
 - [x] Prior jc1 work introduced `h1_basis_periodCoordinate_linearIndependent`
       as the narrower remaining provider for a concrete integral H1 basis.
-- [ ] Issue #227 is still open until the current provider is either discharged
-      or narrowed to the precise classical symplectic-basis/Stokes/Hodge input.
+- [x] Prior jc1 work split the coordinate provider through
+      `h1_basis_periodMatrix_realKernel_trivial`.
+- [x] Current work split the coordinate kernel through
+      `h1_basis_periodPairing_realKernel_trivial`, so the remaining root is
+      the raw functional period-pairing separation statement.
+- [ ] Issue #227 is still open until the current provider is discharged by the
+      actual chain-level period integration plus classical
+      symplectic-basis/Stokes/Hodge input.
 
 ## 2. Commit Sequence
 
@@ -69,11 +75,11 @@ period-coordinate nondegeneracy provider.
       green.
 
 ### Milestone P4 — Acceptance
-- [ ] **P4.** `lake build Jacobian.Periods.PeriodFunctional`,
+- [x] **P4.** `lake build Jacobian.Periods.PeriodFunctional`,
       `lake build Jacobian.Periods.PeriodVectorsLIU`, and
       `lake build Jacobian.Solution` all pass. `scripts/list-sorries.py --text`
-      shows #227 discharged or narrowed to a strictly smaller provider with no
-      net new reachable sorries.
+      shows #227 narrowed to the strictly smaller functional period-pairing
+      provider with no net new reachable sorries.
 
 ## 3. Hazards
 

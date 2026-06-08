@@ -1,56 +1,39 @@
-SUGGESTED TASK: Milestone P3 refresh #227 blueprint and sorry graph for the period-matrix kernel root.
+COMPLETED TASK: Split #227 to the functional period-pairing kernel provider.
 
-Objective: update the Chapter-06 blueprint wiring and generated sorry ledger so
-issue #227 points at the current precise Type-0 frontier:
+Objective: replace the direct reachable PeriodFunctional frontier
+`h1_basis_periodMatrix_realKernel_trivial` with the strictly narrower
+functional statement:
 
 ```lean
-h1_basis_periodMatrix_realKernel_trivial
+h1_basis_periodPairing_realKernel_trivial
 ```
 
-The accepted P1 split proved `h1_basis_periodCoordinate_linearIndependent`
-sorry-free from this narrower real-kernel provider, but the current blueprint
-text and `sorries.jsonl` still name the older public/broader declarations. This
-task should refresh the graph without claiming the open provider is solved.
-
-Scope:
-- Work primarily in `tex/sections/06-periods-and-riemann-bilinear.tex` and
-  `sorries.jsonl`.
-- Add or revise a Chapter-06 node so the open #227 frontier names
-  `JacobianChallenge.Periods.h1_basis_periodMatrix_realKernel_trivial`.
-- Keep the public `lem:riemann-classical-real-li-input` story honest: it is now
-  a sorry-free assembly from `RiemannClassicalPeriodBasis` and the selected H₁
-  basis provider stack, not the direct `sorry`.
-- Do not mark the new period-matrix kernel provider with `\leanok`.
-- Preserve the existing green substrate nodes for
-  `periodPairing_satisfies_bilinear_identity`,
-  `hodge_form_posDef_on_periods`, and the algebraic positivity skeletons.
-- Do not edit `Jacobian/Challenge.lean`.
-- Avoid jc2/jc3/jc4/jc5 active Lean files; this should be blueprint/ledger
-  work plus verification only.
+What changed:
+- Added `h1_basis_periodPairing_realKernel_trivial` as the direct Type-0 #227
+  provider.
+- Proved `h1_basis_periodMatrix_realKernel_trivial` sorry-free by transporting
+  a vanishing real linear combination through
+  `(holomorphicOneFormDualEquiv ℂ X).restrictScalars ℝ`.
+- Kept `h1_basis_periodCoordinate_linearIndependent`,
+  `h1_basis_riemannClassicalPeriodBasis`, and
+  `riemann_classical_real_LI_input` as sorry-free assemblies from the provider.
+- Updated Chapter 06 so the blueprint node points at
+  `h1_basis_periodPairing_realKernel_trivial`.
+- Refreshed `sorries.jsonl`; the direct blueprint/provider row is now the
+  functional kernel, while the period-matrix and period-coordinate theorems are
+  dependency rows.
 
 Verification:
-- Run `python3 scripts/blueprint_audit.py`.
-- Run `bash scripts/build-blueprint.sh` to refresh `sorries.jsonl` and node
-  colors.
-- Run `python3 scripts/list-sorries.py --text` and confirm
-  `h1_basis_periodMatrix_realKernel_trivial` remains the reachable
-  `PeriodFunctional.lean` sorry.
-- Run `lake build Jacobian.Periods.PeriodFunctional`.
-- Run `lake build Jacobian.Solution`.
-- Confirm `sorries.jsonl` contains a direct `c:"sorry"` row for
-  `h1_basis_periodMatrix_realKernel_trivial` and no stale direct `c:"sorry"`
-  row for `h1_basis_periodCoordinate_linearIndependent`.
-- Commit exactly the scoped blueprint/ledger/SCI edit with normalized
-  author/committer metadata and `Co-authored-by: Codex <codex@openai.com>`.
+- [x] `lake build Jacobian.Periods.PeriodFunctional`
+- [x] `lake build Jacobian.Periods.PeriodVectorsLIU`
+- [x] `lake build Jacobian.Solution`
+- [x] `python3 scripts/list-sorries.py --text`
+- [x] `python3 scripts/blueprint_audit.py`
+- [x] `bash scripts/build-blueprint.sh`
+- [x] `rg -n "\\baxiom\\b|unsafe|sorry" Jacobian/Periods/PeriodFunctional.lean`
 
-Checklist:
-- [x] Update Chapter-06 blueprint wording/wiring for the new #227 root.
-- [x] Refresh `sorries.jsonl`.
-- [x] Run `python3 scripts/blueprint_audit.py`.
-- [x] Run `bash scripts/build-blueprint.sh`.
-- [x] Run `python3 scripts/list-sorries.py --text`.
-- [x] Run `lake build Jacobian.Periods.PeriodFunctional`.
-- [x] Run `lake build Jacobian.Solution`.
-- [x] Confirm the stale old direct #227 root is gone from `sorries.jsonl`.
-- [x] Commit the scoped edit and set `.sci/status-line` to
-      `READY: Chapter 06 P3 #227 blueprint kernel-root refresh`.
+Result:
+- #227 is not mathematically discharged yet. The remaining root is now the
+  minimal functional-kernel provider blocked by the current zero
+  `periodPairing` scaffold and the absent chain-level integration /
+  classical Stokes-Hodge input.
