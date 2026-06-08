@@ -1,31 +1,40 @@
-# Worker jc0 — Milestone C1.5i: discharge target order field in #234 provider
+# Worker jc0 — Milestone C1.5j: prove target meromorphicity helper
 
 ## Assignment
 
-Execute a narrow provider-tightening step for C1.5. C1.5h proved the target
-order-one helper:
+Execute one target-side support proof for C1.5. After C1.5i removed the target
+order-one field from the remaining #234 provider, the only target field still
+carried by `BiholomorphOnePointSimplePolePullbackFieldFacts` is target
+meromorphicity:
 
 ```lean
-theorem mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole
-    (Q : OnePoint ℂ) :
-    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
-      (onePointExtend (onePointSimplePoleCoordinate Q) Q) Q = 1
+∀ q : OnePoint ℂ,
+  JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+    (onePointSimplePoleCoordinate Q) q
 ```
 
-Use that helper to remove the target order-one obligation from the remaining
-#234 field-facts provider in
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
+Prove a local sorry-free helper in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`:
 
-Concretely, update `BiholomorphOnePointSimplePolePullbackFieldFacts` so it no
-longer has a `target_orderAt_pole` field. Then update
-`biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` so the
-target `HasComplexSimplePolePrincipalPart.orderAt_pole` field is filled
-directly by
-`mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole (e P)`.
+```lean
+theorem meromorphicAtX_onePointSimplePoleCoordinate
+    (Q : OnePoint ℂ) :
+    ∀ q : OnePoint ℂ,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (onePointSimplePoleCoordinate Q) q
+```
 
-This should narrow the reachable #234 frontier from six exposed fields to five
-exposed fields. Do not attempt to prove target meromorphicity or any source
-transport field in this step, and do not change any public theorem signatures.
+Use the existing explicit coordinate normal forms. For `Q = ∞`, reduce to the
+finite projection `x.getD 0` in the `OnePoint ℂ` charts. For `Q = (a : ℂ)`,
+split the local point `q`; away from the finite pole reduce locally to the
+holomorphic function `(z - a)⁻¹` or the constant `0` near `∞`, and at the pole
+use the inversion/local-coordinate normal form already used by the target
+order-one proof.
+
+This is a support-proof commit only. Do not thread the helper into
+`BiholomorphOnePointSimplePolePullbackFieldFacts` yet, do not remove
+`target_meromorphic_everywhere` from the provider in this step, and do not
+attempt any source transport field.
 
 ## Scope
 
@@ -45,18 +54,20 @@ transport field in this step, and do not change any public theorem signatures.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks C1.5h complete and lists C1.5i/C1.5 as the
-      next C1 support/provider-tightening work.
-- [x] Inspect `BiholomorphOnePointSimplePolePullbackFieldFacts`,
-      `biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint`,
-      and `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint`.
-- [x] Remove the `target_orderAt_pole` field from
-      `BiholomorphOnePointSimplePolePullbackFieldFacts` and update comments to
-      say the provider now carries five remaining fields.
-- [x] Fill `targetPrincipalPart.orderAt_pole` from
-      `mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole (e P)`.
-- [x] Keep the C1.4 field-facts provider as the sole reachable #234 root, but
-      with one fewer required target field.
+- [x] Confirm `.sci/plan.md` marks C1.5i complete and lists C1.5/C1 as the
+      next C1 proof work.
+- [x] Inspect the local definitions of
+      `MeromorphicAtX`, `onePointSimplePoleCoordinate`, the `onePointExtend`
+      normal forms, and the chart-local helpers used by
+      `mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole`.
+- [x] Prove any narrowly scoped chart-local meromorphicity helpers needed for
+      the `Q = ∞` branch.
+- [x] Prove any narrowly scoped chart-local meromorphicity helpers needed for
+      the finite-pole branch away from and at the pole.
+- [x] Add the public local helper
+      `meromorphicAtX_onePointSimplePoleCoordinate`.
+- [x] Keep the five-field provider as the sole reachable #234 root; do not
+      remove `target_meromorphic_everywhere` from the provider in this step.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root

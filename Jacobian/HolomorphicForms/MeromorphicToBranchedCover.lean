@@ -3312,6 +3312,136 @@ theorem tendsto_norm_onePointSimplePoleCoordinate_atTop
     (identityChart.symm : ℂ → OnePoint ℂ) z = ((z : ℂ) : OnePoint ℂ) := by
   simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
 
+@[simp] lemma onePoint_identityChart_apply_coe (z : ℂ) :
+    (identityChart : OnePoint ℂ → ℂ) ((z : ℂ) : OnePoint ℂ) = z := by
+  exact OnePoint.isOpenEmbedding_coe.toOpenPartialHomeomorph_left_inv
+
+lemma onePointSimplePoleCoordinate_infty_meromorphicAtX :
+    ∀ q : OnePoint ℂ,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ)) q := by
+  intro q
+  cases q using OnePoint.rec with
+  | infty =>
+      unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+      rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt]
+      rw [chartAt_onePoint_infty_eq]
+      have hmer : MeromorphicAt (fun w : ℂ => w⁻¹) 0 := by
+        exact (MeromorphicAt.id (0 : ℂ)).inv
+      refine hmer.congr ?_
+      rw [eventuallyEq_nhdsWithin_iff]
+      filter_upwards [] with w
+      intro hw
+      change w⁻¹ = (invBwd w).getD 0
+      rw [invBwd_ne_zero hw]
+      rfl
+  | coe z =>
+      unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+      rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt]
+      rw [chartAt_onePoint_coe_eq z]
+      rw [onePoint_identityChart_apply_coe z]
+      change MeromorphicAt
+        (onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ) ∘
+          (identityChart.symm : ℂ → OnePoint ℂ)) z
+      convert MeromorphicAt.id z using 1
+
+lemma onePointSimplePoleCoordinate_coe_meromorphicAt_identityChart
+    (a z : ℂ) :
+    MeromorphicAt
+      (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ) ∘
+        (identityChart.symm : ℂ → OnePoint ℂ)) z := by
+  have hmer : MeromorphicAt (fun w : ℂ => (w - a)⁻¹) z := by
+    exact ((MeromorphicAt.id z).sub (MeromorphicAt.const a z)).inv
+  refine hmer.congr ?_
+  rw [eventuallyEq_nhdsWithin_iff]
+  by_cases hz : z = a
+  · filter_upwards [] with w
+    intro hw
+    have hw_ne_z : w ≠ z := by simpa using hw
+    have hw_ne : w ≠ a := by
+      intro hwa
+      exact hw_ne_z (by rw [hwa, hz])
+    change (w - a)⁻¹ =
+      onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ)
+        ((identityChart.symm : ℂ → OnePoint ℂ) w)
+    rw [onePoint_identityChart_symm_apply,
+      onePointSimplePoleCoordinate_coe_apply_coe_ne hw_ne]
+  · filter_upwards [isOpen_ne.mem_nhds hz] with w hw_ne _
+    change (w - a)⁻¹ =
+      onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ)
+        ((identityChart.symm : ℂ → OnePoint ℂ) w)
+    rw [onePoint_identityChart_symm_apply,
+      onePointSimplePoleCoordinate_coe_apply_coe_ne hw_ne]
+
+lemma onePointSimplePoleCoordinate_coe_inversionChart_formula
+    (a w : ℂ) (hw : w ≠ 0) :
+    onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ)
+        ((inversionChart.symm : ℂ → OnePoint ℂ) w) =
+      w / (1 - a * w) := by
+  rw [show (inversionChart.symm : ℂ → OnePoint ℂ) w = invBwd w from rfl,
+    invBwd_ne_zero hw]
+  by_cases hwa : w⁻¹ = a
+  · have hden : 1 - a * w = 0 := by
+      calc
+        1 - a * w = 1 - w⁻¹ * w := by rw [← hwa]
+        _ = 0 := by simp [hw]
+    simp [hwa, hden]
+  · have hden : 1 - a * w ≠ 0 := by
+      intro hden
+      apply hwa
+      rw [sub_eq_zero] at hden
+      calc
+        w⁻¹ = 1 * w⁻¹ := by simp
+        _ = (a * w) * w⁻¹ := by rw [← hden]
+        _ = a := by field_simp [hw]
+    rw [onePointSimplePoleCoordinate_coe_apply_coe_ne hwa]
+    field_simp [hw, hden]
+
+lemma onePointSimplePoleCoordinate_coe_meromorphicAt_inversionChart
+    (a : ℂ) :
+    MeromorphicAt
+      (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ) ∘
+        (inversionChart.symm : ℂ → OnePoint ℂ)) 0 := by
+  have hmer : MeromorphicAt (fun w : ℂ => w / (1 - a * w)) 0 := by
+    exact (MeromorphicAt.id (0 : ℂ)).div
+      ((MeromorphicAt.const 1 (0 : ℂ)).sub
+        ((MeromorphicAt.const a (0 : ℂ)).mul (MeromorphicAt.id (0 : ℂ))))
+  refine hmer.congr ?_
+  rw [eventuallyEq_nhdsWithin_iff]
+  filter_upwards [] with w
+  intro hw
+  exact (onePointSimplePoleCoordinate_coe_inversionChart_formula a w hw).symm
+
+theorem meromorphicAtX_onePointSimplePoleCoordinate
+    (Q : OnePoint ℂ) :
+    ∀ q : OnePoint ℂ,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (onePointSimplePoleCoordinate Q) q := by
+  cases Q using OnePoint.rec with
+  | infty =>
+      exact onePointSimplePoleCoordinate_infty_meromorphicAtX
+  | coe a =>
+      intro q
+      cases q using OnePoint.rec with
+      | infty =>
+          unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+          rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+            JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt]
+          rw [chartAt_onePoint_infty_eq]
+          exact onePointSimplePoleCoordinate_coe_meromorphicAt_inversionChart a
+      | coe z =>
+          unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+          rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+            JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt]
+          rw [chartAt_onePoint_coe_eq z]
+          rw [onePoint_identityChart_apply_coe z]
+          change MeromorphicAt
+            (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ) ∘
+              (identityChart.symm : ℂ → OnePoint ℂ)) z
+          exact onePointSimplePoleCoordinate_coe_meromorphicAt_identityChart a z
+
 lemma chartLocalAt_onePointSimplePoleCoordinate_infty
     (t : ℂ) :
     JacobianChallenge.HolomorphicForms.chartLocalAt
