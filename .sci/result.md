@@ -295,6 +295,13 @@ substrate node.
   after repeated no-output intervals. Per the task instructions, the
   `bash scripts/build-blueprint.sh` verification is caveated rather than run
   without the prerequisite cache step.
+- Rejection adjustment: added the missing
+  `lem:polygon4g-eq-standard-word-quotient` blueprint label as a green node
+  for `EdgeWord.polygon4g_eq_standard_word_quotient`. A rerun of
+  `bash scripts/build-blueprint.sh` completed successfully: web generation,
+  `sorries.jsonl`/node-state refresh, post-processing injection, and injection
+  verification all passed. The generated `sorries.jsonl` update is included in
+  the amended fix commit.
 
 ## Next Recommended Step
 
