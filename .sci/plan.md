@@ -80,3 +80,25 @@ See `goal.md` § FIRST JOB for the full framing and the 3 clusters.
   a separate assignment, not this planning job.
 * Per proving-guide: never declare blocked on a Mathlib gap — but in the planning
   phase, an honest Mathlib citation at a leaf IS the correct bottoming-out.
+
+## 4. Commit sequence — Phase 2 (execution)
+
+Use the final split in `.sci/result.md`. jc1 owns the Riemann bilinear /
+period-rank cluster: #227, #241, and #240. The #227 keystone must land before
+the #241 universe-`u` port.
+
+### Milestone B-exec — Riemann bilinear / period rank
+- [x] **B3.** Start with #227
+      `riemann_classical_real_LI_input` in
+      `Jacobian/Periods/PeriodFunctional.lean`: inspect whether the current
+      arbitrary-injective `σ` statement is provable from existing substrate; if
+      not, replace the broad `sorry` with the narrowest named provider(s) for
+      the missing canonical/symplectic-basis or Stokes/Hodge-positivity input,
+      preserving the public API where possible.
+- [ ] **B4.** After #227 is stable, port the result to #241
+      `riemann_classical_real_LI_inputU` in
+      `Jacobian/Periods/PeriodVectorsLIU.lean`.
+- [ ] **B5.** Discharge or narrowly split #240
+      `h1_basis_of_compact_riemann_surfaceU` in
+      `Jacobian/Periods/H1BasisU.lean`, coordinating with the Hurewicz/cellular
+      substrate owned by jc4.

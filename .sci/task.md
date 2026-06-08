@@ -1,55 +1,56 @@
-SUGGESTED TASK: Milestone V finalize the Chapter 06 blueprint-to-Mathlib plan.
+SUGGESTED TASK: Milestone B3 start execution Phase 2 with #227 `riemann_classical_real_LI_input`.
 
-Objective: complete Phase 1 by auditing the finished Chapter-06 blueprint map,
-running the final verification commands, and writing the jc1/jc4/jc5 execution
-split for the 8 remaining Chapter-06 sorries.
+Objective: make the first commit-sized proof step on the jc1-owned Riemann
+bilinear / period-rank cluster by narrowing or discharging the keystone theorem
+`riemann_classical_real_LI_input` in
+`Jacobian/Periods/PeriodFunctional.lean`.
+
+Context:
+- `.sci/plan.md` now has Phase 2 Milestone B3 for this commit-sized #227 step.
+- Phase 1 planning is complete. The final split in `.sci/result.md` assigns
+  jc1 #227, #241, and #240, with #227 strictly before #241.
+- #227 currently states real linear independence of the period functionals for
+  an arbitrary injective family `σ : Fin (2 * analyticGenus ℂ X) →
+  IntegralOneCycle X`.
+- The existing comment in `PeriodFunctional.lean` says the statement needs
+  `σ` to be a canonical/symplectic homology basis and needs Stokes on the
+  fundamental polygon to identify the period sum with the positive Hodge form.
 
 Scope:
-- Audit the mapped Chapter-06 dependency graph across the three clusters:
-  - Cluster B: #227 `riemann_classical_real_LI_input`, #241
-    `riemann_classical_real_LI_inputU`, and #240
-    `h1_basis_of_compact_riemann_surfaceU`.
-  - Cluster A: #228 `polygon4g_quotient_path_finite_lift_subdivision`, #229
-    `polygon4g_partial_side_arc_homologous_to_edge_chain`, and #230
-    `edgeChain_sum_singular_boundary_scalar_coefficient_zero`.
-  - Cluster C: #242
-    `deRhamComparisonMap1_zero_period_primitiveExists_provider` and #243
-    `hodgeRemainder_periodPayload_exact`.
-- Confirm each green `\\lean{}` blueprint node is either graph-coloured
-  `done` in `sorries.jsonl` or otherwise honestly justified as sorry-free.
-- Confirm the 8 open frontier nodes remain unmarked by proof-level `\\leanok`
-  and are graph-coloured as `sorry` or `sorry-dep` only where expected.
-- Run the final blueprint checks:
-  - `python3 scripts/blueprint_audit.py`
-  - `bash scripts/build-blueprint.sh`
-  - `lake build Jacobian.Solution`, if not already covered by the blueprint
-    build refresh and feasible in the environment.
-- Write `.sci/result.md` with the final execution split and ordering:
-  - #227 must precede #241.
-  - Cluster-A lift/side-arc work should precede #230 coefficient independence.
-  - #242 and #243 should be split by de Rham primitive existence versus Hodge
-    period-payload exactness.
-  - Include cross-worker coordination notes for jc1 / jc4 / jc5.
-- Do not edit Lean proof files and do not touch `Jacobian/Challenge.lean`.
+- Work only in `Jacobian/Periods/PeriodFunctional.lean` unless a tiny local
+  helper in the same `Jacobian/Periods/` ownership area is unavoidable.
+- Do not touch `Jacobian/Challenge.lean`.
+- Do not touch files assigned to jc2 or jc3.
+- Inspect the already-mapped substrate:
+  - `periodPairing_satisfies_bilinear_identity`
+  - `hodge_form_posDef_on_periods`
+  - `RiemannBilinearRefinement.real_linearIndependent_of_quadratic_pos_def`
+  - the exact statement and consumers of `riemann_classical_real_LI_input`
+- Determine whether #227 can be proved from the current hypotheses. If the
+  current arbitrary-injective `σ` statement is too strong, replace the single
+  broad `sorry` with the narrowest honest local provider(s) needed for the
+  canonical/symplectic-basis and Stokes/Hodge-positivity inputs, preserving the
+  public theorem's API where possible.
+- Do not introduce new broad axioms or unrelated theory. Any new placeholder
+  must be strictly narrower than #227 and named for the precise missing input.
 
 Verification:
-- `python3 scripts/blueprint_audit.py` succeeds.
-- `bash scripts/build-blueprint.sh` succeeds and any generated `sorries.jsonl`
-  change is included.
-- `lake build Jacobian.Solution` succeeds or any environment limitation is
-  explicitly recorded in `.sci/result.md`.
-- `.sci/result.md` contains a concrete jc1/jc4/jc5 split proposal.
+- Run `lake build Jacobian.Periods.PeriodFunctional`.
+- Run `lake build Jacobian.Solution`.
+- Confirm `scripts/list-sorries.py --text` shows #227 has either been proved or
+  replaced by strictly narrower named provider(s), without increasing unrelated
+  reachable sorries.
+- Commit the Lean/task updates and set `.sci/status-line` to
+  `READY: Chapter 06 #227 Riemann bilinear keystone step`.
 
 Checklist:
-- [x] Audit all Cluster A/B/C frontier and substrate graph rows in
-      `sorries.jsonl`.
-- [x] Confirm all green `\\lean{}` nodes are genuinely green and open frontier
-      nodes are not marked with `\\leanok`.
-- [x] Run `python3 scripts/blueprint_audit.py`.
-- [x] Run `bash scripts/build-blueprint.sh`.
-- [x] Run `lake build Jacobian.Solution` or record why the blueprint build's
-      Lake refresh is the available verification.
-- [x] Write the final jc1/jc4/jc5 execution split in `.sci/result.md`.
-- [x] Stage any generated `sorries.jsonl` update.
-- [x] Commit the result/task/plan/sorries updates and set `.sci/status-line` to
-      `READY: Chapter 06 blueprint-to-Mathlib plan`.
+- [x] Inspect #227, its consumers, and the mapped substrate declarations.
+- [x] Decide whether the current #227 statement is provable as stated or needs
+      a narrower provider split.
+- [x] Implement the smallest proof or provider split in the assigned file.
+- [x] Run `lake build Jacobian.Periods.PeriodFunctional`.
+- [x] Run `lake build Jacobian.Solution`.
+- [x] Run `python3 scripts/list-sorries.py --text` and record the reachable
+      sorry effect.
+- [x] Commit the changes and set `.sci/status-line` to
+      `READY: Chapter 06 #227 Riemann bilinear keystone step`.

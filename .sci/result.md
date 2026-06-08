@@ -551,3 +551,51 @@ Own #242 and #243:
   real chartwise content. Keep the providers separate: #242 is the de Rham
   zero-period primitive theorem; #243 is the Hodge period-payload exactness
   theorem.
+
+# B3 #227 Riemann Bilinear Keystone Split
+
+Status: B3 complete.
+
+## Result
+
+The broad arbitrary-injective direct `sorry` in
+`Jacobian/Periods/PeriodFunctional.lean` at
+`riemann_classical_real_LI_input` has been replaced by an explicit
+classical-basis predicate plus a basis-specific provider:
+
+- `RiemannClassicalPeriodBasis`
+- `h1_basis_riemannClassicalPeriodBasis`
+
+The predicate packages the basis-aligned period-coordinate nondegeneracy input
+only for cycle families carrying the missing canonical/symplectic
+Stokes/Hodge-positive structure. The remaining direct provider is tied to a
+concrete `Module.Basis` of `IntegralOneCycle X`; it no longer asserts
+nondegeneracy for every arbitrary injective family of cycles. The public #227
+theorem now takes an explicit `RiemannClassicalPeriodBasis X σ` witness and
+transports its coordinate nondegeneracy back through
+`holomorphicOneFormDualEquiv`.
+
+The current arbitrary-injective `σ` statement is not directly provable from the
+local scaffold alone: `periodPairing` is still implemented as the zero descent
+placeholder, so nondegeneracy must come from the missing classical
+canonical/symplectic-basis plus Stokes/Hodge-positivity input.
+
+## Verification
+
+- `lake build Jacobian.Periods.PeriodFunctional` succeeded.
+- `lake build Jacobian.Solution` succeeded with existing `declaration uses
+  sorry` warnings only.
+- `python3 scripts/list-sorries.py --text` succeeded and now reports
+  `h1_basis_riemannClassicalPeriodBasis` as the reachable PeriodFunctional
+  sorry instead of `riemann_classical_real_LI_input`.
+- `bash scripts/build-blueprint.sh` succeeded and refreshed `sorries.jsonl`
+  with 324 graph-coloured records. The graph now includes
+  `h1_basis_riemannClassicalPeriodBasis` as the direct `c:"sorry"` row; a stale
+  ledger row for the rejected coordinate provider was removed.
+
+## Next Recommended Step
+
+Proceed to B4 only after this narrower provider is accepted: port the stable
+#227 public theorem to #241 `riemann_classical_real_LI_inputU` in
+`Jacobian/Periods/PeriodVectorsLIU.lean`, keeping the universe-`u` work as a
+transport layer rather than a second analytic proof.
