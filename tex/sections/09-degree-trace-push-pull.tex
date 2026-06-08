@@ -208,3 +208,34 @@ by \(\deg(f)\), proving
   f_*(f^{*}P)=\deg(f)\,P.
 \]
 \end{proof}
+
+% --- Trace-pullback identity (relocated from the former Statement Bank) ---
+
+\begin{theorem}[Trace-pullback identity]
+\label{thm:trace-pullback}
+\uses{def:degree-trace, lem:trace-forms, lem:pullback-forms}
+For every \(\eta\in\HY\),
+\[
+  \tr_f(f^{*}\eta)=\deg(f)\,\eta.
+\]
+\lean{JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback}
+\leanok
+\proofplan
+Use the fundamental identity \(\tr_f \circ f^* = \deg(f)\) on holomorphic 1-forms
+(Theorem~\ref{thm:trace-pullback-identity}) and descend to the Jacobian quotient.
+\end{theorem}
+
+\begin{layman}
+Take a holomorphic 1-form on the target. Pull it back along the map
+to get a 1-form on the source. Trace it back down to the target. The
+result equals the original 1-form multiplied by the degree of the
+map. The intuition: pulling back creates \(d\) copies of the form (one
+per inverse branch in a generic fiber); summing them via the trace
+recovers \(d\) times the original. Why bother? This is the algebraic
+backbone of the pushforward-pullback identity
+(Theorem~\ref{thm:pushforward-pullback}). After dualizing and
+descending to Jacobians, it becomes ``push-then-pull equals
+multiplication-by-degree'' on Jacobian elements --- forcing push, pull,
+and degree to interact through the classical trace identity rather
+than through arbitrary homomorphisms invented to game the challenge.
+\end{layman}

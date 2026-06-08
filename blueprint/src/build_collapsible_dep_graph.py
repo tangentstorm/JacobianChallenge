@@ -41,14 +41,13 @@ from blueprint_recolor import load_states, recolor_dot  # noqa: E402
 # Sections to skip entirely (none, currently).
 SKIP_SECTIONS: set[str] = set()
 
-# tex/statements/*.tex files hold apex API declarations and cross-cutting
-# `\uses{}` references (e.g. `thm:period-lattice` in `statement-bank.tex`,
-# `def:analytic-jacobian` in `challenge-statement.tex`).  Functionally
-# they are part of §10's apex assembly; fold them in so the section
-# dependency chain stays connected.
+# tex/statements/challenge-statement.tex holds the apex public-API declarations
+# (e.g. `def:analytic-jacobian`).  Functionally it is part of §10's apex
+# assembly; fold it in so the section dependency chain stays connected.
+# (The former statement-bank.tex was dissolved: its nodes moved to their topical
+# chapters — period pairing/lattice + U-mirrors to §06, trace-pullback to §09.)
 MERGE_INTO_SECTION = {
     "challenge-statement": "10-main-theorem-assembly",
-    "statement-bank": "10-main-theorem-assembly",
 }
 
 # §12 "classical analysis gaps" is split by `\subsection{R<N> -- ...}`
