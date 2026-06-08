@@ -88,6 +88,25 @@ theorem orientable_letterPair_opposite_orientation
     ∀ ℓ : Letter E.extractedGenus, ℓ ∈ w → ℓ.inv ∈ w := by
   sorry
 
+/-- If a single sub-step (e.g. "the four letters of a handle can be collected adjacently")
+is itself heavy, isolate IT as the next narrow provider.
+This provider pulls one full handle block to the front and leaves a shorter valid remainder. -/
+theorem handle_collection_substep {g : ℕ} (w : EdgeWord g)
+    (hPairs : ∀ ℓ : Letter g, ℓ ∈ w → ℓ.inv ∈ w)
+    (hReduced : ∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel w x)
+    (hNonempty : w ≠ []) :
+    ∃ i : Fin g, ∃ u : EdgeWord g,
+      EdgeWord.TietzeEq w (EdgeWord.handleBlock i ++ u) ∧
+      (∀ ℓ : Letter g, ℓ ∈ u → ℓ.inv ∈ u) ∧
+      (∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel u x) ∧
+      u.length < w.length := by
+  sorry
+
+/-- Tietze equivalence is preserved under left-append. -/
+theorem TietzeEq_append_left {g : ℕ} {A B : EdgeWord g} (C : EdgeWord g) (h : EdgeWord.TietzeEq A B) :
+    EdgeWord.TietzeEq (C ++ A) (C ++ B) := by
+  sorry
+
 /-- Classical Brahana handle-collection: a reduced, inverse-paired word over the
 genus-`g` alphabet is `TietzeEq` to a concatenation of complete handle blocks
 listed in some order `l : List (Fin g)`. This is the genuine geometric input;
@@ -98,7 +117,24 @@ theorem orientable_handleBlock_collection
     (hReduced : ∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel w x) :
     ∃ l : List (Fin g),
       EdgeWord.TietzeEq w (l.flatMap EdgeWord.handleBlock) := by
-  sorry
+  induction hw : w.length using Nat.strong_induction_on generalizing w with
+  | h n ih =>
+    cases w with
+    | nil =>
+      use []
+      exact EdgeWord.TietzeEq.refl []
+    | cons hd tl =>
+      have hNonempty : hd :: tl ≠ [] := by simp
+      obtain ⟨i, u, hTietze, huPairs, huReduced, hLen⟩ := handle_collection_substep (hd :: tl) hPairs hReduced hNonempty
+      have hLen' : u.length < n := by
+        rw [←hw]
+        exact hLen
+      obtain ⟨l, hl⟩ := ih u.length hLen' u huPairs huReduced rfl
+      use i :: l
+      have h_bind : (i :: l).flatMap EdgeWord.handleBlock = EdgeWord.handleBlock i ++ l.flatMap EdgeWord.handleBlock := rfl
+      rw [h_bind]
+      have h2 := TietzeEq_append_left (EdgeWord.handleBlock i) hl
+      exact hTietze.trans h2
 
 /-- The topological constraint: if a word is the global boundary, the resulting list
 of handles must be exactly a permutation of all handles. -/

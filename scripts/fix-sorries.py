@@ -250,7 +250,7 @@ def main():
     # Write back to DB_FILE with precise column order
     with open(DB_FILE, "w") as f:
         f.write(format_row(header, is_header=True) + "\n")
-        for obj in sorted(db.values(), key=lambda x: x.get("i", 0)):
+        for obj in sorted(db.values(), key=lambda x: x.get("i") or 0):
             f.write(format_row(obj) + "\n")
 
     print(f"Successfully fixed/updated {DB_FILE} with {len(db)} records"
