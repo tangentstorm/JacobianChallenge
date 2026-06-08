@@ -3283,9 +3283,9 @@ structure BiholomorphOnePointSimplePolePullbackFacts
 /--
 Field-level facts for the biholomorphic pullback construction of a simple pole.
 
-This is the fully exposed shape of the remaining #234 analytic frontier:
-four fields for the explicit target coordinate and four fields for its named
-pullback along `e`.
+This is the exposed shape of the remaining #234 analytic frontier after the
+target continuity field has been discharged locally: three remaining fields for
+the explicit target coordinate and four fields for its named pullback along `e`.
 -/
 structure BiholomorphOnePointSimplePolePullbackFieldFacts
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -3298,9 +3298,6 @@ structure BiholomorphOnePointSimplePolePullbackFieldFacts
     ∀ q : OnePoint ℂ,
       JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
         (onePointSimplePoleCoordinate (e P)) q
-  /-- The target one-point extension is continuous. -/
-  target_continuous_extension :
-    Continuous (onePointExtend (onePointSimplePoleCoordinate (e P)) (e P))
   /-- The target coordinate has analytic order one at `e P`. -/
   target_orderAt_pole :
     JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
@@ -3330,9 +3327,9 @@ structure BiholomorphOnePointSimplePolePullbackFieldFacts
 Field-level principal-part facts provider for the explicit biholomorphic
 pullback route.
 
-This is the remaining explicit-coordinate analytic frontier: prove the
-field-level target coordinate facts and transport them along the biholomorphism
-`e` to the named source coordinate.
+This is the remaining explicit-coordinate analytic frontier: prove the seven
+field-level target/source coordinate facts still not discharged locally and
+transport the source facts along the biholomorphism `e`.
 -/
 theorem biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -3348,8 +3345,9 @@ theorem biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint
         (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
     Nonempty (BiholomorphOnePointSimplePolePullbackFieldFacts X P e) := by
   -- Principal-part frontier: prove the explicit target coordinate field facts
-  -- and transport meromorphicity, continuity, order-one, and
-  -- punctured-neighborhood divergence across the biholomorphism `e`.
+  -- not already discharged locally, and transport source meromorphicity,
+  -- continuity, order-one, and punctured-neighborhood divergence across the
+  -- biholomorphism `e`.
   sorry
 
 /--
@@ -3378,7 +3376,8 @@ theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
   exact ⟨{
     targetPrincipalPart := {
       meromorphic_everywhere := h.target_meromorphic_everywhere
-      continuous_extension := h.target_continuous_extension
+      continuous_extension :=
+        continuous_onePointExtend_onePointSimplePoleCoordinate (e P)
       orderAt_pole := h.target_orderAt_pole
       modulus_tendsto := h.target_modulus_tendsto }
     sourcePrincipalPart := {

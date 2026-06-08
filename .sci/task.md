@@ -1,29 +1,31 @@
-# Worker jc0 — Milestone C1.5d: prove target extension continuity helper
+# Worker jc0 — Milestone C1.5e: discharge target continuity field in #234 provider
 
 ## Assignment
 
-Execute one target-side support proof for C1.5. After C1.5c packaged the
-target one-point extension into whole-function normal forms, prove a local
-sorry-free helper in
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`:
+Execute a narrow provider-tightening step for C1.5. C1.5d proved the target
+continuity helper:
 
 ```lean
-theorem continuous_onePointExtend_onePointSimplePoleCoordinate
+continuous_onePointExtend_onePointSimplePoleCoordinate
     (Q : OnePoint ℂ) :
     Continuous (onePointExtend (onePointSimplePoleCoordinate Q) Q)
 ```
 
-Use the existing case split on `Q`. For `Q = ∞`, rewrite with the C1.5c
-identity normal form and discharge continuity by continuity of `id`. For
-`Q = (a : ℂ)`, use the C1.5c finite-pole normal form and prove the explicit
-case map is continuous on `OnePoint ℂ` from local primitives. If needed, add
-small local sorry-free continuity lemmas for the finite-pole case map, but keep
-them scoped to this target coordinate.
+Use that helper to remove the target continuity obligation from the remaining
+#234 field-facts provider in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
 
-This is a Lean-code support commit for one target field only. Do not attempt to
-prove target meromorphicity, order, or modulus divergence in this step. Do not
-split or replace the C1.4 field-facts provider, and do not move the reachable
-#234 root yet.
+Concretely, update `BiholomorphOnePointSimplePolePullbackFieldFacts` so it no
+longer has a `target_continuous_extension` field. Then update
+`biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` so the
+target `HasComplexSimplePolePrincipalPart.continuous_extension` field is filled
+directly by
+`continuous_onePointExtend_onePointSimplePoleCoordinate (e P)`.
+
+This should narrow the reachable #234 frontier from eight exposed fields to
+seven exposed fields. Do not attempt to prove target meromorphicity, order, or
+modulus divergence in this step, and do not change any public theorem
+signatures.
 
 ## Scope
 
@@ -43,18 +45,18 @@ split or replace the C1.4 field-facts provider, and do not move the reachable
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks C1.5c complete and lists C1.5d/C1.5 as the
+- [x] Confirm `.sci/plan.md` marks C1.5d complete and lists C1.5e/C1.5 as the
       next C1 support/proof work.
-- [x] Inspect the C1.5c whole-function normal forms and available continuity
-      facts for `OnePoint ℂ` maps in
-      `Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
-- [x] Prove the `Q = ∞` continuity case by rewriting the extension to `id`.
-- [x] Prove the finite-pole continuity case, adding only narrowly scoped
-      sorry-free helper lemmas if needed.
-- [x] Add the public local helper
-      `continuous_onePointExtend_onePointSimplePoleCoordinate`.
-- [x] Keep the C1.4 field-facts provider as the sole reachable #234 root; do
-      not introduce target/source provider splits in this step.
+- [x] Inspect `BiholomorphOnePointSimplePolePullbackFieldFacts`,
+      `biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint`,
+      and `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint`.
+- [x] Remove the `target_continuous_extension` field from
+      `BiholomorphOnePointSimplePolePullbackFieldFacts` and update comments to
+      say the provider now carries seven remaining fields.
+- [x] Fill `targetPrincipalPart.continuous_extension` from
+      `continuous_onePointExtend_onePointSimplePoleCoordinate (e P)`.
+- [x] Keep the C1.4 field-facts provider as the sole reachable #234 root, but
+      with one fewer required target field.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root
@@ -71,7 +73,7 @@ split or replace the C1.4 field-facts provider, and do not move the reachable
 ## Verification
 
 - `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`: succeeds
-  with existing `uses sorry` warnings at the field-facts provider and
+  with existing `uses sorry` warnings at the seven-field provider and
   `genusZeroHomeomorphOnePoint_of_analyticGenus_zero`.
 - `lake build Jacobian.Solution`: succeeds with existing `uses sorry` warnings.
 - `scripts/list-sorries.py --text`: still 20 reachable sorries total; the #234
