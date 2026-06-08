@@ -3302,6 +3302,110 @@ theorem tendsto_norm_onePointSimplePoleCoordinate_atTop
     exact onePointExtend_off (F := F) (P := Q) (x := q) hq
   simpa [F] using tendsto_norm_atTop_of_tendsto_onePoint_coe_infty hcoe
 
+@[simp] lemma chartAt_onePoint_infty_eq :
+    chartAt ℂ (OnePoint.infty : OnePoint ℂ) = inversionChart := rfl
+
+@[simp] lemma chartAt_onePoint_coe_eq (z : ℂ) :
+    chartAt ℂ ((z : ℂ) : OnePoint ℂ) = identityChart := rfl
+
+@[simp] lemma onePoint_identityChart_symm_apply (z : ℂ) :
+    (identityChart.symm : ℂ → OnePoint ℂ) z = ((z : ℂ) : OnePoint ℂ) := by
+  simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+
+lemma chartLocalAt_onePointSimplePoleCoordinate_infty
+    (t : ℂ) :
+    JacobianChallenge.HolomorphicForms.chartLocalAt
+      (onePointExtend (onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ))
+        (OnePoint.infty : OnePoint ℂ))
+    (OnePoint.infty : OnePoint ℂ) t = t := by
+  rw [onePointExtend_onePointSimplePoleCoordinate_infty_eq_id]
+  simp [JacobianChallenge.HolomorphicForms.chartLocalAt]
+  change invFwd (invBwd t) = t
+  exact invFwd_invBwd t
+
+lemma chartLocalAt_onePointSimplePoleCoordinate_coe
+    (a t : ℂ) :
+    JacobianChallenge.HolomorphicForms.chartLocalAt
+      (onePointExtend (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
+        ((a : ℂ) : OnePoint ℂ))
+    ((a : ℂ) : OnePoint ℂ) t = t - a := by
+  by_cases ht : t = a
+  · subst ht
+    simp [JacobianChallenge.HolomorphicForms.chartLocalAt]
+    change invFwd (OnePoint.infty : OnePoint ℂ) = 0
+    exact invFwd_infty
+  · simp [JacobianChallenge.HolomorphicForms.chartLocalAt,
+      onePointExtend_onePointSimplePoleCoordinate_coe_apply_coe_ne ht]
+    change invFwd (((t - a)⁻¹ : ℂ) : OnePoint ℂ) = t - a
+    rw [invFwd_coe]
+    simp
+
+theorem mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole
+    (Q : OnePoint ℂ) :
+    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+      (onePointExtend (onePointSimplePoleCoordinate Q) Q) Q = 1 := by
+  cases Q using OnePoint.rec with
+  | infty =>
+      unfold JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+      have hcenter :
+          JacobianChallenge.HolomorphicForms.chartLocalAt
+            (onePointExtend (onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ))
+              (OnePoint.infty : OnePoint ℂ))
+            (OnePoint.infty : OnePoint ℂ)
+            (chartAt ℂ (OnePoint.infty : OnePoint ℂ)
+              (OnePoint.infty : OnePoint ℂ)) = 0 := by
+        rw [chartAt_onePoint_infty_eq]
+        change
+          JacobianChallenge.HolomorphicForms.chartLocalAt
+            (onePointExtend (onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ))
+              (OnePoint.infty : OnePoint ℂ))
+            (OnePoint.infty : OnePoint ℂ) 0 = 0
+        simp [chartLocalAt_onePointSimplePoleCoordinate_infty]
+      rw [hcenter]
+      have hfun :
+          (fun t : ℂ =>
+              JacobianChallenge.HolomorphicForms.chartLocalAt
+                (onePointExtend (onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ))
+                  (OnePoint.infty : OnePoint ℂ))
+                (OnePoint.infty : OnePoint ℂ) t - 0) = id := by
+        funext t
+        simp [chartLocalAt_onePointSimplePoleCoordinate_infty]
+      rw [hfun]
+      change analyticOrderNatAt (fun t : ℂ => t) 0 = 1
+      change analyticOrderNatAt (id : ℂ → ℂ) 0 = 1
+      simp [analyticOrderNatAt]
+  | coe a =>
+      unfold JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+      have hcenter_chart :
+          chartAt ℂ ((a : ℂ) : OnePoint ℂ) ((a : ℂ) : OnePoint ℂ) = a := by
+        change identityChart ((a : ℂ) : OnePoint ℂ) = a
+        exact OnePoint.isOpenEmbedding_coe.toOpenPartialHomeomorph_left_inv
+      have hcenter_local :
+          JacobianChallenge.HolomorphicForms.chartLocalAt
+            (onePointExtend (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
+              ((a : ℂ) : OnePoint ℂ))
+            ((a : ℂ) : OnePoint ℂ)
+            (chartAt ℂ ((a : ℂ) : OnePoint ℂ) ((a : ℂ) : OnePoint ℂ)) = 0 := by
+        rw [hcenter_chart]
+        simp [chartLocalAt_onePointSimplePoleCoordinate_coe]
+      rw [hcenter_local, hcenter_chart]
+      have hfun :
+          (fun t : ℂ =>
+              JacobianChallenge.HolomorphicForms.chartLocalAt
+                (onePointExtend (onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ))
+                  ((a : ℂ) : OnePoint ℂ))
+                ((a : ℂ) : OnePoint ℂ) t - 0) = (fun t : ℂ => t - a) := by
+        funext t
+        simp [chartLocalAt_onePointSimplePoleCoordinate_coe]
+      rw [hfun]
+      have horder :
+          analyticOrderAt (fun t : ℂ => t - a) a = (1 : ℕ∞) := by
+        simpa using
+          (analyticAt_id.analyticOrderAt_sub_eq_one_of_deriv_ne_zero
+            (by simp))
+      rw [analyticOrderNatAt, horder]
+      rfl
+
 /--
 The source coordinate obtained by pulling the explicit `OnePoint ℂ`
 simple-pole coordinate at `e P` back along a biholomorphism `e`.

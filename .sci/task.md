@@ -1,32 +1,32 @@
-# Worker jc0 — Milestone C1.5g: discharge target modulus field in #234 provider
+# Worker jc0 — Milestone C1.5h: prove target coordinate order-one helper
 
 ## Assignment
 
-Execute a narrow provider-tightening step for C1.5. C1.5f proved the target
-modulus-divergence helper:
+Execute one target-side support proof for C1.5. After C1.5g discharged the
+target modulus-divergence field from the remaining #234 provider, prove a local
+sorry-free helper in
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`:
 
 ```lean
-theorem tendsto_norm_onePointSimplePoleCoordinate_atTop
+theorem mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole
     (Q : OnePoint ℂ) :
-    Filter.Tendsto (fun q => ‖onePointSimplePoleCoordinate Q q‖)
-      (nhdsWithin Q ({Q}ᶜ : Set (OnePoint ℂ))) Filter.atTop
+    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+      (onePointExtend (onePointSimplePoleCoordinate Q) Q) Q = 1
 ```
 
-Use that helper to remove the target modulus-divergence obligation from the
-remaining #234 field-facts provider in
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
+Use the existing target extension normal forms. For `Q = ∞`, reduce the
+one-point extension to `id` and prove order one in the infinity chart. For
+`Q = (a : ℂ)`, use the finite-pole extension normal form as
+`onePointSphereInversion ∘ OnePoint.map (fun z : ℂ => z - a)` and prove the
+local order is one at `↑a` by reducing to the standard local coordinate.
 
-Concretely, update `BiholomorphOnePointSimplePolePullbackFieldFacts` so it no
-longer has a `target_modulus_tendsto` field. Then update
-`biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` so the
-target `HasComplexSimplePolePrincipalPart.modulus_tendsto` field is filled
-directly by
-`tendsto_norm_onePointSimplePoleCoordinate_atTop (e P)`.
+If needed, add small local sorry-free helper lemmas for the exact chart/order
+translation on `OnePoint ℂ`, but keep them scoped to this target coordinate.
 
-This should narrow the reachable #234 frontier from seven exposed fields to six
-exposed fields. Do not attempt to prove target meromorphicity, target order, or
-any source transport field in this step, and do not change any public theorem
-signatures.
+This is a Lean-code support commit for one target field only. Do not thread the
+helper into `BiholomorphOnePointSimplePolePullbackFieldFacts` yet. Do not
+attempt to prove target meromorphicity or any source transport field in this
+step, and do not move the reachable #234 root.
 
 ## Scope
 
@@ -46,18 +46,22 @@ signatures.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks C1.5f complete and lists C1.5g/C1.5 as the
-      next C1 support/provider-tightening work.
-- [x] Inspect `BiholomorphOnePointSimplePolePullbackFieldFacts`,
-      `biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint`,
-      and `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint`.
-- [x] Remove the `target_modulus_tendsto` field from
-      `BiholomorphOnePointSimplePolePullbackFieldFacts` and update comments to
-      say the provider now carries six remaining fields.
-- [x] Fill `targetPrincipalPart.modulus_tendsto` from
-      `tendsto_norm_onePointSimplePoleCoordinate_atTop (e P)`.
-- [x] Keep the C1.4 field-facts provider as the sole reachable #234 root, but
-      with one fewer required target field.
+- [x] Confirm `.sci/plan.md` marks C1.5g complete and lists C1.5h/C1.5 as the
+      next C1 support/proof work.
+- [x] Inspect the definitions and local API for
+      `mapAnalyticOrderAt`, `onePointExtend`, `onePointSimplePoleCoordinate`,
+      `onePointExtend_onePointSimplePoleCoordinate_infty_eq_id`, and
+      `onePointExtend_onePointSimplePoleCoordinate_coe_eq_comp`.
+- [x] Inspect the relevant `OnePoint ℂ` chart/inversion order lemmas already in
+      `MeromorphicToBranchedCover.lean`, `OnePointCxChartedSpace.lean`, and
+      local analytic-order files before adding any helper.
+- [x] Prove the `Q = ∞` order-one case.
+- [x] Prove the finite-pole order-one case, adding only narrowly scoped
+      sorry-free helper lemmas if needed.
+- [x] Add the public local helper
+      `mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole`.
+- [x] Keep the six-field provider as the sole reachable #234 root; do not
+      remove `target_orderAt_pole` from the provider in this step.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root
