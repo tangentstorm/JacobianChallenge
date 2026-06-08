@@ -233,7 +233,6 @@ Cross-ref: `tex/sections/02-holomorphic-forms-finite-dim.tex`,
 theorem ContMDiffSection.fiberNorm_eq_abs_eval_one
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : HolomorphicOneForm ℂ X) (x : X) :
     ContMDiffSection.fiberNorm σ x = ‖(σ.toFun x) (1 : ℂ)‖ := by
   -- Fiber norm is the operator norm on T*X x = ℂ →L[ℂ] ℂ.
