@@ -32,17 +32,12 @@ requires re-running the surface-classification + cellular-homology argument on t
 universe-`u` functor — substantial deferred infrastructure, well beyond a single
 commit.
 
-Accordingly, `h1_basis_of_compact_riemann_surfaceU` is recorded here as a single
-**named tracked Periods layer-frontier obligation** (the universe-`u` analogue of
-the genuinely-proved Type-0 `h1_basis_of_compact_riemann_surface`). It is a
-Periods-layer sorry — NOT a sorry in `Jacobian/Solution.lean`'s public anti-hack
-block, and NOT an axiom — consistent with the project goal's acceptance criterion
-("zero sorries in the public block; HolomorphicForms/Periods layer-frontier
-sorries are expected") and with the fact that the Type-0 period lattice's
-full-rank content is itself currently frontier-sorry-backed
-(`riemann_classical_real_LI_input`). When the universe-`u` surface-classification
-infrastructure lands, this obligation is discharged genuinely, exactly mirroring
-the Type-0 side.
+Accordingly, the remaining direct providers in this file are narrower Stage-A
+and Stage-B universe-`u` obligations: the `IntegralOneCycleU` singular/cellular
+H₁ bridge giving a topological-genus-indexed basis, and the analytic/topological
+genus comparison for that universe-`u` homology object. The public
+`h1_basis_of_compact_riemann_surfaceU` theorem is only the sorry-free reindexing
+assembly, exactly mirroring the Type-0 side.
 -/
 
 namespace JacobianChallenge.Periods
@@ -52,14 +47,57 @@ open JacobianChallenge.HolomorphicForms
 universe u
 
 /--
+Universe-`u` topological genus measured from the universe-`u` singular homology
+object `IntegralOneCycleU X`.
+-/
+noncomputable def topologicalGenusU
+    (X : Type u) [TopologicalSpace X] : ℕ :=
+  Module.finrank ℤ (IntegralOneCycleU X) / 2
+
+/--
+**Universe-`u` Stage-A surface classification + cellular H₁ provider.**
+A compact connected Riemann surface `X : Type u` admits a topological-genus
+indexed ℤ-basis of the universe-`u` integral 1-cycles.
+
+This is the genuinely missing bridge: re-running the surface-classification,
+cellular-homology, and singular-vs-cellular comparison for Mathlib's
+`singularHomologyFunctor.{u}` with `ULift.{u} ℤ` coefficients.
+-/
+theorem stageA_surface_CW_basisU
+    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    Nonempty (Module.Basis (Fin (2 * topologicalGenusU X)) ℤ
+      (IntegralOneCycleU X)) := by
+  sorry
+
+/--
+**Universe-`u` Stage-B Hodge bridge.** The analytic genus agrees with the
+topological genus measured by `IntegralOneCycleU`.
+
+This is the universe-`u` companion of the Type-0 analytic/topological genus
+comparison, with the homology side now using `ULift.{u} ℤ` coefficients.
+-/
+theorem stageB_analytic_eq_topologicalGenusU
+    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
+    analyticGenus ℂ X = topologicalGenusU X := by
+  sorry
+
+/--
 **Universe-`u` H₁ ℤ-basis (tracked surface-classification obligation).**
 A compact connected Riemann surface `X : Type u` has integral first homology
 `IntegralOneCycleU X` admitting a ℤ-basis indexed by `Fin (2 * analyticGenus ℂ X)`.
 
 Universe-polymorphic companion to the genuinely-proved Type-0
-`h1_basis_of_compact_riemann_surface`. Recorded as a named tracked Periods
-layer-frontier obligation; see the module docstring for why the universe-`u`
-re-derivation is deferred infrastructure.
+`h1_basis_of_compact_riemann_surface`. Its remaining frontier is the narrower
+topological-genus basis provider `stageA_surface_CW_basisU` plus the
+universe-`u` Stage-B genus comparison `stageB_analytic_eq_topologicalGenusU`;
+this theorem itself only reindexes that basis.
 -/
 theorem h1_basis_of_compact_riemann_surfaceU
     (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -67,7 +105,8 @@ theorem h1_basis_of_compact_riemann_surfaceU
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
-    Nonempty (Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ (IntegralOneCycleU X)) :=
-  sorry
+    Nonempty (Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ (IntegralOneCycleU X)) := by
+  obtain ⟨b⟩ := stageA_surface_CW_basisU X
+  exact ⟨b.reindex (Fin.castOrderIso (by rw [stageB_analytic_eq_topologicalGenusU])).toEquiv⟩
 
 end JacobianChallenge.Periods
