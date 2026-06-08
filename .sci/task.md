@@ -8,11 +8,11 @@ Honestly close the surface-classification sub-chain in `Jacobian/Periods/TietzeR
 ## Targets
 - `Jacobian/Periods/TietzeReduction.lean`
 
-## Current Step (Milestone C2b.1)
-- [x] Isolate the narrow provider `orientable_handleBlock_collection`.
-- [x] Prove `orientable_handleSwap_grouping` from it.
-- [x] Verify `lake build Jacobian.Periods.TietzeReduction` compiles.
-- [x] Update `sorries.jsonl` and commit.
+## Current Step (Milestone C2b.2)
+- [ ] Isolate the heavy sub-step ("collect four letters of a handle adjacently") as a narrow provider.
+- [ ] Prove `orientable_handleBlock_collection` by strong induction on `w.length`, peeling `handleBlock i` using the new sub-step provider.
+- [ ] Verify `lake build Jacobian.Periods.TietzeReduction` compiles.
+- [ ] Update `sorries.jsonl` and commit.
 
 ## Logs
 - Milestone B has been accepted.
