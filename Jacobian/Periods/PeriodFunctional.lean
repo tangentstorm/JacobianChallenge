@@ -553,6 +553,66 @@ theorem hodge_form_posDef_on_periods
     simpa only [map_zero, Finsupp.coe_zero, Pi.zero_apply, Complex.normSq_eq_zero]
       using h_each_zero i;
 
+/--
+**Classical period-basis predicate.** A family of integral cycles is not merely
+injective: it is the canonical/symplectic period basis for which the classical
+Riemann-bilinear identity and Hodge positivity make the basis-aligned period
+coordinate rows nondegenerate.
+
+The single field is the coordinate nondegeneracy consequence that the local
+linear-algebra assembly consumes. The missing analytic/geometric proof of this
+predicate belongs to the classical symplectic-basis + Stokes/Hodge frontier, not
+to the arbitrary-injective public API.
+-/
+structure RiemannClassicalPeriodBasis
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X) : Prop where
+  periodCoordinate_linearIndependent :
+    LinearIndependent ℝ
+      (fun i => (holomorphicOneFormDualEquiv ℂ X)
+        ((periodPairing ℂ X) (σ i)))
+
+/--
+**Classical period-coordinate nondegeneracy provider for an H₁ basis.** A
+concrete `Module.Basis` supplied by the surface-classification/H₁ construction
+has basis-aligned period-coordinate rows that are ℝ-linearly independent.
+
+This is narrower than #227: it does not assert linear independence for an
+arbitrary injective cycle family, only for an H₁ basis carrying the missing
+classical symplectic/Stokes/Hodge structure.
+-/
+theorem h1_basis_periodCoordinate_linearIndependent
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (B : Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
+      (IntegralOneCycle X)) :
+    LinearIndependent ℝ
+      (fun i => (holomorphicOneFormDualEquiv ℂ X)
+        ((periodPairing ℂ X) (B i))) := by
+  sorry
+
+/--
+**Classical period-basis provider for an H₁ basis.** This is now only a
+structure assembly from the precise coordinate nondegeneracy provider above.
+-/
+theorem h1_basis_riemannClassicalPeriodBasis
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (B : Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
+      (IntegralOneCycle X)) :
+    RiemannClassicalPeriodBasis X (fun i => B i) := by
+  exact ⟨h1_basis_periodCoordinate_linearIndependent X B⟩
+
 
 theorem riemann_classical_real_LI_input
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -561,7 +621,8 @@ theorem riemann_classical_real_LI_input
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
-    (hσ : Function.Injective σ) :
+    (_hσ : Function.Injective σ)
+    (hσ_classical : RiemannClassicalPeriodBasis X σ) :
     LinearIndependent ℝ
       (fun i => (periodPairing ℂ X) (σ i)) := by
   -- Proof strategy (assembly of Blockers 3.1 and 3.2):
@@ -579,7 +640,24 @@ theorem riemann_classical_real_LI_input
   -- and needs Stokes on the fundamental polygon to identify the period sum
   -- with the positive Hodge form.  An arbitrary injective family of cycles
   -- need not have nondegenerate period pairings.
-  sorry
+  let e := (holomorphicOneFormDualEquiv ℂ X).restrictScalars ℝ
+  have hcoords :
+      LinearIndependent ℝ (e.symm.toLinearMap ∘
+        fun i => (holomorphicOneFormDualEquiv ℂ X)
+          ((periodPairing ℂ X) (σ i))) :=
+    hσ_classical.periodCoordinate_linearIndependent.map'
+      e.symm.toLinearMap
+      (LinearMap.ker_eq_bot.mpr e.symm.injective)
+  have hfun :
+      (e.symm.toLinearMap ∘ fun i => (holomorphicOneFormDualEquiv ℂ X)
+          ((periodPairing ℂ X) (σ i)))
+        = fun i => (periodPairing ℂ X) (σ i) := by
+    funext i
+    change e.symm (e ((periodPairing ℂ X) (σ i))) =
+      (periodPairing ℂ X) (σ i)
+    exact e.symm_apply_apply ((periodPairing ℂ X) (σ i))
+  rw [hfun] at hcoords
+  exact hcoords
 
 /--
 **Analytic core.** The period functionals `(periodPairing ℂ X) ∘ σ`
@@ -605,10 +683,11 @@ theorem period_functionals_ℝ_linearIndependent
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
-    (hσ : Function.Injective σ) :
+    (hσ : Function.Injective σ)
+    (hσ_classical : RiemannClassicalPeriodBasis X σ) :
     LinearIndependent ℝ
       (fun i => (periodPairing ℂ X) (σ i)) :=
-  riemann_classical_real_LI_input X σ hσ
+  riemann_classical_real_LI_input X σ hσ hσ_classical
 
 /--
 Proof: transport `period_functionals_ℝ_linearIndependent` through
@@ -622,13 +701,36 @@ theorem period_vectors_linearIndependent_of_symplectic
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
-    (hσ : Function.Injective σ) :
+    (hσ : Function.Injective σ)
+    (hσ_classical : RiemannClassicalPeriodBasis X σ) :
     LinearIndependent ℝ
       (fun i => (holomorphicOneFormDualEquiv ℂ X)
         ((periodPairing ℂ X) (σ i))) := by
-  exact (period_functionals_ℝ_linearIndependent X σ hσ).map'
+  exact (period_functionals_ℝ_linearIndependent X σ hσ hσ_classical).map'
     ((holomorphicOneFormDualEquiv ℂ X).restrictScalars ℝ).toLinearMap
     (LinearMap.ker_eq_bot.mpr (LinearEquiv.injective _))
+
+/--
+**Classical basis provider for the selected symplectic basis.** The cycles
+chosen by `symplectic_basis_of_cycles` are the canonical/symplectic period basis
+for which the Riemann-bilinear identity plus Hodge positivity produce
+basis-aligned period-coordinate nondegeneracy.
+
+This is the genuinely narrower remaining frontier: it is tied to the specific
+symplectic basis selected by the surface-classification/H₁ construction, rather
+than asserting nondegeneracy for every arbitrary injective family of cycles.
+-/
+theorem symplectic_basis_of_cycles_riemannClassicalPeriodBasis
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
+    ∃ (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X),
+      Function.Injective σ ∧ RiemannClassicalPeriodBasis X σ := by
+  obtain ⟨B⟩ := h1_basis_of_compact_riemann_surface X
+  exact ⟨fun i => B i, B.linearIndependent.injective,
+    h1_basis_riemannClassicalPeriodBasis X B⟩
 
 
 theorem periodVectors_linearIndependent
@@ -643,9 +745,10 @@ theorem periodVectors_linearIndependent
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
         ((periodPairing ℂ X).range) :
         Set (Fin (analyticGenus ℂ X) → ℂ)) := by
-  obtain ⟨σ, hσ⟩ := symplectic_basis_of_cycles X
+  obtain ⟨σ, hσ, hσ_classical⟩ :=
+    symplectic_basis_of_cycles_riemannClassicalPeriodBasis X
   exact ⟨fun i => (holomorphicOneFormDualEquiv ℂ X) ((periodPairing ℂ X) (σ i)),
-         period_vectors_linearIndependent_of_symplectic X σ hσ,
+         period_vectors_linearIndependent_of_symplectic X σ hσ hσ_classical,
          period_vectors_mem_subgroup X σ⟩
 
 /-!
@@ -808,6 +911,7 @@ theorem periodSubgroup_eq_zspan_of_basis
     -- fact that a `Module.Basis` is injective.
     exact period_vectors_linearIndependent_of_symplectic X
       (fun i => B i) B.linearIndependent.injective
+      (h1_basis_riemannClassicalPeriodBasis X B)
   · -- Range equality. We route entirely through `AddSubgroup.closure`
     -- (which is module-instance-independent), and only convert back to
     -- `Submodule.span ℤ` on the target side `Fin _ → ℂ` (which has no

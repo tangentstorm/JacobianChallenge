@@ -504,6 +504,7 @@ are linearly independent over \(\R\).
 
 \begin{lemma}[Riemann bilinear $\R$-linear-independence input (open)]
 \label{lem:riemann-classical-real-li-input}
+\uses{lem:period-pairing-satisfies-bilinear-identity, lem:hodge-form-pos-def-on-periods, lem:riemann-bilinear-algebra-skeleton, lem:quadratic-positivity-linear-independent-skeleton}
 For an injective family of \(2g\) integral \(1\)-cycles, the corresponding
 period functionals are \(\R\)-linearly independent. This is the classical
 Riemann-bilinear / Hermitian-positivity input on which
@@ -596,18 +597,95 @@ stated leaf sorries.
 
 The decomposition of \code{Jacobian/Periods/PeriodFunctional.lean}
 replaces the original single \code{sorry} in
-\code{riemann_classical_real_LI_input} with a sorry-free assembly
-delegating to two named, deeper obligations.
+\code{riemann_classical_real_LI_input} into explicit algebraic and
+positivity substrate nodes plus the remaining geometric frontier.
 
-\begin{itemize}
-\item \code{periodPairing_satisfies_bilinear_identity} --- packages the
-  link between the manifold integral \(\int_X \omega \wedge \eta\) and
-  the symplectic period sum. Requires Stokes on the fundamental
-  polygon.
-\item \code{hodge_form_posDef_on_periods} --- packages the Hermitian
-  positivity \(\code{i} \int_X \omega \wedge \bar\omega > 0\) at the
-  level of period functionals. Requires K\"ahler/Hodge theory.
-\end{itemize}
+\begin{lemma}[Algebraic symplectic-period fold skeleton]
+\label{lem:riemann-bilinear-algebra-skeleton}
+For functions on the \(2g\) symplectic basis, the alternating handle sum
+\[
+  Q(f,g)=\sum_{k<g}\bigl(f(a_k)g(b_k)-f(b_k)g(a_k)\bigr)
+\]
+is antisymmetric, vanishes on the diagonal, respects scalar
+multiplication, and expands as the handle-indexed Riemann-bilinear
+stand-in.
+\depends{Project-side algebra in
+\code{Jacobian/Periods/RiemannBilinearRefinement.lean}; grounded in
+Mathlib's finite-sum algebra, \code{Finset.sum_congr},
+\code{Finset.sum_neg_distrib}, \code{Finset.mul_sum}, and the
+\code{ring} tactic over \(\C\).}
+\lean{JacobianChallenge.Periods.RiemannBilinearRefinement.Q_skeleton_antisym,
+JacobianChallenge.Periods.RiemannBilinearRefinement.Q_skeleton_diag_zero,
+JacobianChallenge.Periods.RiemannBilinearRefinement.Q_skeleton_smul_left,
+JacobianChallenge.Periods.RiemannBilinearRefinement.Q_skeleton_smul_right,
+JacobianChallenge.Periods.RiemannBilinearRefinement.handleTerm_antisym,
+JacobianChallenge.Periods.RiemannBilinearRefinement.handleTerm_diag_zero,
+JacobianChallenge.Periods.RiemannBilinearRefinement.riemann_bilinear_identity_skeleton}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Quadratic positivity implies real linear independence]
+\label{lem:quadratic-positivity-linear-independent-skeleton}
+\uses{lem:riemann-bilinear-algebra-skeleton}
+For a finite family of complex coordinate rows, if the nonnegative
+quadratic skeleton
+\[
+  q(c)=\sum_k \left|\sum_i c_i a_{i,k}\right|^2
+\]
+vanishes only when every real coefficient \(c_i\) vanishes, then those
+rows are \(\R\)-linearly independent. Conversely, real linear
+independence gives the coefficient-vanishing conclusion from
+\(q(c)=0\).
+\depends{Project-side linear algebra in
+\code{Jacobian/Periods/RiemannBilinearRefinement.lean}; grounded in
+Mathlib's \code{Complex.normSq_nonneg},
+\code{Complex.normSq_eq_zero},
+\code{Finset.sum_eq_zero_iff_of_nonneg}, and
+\code{Fintype.linearIndependent_iff}.}
+\lean{JacobianChallenge.Periods.RiemannBilinearRefinement.quadraticSkeleton_nonneg,
+JacobianChallenge.Periods.RiemannBilinearRefinement.quadraticSkeleton_eq_zero_iff,
+JacobianChallenge.Periods.RiemannBilinearRefinement.sum_nonneg_eq_zero_iff_pointwise,
+JacobianChallenge.Periods.RiemannBilinearRefinement.real_linearIndependent_of_quadratic_pos_def,
+JacobianChallenge.Periods.RiemannBilinearRefinement.quadratic_pos_def_of_real_linearIndependent}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Period pairing satisfies the algebraic bilinear identity]
+\label{lem:period-pairing-satisfies-bilinear-identity}
+\uses{def:period-pairing, lem:riemann-bilinear-algebra-skeleton}
+The period pairing admits an alternating form whose value on two
+holomorphic one-forms is the symplectic handle sum of their periods over
+\(\sigma_{2k}\) and \(\sigma_{2k+1}\).
+\depends{Sorry-free wrapper in
+\code{Jacobian/Periods/PeriodFunctional.lean}, delegating to the
+project's current stand-in \code{riemann_bilinear_identity}. The
+remaining mathematical upgrade is to identify this algebraic stand-in
+with the actual manifold integral by Stokes on the fundamental polygon.}
+\lean{JacobianChallenge.Periods.riemann_bilinear_identity,
+JacobianChallenge.Periods.periodPairing_satisfies_bilinear_identity}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Hodge positivity on period coordinates]
+\label{lem:hodge-form-pos-def-on-periods}
+\uses{def:period-pairing, lem:quadratic-positivity-linear-independent-skeleton}
+The basis-aligned Hodge form on period functionals is positive on
+nonzero holomorphic one-forms: after rewriting by the period Stokes
+identity, \(i\) times the self-pairing has positive real part.
+\depends{Sorry-free coordinate positivity in
+\code{Jacobian/Periods/PeriodFunctional.lean}, using the basis-aligned
+dual equivalence and Mathlib's \code{Complex.mul_conj},
+\code{Complex.normSq_nonneg}, \code{Complex.normSq_pos}, and finite
+sum positivity. The remaining mathematical upgrade is the genuine
+K\"ahler/Hodge positivity of \(i\int_X\omega\wedge\bar\omega\).}
+\lean{JacobianChallenge.Periods.hodge_form_posDef,
+JacobianChallenge.Periods.hodge_form_posDef_on_periods}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
 
 % --- de Rham / Hodge rank input + its open exactness obligations ---
 % `input:hodge-deRham` is referenced by the analytic=topological genus theorem
@@ -616,11 +694,36 @@ delegating to two named, deeper obligations.
 
 \begin{theorem}[de Rham / Hodge rank computation]
 \label{input:hodge-deRham}
-\uses{lem:de-rham-comparison-map1-zero-period-primitive-exists-provider, lem:hodge-remainder-period-payload-exact}
+\uses{lem:de-rham-zero-period-exactness-assembly, lem:hodge-zero-projection-exactness-assembly}
 \(\mathrm{rank}_{\Z}H_1(X) = 2g_{\mathrm{an}}(X)\). This decomposes into the two
-exactness inputs below: a closed 1-form with vanishing periods is exact (de Rham),
-and a closed 1-form with zero harmonic projection is exact (Hodge).
+exactness packages below: the de Rham comparison map has exact kernel in
+degree \(1\), and Hodge projection has exact kernel on closed \(1\)-forms.
 \end{theorem}
+
+\begin{lemma}[Zero-period comparison-kernel bookkeeping]
+\label{lem:de-rham-zero-period-kernel-bookkeeping}
+For the degree-\(1\) comparison map, a closed form has zero periods
+exactly when it lies in the kernel. This is the definitional
+\(\ker f = \{x \mid f x = 0\}\) transport used by the de Rham
+injectivity branch.
+\depends{Mathlib's \code{LinearMap.mem_ker} and definitional rewriting.}
+\lean{JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_mem_kernel_frontier,
+JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_comparison_kernel_zero_period_frontier}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Primitive existence gives exactness]
+\label{lem:de-rham-primitive-to-exact-assembly}
+If a zero-period closed form admits a global primitive
+\(\theta\) with \(d\theta=\omega\), then \(\omega\) is exact. This is
+the range-witness unpacking of \(\mathrm{ExactForm}\).
+\depends{The project definition \code{ExactForm 0 X =
+LinearMap.range (exteriorDerivative 0 X)}.}
+\lean{JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_primitiveExists_exact_assembly}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
 
 \begin{lemma}[Zero-period closed form is exact (open)]
 \label{lem:de-rham-comparison-map1-zero-period-primitive-exists-provider}
@@ -630,12 +733,51 @@ Tracking: \ghissue{242}.
 \lean{JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_primitiveExists_provider}
 \end{lemma}
 
+\begin{lemma}[de Rham zero-period exactness assembly]
+\label{lem:de-rham-zero-period-exactness-assembly}
+\uses{lem:de-rham-zero-period-kernel-bookkeeping, lem:de-rham-primitive-to-exact-assembly, lem:de-rham-comparison-map1-zero-period-primitive-exists-provider}
+The de Rham comparison-kernel exactness package composes the
+zero-period/kernel conversion with primitive-existence and the
+primitive-to-exact assembly. Its only analytic frontier is the
+zero-period primitive-existence provider.
+\lean{JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_exact_axiom_frontier,
+JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_zero_period_mem_exact_frontier,
+JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_comparison_kernel_mem_exact_of_zero_period_frontier,
+JacobianChallenge.HolomorphicForms.deRhamComparisonMap1_comparison_kernel_mem_exact_frontier}
+\end{lemma}
+
+\begin{lemma}[Harmonic projection embedding bookkeeping]
+\label{lem:hodge-harmonic-embed-bookkeeping}
+The harmonic projection has the explicit coefficient-section
+\(\mathrm{harmonicEmbed}(h)=(h,0)\), and this section is a right
+inverse for the projection on harmonic coefficient data.
+\depends{Definitional simplification of \code{harmonicProjection1} and
+\code{harmonicEmbed}.}
+\lean{JacobianChallenge.HolomorphicForms.harmonicEmbed,
+JacobianChallenge.HolomorphicForms.harmonicProjection1_harmonicEmbed}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Zero-harmonic closed form is exact (open)]
 \label{lem:hodge-remainder-period-payload-exact}
 A closed \(1\)-form with zero harmonic projection is exact (the Hodge-remainder
 exactness payload). Open obligation (\code{sorry}).
 Tracking: \ghissue{243}.
 \lean{JacobianChallenge.HolomorphicForms.hodgeRemainder_periodPayload_exact}
+\end{lemma}
+
+\begin{lemma}[Hodge zero-projection exactness assembly]
+\label{lem:hodge-zero-projection-exactness-assembly}
+\uses{lem:hodge-harmonic-embed-bookkeeping, lem:hodge-remainder-period-payload-exact}
+The Hodge exactness package splits a closed \(1\)-form into its embedded
+harmonic projection plus the pure period-payload remainder. When the
+projection vanishes, the embedded harmonic summand is zero, so exactness
+of the period payload gives exactness of the original form. Its only
+analytic frontier is the Hodge-remainder period-payload exactness input.
+\lean{JacobianChallenge.HolomorphicForms.harmonicProjection1_hodgeDecomposition,
+JacobianChallenge.HolomorphicForms.harmonicProjection1_kernel_subset_exact,
+JacobianChallenge.HolomorphicForms.harmonicProjection1_kernel_eq_exact}
 \end{lemma}
 
 % --- Period pairing + period lattice (relocated from the former Statement Bank) ---

@@ -22,16 +22,15 @@ can be assembled, completing the `FullComplexLattice` fields for the public
 
 ## Frontier obligation
 
-The base of the chain, `riemann_classical_real_LI_inputU`, is the universe-`u`
-analogue of the **existing** Type-0 `sorry` `riemann_classical_real_LI_input`
-(PeriodFunctional.lean): the assertion that the period matrix of a symplectic
-homology basis has ℝ-linearly independent rows. Its genuine proof requires
-Riemann bilinear nondegeneracy / Hodge positivity and Stokes on the fundamental
-polygon — classical content absent in Mathlib v4.28.0, tracked project-wide. It
-is recorded here as a single named Periods layer-frontier sorry — NOT a sorry in
-`Jacobian/Solution.lean`'s public anti-hack block, NOT an axiom — matching the
-accepted Type-0 honesty level. Everything else in this file is genuine (a verbatim
-mirror of the Type-0 proofs with the universe-`u` substitutions).
+The remaining frontier is the universe-`u` companion to the accepted Type-0
+period-basis provider: an H₁ basis supplied by
+`h1_basis_of_compact_riemann_surfaceU` must be the classical symplectic period
+basis for which Riemann bilinear nondegeneracy / Hodge positivity and Stokes on
+the fundamental polygon give basis-aligned period-coordinate independence.
+
+That missing classical/geometric proof is recorded as the narrow provider
+`h1_basis_riemannClassicalPeriodBasisU`, not as a broad arbitrary-injective
+period-independence assertion.
 -/
 
 namespace JacobianChallenge.Periods
@@ -47,20 +46,60 @@ variable (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [FiniteDimensionalHolomorphicOneForms ℂ X]
 
 /--
-**Riemann-bilinear ℝ-linear-independence input (universe-`u`, tracked frontier
-obligation).** The period functionals `periodPairingComplexU X ∘ σ` of a
-symplectic homology basis `σ` are ℝ-linearly independent.
+**Universe-`u` classical period-basis predicate.** A family of lifted integral
+cycles carries the canonical/symplectic period-basis input needed by the
+Riemann-bilinear/Hodge-positivity argument.
+-/
+structure RiemannClassicalPeriodBasisU
+    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycleU X) : Prop where
+  periodCoordinate_linearIndependent :
+    LinearIndependent ℝ
+      (fun i => (holomorphicOneFormDualEquiv ℂ X)
+        ((periodPairingComplexU X) (σ i)))
 
-Universe-`u` analogue of the existing Type-0 `sorry`
-`riemann_classical_real_LI_input`; see the module docstring.
+/--
+**Universe-`u` classical period-basis provider for an H₁ basis.** This is the
+narrow remaining Riemann-bilinear frontier: a concrete H₁ basis is the
+classical/symplectic period basis with nondegenerate basis-aligned coordinates.
+-/
+theorem h1_basis_riemannClassicalPeriodBasisU
+    (B : Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
+      (IntegralOneCycleU X)) :
+    RiemannClassicalPeriodBasisU X (fun i => B i) := by
+  sorry
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
+/--
+**Riemann-bilinear ℝ-linear-independence input (universe-`u`).** The period
+functionals `periodPairingComplexU X ∘ σ` are ℝ-linearly independent once `σ`
+is known to be a classical/symplectic period basis.
 -/
 theorem riemann_classical_real_LI_inputU
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycleU X)
-    (hσ : Function.Injective σ) :
+    (_hσ : Function.Injective σ)
+    (hσ_classical : RiemannClassicalPeriodBasisU X σ) :
     LinearIndependent ℝ
-      (fun i => (periodPairingComplexU X) (σ i)) :=
-  sorry
+      (fun i => (periodPairingComplexU X) (σ i)) := by
+  let e := (holomorphicOneFormDualEquiv ℂ X).restrictScalars ℝ
+  have hcoords :
+      LinearIndependent ℝ (e.symm.toLinearMap ∘
+        fun i => (holomorphicOneFormDualEquiv ℂ X)
+          ((periodPairingComplexU X) (σ i))) :=
+    hσ_classical.periodCoordinate_linearIndependent.map'
+      e.symm.toLinearMap
+      (LinearMap.ker_eq_bot.mpr e.symm.injective)
+  have hfun :
+      (e.symm.toLinearMap ∘ fun i => (holomorphicOneFormDualEquiv ℂ X)
+          ((periodPairingComplexU X) (σ i)))
+        = fun i => (periodPairingComplexU X) (σ i) := by
+    funext i
+    change e.symm (e ((periodPairingComplexU X) (σ i))) =
+      (periodPairingComplexU X) (σ i)
+    exact e.symm_apply_apply ((periodPairingComplexU X) (σ i))
+  rw [hfun] at hcoords
+  exact hcoords
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /--
 The period functionals `periodPairingComplexU X ∘ σ` are ℝ-linearly independent
 in the ℂ-linear dual `HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ`. Universe-`u` companion to
@@ -68,11 +107,13 @@ in the ℂ-linear dual `HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ`. Universe-`u` 
 -/
 theorem period_functionals_ℝ_linearIndependentU
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycleU X)
-    (hσ : Function.Injective σ) :
+    (hσ : Function.Injective σ)
+    (hσ_classical : RiemannClassicalPeriodBasisU X σ) :
     LinearIndependent ℝ
       (fun i => (periodPairingComplexU X) (σ i)) :=
-  riemann_classical_real_LI_inputU X σ hσ
+  riemann_classical_real_LI_inputU X σ hσ hσ_classical
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /--
 The period vectors `dualEquiv ∘ periodPairingComplexU X ∘ σ` are ℝ-linearly
 independent in the basis-aligned model `Fin (analyticGenus ℂ X) → ℂ`.
@@ -81,11 +122,12 @@ transports `period_functionals_ℝ_linearIndependentU` through the dual equivale
 -/
 theorem period_vectors_linearIndependent_of_symplecticU
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycleU X)
-    (hσ : Function.Injective σ) :
+    (hσ : Function.Injective σ)
+    (hσ_classical : RiemannClassicalPeriodBasisU X σ) :
     LinearIndependent ℝ
       (fun i => (holomorphicOneFormDualEquiv ℂ X)
         ((periodPairingComplexU X) (σ i))) :=
-  (period_functionals_ℝ_linearIndependentU X σ hσ).map'
+  (period_functionals_ℝ_linearIndependentU X σ hσ hσ_classical).map'
     ((holomorphicOneFormDualEquiv ℂ X).restrictScalars ℝ).toLinearMap
     (LinearMap.ker_eq_bot.mpr (LinearEquiv.injective _))
 
@@ -99,6 +141,17 @@ theorem symplectic_basis_of_cyclesU :
       Function.Injective σ := by
   obtain ⟨b⟩ := h1_basis_of_compact_riemann_surfaceU X
   exact ⟨b, b.linearIndependent.injective⟩
+
+/--
+The selected universe-`u` H₁ basis also carries the classical period-basis
+predicate needed for the Riemann-bilinear rank assembly.
+-/
+theorem symplectic_basis_of_cycles_riemannClassicalPeriodBasisU :
+    ∃ (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycleU X),
+      Function.Injective σ ∧ RiemannClassicalPeriodBasisU X σ := by
+  obtain ⟨B⟩ := h1_basis_of_compact_riemann_surfaceU X
+  exact ⟨fun i => B i, B.linearIndependent.injective,
+    h1_basis_riemannClassicalPeriodBasisU X B⟩
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /--
@@ -122,9 +175,9 @@ theorem periodVectors_linearIndependentU :
       LinearIndependent ℝ b ∧
       ∀ i, b i ∈ (basisAlignedPeriodSubgroupConcreteU X :
         Set (Fin (analyticGenus ℂ X) → ℂ)) := by
-  obtain ⟨σ, hσ⟩ := symplectic_basis_of_cyclesU X
+  obtain ⟨σ, hσ, hσ_classical⟩ := symplectic_basis_of_cycles_riemannClassicalPeriodBasisU X
   exact ⟨fun i => (holomorphicOneFormDualEquiv ℂ X) ((periodPairingComplexU X) (σ i)),
-         period_vectors_linearIndependent_of_symplecticU X σ hσ,
+         period_vectors_linearIndependent_of_symplecticU X σ hσ hσ_classical,
          period_vectors_mem_subgroupU X σ⟩
 
 /--
