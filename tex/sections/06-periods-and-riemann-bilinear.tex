@@ -831,10 +831,76 @@ to obtain a full lattice in the underlying real vector space.
 % universe bridge consumes these); both are open obligations.
 \begin{lemma}[Universe-$u$ $H_1$ basis (open)]
 \label{lem:h1-basis-of-compact-riemann-surface-u}
+\uses{lem:stageA-surface-CW-basisU}
 A \(\Z\)-basis of \(H_1\) for a universe-\(u\) compact Riemann surface
 (\(\code{IntegralOneCycleU}\)). Open obligation (\code{sorry}).
 Tracking: \ghissue{240}.
 \lean{JacobianChallenge.Periods.h1_basis_of_compact_riemann_surfaceU}
+\end{lemma}
+
+\begin{lemma}[Type-0 classification homeomorphism]
+\label{lem:compact-orientable-surface-homeomorph-polygon4g}
+A compact connected Riemann surface (in Type 0) is homeomorphic to the standard fundamental polygon.
+\lean{JacobianChallenge.Periods.compactOrientableSurface_homeomorph_polygon4g_topologicalGenus}
+\end{lemma}
+
+\begin{lemma}[Type-0 Polygonal Cellular $H_1$ Basis]
+\label{lem:polygon4g-singularH1-iso-freeZ}
+The singular homology of the fundamental polygon in Type 0 is linearly isomorphic to $\Z^{2g}$.
+\lean{JacobianChallenge.Periods.polygon4g_singularH1_iso_freeZ}
+\end{lemma}
+
+\begin{lemma}[Mathlib: Equiv.ulift]
+\label{lem:mathlib-equiv-ulift}
+The equivalence between a type and its universe lift.
+\lean{Equiv.ulift}
+\end{lemma}
+
+\begin{lemma}[Mathlib: Homeomorph.ulift]
+\label{lem:mathlib-homeomorph-ulift}
+The homeomorphism between a topological space and its universe lift.
+\lean{Homeomorph.ulift}
+\end{lemma}
+
+\begin{lemma}[Mathlib: singularHomologyFunctor]
+\label{lem:mathlib-singular-homology-functor}
+The singular homology functor from topological spaces to modules.
+\lean{AlgebraicTopology.singularHomologyFunctor}
+\end{lemma}
+
+\begin{lemma}[Mathlib: TopCat.isoOfHomeo]
+\label{lem:mathlib-topcat-isoofhomeo}
+A homeomorphism of topological spaces induces an isomorphism in TopCat.
+\lean{TopCat.isoOfHomeo}
+\end{lemma}
+
+\begin{lemma}[Universe-$u$ Surface CW Basis]
+\label{lem:stageA-surface-CW-basisU}
+\uses{lem:compact-riemann-surface-homeomorph-ulift-polygon4g, lem:polygon4g-singularH1U-iso-freeZ, lem:mathlib-singular-homology-functor, lem:mathlib-topcat-isoofhomeo}
+The \code{IntegralOneCycleU} homology of the compact Riemann surface is isomorphic to $\Z^{2g}$ via the polygonal lift.
+\depends{Assembles the previous two nodes along with the universe-$u$ transport of homeomorphism \code{IntegralOneCycleULinearEquivOfHomeo} (derived via \code{TopCat.isoOfHomeo} and \code{singularHomologyFunctor}).}
+\lean{JacobianChallenge.Periods.stageA_surface_CW_basisU}
+\end{lemma}
+
+\begin{lemma}[Universe-$u$ classification homeomorphism]
+\label{lem:compact-riemann-surface-homeomorph-ulift-polygon4g}
+\uses{lem:compact-orientable-surface-homeomorph-polygon4g, lem:mathlib-equiv-ulift, lem:mathlib-homeomorph-ulift}
+A compact connected Riemann surface in Type $u$ is homeomorphic to the
+\code{ULift} of the standard fundamental polygon of its analytic genus.
+\depends{Transport of the Type-0 source lemma \code{compactOrientableSurface_homeomorph_polygon4g_topologicalGenus}
+via \code{Equiv.ulift} and \code{Homeomorph.ulift}. Note: this is shared surface-classification
+substrate (polygon) that overlaps jc2/jc4's domain.}
+\lean{JacobianChallenge.Periods.compactRiemannSurface_homeomorph_ulift_polygon4g}
+\end{lemma}
+
+\begin{lemma}[Universe-$u$ Polygonal Cellular $H_1$ Basis]
+\label{lem:polygon4g-singularH1U-iso-freeZ}
+\uses{lem:polygon4g-singularH1-iso-freeZ, lem:mathlib-singular-homology-functor}
+The \code{IntegralOneCycleU} homology of the lifted fundamental polygon is linearly isomorphic to $\Z^{2g}$.
+\depends{Lifts the Type-0 source lemma \code{polygon4g_singularH1_iso_freeZ} (from \code{SurfaceClassification.lean})
+using Mathlib's \code{singularHomologyFunctor} functoriality and coefficient isomorphism over \code{ULift}.
+Note: this is shared surface-classification substrate (cellular homology) that overlaps jc2/jc4's domain.}
+\lean{JacobianChallenge.Periods.polygon4g_singularH1U_iso_freeZ}
 \end{lemma}
 
 \begin{lemma}[Universe-$u$ Riemann-bilinear $\R$-LI input (open)]
