@@ -195,12 +195,12 @@ sending each homology class \([\gamma]\) to the linear functional
 Well-definedness on homology classes is
 \ref{lem:period-homology-invariance}, which itself depends on
 Stokes on a manifold with boundary
-(\ref{thm:stokes-on-rs-with-boundary}). The Lean side now
-implements the pairing by descending the multi-chart path
-integration \code{pathIntegralViaCover} to the homology level.
-The well-definedness of this descent (that the integral kills
-boundaries) is the "Stokes gap" and remains a \code{sorry} in the
-underlying \code{chain_integration_kills_boundary} leaf.}
+(\ref{thm:stokes-on-rs-with-boundary}). The blueprint target is the
+homology descent of the nonzero multi-chart path integration
+\code{pathIntegralViaCover}; the current Lean declaration
+\code{periodPairing} is only the typed zero placeholder, used so
+downstream period-lattice code has a stable API while the chain-level
+integration source is still being built.}
 \lean{JacobianChallenge.Periods.periodPairing}
 \leanok
 \end{theorem}
@@ -222,17 +222,53 @@ gap to a named analytic leaf.
 \end{layman}
 
 \begin{proofsketch}
-The Lean target \code{JacobianChallenge.Periods.periodPairing} is
-constructed in
-\code{Jacobian/Periods/PeriodFunctional.lean} by descending the
-multi-chart path integration \code{pathIntegralViaCover} (packaged
-as a chain-level integration in
+The intended target is to descend the multi-chart path integration
+\code{pathIntegralViaCover} (packaged as a chain-level integration in
 \code{Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean}) to the
-homology level. The well-definedness of this descent (that the
-integral kills boundaries) is the "Stokes gap" and remains a
-\code{sorry} in the underlying \code{chain_integration_kills_boundary}
-leaf.
+homology level. The current Lean declaration
+\code{JacobianChallenge.Periods.periodPairing} is deliberately the zero
+placeholder in \code{Jacobian/Periods/PeriodFunctional.lean}; the missing
+source content is the nonzero chain-level integration map and its
+boundary-killing proof.
 \end{proofsketch}
+
+\begin{lemma}[Nonzero chain-level period functional provider (open)]
+\label{lem:nonzero-chain-level-period-functional-provider}
+\uses{def:path-integral-via-cover, lem:path-integral-cover-independent}
+There is a chain-level integration homomorphism
+\[
+  I_X : C_1(X;\Z) \to (\HX \to_\C \C)
+\]
+whose value on a singular simplex is the cover-based path integral of
+the holomorphic form along that simplex.
+\depends{Project-side assembly of finite chart covers and common
+refinements, grounded in Mathlib's interval and circle integral
+infrastructure:
+\code{Mathlib.MeasureTheory.Integral.IntervalIntegral},
+\code{Mathlib.MeasureTheory.Integral.CircleIntegral}, and the
+linearity/additivity/reversal lemmas used by
+\code{pathIntegralInChartCorrect}.}
+\notready
+\end{lemma}
+
+\begin{lemma}[Nonzero period-pairing descent provider (open)]
+\label{lem:nonzero-period-pairing-descent-provider}
+\uses{lem:nonzero-chain-level-period-functional-provider, lem:period-homology-invariance, thm:stokes-on-rs-with-boundary}
+The chain-level functional \(I_X\) kills singular boundaries of closed
+holomorphic 1-forms, hence descends to a nonzero additive homomorphism
+\[
+  H_1(X,\Z) \to \HdualX.
+\]
+Replacing the current zero \code{periodPairing} placeholder by this descent is
+the source-level provider needed before the #227 functional-kernel theorem can
+be attacked directly.
+\depends{The boundary-killing statement is the chain-level Stokes leaf
+\code{chainIntegral\_kills\_boundary\_of\_closed}, assembled from
+\code{holomorphicForm\_closed\_chain\_integral} and
+\code{stokes\_chain\_integral\_boundary}; the Stokes branch points to
+\ref{thm:stokes-on-rs-with-boundary}.}
+\notready
+\end{lemma}
 
 \subsection{Homology invariance of periods}
 
@@ -504,7 +540,7 @@ are linearly independent over \(\R\).
 
 \begin{lemma}[H1-basis period-pairing real-kernel provider (open)]
 \label{lem:riemann-classical-real-li-input}
-\uses{lem:period-pairing-satisfies-bilinear-identity, lem:hodge-form-pos-def-on-periods, lem:riemann-bilinear-algebra-skeleton, lem:quadratic-positivity-linear-independent-skeleton}
+\uses{lem:nonzero-period-pairing-descent-provider, lem:period-pairing-satisfies-bilinear-identity, lem:hodge-form-pos-def-on-periods, thm:stokes-on-rs-with-boundary, lem:riemann-bilinear-algebra-skeleton, lem:quadratic-positivity-linear-independent-skeleton}
 For the concrete integral \(H_1\)-basis \(B\) supplied by the
 surface-classification construction, the basis-aligned period functionals
 have trivial real kernel: if real coefficients \(c_i\) kill the functional
@@ -517,6 +553,10 @@ Riemann-bilinear / Hermitian-positivity frontier. The public
 \code{riemann\_classical\_real\_LI\_input} theorem and the
 \code{h1\_basis\_periodMatrix\_realKernel\_trivial} coordinate provider are
 now sorry-free assemblies from this narrower functional-kernel statement.
+The node depends on the nonzero period-pairing descent provider because the
+current Lean \code{periodPairing} declaration is still the zero placeholder;
+with that placeholder alone, the displayed kernel statement is false for any
+positive genus \(H_1\)-basis.
 Tracking: \ghissue{227}.
 \lean{JacobianChallenge.Periods.h1_basis_periodPairing_realKernel_trivial}
 \end{lemma}
@@ -667,7 +707,7 @@ JacobianChallenge.Periods.RiemannBilinearRefinement.quadratic_pos_def_of_real_li
 
 \begin{lemma}[Period pairing satisfies the algebraic bilinear identity]
 \label{lem:period-pairing-satisfies-bilinear-identity}
-\uses{def:period-pairing, lem:riemann-bilinear-algebra-skeleton}
+\uses{def:period-pairing, lem:nonzero-period-pairing-descent-provider, thm:stokes-on-rs-with-boundary, lem:riemann-bilinear-algebra-skeleton}
 The period pairing admits an alternating form whose value on two
 holomorphic one-forms is the symplectic handle sum of their periods over
 \(\sigma_{2k}\) and \(\sigma_{2k+1}\).
@@ -684,7 +724,7 @@ JacobianChallenge.Periods.periodPairing_satisfies_bilinear_identity}
 
 \begin{lemma}[Hodge positivity on period coordinates]
 \label{lem:hodge-form-pos-def-on-periods}
-\uses{def:period-pairing, lem:quadratic-positivity-linear-independent-skeleton}
+\uses{def:period-pairing, lem:nonzero-period-pairing-descent-provider, lem:quadratic-positivity-linear-independent-skeleton}
 The basis-aligned Hodge form on period functionals is positive on
 nonzero holomorphic one-forms: after rewriting by the period Stokes
 identity, \(i\) times the self-pairing has positive real part.

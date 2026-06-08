@@ -81,6 +81,14 @@ classical period-pairing nondegeneracy provider.
       shows #227 narrowed to the strictly smaller functional period-pairing
       provider with no net new reachable sorries.
 
+### Milestone P5 — Blueprint Map the Period-Pairing Frontier
+- [x] **P5.** Extend the Chapter-06 Lean Blueprint so the current #227 frontier
+      `h1_basis_periodPairing_realKernel_trivial` is wired through explicit
+      blueprint nodes for the nonzero chain-integration period pairing,
+      homology descent, Stokes-on-boundary, Riemann bilinear identity, and
+      Hermitian positivity leaves. This is a `tex/` planning/mapping commit,
+      not another Lean/source-boundary split.
+
 ## 3. Hazards
 
 - The original arbitrary-injective #227 statement is mathematically too strong.
@@ -90,4 +98,7 @@ classical period-pairing nondegeneracy provider.
 - Do not create a second broad provider parallel to the current one. If a new
   provider is needed, it must be strictly narrower and the old root must be
   proved sorry-free from it.
+- Do not keep reshaping the same #227 frontier. Before more implementation,
+  map the zero `periodPairing` placeholder and the functional-kernel provider
+  through the blueprint down to named Mathlib/Stokes/Hodge leaves.
 - Do not introduce `axiom`, `unsafe`, or a new broad `sorry`.
