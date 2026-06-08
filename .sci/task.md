@@ -1,34 +1,23 @@
-# Worker jc0 — Milestone C1.4: expose simple-pole principal-part field facts
+# Worker jc0 — Milestone C1.5a: correct finite-pole target coordinate normal form
 
 ## Assignment
 
-Execute C1.4 from `.sci/plan.md`: replace the remaining #234 facts-provider
-`sorry` with a narrower provider that exposes the exact field-level obligations
-needed to build `HasComplexSimplePolePrincipalPart` for both the explicit target
-coordinate and the pulled-back source coordinate.
+Execute a smaller prerequisite step before retrying C1.5. The rejected C1.5
+attempt exposed that the current finite-pole branch of
+`onePointSimplePoleCoordinate` is not the continuous target coordinate at
+`∞`: for `Q = (a : ℂ)`, it currently evaluates the generic `getD 0` formula at
+`∞`, giving `(-a)⁻¹` instead of the correct limiting value `0`.
 
-Add a local structure in
-`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`, for example
-`BiholomorphOnePointSimplePolePullbackFieldFacts`, whose fields are the concrete
-components of the two principal-part predicates:
+Change the finite-pole branch of
+`Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean` so it explicitly
+handles `∞` by `0`, for example by using
+`x.elim 0 (fun z => if z = a then 0 else (z - a)⁻¹)`.
 
-- for `onePointSimplePoleCoordinate (e P)` at `e P`:
-  meromorphic everywhere, continuous one-point extension, order one, and
-  punctured-neighborhood modulus divergence;
-- for `biholomorphPulledBackSimplePoleCoordinate P e` at `P`:
-  meromorphic everywhere, continuous one-point extension, order one, and
-  punctured-neighborhood modulus divergence.
-
-Then add a named provider returning `Nonempty` of this field-facts structure
-with the single remaining `sorry`, and prove
-`biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` by
-assembling the two `HasComplexSimplePolePrincipalPart` records from those
-fields.
-
-This is a Lean-code commit. It should not prove the analytic field facts yet;
-it should make the remaining #234 frontier strictly narrower by exposing the
-eight concrete proof obligations instead of hiding them inside bundled
-principal-part predicates.
+Then add small sorry-free local normal-form lemmas for the explicit coordinate:
+evaluation at `∞`, evaluation at a finite pole, and evaluation at finite
+off-pole points. This task is only the coordinate correction plus basic
+supporting lemmas; do not attempt to prove the target-side simple-pole field
+facts or move the #234 frontier in this commit.
 
 ## Scope
 
@@ -38,11 +27,8 @@ principal-part predicates.
 - Do not edit `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
 - Preserve public theorem names and signatures, especially
   `complexSimplePolePrincipalPart_of_biholomorph_onePoint`.
-- Do not add more than one new `sorry`; the new field-facts provider must
-  replace the existing
-  `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` `sorry`,
-  not add a second reachable gap.
-- Do not use the circular fixed-pole/Riemann--Roch route through
+- Do not introduce new sorries, axioms, or unsafe declarations.
+- Do not route through the circular fixed-pole/Riemann--Roch chain:
   `genusZero_pointRRSection_meromorphic_getD_exists`,
   `genusZero_fixedPole_analyticRRWitness_nonempty`,
   `genusZero_fixedPole_simplePoleRRSection_nonempty`,
@@ -51,38 +37,40 @@ principal-part predicates.
 
 ## Checklist
 
-- [x] Confirm `.sci/plan.md` marks C1.3 complete and lists C1.4 as the next
-      unchecked milestone.
-- [x] Inspect `HasComplexSimplePolePrincipalPart`,
-      `BiholomorphOnePointSimplePolePullbackFacts`, and the current facts
-      provider.
-- [x] Add the field-facts structure carrying the four target fields and four
-      source fields needed for `HasComplexSimplePolePrincipalPart`.
-- [x] Add the named field-facts provider with exactly one `sorry`, documenting
-      it as the remaining explicit-coordinate analytic frontier.
-- [x] Replace the body of
-      `biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint` with
-      sorry-free assembly of the target and source principal-part records from
-      the field facts.
-- [x] Keep `BiholomorphOnePointSimplePolePullbackData`,
-      `complexSimplePolePrincipalPart_of_biholomorph_onePoint`, and downstream
-      `singlePoleAnalyticData_of_biholomorph_onePoint` unchanged except for any
-      name drift forced by the provider replacement.
+- [x] Confirm `.sci/plan.md` marks reverted C1.5 unchecked and lists C1.5a as
+      the next unchecked milestone.
+- [x] Inspect the current `onePointSimplePoleCoordinate` definition and nearby
+      provider stack in
+      `Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`.
+- [x] Change the finite-pole coordinate branch so `∞` maps to `0` and finite
+      values are `if z = a then 0 else (z - a)⁻¹`.
+- [x] Add sorry-free normal-form/evaluation lemmas for the infinite-pole
+      coordinate, finite-pole coordinate at `∞`, finite-pole coordinate at the
+      pole, and finite-pole coordinate away from the pole.
+- [x] Keep the C1.4 field-facts provider as the sole reachable #234 root; do
+      not replace it with target/source transport providers in this step.
 - [x] Run `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`.
 - [x] Run `lake build Jacobian.Solution`.
 - [x] Run `scripts/list-sorries.py --text` and confirm the reachable #234 root
-      moved to the new field-facts provider, with no net new reachable sorries.
+      remains
+      `biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint`
+      with no net new reachable sorries.
+- [x] Run
+      `rg -n "\\baxiom\\b|unsafe|sorry" Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`
+      and confirm no new axiom/unsafe declarations and only the expected real
+      sorries in this file.
 - [x] Commit exactly the scoped Lean/SCI edit with normalized author/committer
       metadata and `Co-authored-by: Codex <codex@openai.com>`.
 
 ## Verification
 
-- `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`: succeeds;
-  this file now has warnings at
-  `biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint` and
-  the existing `genusZeroHomeomorphOnePoint_of_analyticGenus_zero` provider.
-- `lake build Jacobian.Solution`: succeeds with existing `uses sorry`
-  warnings.
+- `lake build Jacobian.HolomorphicForms.MeromorphicToBranchedCover`: succeeds
+  with existing `uses sorry` warnings at the field-facts provider and
+  `genusZeroHomeomorphOnePoint_of_analyticGenus_zero`.
+- `lake build Jacobian.Solution`: succeeds with existing `uses sorry` warnings.
 - `scripts/list-sorries.py --text`: still 20 reachable sorries total; the #234
-  root moved to
+  root remains
   `biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint`.
+- `rg -n "\\baxiom\\b|unsafe|sorry" Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean`:
+  no axiom/unsafe declarations; only the expected two real `sorry`s in this
+  file plus explanatory comments.

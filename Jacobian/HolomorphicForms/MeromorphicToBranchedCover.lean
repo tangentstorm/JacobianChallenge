@@ -3012,14 +3012,48 @@ structure BiholomorphOnePointSimplePolePullbackData
 Explicit simple-pole coordinate on `OnePoint ℂ` with pole at `Q`.
 
 For `Q = ∞`, this is the standard finite coordinate `x.getD 0`. For
-`Q = ↑a`, this is the finite coordinate `(x.getD 0 - a)⁻¹` away from the pole,
-with the value at the pole set arbitrarily to `0`; the complex lift value at
-the pole is irrelevant for the resulting one-point extension.
+`Q = ↑a`, this is the finite coordinate `(z - a)⁻¹` on finite points away from
+the pole, with the values at both `∞` and the pole set to `0`; the complex lift
+value at the pole is irrelevant for the resulting one-point extension, while
+the value at `∞` is the continuous limiting value of `(z - a)⁻¹`.
 -/
 noncomputable def onePointSimplePoleCoordinate (Q : OnePoint ℂ) : OnePoint ℂ → ℂ := by
   classical
   exact Q.elim (fun x => x.getD 0)
-    (fun a x => if x = ((a : ℂ) : OnePoint ℂ) then 0 else (x.getD 0 - a)⁻¹)
+    (fun a x => x.elim 0 (fun z => if z = a then 0 else (z - a)⁻¹))
+
+@[simp] theorem onePointSimplePoleCoordinate_infty_apply
+    (x : OnePoint ℂ) :
+    onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ) x = x.getD 0 := rfl
+
+@[simp] theorem onePointSimplePoleCoordinate_infty_apply_coe
+    (z : ℂ) :
+    onePointSimplePoleCoordinate (OnePoint.infty : OnePoint ℂ)
+      ((z : ℂ) : OnePoint ℂ) = z := rfl
+
+@[simp] theorem onePointSimplePoleCoordinate_coe_apply_infty
+    (a : ℂ) :
+    onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ)
+      (OnePoint.infty : OnePoint ℂ) = 0 := by
+  simp [onePointSimplePoleCoordinate]
+
+@[simp] theorem onePointSimplePoleCoordinate_coe_apply_coe
+    (a z : ℂ) :
+    onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ)
+      ((z : ℂ) : OnePoint ℂ) = if z = a then 0 else (z - a)⁻¹ := by
+  simp [onePointSimplePoleCoordinate]
+
+@[simp] theorem onePointSimplePoleCoordinate_coe_apply_pole
+    (a : ℂ) :
+    onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ)
+      ((a : ℂ) : OnePoint ℂ) = 0 := by
+  simp
+
+theorem onePointSimplePoleCoordinate_coe_apply_coe_ne
+    {a z : ℂ} (hz : z ≠ a) :
+    onePointSimplePoleCoordinate ((a : ℂ) : OnePoint ℂ)
+      ((z : ℂ) : OnePoint ℂ) = (z - a)⁻¹ := by
+  simp [hz]
 
 /--
 The source coordinate obtained by pulling the explicit `OnePoint ℂ`
