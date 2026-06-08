@@ -818,7 +818,7 @@ canonical inclusion, tends to \(\infty\) at \(P\).
 
 \begin{lemma}[Cotangent transition formula on the overlap]
 \label{lem:cotangent-transition-formula}
-\uses{lem:onepoint-cx-chart-overlap-derivative, lem:onepoint-cx-chart-overlap-pullback, lem:holomorphic-one-form-pointwise-limit-exists, lem:holomorphic-one-form-limit-continuous, lem:holomorphic-one-form-limit-holomorphic}
+\uses{lem:onepoint-cx-chart-overlap-pullback}
 For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), there is a
 punctured neighbourhood of \(0\in\C\) (in the inversion chart) on
 which the identity-chart coefficient \(f\) and the inversion-chart
@@ -861,6 +861,24 @@ Apply the chain rule for cotangent vectors under
 with \(g(w)\,dw\) yields the identity.
 \end{proof}
 
+\begin{lemma}[Finite coefficient decays at infinity]
+\label{lem:holomorphic-one-form-coeff-tendsto-zero}
+\uses{lem:inversion-chart-coeff-continuous-at-zero, lem:cotangent-transition-formula}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), the identity-chart
+coefficient tends to \(0\) along the cocompact filter on \(\C\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_coeff_tendsto_zero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Continuity of the inversion-chart coefficient at \(0\), together with
+Lemma~\ref{lem:cotangent-transition-formula}, shows that
+\(f(w^{-1})=-w^{2}g(w)\) tends to \(0\) along the punctured neighbourhood of
+\(0\). Mathlib's \code{Filter.tendsto\_inv₀\_cobounded'} turns
+the inverse map into a map from the cobounded filter to that punctured
+neighbourhood, and \code{Metric.cobounded\_eq\_cocompact} identifies the
+cobounded and cocompact filters on \(\C\). Hence \(f\to0\) at infinity.
+\end{proof}
+
 \begin{lemma}[Liouville vanishing for entire functions decaying at infinity]
 \label{lem:entire-tendsto-zero-eq-zero}
 An entire function \(f:\C\to\C\) which tends to \(0\) along the
@@ -876,7 +894,7 @@ given complex differentiable function and its cocompact decay hypothesis.
 
 \begin{lemma}[Finite-point vanishing on \(\code{OnePoint}\,\C\)]
 \label{lem:onepoint-holomorphic-one-form-finite-vanishing}
-\uses{lem:entire-tendsto-zero-eq-zero, lem:holomorphic-one-form-coeff-entire, lem:inversion-chart-coeff-continuous-at-zero, lem:cotangent-transition-formula}
+\uses{lem:entire-tendsto-zero-eq-zero, lem:holomorphic-one-form-coeff-entire, lem:holomorphic-one-form-coeff-tendsto-zero}
 For a holomorphic \(1\)-form \(\omega\) on \(\CPone\), the value of
 \(\omega\) at every finite point \(z:\C\subset\CPone\) is zero.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_onePointCx_toFun_finite_eq_zero}
@@ -885,8 +903,8 @@ For a holomorphic \(1\)-form \(\omega\) on \(\CPone\), the value of
 \begin{proof}\leanok
 Read \(\omega\) in the identity chart as \(f(z)\,dz\).
 Lemma~\ref{lem:holomorphic-one-form-coeff-entire} supplies the entire coefficient,
-while Lemma~\ref{lem:cotangent-transition-formula}, together with continuity in
-the inversion chart, gives cocompact decay of \(f\). Applying
+while Lemma~\ref{lem:holomorphic-one-form-coeff-tendsto-zero} supplies
+cocompact decay of \(f\). Applying
 Lemma~\ref{lem:entire-tendsto-zero-eq-zero} gives \(f=0\), hence \(\omega\)
 vanishes at all finite points.
 \end{proof}
