@@ -310,3 +310,57 @@ In particular, separate #228 into quotient-chart finite-lift topology versus
 the already-isolated subdivision-prism leaf; keep #229 focused on primitive
 side-strip geometry; and keep #230 focused on the homological edge-chain
 independence theorem after the finite coefficient algebra already mapped here.
+
+# A2 Hurewicz Frontier Wiring
+
+Status: A2 complete.
+
+## Added / Refined Frontier Node
+
+In `tex/sections/05-polygonal-model.tex`, the Cluster-A Hurewicz wiring now
+separates the quotient-lift and singular-subdivision frontiers:
+
+- `lem:polygon4g-singular-simplex-subdivision-lifts-to-disk`
+  - Lean declaration:
+    `polygon4g_singularSimplex_subdivision_lifts_to_disk`.
+  - Role: records the downstream lift package that depends on #228
+    quotient-chart finite-lift data and, in the prose, the singular-chain
+    subdivision-prism frontier. The prism frontier is intentionally not a
+    separate `\lean{}` node because the graph-state generator attaches a stale
+    green blueprint row to that declaration while the Lean declaration row
+    remains `c:"sorry"`.
+
+## Frontier Wiring
+
+- `thm:analytic-eq-topological-genus` now uses the full polygon quotient simplex
+  lift package rather than pointing directly to #228. The package node then
+  exposes the genuine #228 quotient-chart finite-lift frontier and the
+  independent singular-chain subdivision-prism frontier in prose.
+- #229 remains focused on primitive side-strip geometry after the A1 endpoint
+  repair/bookkeeping substrate.
+- #230 remains focused on homological edge-chain independence after the A1
+  finite signed-face coefficient algebra.
+
+The direct frontier nodes #228, #229, #230, and the downstream lift-package node
+remain unmarked by proof-level `\leanok`; the subdivision-prism frontier is
+also left ungreen.
+
+## Verification
+
+- Confirmed the new `\lean{}` declarations exist in
+  `Jacobian/Periods/Hurewicz.lean`.
+- `python3 scripts/blueprint_audit.py` succeeded with exit code 0:
+  105 statement-style environments, 104 with `\lean{...}`, 1 `\notready`,
+  87 clean, and 16 expected declaration-only open nodes.
+- `bash scripts/build-blueprint.sh` succeeded end-to-end. It refreshed
+  `sorries.jsonl` with 310 graph-coloured records, pruned the stale prism
+  blueprint row, injected the blueprint web extras, and verified the
+  post-processing hooks.
+
+## Next Recommended Step
+
+Proceed to C1: refine `input:hodge-deRham` so #242 is the unique de Rham
+primitive-existence frontier and #243 is the unique Hodge closed =
+harmonic + exact frontier, with green surrounding assembly nodes for
+zero-period-to-kernel, primitive-to-exact, and harmonic-projection
+kernel/exact bookkeeping.

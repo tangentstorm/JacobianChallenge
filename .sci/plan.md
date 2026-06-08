@@ -50,7 +50,7 @@ See `goal.md` § FIRST JOB for the full framing and the 3 clusters.
       (4g-gon quotient charts, edge-chain cellular model, singular-chain
       subdivision) and add green nodes with `\uses` down to Mathlib (Arzelà–Ascoli
       / quotient-map / cellular-homology facts) or green project lemmas.
-- [ ] **A2.** Wire #228/#229/#230 to their genuine frontier leaves only.
+- [x] **A2.** Wire #228/#229/#230 to their genuine frontier leaves only.
 
 ### Milestone C-map — de Rham / Hodge exactness
 - [ ] **C1.** Refine `input:hodge-deRham` so #242 is the unique de Rham
