@@ -1036,9 +1036,171 @@ only a homeomorphism; the complex-smooth upgrade is
 Theorem~\ref{thm:uniformization-genus-zero-biholomorphism}.
 \end{proof}
 
+\begin{lemma}[Gluing coordinates land in their target charts]
+\label{lem:global-gluing-coord-mem-target}
+For a genus-zero global patch family, each local coordinate value lies in the
+target of the assigned public \(\code{OnePoint}\,\C\) chart.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_coord_mem_target_on_patch}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+The assigned target chart is either the identity chart or the inversion chart
+of \(\code{OnePoint}\,\C\). In both cases the coordinate target-membership
+condition follows by unfolding the standard chart target.
+\end{proof}
+
+\begin{definition}[Glued forward candidate map]
+\label{def:global-gluing-to-map}
+\uses{lem:global-gluing-coord-mem-target}
+Given a genus-zero global patch family, define the candidate map
+\(X\to\code{OnePoint}\,\C\) by choosing a patch containing \(x\) and applying
+that patch's target-chart inverse to the local coordinate of \(x\).
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_toMap}
+\leanok
+\end{definition}
+
+\begin{lemma}[Glued map agrees with the selector uniformization]
+\label{lem:global-gluing-to-map-eq-uniformization}
+\uses{def:global-gluing-to-map}
+For a normalized Montel patch selector, the chosen-patch formula for the glued
+map agrees pointwise with the homeomorphism packaged by the selector.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_toMap_eq_uniformization}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Choose the patch supplied by the finite cover at \(x\). The selector field
+\code{coord\_represents\_uniformization} states exactly that this patch's
+target-chart inverse of the local coordinate is the selector uniformization.
+\end{proof}
+
+\begin{lemma}[Gluing coordinates agree on overlaps]
+\label{lem:global-gluing-overlap-compatible}
+\uses{lem:global-gluing-to-map-eq-uniformization}
+On any overlap of two selected source patches, the two local coordinate
+formulas determine the same point of \(\code{OnePoint}\,\C\).
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_overlap_compatible}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Both patch expressions are equal to the selector's uniformization at the same
+source point, so they are equal to each other.
+\end{proof}
+
+\begin{lemma}[Glued map lands in the selected target chart]
+\label{lem:global-gluing-to-map-target-mem}
+\uses{lem:global-gluing-coord-mem-target, lem:global-gluing-to-map-eq-uniformization}
+On each selected source patch, the glued map lands in the source of that
+patch's assigned target chart.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_toMap_target_mem_on_patch}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+The local coordinate lies in the target chart by
+Lemma~\ref{lem:global-gluing-coord-mem-target}. Applying the chart inverse
+puts the value in the chart source, and
+Lemma~\ref{lem:global-gluing-to-map-eq-uniformization} identifies this local
+formula with the chosen-patch glued map.
+\end{proof}
+
+\begin{lemma}[Forward glued candidate exists]
+\label{lem:global-gluing-to-map-exists}
+\uses{def:global-gluing-to-map, lem:global-gluing-to-map-target-mem}
+A normalized Montel patch selector supplies a global candidate
+\(X\to\code{OnePoint}\,\C\) whose values lie in the assigned target chart on
+each source patch.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_toMap_exists}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Take the map of Definition~\ref{def:global-gluing-to-map}; the target-chart
+membership assertion is Lemma~\ref{lem:global-gluing-to-map-target-mem}.
+\end{proof}
+
+\begin{lemma}[Chart expression for the glued map]
+\label{lem:global-gluing-chart-expression}
+\uses{lem:global-gluing-coord-mem-target, lem:global-gluing-to-map-eq-uniformization}
+On each selected source patch, reading the glued map in the assigned target
+chart recovers the patch's local coordinate.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_chart_expression_on_patch}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+After replacing the glued map by the selector uniformization using
+Lemma~\ref{lem:global-gluing-to-map-eq-uniformization}, the selector's local
+coordinate representation reduces the claim to the right-inverse property of
+the target chart.
+\end{proof}
+
+\begin{lemma}[Glued inverse candidate exists]
+\label{lem:global-gluing-inv-map-exists}
+\uses{lem:global-gluing-chart-expression}
+The selector supplies an inverse candidate \(\code{OnePoint}\,\C\to X\) whose
+local formula on each target chart is the selected inverse branch.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_invMap_exists}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Use the inverse of the selector homeomorphism. The selector field
+\code{invCoord\_represents\_uniformization} identifies this inverse with each
+local inverse branch on the corresponding target chart.
+\end{proof}
+
+\begin{lemma}[Local left inverse for the glued maps]
+\label{lem:global-gluing-local-left-inverse}
+\uses{lem:global-gluing-to-map-eq-uniformization}
+The selector inverse followed by the glued forward map is locally the identity
+on every selected source patch.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_local_left_inverse_on_patch}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Replace the glued forward map by the selector uniformization, then apply the
+left-inverse property of the selector homeomorphism.
+\end{proof}
+
+\begin{lemma}[Local right inverse for target-chart branches]
+\label{lem:global-gluing-local-right-inverse}
+\uses{lem:global-gluing-to-map-eq-uniformization, lem:global-gluing-inv-map-exists}
+The glued forward map sends each selected inverse branch back to the
+corresponding point of \(\code{OnePoint}\,\C\).
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_local_right_inverse_on_target_chart}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Rewrite the glued map as the selector uniformization and rewrite the inverse
+branch by \code{invCoord\_represents\_uniformization}; the result is the
+right-inverse property of the selector homeomorphism.
+\end{proof}
+
+\begin{lemma}[Smoothness of the glued forward map]
+\label{lem:global-gluing-contmdiff-to-map}
+\uses{lem:global-gluing-to-map-eq-uniformization}
+The glued forward candidate is \(\code{ContMDiff}\).
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_contMDiff_toMap}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+The glued map is pointwise the selector uniformization by
+Lemma~\ref{lem:global-gluing-to-map-eq-uniformization}; smoothness is the
+\code{uniformization\_contMDiff} field of the selector.
+\end{proof}
+
+\begin{lemma}[Smoothness of the glued inverse map]
+\label{lem:global-gluing-contmdiff-inv-map}
+\uses{lem:global-gluing-inv-map-exists}
+The inverse map packaged by the normalized Montel selector is
+\(\code{ContMDiff}\).
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_contMDiff_invMap}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+This is exactly the \code{inverse\_uniformization\_contMDiff} field of the
+normalized Montel patch selector.
+\end{proof}
+
 \begin{theorem}[Biholomorphism from sphere homeomorphism (genus-zero uniformization)]
 \label{thm:uniformization-genus-zero-biholomorphism}
-\uses{lem:uniformization-genus-zero-homeomorphism, lem:holomorphic-one-form-pointwise-limit-exists, lem:holomorphic-one-form-limit-continuous, lem:holomorphic-one-form-limit-holomorphic}
+\uses{lem:uniformization-genus-zero-homeomorphism, lem:holomorphic-one-form-pointwise-limit-exists, lem:holomorphic-one-form-limit-continuous, lem:holomorphic-one-form-limit-holomorphic, lem:global-gluing-to-map-exists, lem:global-gluing-chart-expression, lem:global-gluing-local-left-inverse, lem:global-gluing-local-right-inverse, lem:global-gluing-contmdiff-to-map, lem:global-gluing-contmdiff-inv-map}
 A compact connected complex 1-manifold homeomorphic to \(S^2\) admits a
 \emph{biholomorphism} to \(\code{OnePoint}\,\C\): a homeomorphism
 \(f:X\simeq\code{OnePoint}\,\C\) with both \(f\) and \(f^{-1}\) complex-smooth
@@ -1058,9 +1220,13 @@ analytic uniformization substrate --- local chart-ball power series, an
 open-mapping / inverse-function normalization of local coordinates, a normal
 family (Montel / Arzel\`a--Ascoli) extraction of compatible normalized patches,
 and a gluing through the two-chart \(\code{OnePoint}\,\C\) atlas that is
-\code{ContMDiff} in both directions. The simple-pole / degree-one meromorphic
-data of the classical proof is then \emph{obtained from} this biholomorphism,
-not used to construct it.
+\code{ContMDiff} in both directions. The green global-gluing lemmas above show
+how a completed \code{GenusZeroNormalizedMontelPatchSelector} produces the
+forward map, inverse branches, local inverse laws, and \code{ContMDiff}
+regularity. The remaining orange frontier is the construction of such a
+selector from the normal-family substrate, packaged by this theorem. The
+simple-pole / degree-one meromorphic data of the classical proof is then
+\emph{obtained from} this biholomorphism, not used to construct it.
 \end{proof}
 
 \begin{lemma}[Analytic genus zero gives a sphere biholomorphism (open)]
