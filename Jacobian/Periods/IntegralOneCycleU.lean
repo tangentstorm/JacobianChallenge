@@ -55,4 +55,17 @@ noncomputable def IntegralOneCycleU (X : Type u) [TopologicalSpace X] :
   ((AlgebraicTopology.singularHomologyFunctor.{u} (ModuleCat.{u} ℤ) 1).obj
     (ModuleCat.of ℤ (ULift.{u} ℤ))).obj (TopCat.of X)
 
+/--
+**Provider (Universe-`u` Homology Functoriality).**
+A homeomorphism between spaces in `Type u` induces a `LinearEquiv` on `IntegralOneCycleU`.
+
+This is a tracked layer-frontier sorry. Its discharge requires transporting
+`singularH1_iso_of_homotopyEquiv_via_prism` to `Type u` or directly using the
+Mathlib singular homology functoriality.
+-/
+theorem IntegralOneCycleULinearEquivOfHomeo {X Y : Type u}
+    [TopologicalSpace X] [TopologicalSpace Y] (h : X ≃ₜ Y) :
+    Nonempty (IntegralOneCycleU X ≃ₗ[ℤ] IntegralOneCycleU Y) :=
+  sorry
+
 end JacobianChallenge.Periods
