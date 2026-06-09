@@ -1,62 +1,60 @@
-SUGGESTED TASK: Milestone P5 blueprint-map the #227 period-pairing frontier.
+SUGGESTED TASK: Milestone P6 audit/prove the free-module chain-integration bridge.
 
-Objective: update the Chapter-06 Lean Blueprint so the current direct #227
-frontier
+Objective: make one upstream source-level move exposed by the accepted
+blueprint map: attack
 
 ```lean
-h1_basis_periodPairing_realKernel_trivial
+JacobianChallenge.Blueprint.Sec03.singularChain_integration_from_simplex
 ```
 
-has an explicit path through the zero `periodPairing` placeholder to the
-intended chain-integration, Stokes, Riemann-bilinear, and Hermitian-positivity
-inputs. This is a blueprint mapping task, not another Lean narrowing or source
-boundary split.
+in `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean`.
 
-Manager feedback addressed:
-- Do not keep reshaping the same frontier.
-- Treat the zero `periodPairing` implementation as an upstream-placeholder
-  situation.
-- Map the frontier in `tex/` down to named Mathlib / Stokes / Hodge leaves before
-  proposing more implementation.
-- Restore the lingering `.sci/result.md` deletion before the next commit.
+Current state: Chapter 06 now maps #227 through the nonzero chain-level period
+functional provider. In Lean, sub-leaf A.1 already constructs a per-simplex
+functional using `pathIntegralViaCover`, but sub-leaf A.2
+`singularChain_integration_from_simplex` still returns `0` while its comment says
+it should extend the per-simplex functional to singular 1-chains by the
+free-module universal property. This is the first precise upstream placeholder
+to attack before replacing the zero `periodPairing`.
 
 Scope:
-- Edit `tex/sections/06-periods-and-riemann-bilinear.tex`.
-- Edit `sorries.jsonl` only through `bash scripts/build-blueprint.sh`.
-- Update `.sci/task.md`, `.sci/plan.md`, and `.sci/status-line` as required by
-  the worker protocol.
+- Edit `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean`.
+- Read Mathlib singular-chain/free-abelian APIs and nearby path-integral files
+  as needed.
+- Update `tex/sections/06-periods-and-riemann-bilinear.tex` and
+  `sorries.jsonl` only if the provider boundary or blueprint wording changes.
 - Do not edit `Jacobian/Challenge.lean`.
-- Do not edit Lean source files unless the manager explicitly redirects.
-- Do not mark any open node with `\leanok`.
+- Do not edit the final #227 theorem in `Jacobian/Periods/PeriodFunctional.lean`
+  unless a small import/comment adjustment is strictly required.
+- Do not claim #227 is discharged.
 
 Implementation target:
-- Add or extend blueprint nodes documenting that `periodPairing` /
-  `periodPairingComplex` are currently zero placeholders.
-- Name the intended nonzero chain-integration/descent provider(s) that must
-  eventually replace the placeholder.
-- Wire `h1_basis_periodPairing_realKernel_trivial` through `\uses` to those
-  provider nodes, plus the existing Stokes-on-Riemann-surface-with-boundary,
-  Riemann-bilinear identity, and Hermitian-positivity inputs.
-- Include named Mathlib references in the text for the chain-integration leaves
-  already referenced in Chapter 06, such as `Mathlib.MeasureTheory.Integral.*`
-  and the circle-integral/interval-integral leaves cited near the period
-  construction.
-- Keep the public #227 Lean API and existing sorry-free assemblies unchanged.
+- Inspect the concrete representation/API of `SingularOneChain X`.
+- If Mathlib exposes the needed generator/free-module extension API, prove a
+  chain-level integration map extending the per-simplex functional, replacing
+  the zero witness in `singularChain_integration_from_simplex`.
+- If the API is not locally available, introduce the narrowest named
+  generator-agreement/free-module-extension provider and prove
+  `singularChain_integration_from_simplex` sorry-free from it.
+- Keep the task limited to A.2. Do not attempt Stokes boundary killing,
+  nonzero period-pairing descent, or the final period-pairing kernel provider.
+- Do not introduce `axiom`, `unsafe`, or a broad replacement `sorry`.
 
 Verification:
-- Run `bash scripts/build-blueprint.sh`.
-- Run `python3 scripts/blueprint_audit.py`.
+- Run `lake build Jacobian.Blueprint.Sec03.PeriodHomologyInvariance`.
+- Run `lake build Jacobian.Periods.PeriodFunctional`.
+- Run `lake build Jacobian.Solution`.
 - Run `python3 scripts/list-sorries.py --text`.
-- Confirm `sorries.jsonl` still has direct `c:"sorry"` rows for
-  `h1_basis_periodPairing_realKernel_trivial` and its blueprint node, with no
-  stale direct root for `h1_basis_periodMatrix_realKernel_trivial`.
+- If blueprint or root tracking changes, run `python3 scripts/blueprint_audit.py`
+  and `bash scripts/build-blueprint.sh`.
 
 Checklist:
-- [x] Restore `.sci/result.md` if still deleted.
-- [x] Update the Chapter-06 blueprint period-pairing/provider nodes.
-- [x] Wire the `\uses` chain from the #227 provider to the named leaves.
-- [x] Build the blueprint and refresh `sorries.jsonl`.
-- [x] Run the blueprint audit and sorry scan.
-- [x] Confirm no Lean source/API changes were made.
-- [ ] Commit the scoped blueprint/SCI/ledger edit and set `.sci/status-line` to
-      `READY: Chapter 06 P5 blueprint period-pairing frontier map`.
+- [x] Inspect the `SingularOneChain` representation and available Mathlib
+      extension API.
+- [x] Prove A.2 directly, or add the exact missing A.2 provider and prove the
+      old wrapper from it.
+- [x] Keep the final #227 API and downstream assemblies unchanged.
+- [x] Run the required Lean builds and sorry scan.
+- [x] Refresh blueprint/ledger only if the provider boundary changes.
+- [x] Commit the scoped edit and set `.sci/status-line` to
+      `READY: Chapter 06 P6 chain-integration free-module bridge`.

@@ -7,6 +7,7 @@ import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
 import Jacobian.Periods.ChartedFormPullbackContinuous
 import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
 import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
+import Mathlib.Analysis.Convex.StdSimplex
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Category.ModuleCat.Basic
 import Jacobian.TraceDegree.PiecewiseC1Def
@@ -128,6 +129,34 @@ def simplex_to_path
     continuous_toFun := σ.continuous_toFun
     source' := rfl
     target' := rfl }
+
+/--
+The actual Mathlib singular one-simplices of `X`: degree-1 simplices in the
+singular simplicial set `TopCat.toSSet.obj (TopCat.of X)`.
+-/
+noncomputable abbrev SingularOneSimplex
+    (X : Type) [TopologicalSpace X] : Type :=
+  (TopCat.toSSet.obj (TopCat.of X)).obj (Opposite.op (SimplexCategory.mk 1))
+
+/--
+The inverse parametrisation from the unit interval to the standard topological
+one-simplex.
+-/
+noncomputable def unitIntervalToStdSimplexSec03 :
+    C(unitInterval, stdSimplex ℝ (Fin 2)) :=
+  ⟨stdSimplexHomeomorphUnitInterval.symm,
+    stdSimplexHomeomorphUnitInterval.symm.continuous⟩
+
+/--
+Convert a Mathlib singular one-simplex into the interval path shape used by
+`pathIntegralViaCover`.
+-/
+noncomputable def singularOneSimplex_to_unitIntervalPath
+    (X : Type) [TopologicalSpace X]
+    (σ : SingularOneSimplex X) : C(unitInterval, X) :=
+  (TopCat.toSSetObjEquiv (TopCat.of X)
+    (Opposite.op (SimplexCategory.mk 1)) σ).comp
+      unitIntervalToStdSimplexSec03
 
 /-- **Sub-leaf A.1.cover (chart-cover existence on a path).** -/
 theorem exists_pathChartCover
@@ -319,14 +348,33 @@ free-abelian-group structure of `SingularOneChain X` extends `I_σ`
 property of the free abelian group on continuous `Δ¹ → X` maps —
 purely structural, no analytic content beyond A.1.
 -/
+theorem singularChain_integration_from_simplex_extension_provider
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (Iσ : C(unitInterval, X) → (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ)) :
+    ∃ I : ((TopCat.toSSet.obj (TopCat.of X)).chainComplex
+        (ModuleCat.of ℤ ℤ)).X 1 →ₗ[ℤ]
+        (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
+      ∀ σ : SingularOneSimplex X,
+        I ((SSet.ιChainComplex (X := TopCat.toSSet.obj (TopCat.of X))
+              (R := ModuleCat.of ℤ ℤ) σ) (1 : ℤ)) =
+          Iσ (singularOneSimplex_to_unitIntervalPath X σ) := by
+  sorry
+
+/--
+Weak existential wrapper consumed by the current descent scaffold. The real A.2
+content is the generator-agreement provider above.
+-/
 theorem singularChain_integration_from_simplex
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_Iσ : C(unitInterval, X) → (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ)) :
+    (Iσ : C(unitInterval, X) → (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ)) :
     ∃ _ : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
-      True :=
-  ⟨0, trivial⟩
+      True := by
+  obtain ⟨I, _hI⟩ := singularChain_integration_from_simplex_extension_provider X Iσ
+  exact ⟨I, trivial⟩
 
 /--
 **Sub-leaf A (chain-level integration exists).**

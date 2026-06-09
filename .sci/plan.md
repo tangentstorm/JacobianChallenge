@@ -89,6 +89,15 @@ classical period-pairing nondegeneracy provider.
       Hermitian positivity leaves. This is a `tex/` planning/mapping commit,
       not another Lean/source-boundary split.
 
+### Milestone P6 — Free-Module Chain-Integration Bridge
+- [x] **P6.** Attack the first upstream placeholder exposed by P5:
+      `singularChain_integration_from_simplex` in
+      `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean`. Prove the
+      finite/free-module extension from per-simplex path integration to
+      singular 1-chains if Mathlib exposes the needed generator API; otherwise
+      isolate the exact missing generator-agreement provider and prove the
+      current broader A.2 wrapper from it.
+
 ## 3. Hazards
 
 - The original arbitrary-injective #227 statement is mathematically too strong.
@@ -101,4 +110,7 @@ classical period-pairing nondegeneracy provider.
 - Do not keep reshaping the same #227 frontier. Before more implementation,
   map the zero `periodPairing` placeholder and the functional-kernel provider
   through the blueprint down to named Mathlib/Stokes/Hodge leaves.
+- When working upstream of #227, target one blueprint leaf at a time. The first
+  source-level leaf is the chain-level free-module extension, not the final
+  period-pairing kernel theorem.
 - Do not introduce `axiom`, `unsafe`, or a new broad `sorry`.
