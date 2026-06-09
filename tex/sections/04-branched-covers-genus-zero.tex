@@ -1310,15 +1310,32 @@ of all selected indices by these two patches.
 \lean{JacobianChallenge.HolomorphicForms.GenusZeroTwoChartMontelAtlasSelector}
 \end{lemma}
 
+\begin{lemma}[Mathlib: finite subcover of a compact space from neighborhoods]
+\label{lem:mathlib-compactspace-elim-nhds-subcover}
+\lean{CompactSpace.elim_nhds_subcover}
+On a compact space, from a choice of neighborhood \(U_x\in\mathcal N(x)\) for each
+point one can extract a \emph{finite} set of points \(t\) with
+\(\bigcup_{x\in t}U_x=\top\). This is the Mathlib compactness primitive behind the
+``choose finitely many chart-ball patches'' selection step; the companion
+\code{IsCompact.elim\_finite\_subcover} is its open-cover form. Green (Mathlib).
+\leanok
+\end{lemma}
+
 \begin{lemma}[Montel two-chart source cover (open)]
 \label{lem:montel-two-chart-source-cover}
-\uses{lem:montel-two-chart-target-assignment}
+\uses{lem:montel-two-chart-target-assignment, lem:mathlib-compactspace-elim-nhds-subcover}
 The identity and inversion local Montel patches must cover the source
 manifold \(X\). This is the real
 \code{source\_cover\_two\_chart} field of
-\code{GenusZeroTwoChartMontelCoverSelector}; the missing provider is the
+\code{GenusZeroTwoChartMontelCoverSelector}. The missing provider is the
 compactness/selection step that proves the two chosen chart-ball domains cover
-\(X\).
+\(X\): each point has a normalized Montel chart-ball neighborhood, so
+\(\code{CompactSpace.elim\_nhds\_subcover}\)
+(Lemma~\ref{lem:mathlib-compactspace-elim-nhds-subcover}) extracts a finite
+subcover, which the genus-zero normalization then reduces to the two public
+(identity / inversion) patches. This node stays open: only the named Mathlib
+floor of the selection step is now wired; the genus-zero reduction to exactly two
+charts remains an unproven assembly.
 \lean{JacobianChallenge.HolomorphicForms.GenusZeroTwoChartMontelCoverSelector.source_cover_two_chart}
 \end{lemma}
 
@@ -1434,9 +1451,27 @@ stays open because that provider is the remaining uniformization frontier.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint}
 \end{lemma}
 
+\begin{lemma}[Global gluing data from the Montel selector (open)]
+\label{lem:genus-zero-gluing-data-from-selector}
+\uses{lem:montel-selector-of-homeomorph-onepoint, lem:global-gluing-to-map-exists, lem:global-gluing-chart-expression, lem:global-gluing-local-left-inverse, lem:global-gluing-local-right-inverse, lem:global-gluing-contmdiff-to-map, lem:global-gluing-contmdiff-inv-map}
+The intermediate Lean step actually called by the \#232 root: from a topological
+\(X\simeq\code{OnePoint}\,\C\), produce a completed \code{GenusZeroGlobalGluingData}.
+Its body is \emph{direct}-sorry-free --- it discharges every gluing-data field
+(target membership, chart expression, overlap compatibility, the two local
+inverse laws, both \code{ContMDiff} fields) from the selector's fields and the
+green global-gluing lemmas above. It nonetheless stays \emph{open} (it is left
+deliberately un-green): it obtains the selector via
+\code{genusZeroNormalizedMontelPatchSelector\_of\_homeomorph\_onePoint}, so it is
+transitively \code{sorryAx}-tainted through
+Lemma~\ref{lem:montel-selector-of-homeomorph-onepoint}. This node makes the real
+selector\(\to\)gluing-data call edge graph-visible, instead of the root appearing
+to depend on the selector and the green lemmas directly.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluingData_of_homeomorph_onePoint}
+\end{lemma}
+
 \begin{theorem}[Biholomorphism from sphere homeomorphism (genus-zero uniformization)]
 \label{thm:uniformization-genus-zero-biholomorphism}
-\uses{lem:montel-selector-of-homeomorph-onepoint, lem:global-gluing-to-map-exists, lem:global-gluing-chart-expression, lem:global-gluing-local-left-inverse, lem:global-gluing-local-right-inverse, lem:global-gluing-contmdiff-to-map, lem:global-gluing-contmdiff-inv-map}
+\uses{lem:genus-zero-gluing-data-from-selector}
 A compact connected complex 1-manifold homeomorphic to \(S^2\) admits a
 \emph{biholomorphism} to \(\code{OnePoint}\,\C\): a homeomorphism
 \(f:X\simeq\code{OnePoint}\,\C\) with both \(f\) and \(f^{-1}\) complex-smooth
