@@ -1025,6 +1025,26 @@ theorem GenusZeroTwoChartMontelCoverSelector.target_chart_cover_global
     · exact (chart.left_inv hsource).symm
 
 /--
+The two-chart cover selector supplies the source-cover witness required by
+`GenusZeroGlobalPatchFamily`.
+-/
+theorem GenusZeroTwoChartMontelCoverSelector.patch_cover_global
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (cover : GenusZeroTwoChartMontelCoverSelector X) :
+    ∀ x : X,
+      ∃ i :
+        cover.atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.PatchIndex,
+        x ∈
+          (cover.atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch i).source := by
+  intro x
+  rcases cover.source_cover_two_chart x with hx | hx
+  · exact ⟨cover.atlasSelector.identityIndex, hx⟩
+  · exact ⟨cover.atlasSelector.inversionIndex, hx⟩
+
+/--
 Two-chart Montel cover selector with the local normalizations exposed.
 
 The identity and inversion chart-ball maps are required to be normalized at
