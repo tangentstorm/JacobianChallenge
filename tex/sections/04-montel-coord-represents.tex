@@ -1,0 +1,72 @@
+\subsection{Montel coordinate representation}
+\label{sec:montel-coord-represents}
+
+This subtree isolates the \code{coord\_represents\_uniformization} field of
+\code{GenusZeroNormalizedMontelPatchSelector}.  It is the local statement that
+each selected Montel coordinate represents the global uniformization in the
+assigned public chart of \(\code{OnePoint}\,\C\).
+
+\begin{lemma}[Montel selector coordinate represents the uniformization (open)]
+\label{lem:montel-selector-coord-represents-uniformization}
+\uses{lem:montel-selector-source-patch-cover, lem:global-gluing-coord-mem-target, lem:montel-selector-chart-inverse-local-value, lem:montel-selector-normal-limit-agrees-with-uniformization, lem:montel-selector-overlap-compatible-normalized-values}
+For every selected source patch \(U_i\), source point \(x\in U_i\), and assigned
+target chart \(\psi_i\) on \(\code{OnePoint}\,\C\), the selected local coordinate
+represents the global uniformization:
+\[
+  \psi_i^{-1}(z_i(x)) = F(x).
+\]
+This is the field
+\code{GenusZeroNormalizedMontelPatchSelector.coord\_represents\_uniformization}.
+The Lean projection exists as a structure field, but the construction of a
+selector carrying this field is the open Montel assembly obligation, so this
+blueprint node intentionally carries no \code{\textbackslash lean\{\}} citation.
+\end{lemma}
+
+\begin{lemma}[Selected source patches cover the surface]
+\label{lem:montel-selector-source-patch-cover}
+The finite global patch-family structure supplies a selected source patch
+containing each point of \(X\).  Its \code{patch\_cover} field is the cover
+witness used when turning local coordinate statements into a global formula.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroGlobalPatchFamily}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Selected chart inverse gives the local candidate value (open)]
+\label{lem:montel-selector-chart-inverse-local-value}
+\uses{lem:global-gluing-coord-mem-target}
+On a selected source patch, the local coordinate lies in the assigned target
+chart.  Applying the target-chart inverse therefore gives the local candidate
+point of \(\code{OnePoint}\,\C\) that should become the global uniformization
+value.
+
+This is a planning node: the eventual Lean proof should use the target-chart
+membership leaf and the right-inverse API for open partial homeomorphisms, but
+there is not yet a standalone project declaration for this local reconstruction.
+\end{lemma}
+
+\begin{lemma}[Normalized Montel limit agrees with the uniformization (open)]
+\label{lem:montel-selector-normal-limit-agrees-with-uniformization}
+\uses{lem:montel-selector-source-patch-cover, lem:montel-selector-chart-inverse-local-value}
+The normal-family/Montel extraction must choose local coordinates whose
+target-chart inverse agrees with the global homeomorphism \(F:X\simeq
+\code{OnePoint}\,\C\) on the selected source patch.
+
+This is the analytic heart of the coordinate-representation field: it is not a
+formal consequence of the existing gluing API, and it should remain an open
+provider until the Montel patch-selector construction supplies it.
+\end{lemma}
+
+\begin{lemma}[Normalized local values are overlap-compatible (open)]
+\label{lem:montel-selector-overlap-compatible-normalized-values}
+\uses{lem:global-gluing-coord-mem-target}
+On overlaps of selected source patches, the two target-chart inverse formulas
+for the normalized Montel coordinates determine the same point of
+\(\code{OnePoint}\,\C\).  This compatibility is what lets the local
+representations define one global uniformization rather than unrelated chart
+values.
+
+This is a planning node with no current Lean declaration.  Downstream green
+gluing lemmas consume this compatibility once the selector field is available,
+but they should not be used as fake providers for constructing the field.
+\end{lemma}
