@@ -954,6 +954,31 @@ structure GenusZeroTwoChartMontelAtlasSelector
       i = identityIndex ∨ i = inversionIndex
 
 /--
+The identity and inversion patches of a two-chart Montel atlas selector cover
+the source, by projecting the underlying finite family cover through the
+two-index exhaustion field.
+-/
+theorem GenusZeroTwoChartMontelAtlasSelector.source_cover_two_chart_of_patch_cover
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (atlasSelector : GenusZeroTwoChartMontelAtlasSelector X) :
+    ∀ x : X,
+      x ∈ (atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch
+        atlasSelector.identityIndex).source ∨
+      x ∈ (atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch
+        atlasSelector.inversionIndex).source := by
+  intro x
+  rcases atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch_cover x with
+    ⟨i, hi⟩
+  rcases atlasSelector.patch_index_exhausted i with hi_index | hi_index
+  · subst hi_index
+    exact Or.inl hi
+  · subst hi_index
+    exact Or.inr hi
+
+/--
 Two-chart Montel atlas selector with the cover obligations stated at the
 public identity/inversion charts.
 
