@@ -1326,11 +1326,10 @@ compactness/selection step that proves the two chosen chart-ball domains cover
 \label{lem:montel-two-chart-target-cover}
 \uses{lem:montel-two-chart-target-assignment}
 The identity and inversion public charts must cover
-\(\code{OnePoint}\,\C\) on the target side. This is the real
-\code{target\_cover\_two\_chart} field of
-\code{GenusZeroTwoChartMontelCoverSelector}; wiring it separately makes the
-target-cover obligation visible in the selector spine.
-\lean{JacobianChallenge.HolomorphicForms.GenusZeroTwoChartMontelCoverSelector.target_cover_two_chart}
+\(\code{OnePoint}\,\C\) on the target side: every target point lies in
+\code{identityChart.source} or in \code{inversionChart.source}.
+\lean{JacobianChallenge.HolomorphicForms.onePointCx_identity_or_inversionChart_source}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Montel normalized-limit two-chart cover (open)]
