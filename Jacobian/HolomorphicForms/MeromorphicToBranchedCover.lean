@@ -3679,6 +3679,240 @@ theorem tendsto_norm_biholomorphPulledBackSimplePoleCoordinate_atTop
     htarget.comp he_within
 
 /--
+The local chart expression of a biholomorphism has nonzero derivative at the
+source pole. This is the specialized inverse-function fact needed to transport
+the order-one field for the explicit pullback coordinate.
+-/
+theorem biholomorph_chartLocal_deriv_ne_zero
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (P : X) (e : X ≃ₜ OnePoint ℂ)
+    (he :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ))
+    (he_symm :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
+    deriv
+      ((chartAt ℂ (e P)) ∘ (e : X → OnePoint ℂ) ∘ (chartAt ℂ P).symm)
+      ((chartAt ℂ P) P) ≠ 0 := by
+  set z₀ : ℂ := (chartAt ℂ P) P with hz₀_def
+  set w₀ : ℂ := (chartAt ℂ (e P)) (e P) with hw₀_def
+  set g : ℂ → ℂ :=
+    (chartAt ℂ (e P)) ∘ (e : X → OnePoint ℂ) ∘ (chartAt ℂ P).symm with hg_def
+  set h : ℂ → ℂ :=
+    (chartAt ℂ P) ∘ (e.symm : OnePoint ℂ → X) ∘ (chartAt ℂ (e P)).symm with hh_def
+  have hg_an : AnalyticAt ℂ g z₀ := by
+    have hhol := JacobianChallenge.HolomorphicForms.IsHolomorphicAt.of_contMDiff he P
+    unfold JacobianChallenge.HolomorphicForms.IsHolomorphicAt at hhol
+    simpa [g, z₀, hg_def, hz₀_def, JacobianChallenge.HolomorphicForms.chartLocalAt,
+      Function.comp_def] using hhol
+  have hg_center : g z₀ = w₀ := by
+    simp [g, z₀, w₀, Function.comp_def,
+      (chartAt ℂ P).left_inv (mem_chart_source ℂ P)]
+  have hh_an : AnalyticAt ℂ h w₀ := by
+    have hhol :=
+      JacobianChallenge.HolomorphicForms.IsHolomorphicAt.of_contMDiff he_symm (e P)
+    unfold JacobianChallenge.HolomorphicForms.IsHolomorphicAt at hhol
+    simpa [h, w₀, hh_def, hw₀_def, JacobianChallenge.HolomorphicForms.chartLocalAt,
+      Function.comp_def] using hhol
+  have hcomp_eventually : h ∘ g =ᶠ[𝓝 z₀] id := by
+    have hsymm :
+        Filter.Tendsto (fun z : ℂ => (chartAt ℂ P).symm z) (𝓝 z₀) (𝓝 P) := by
+      have hcont := (chartAt ℂ P).continuousAt_symm
+        ((chartAt ℂ P).map_source (mem_chart_source ℂ P))
+      change Filter.Tendsto (fun z : ℂ => (chartAt ℂ P).symm z)
+        (𝓝 ((chartAt ℂ P) P))
+        (𝓝 ((chartAt ℂ P).symm ((chartAt ℂ P) P))) at hcont
+      simpa [z₀, hz₀_def, (chartAt ℂ P).left_inv (mem_chart_source ℂ P)] using hcont
+    have hsource_target_nhds : (chartAt ℂ P).target ∈ 𝓝 z₀ := by
+      rw [hz₀_def]
+      exact (chartAt ℂ P).open_target.mem_nhds
+        ((chartAt ℂ P).map_source (mem_chart_source ℂ P))
+    have htgt_nhds : (chartAt ℂ (e P)).source ∈ 𝓝 (e P) :=
+      (chartAt ℂ (e P)).open_source.mem_nhds (mem_chart_source ℂ (e P))
+    have he_cont : Continuous (e : X → OnePoint ℂ) := he.continuous
+    have hsrc : ∀ᶠ z in 𝓝 z₀, z ∈ (chartAt ℂ P).target :=
+      hsource_target_nhds
+    have htgt :
+        ∀ᶠ z in 𝓝 z₀,
+          e ((chartAt ℂ P).symm z) ∈ (chartAt ℂ (e P)).source :=
+      hsymm.eventually (he_cont.continuousAt htgt_nhds)
+    filter_upwards [hsrc, htgt] with z hz_src hz_tgt
+    simp [h, g, Function.comp_def,
+      (chartAt ℂ (e P)).left_inv hz_tgt,
+      (chartAt ℂ P).right_inv hz_src]
+  have hg_d : HasDerivAt g (deriv g z₀) z₀ :=
+    hg_an.differentiableAt.hasDerivAt
+  have hh_d : HasDerivAt h (deriv h w₀) w₀ :=
+    hh_an.differentiableAt.hasDerivAt
+  have hh_d' : HasDerivAt h (deriv h w₀) (g z₀) := by
+    simpa [hg_center] using hh_d
+  have hcomp_d : HasDerivAt (h ∘ g) (deriv h w₀ * deriv g z₀) z₀ := by
+    exact hh_d'.comp z₀ hg_d
+  have hid_d : HasDerivAt (h ∘ g) (1 : ℂ) z₀ :=
+    (hasDerivAt_id z₀).congr_of_eventuallyEq hcomp_eventually
+  have hprod : deriv h w₀ * deriv g z₀ = 1 :=
+    hcomp_d.unique hid_d
+  intro hzero
+  rw [hzero, mul_zero] at hprod
+  exact zero_ne_one hprod
+
+/--
+The pulled-back explicit simple-pole coordinate has analytic order one at the
+source pole.
+-/
+theorem mapAnalyticOrderAt_biholomorphPulledBackSimplePoleCoordinate_pole
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (e : X ≃ₜ OnePoint ℂ)
+    (he :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ))
+    (he_symm :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
+    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+      (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P) P = 1 := by
+  set z₀ : ℂ := (chartAt ℂ P) P with hz₀_def
+  set Q : OnePoint ℂ := e P with hQ_def
+  set g : ℂ → ℂ :=
+    (chartAt ℂ Q) ∘ (e : X → OnePoint ℂ) ∘ (chartAt ℂ P).symm with hg_def
+  have hg_an : AnalyticAt ℂ g z₀ := by
+    have hhol := JacobianChallenge.HolomorphicForms.IsHolomorphicAt.of_contMDiff he P
+    unfold JacobianChallenge.HolomorphicForms.IsHolomorphicAt at hhol
+    simpa [g, Q, z₀, hg_def, hQ_def, hz₀_def,
+      JacobianChallenge.HolomorphicForms.chartLocalAt, Function.comp_def] using hhol
+  have hg_der : deriv g z₀ ≠ 0 := by
+    simpa [g, Q, z₀, hg_def, hQ_def, hz₀_def, Function.comp_def] using
+      biholomorph_chartLocal_deriv_ne_zero P e he he_symm
+  have hg_order :
+      analyticOrderNatAt (fun t : ℂ => g t - g z₀) z₀ = 1 := by
+    rw [analyticOrderNatAt,
+      hg_an.analyticOrderAt_sub_eq_one_of_deriv_ne_zero hg_der]
+    rfl
+  have hg_center : g z₀ = (chartAt ℂ Q) Q := by
+    simp [g, Q, z₀, Function.comp_def,
+      (chartAt ℂ P).left_inv (mem_chart_source ℂ P)]
+  have hsrc_eventually :
+      (fun t : ℂ =>
+          JacobianChallenge.HolomorphicForms.chartLocalAt
+            (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P) P t -
+          JacobianChallenge.HolomorphicForms.chartLocalAt
+            (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P) P z₀)
+        =ᶠ[𝓝 z₀]
+      (fun t : ℂ => g t - g z₀) := by
+    have hsymm :
+        Filter.Tendsto (fun z : ℂ => (chartAt ℂ P).symm z) (𝓝 z₀) (𝓝 P) := by
+      have hcont := (chartAt ℂ P).continuousAt_symm
+        ((chartAt ℂ P).map_source (mem_chart_source ℂ P))
+      change Filter.Tendsto (fun z : ℂ => (chartAt ℂ P).symm z)
+        (𝓝 ((chartAt ℂ P) P))
+        (𝓝 ((chartAt ℂ P).symm ((chartAt ℂ P) P))) at hcont
+      simpa [z₀, hz₀_def, (chartAt ℂ P).left_inv (mem_chart_source ℂ P)] using hcont
+    have hsource_target_nhds : (chartAt ℂ P).target ∈ 𝓝 z₀ := by
+      rw [hz₀_def]
+      exact (chartAt ℂ P).open_target.mem_nhds
+        ((chartAt ℂ P).map_source (mem_chart_source ℂ P))
+    have htgt_nhds : (chartAt ℂ Q).source ∈ 𝓝 Q :=
+      (chartAt ℂ Q).open_source.mem_nhds (mem_chart_source ℂ Q)
+    have he_cont : Continuous (e : X → OnePoint ℂ) := he.continuous
+    have hsrc : ∀ᶠ t in 𝓝 z₀, t ∈ (chartAt ℂ P).target :=
+      hsource_target_nhds
+    have htgt_nhds_at_eP : (chartAt ℂ Q).source ∈ 𝓝 (e P) := by
+      simpa [Q, hQ_def] using htgt_nhds
+    have htgt :
+        ∀ᶠ t in 𝓝 z₀,
+          e ((chartAt ℂ P).symm t) ∈ (chartAt ℂ Q).source :=
+      hsymm.eventually (he_cont.continuousAt htgt_nhds_at_eP)
+    filter_upwards [hsrc, htgt] with t ht_src ht_tgt
+    let sourceExt : X → OnePoint ℂ :=
+      onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P
+    let targetExt : OnePoint ℂ → OnePoint ℂ :=
+      onePointExtend (onePointSimplePoleCoordinate Q) Q
+    have hcomp_ext : ∀ x : X, sourceExt x = targetExt (e x) := by
+      intro x
+      by_cases hx : x = P
+      · subst hx
+        simp [sourceExt, targetExt, onePointExtend_at, Q]
+      · rw [show sourceExt x =
+            ((biholomorphPulledBackSimplePoleCoordinate P e x : ℂ) : OnePoint ℂ) by
+              simpa [sourceExt] using
+                onePointExtend_off (F := biholomorphPulledBackSimplePoleCoordinate P e)
+                  (P := P) (x := x) hx]
+        rw [show targetExt (e x) =
+            ((onePointSimplePoleCoordinate Q (e x) : ℂ) : OnePoint ℂ) by
+              have hex : e x ≠ Q := by
+                intro hex
+                exact hx (e.injective (by simpa [Q, hQ_def] using hex))
+              simpa [targetExt] using
+                onePointExtend_off (F := onePointSimplePoleCoordinate Q)
+                  (P := Q) (x := e x) hex]
+        simp [biholomorphPulledBackSimplePoleCoordinate, Q]
+    have ht_arg :
+        (chartAt ℂ Q).symm (g t) = e ((chartAt ℂ P).symm t) := by
+      simp [g, Function.comp_def, (chartAt ℂ Q).left_inv ht_tgt]
+    have hz_arg :
+        (chartAt ℂ Q).symm (g z₀) = Q := by
+      have hzP : (chartAt ℂ P).symm z₀ = P := by
+        rw [hz₀_def]
+        exact (chartAt ℂ P).left_inv (mem_chart_source ℂ P)
+      simp [g, Q, hzP, Function.comp_def,
+        (chartAt ℂ Q).left_inv (mem_chart_source ℂ Q)]
+    have ht_local :
+        JacobianChallenge.HolomorphicForms.chartLocalAt sourceExt P t =
+          JacobianChallenge.HolomorphicForms.chartLocalAt targetExt Q (g t) := by
+      calc
+        JacobianChallenge.HolomorphicForms.chartLocalAt sourceExt P t =
+            chartAt ℂ (sourceExt P) (sourceExt ((chartAt ℂ P).symm t)) := by
+              rfl
+        _ = chartAt ℂ (targetExt Q)
+            (targetExt ((chartAt ℂ Q).symm (g t))) := by
+              rw [hcomp_ext P, hcomp_ext ((chartAt ℂ P).symm t), ht_arg]
+        _ = JacobianChallenge.HolomorphicForms.chartLocalAt targetExt Q (g t) := by
+              rfl
+    have hz_local :
+        JacobianChallenge.HolomorphicForms.chartLocalAt sourceExt P z₀ =
+          JacobianChallenge.HolomorphicForms.chartLocalAt targetExt Q (g z₀) := by
+      have hP : sourceExt P = targetExt Q := by
+        simpa [Q, hQ_def] using hcomp_ext P
+      have hsource_center :
+          JacobianChallenge.HolomorphicForms.chartLocalAt sourceExt P z₀ =
+            chartAt ℂ (sourceExt P) (sourceExt P) := by
+        simp [JacobianChallenge.HolomorphicForms.chartLocalAt, z₀,
+          (chartAt ℂ P).left_inv (mem_chart_source ℂ P)]
+      have htarget_center :
+          JacobianChallenge.HolomorphicForms.chartLocalAt targetExt Q (g z₀) =
+            chartAt ℂ (targetExt Q) (targetExt Q) := by
+        simp [JacobianChallenge.HolomorphicForms.chartLocalAt, hz_arg]
+      rw [hsource_center, htarget_center, hP]
+    cases hQcase : Q using OnePoint.rec with
+    | infty =>
+        subst Q
+        rw [ht_local, hz_local]
+        simp [hQcase, targetExt, chartLocalAt_onePointSimplePoleCoordinate_infty]
+    | coe a =>
+        subst Q
+        rw [ht_local, hz_local]
+        simp [hQcase, targetExt, chartLocalAt_onePointSimplePoleCoordinate_coe]
+  unfold JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+  rw [← hz₀_def]
+  have hsrc_nat :
+      analyticOrderNatAt
+          (fun t : ℂ =>
+            JacobianChallenge.HolomorphicForms.chartLocalAt
+                (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P) P t -
+              JacobianChallenge.HolomorphicForms.chartLocalAt
+                (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P) P z₀)
+          z₀ =
+        analyticOrderNatAt (fun t : ℂ => g t - g z₀) z₀ := by
+    unfold analyticOrderNatAt
+    rw [analyticOrderAt_congr hsrc_eventually]
+  exact hsrc_nat.trans hg_order
+
+/--
 Narrow facts for the biholomorphic pullback construction of a simple pole.
 
 This record fixes the target lift to the explicit coordinate
@@ -3700,57 +3934,11 @@ structure BiholomorphOnePointSimplePolePullbackFacts
       (biholomorphPulledBackSimplePoleCoordinate P e) P
 
 /--
-Field-level facts for the biholomorphic pullback construction of a simple pole.
-
-This is the exposed shape of the remaining #234 analytic frontier after the
-target meromorphicity, continuity, order-one, and modulus-divergence fields
-have been discharged locally, and after source meromorphicity has been
-transported through the biholomorphism, and after source one-point-extension
-continuity and punctured-neighborhood modulus divergence have been transported:
-the remaining field is the source order-one transport fact for the named
-pullback along `e`.
--/
-structure BiholomorphOnePointSimplePolePullbackFieldFacts
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (P : X) (e : X ≃ₜ OnePoint ℂ) where
-  /-- The pulled-back coordinate has analytic order one at `P`. -/
-  source_orderAt_pole :
-    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
-      (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P) P = 1
-
-/--
-Field-level principal-part facts provider for the explicit biholomorphic
-pullback route.
-
-This is the remaining explicit-coordinate analytic frontier: transport the four
-source facts along the biholomorphism `e`.
--/
-theorem biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (P : X) (e : X ≃ₜ OnePoint ℂ)
-    (he :
-      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ))
-    (he_symm :
-      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-        (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
-    Nonempty (BiholomorphOnePointSimplePolePullbackFieldFacts X P e) := by
-  -- Principal-part frontier: transport source continuity, order-one, and
-  -- punctured-neighborhood divergence across the biholomorphism `e`.
-  sorry
-
-/--
 Narrow principal-part facts provider for the explicit biholomorphic pullback
 route.
 
-This assembles the bundled target/source principal-part records from the
-field-level facts.
+This assembles the bundled target/source principal-part records from the local
+target facts and their biholomorphic source transports.
 -/
 theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -3765,9 +3953,6 @@ theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
     Nonempty (BiholomorphOnePointSimplePolePullbackFacts X P e) := by
-  obtain ⟨h⟩ :=
-    biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint
-      X P e he he_symm
   exact ⟨{
     targetPrincipalPart := {
       meromorphic_everywhere := meromorphicAtX_onePointSimplePoleCoordinate (e P)
@@ -3780,7 +3965,8 @@ theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
         meromorphicAtX_biholomorphPulledBackSimplePoleCoordinate P e he
       continuous_extension :=
         continuous_onePointExtend_biholomorphPulledBackSimplePoleCoordinate P e he
-      orderAt_pole := h.source_orderAt_pole
+      orderAt_pole :=
+        mapAnalyticOrderAt_biholomorphPulledBackSimplePoleCoordinate_pole P e he he_symm
       modulus_tendsto :=
         tendsto_norm_biholomorphPulledBackSimplePoleCoordinate_atTop P e } }⟩
 
