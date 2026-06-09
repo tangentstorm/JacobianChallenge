@@ -988,6 +988,43 @@ structure GenusZeroTwoChartMontelCoverSelector
       y ∈ identityChart.source ∨ y ∈ inversionChart.source
 
 /--
+The two-chart cover selector supplies the target-chart-cover witness required
+by `GenusZeroGlobalPatchFamily`.
+-/
+theorem GenusZeroTwoChartMontelCoverSelector.target_chart_cover_global
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (cover : GenusZeroTwoChartMontelCoverSelector X) :
+    ∀ y : OnePoint ℂ,
+      ∃ (i :
+          cover.atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.PatchIndex)
+        (z : ℂ),
+        z ∈
+          (cover.atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch i).targetChart.target ∧
+          y =
+            (cover.atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch i).targetChart.symm z := by
+  intro y
+  rcases cover.target_cover_two_chart y with hy | hy
+  · let i := cover.atlasSelector.identityIndex
+    let chart :=
+      (cover.atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch i).targetChart
+    have hsource : y ∈ chart.source := by
+      simpa [chart, i, cover.atlasSelector.targetChart_identity] using hy
+    refine ⟨i, chart y, ?_, ?_⟩
+    · exact chart.map_source hsource
+    · exact (chart.left_inv hsource).symm
+  · let i := cover.atlasSelector.inversionIndex
+    let chart :=
+      (cover.atlasSelector.chartBallSelector.transitionSelector.coherentSelector.localSelector.selector.family.patch i).targetChart
+    have hsource : y ∈ chart.source := by
+      simpa [chart, i, cover.atlasSelector.targetChart_inversion] using hy
+    refine ⟨i, chart y, ?_, ?_⟩
+    · exact chart.map_source hsource
+    · exact (chart.left_inv hsource).symm
+
+/--
 Two-chart Montel cover selector with the local normalizations exposed.
 
 The identity and inversion chart-ball maps are required to be normalized at
