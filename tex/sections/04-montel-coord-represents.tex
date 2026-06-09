@@ -34,16 +34,37 @@ witness used when turning local coordinate statements into a global formula.
 
 \begin{lemma}[Selected chart inverse gives the local candidate value (open)]
 \label{lem:montel-selector-chart-inverse-local-value}
-\uses{lem:global-gluing-coord-mem-target}
+\uses{lem:global-gluing-coord-mem-target, lem:mathlib-open-partial-homeomorph-map-target, lem:mathlib-open-partial-homeomorph-right-inv}
 On a selected source patch, the local coordinate lies in the assigned target
 chart.  Applying the target-chart inverse therefore gives the local candidate
 point of \(\code{OnePoint}\,\C\) that should become the global uniformization
 value.
 
-This is a planning node: the eventual Lean proof should use the target-chart
-membership leaf and the right-inverse API for open partial homeomorphisms, but
-there is not yet a standalone project declaration for this local reconstruction.
+This is a planning node for the project-specific reconstruction package.  Its
+formal floor is already visible: target membership comes from the global patch
+family, and Mathlib's open-partial-homeomorphism API says that the chart inverse
+lands in the chart source and reconstructs the original coordinate.
 \end{lemma}
+
+\begin{lemma}[Mathlib: target points map back to the source]
+\label{lem:mathlib-open-partial-homeomorph-map-target}
+For an open partial homeomorphism \(e\), if \(z\in e.\mathrm{target}\), then
+\(e^{-1}(z)\in e.\mathrm{source}\).
+\lean{OpenPartialHomeomorph.map_target}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Mathlib: chart inverse reconstructs target coordinates]
+\label{lem:mathlib-open-partial-homeomorph-right-inv}
+For an open partial homeomorphism \(e\), if \(z\in e.\mathrm{target}\), then
+\[
+  e(e^{-1}(z)) = z.
+\]
+\lean{OpenPartialHomeomorph.right_inv}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
 
 \begin{lemma}[Normalized Montel limit agrees with the uniformization (open)]
 \label{lem:montel-selector-normal-limit-agrees-with-uniformization}
