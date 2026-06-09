@@ -3618,6 +3618,44 @@ theorem meromorphicAtX_biholomorphPulledBackSimplePoleCoordinate
     Function.comp_def, (chartAt ℂ (e p)).left_inv hz]
 
 /--
+The one-point extension of the explicit simple-pole coordinate pulled back
+along a biholomorphism is continuous.
+-/
+theorem continuous_onePointExtend_biholomorphPulledBackSimplePoleCoordinate
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (e : X ≃ₜ OnePoint ℂ)
+    (he :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ)) :
+    Continuous (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P) := by
+  have htarget :
+      Continuous
+        (onePointExtend (onePointSimplePoleCoordinate (e P)) (e P)) :=
+    continuous_onePointExtend_onePointSimplePoleCoordinate (e P)
+  have hcomp :
+      Continuous
+        ((onePointExtend (onePointSimplePoleCoordinate (e P)) (e P)) ∘
+          (e : X → OnePoint ℂ)) :=
+    htarget.comp he.continuous
+  refine hcomp.congr ?_
+  intro x
+  by_cases hx : x = P
+  · subst hx
+    simp [onePointExtend_at]
+  · rw [onePointExtend_off (F := biholomorphPulledBackSimplePoleCoordinate P e)
+      (P := P) (x := x) hx]
+    change onePointExtend (onePointSimplePoleCoordinate (e P)) (e P) (e x) =
+      ((biholomorphPulledBackSimplePoleCoordinate P e x : ℂ) : OnePoint ℂ)
+    rw [onePointExtend_off (F := onePointSimplePoleCoordinate (e P))
+      (P := e P) (x := e x) (by
+        intro hex
+        exact hx (e.injective hex))]
+    simp [biholomorphPulledBackSimplePoleCoordinate]
+
+/--
 Narrow facts for the biholomorphic pullback construction of a simple pole.
 
 This record fixes the target lift to the explicit coordinate
@@ -3644,7 +3682,8 @@ Field-level facts for the biholomorphic pullback construction of a simple pole.
 This is the exposed shape of the remaining #234 analytic frontier after the
 target meromorphicity, continuity, order-one, and modulus-divergence fields
 have been discharged locally, and after source meromorphicity has been
-transported through the biholomorphism: the three remaining fields are
+transported through the biholomorphism, and after source one-point-extension
+continuity has been transported: the two remaining fields are
 source-transport facts for the named pullback along `e`.
 -/
 structure BiholomorphOnePointSimplePolePullbackFieldFacts
@@ -3653,9 +3692,6 @@ structure BiholomorphOnePointSimplePolePullbackFieldFacts
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (P : X) (e : X ≃ₜ OnePoint ℂ) where
-  /-- The source one-point extension is continuous. -/
-  source_continuous_extension :
-    Continuous (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P)
   /-- The pulled-back coordinate has analytic order one at `P`. -/
   source_orderAt_pole :
     JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
@@ -3722,7 +3758,8 @@ theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
     sourcePrincipalPart := {
       meromorphic_everywhere :=
         meromorphicAtX_biholomorphPulledBackSimplePoleCoordinate P e he
-      continuous_extension := h.source_continuous_extension
+      continuous_extension :=
+        continuous_onePointExtend_biholomorphPulledBackSimplePoleCoordinate P e he
       orderAt_pole := h.source_orderAt_pole
       modulus_tendsto := h.source_modulus_tendsto } }⟩
 
