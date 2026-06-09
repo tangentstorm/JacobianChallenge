@@ -4115,6 +4115,33 @@ theorem genusZero_singlePoleMeromorphicAnalyticData_nonempty
   obtain ⟨e, he, he_symm⟩ := exists_biholomorph_onePoint_of_analyticGenus_zero X h
   exact singlePoleAnalyticData_of_biholomorph_onePoint X P e he he_symm
 
+/--
+Explicit fixed-pole analytic-data provider for the bare genus-zero
+Riemann-Roch section route.
+
+This is the direct RR-chain frontier: produce a `MeromorphicMapToSphere` with
+the prescribed pole divisor, chart-local analytic data for its finite lift, and
+the pole modulus-divergence data. Downstream RR-section packaging should depend
+on this provider directly rather than routing through #233/#232 uniformization
+wrappers.
+-/
+theorem genusZero_fixedPole_rr_analyticData_provider
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    ∃ f : MeromorphicMapToSphere X,
+      f.poles = Divisor.point P ∧ f.AnalyticData ∧ f.PoleModulusData := by
+  -- Remaining RR frontier: construct the fixed-pole meromorphic map and its
+  -- granular analytic/modulus data honestly from `analyticGenus ℂ X = 0`.
+  sorry
+
+/--
+Bare genus-zero RR-section provider, now factored through the direct fixed-pole
+analytic-data frontier instead of the #233/#232 uniformization route.
+-/
 theorem genusZero_pointRRSection_outside_constants_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -4122,9 +4149,11 @@ theorem genusZero_pointRRSection_outside_constants_exists
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
-    Nonempty (PointRiemannRochSection X P) :=
-  genusZero_pointRRSection_outside_constants_of_analyticData X P h
-    (genusZero_singlePoleMeromorphicAnalyticData_nonempty X P h)
+    Nonempty (PointRiemannRochSection X P) := by
+  obtain ⟨f, hpole, han, hmod⟩ :=
+    genusZero_fixedPole_rr_analyticData_provider X P h
+  exact ⟨PointRiemannRochSection.of_meromorphicMap_meromorphic_getD_simple_pole
+    f han.meromorphic_getD P hpole (han.simple_pole_order_one P hpole) hmod⟩
 
 /--
 **Canonical explicit-input form of L2779 (granular).**
@@ -4143,9 +4172,10 @@ The convenience wrapper
 below takes a full `AnalyticData` record instead and delegates here.
 
 The bare form `genusZero_pointRRSection_outside_constants_exists`
-(above) remains as `sorry` until the upstream genus-zero RR chain is
-dependency-broken to produce `MeromorphicMapToSphere` plus granular
-analytic content honestly.
+(above) is now factored through
+`genusZero_fixedPole_rr_analyticData_provider`, the direct fixed-pole
+frontier for producing `MeromorphicMapToSphere` plus granular analytic
+and modulus content honestly.
 -/
 theorem genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
