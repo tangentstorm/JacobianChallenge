@@ -1255,14 +1255,113 @@ local chart-homeomorphism data used by the genus-zero gluing construction.
 \leanok
 \end{lemma}
 
+\begin{lemma}[Montel local chart patch from a normalized chart-ball limit]
+\label{lem:montel-local-chart-patch-from-limit}
+\uses{lem:montel-chartball-normalized-local-chart}
+A packaged normalized chart-ball limit, together with its local
+inverse-function-theorem chart and a choice of public \(\code{OnePoint}\,\C\)
+target chart, gives the local Montel chart patch data.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroLocalMontelChartPatch.ofChartBallLimit}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Montel local patch realization (open)]
+\label{lem:montel-local-patch-realization}
+\uses{lem:montel-local-chart-patch-from-limit}
+Each selected global gluing patch must be realized by its local normalized
+Montel chart: the source chart lands in the chart-ball domain, the patch
+coordinate is the chart-ball limit in that source coordinate, and the inverse
+branch agrees with the local inverse. This is the real
+\code{GenusZeroLocalMontelPatchRealization} payload, but no green existence
+provider currently selects these realizations for the finite family.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroLocalMontelPatchRealization}
+\end{lemma}
+
+\begin{lemma}[Montel coherent local selector (open)]
+\label{lem:montel-coherent-local-selector}
+\uses{lem:montel-local-patch-realization}
+The selected local patches must be coherent with the global selector:
+their assigned target charts agree with the family target charts, every global
+patch is realized by its local chart-ball data, and local transition
+compatibility identifies overlapping coordinates as the same
+\(\code{OnePoint}\,\C\) point.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroLocalMontelChartSelector.localPatch_targetChart_eq, JacobianChallenge.HolomorphicForms.GenusZeroCoherentLocalMontelChartSelector, JacobianChallenge.HolomorphicForms.GenusZeroTransitionCoherentLocalMontelChartSelector}
+\end{lemma}
+
+\begin{lemma}[Montel chart-ball source-domain selector (open)]
+\label{lem:montel-chartball-source-domain-selector}
+\uses{lem:montel-coherent-local-selector}
+The selected source domains must be exactly the chart-ball domains of the
+attached local Montel coordinates. This is the real
+\code{source\_eq\_chartBall\_domain} field of
+\code{GenusZeroChartBallDomainLocalMontelSelector}; the missing provider is
+the global selection proof producing such a selector.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroChartBallDomainLocalMontelSelector.source_eq_chartBall_domain}
+\end{lemma}
+
+\begin{lemma}[Montel two-chart target assignment (open)]
+\label{lem:montel-two-chart-target-assignment}
+\uses{lem:montel-chartball-source-domain-selector}
+The finite selector must reduce to the two public target charts: an identity
+patch, an inversion patch, their target-chart identifications, and exhaustion
+of all selected indices by these two patches.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroTwoChartMontelAtlasSelector}
+\end{lemma}
+
+\begin{lemma}[Montel two-chart source cover (open)]
+\label{lem:montel-two-chart-source-cover}
+\uses{lem:montel-two-chart-target-assignment}
+The identity and inversion local Montel patches must cover the source
+manifold \(X\). This is the real
+\code{source\_cover\_two\_chart} field of
+\code{GenusZeroTwoChartMontelCoverSelector}; the missing provider is the
+compactness/selection step that proves the two chosen chart-ball domains cover
+\(X\).
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroTwoChartMontelCoverSelector.source_cover_two_chart}
+\end{lemma}
+
+\begin{lemma}[Montel two-chart target cover (open)]
+\label{lem:montel-two-chart-target-cover}
+\uses{lem:montel-two-chart-target-assignment}
+The identity and inversion public charts must cover
+\(\code{OnePoint}\,\C\) on the target side. This is the real
+\code{target\_cover\_two\_chart} field of
+\code{GenusZeroTwoChartMontelCoverSelector}; wiring it separately makes the
+target-cover obligation visible in the selector spine.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroTwoChartMontelCoverSelector.target_cover_two_chart}
+\end{lemma}
+
+\begin{lemma}[Montel normalized-limit two-chart cover (open)]
+\label{lem:montel-normalized-limit-two-chart-cover}
+\uses{lem:montel-two-chart-source-cover, lem:montel-two-chart-target-cover}
+The two chosen public-chart patches must retain their normalized chart-ball
+limit packages, one for the identity chart and one for the inversion chart,
+so the finite cover remembers the local Montel normalization used before
+global gluing.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.identity_normalizedLimit, JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.inversion_normalizedLimit}
+\end{lemma}
+
+\begin{lemma}[Montel global patch-family packaging (open)]
+\label{lem:montel-global-patch-family-packaging}
+\uses{lem:montel-normalized-limit-two-chart-cover}
+The normalized two-chart cover must finally be forgotten down to the finite
+\code{GenusZeroGlobalPatchFamily}: the finite index type, patch family,
+source-cover field, and target-chart-cover field. The structure and its cover
+fields are real; the missing provider is the construction that packages the
+two-chart normalized-limit selector as this global family.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroGlobalPatchFamily, JacobianChallenge.HolomorphicForms.GenusZeroGlobalPatchFamily.patch_cover, JacobianChallenge.HolomorphicForms.GenusZeroGlobalPatchFamily.target_chart_cover}
+\end{lemma}
+
 \begin{lemma}[Montel selector finite patch-family assembly (open)]
 \label{lem:montel-selector-finite-patch-family-assembly}
-\uses{lem:uniformization-genus-zero-homeomorphism, lem:montel-chartball-normalized-local-chart}
+\uses{lem:uniformization-genus-zero-homeomorphism, lem:montel-global-patch-family-packaging}
 The remaining selector-family provider is the global assembly step: choose
 finitely many normalized Montel-limit chart balls, attach the public
 \(\code{OnePoint}\,\C\) target charts, prove their source cover and target
-cover, and package the result as a \code{GenusZeroGlobalPatchFamily}. No
-green Lean declaration currently packages this finite global extraction.
+cover, and package the result as a \code{GenusZeroGlobalPatchFamily}. The
+subnodes above expose the local-patch, coherence, two-chart-cover, normalized
+limit, and final packaging obligations. No green Lean declaration currently
+packages this finite global extraction.
 \end{lemma}
 
 \begin{lemma}[Montel selector patch family extraction (open)]
