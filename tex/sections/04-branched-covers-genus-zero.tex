@@ -1321,22 +1321,19 @@ point one can extract a \emph{finite} set of points \(t\) with
 \leanok
 \end{lemma}
 
-\begin{lemma}[Montel two-chart source cover (open)]
+\begin{lemma}[Montel two-chart source cover obligation (open)]
 \label{lem:montel-two-chart-source-cover}
 \uses{lem:montel-two-chart-target-assignment, lem:mathlib-compactspace-elim-nhds-subcover}
 The identity and inversion local Montel patches must cover the source
-manifold \(X\). This is the real
-\code{source\_cover\_two\_chart} field of
-\code{GenusZeroTwoChartMontelCoverSelector}. The missing provider is the
-compactness/selection step that proves the two chosen chart-ball domains cover
-\(X\): each point has a normalized Montel chart-ball neighborhood, so
+manifold \(X\). This is not an accessor lemma: it is the compactness/selection
+obligation that proves the chosen chart-ball domains cover \(X\). Each point
+has a normalized Montel chart-ball neighborhood, so
 \(\code{CompactSpace.elim\_nhds\_subcover}\)
 (Lemma~\ref{lem:mathlib-compactspace-elim-nhds-subcover}) extracts a finite
 subcover, which the genus-zero normalization then reduces to the two public
 (identity / inversion) patches. This node stays open: only the named Mathlib
 floor of the selection step is now wired; the genus-zero reduction to exactly two
 charts remains an unproven assembly.
-\lean{JacobianChallenge.HolomorphicForms.GenusZeroTwoChartMontelCoverSelector.source_cover_two_chart}
 \end{lemma}
 
 \begin{lemma}[Montel two-chart target cover (open)]
@@ -1359,95 +1356,76 @@ global gluing.
 \lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.identity_normalizedLimit, JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.inversion_normalizedLimit}
 \end{lemma}
 
-\begin{lemma}[Montel global patch-family packaging (open)]
-\label{lem:montel-global-patch-family-packaging}
-\uses{lem:montel-normalized-limit-two-chart-cover}
-The normalized two-chart cover must finally be forgotten down to the finite
-\code{GenusZeroGlobalPatchFamily}: the finite index type, patch family,
-source-cover field, and target-chart-cover field. The structure and its cover
-fields are real, and the two-chart selector now supplies both the source-cover
-and target-chart-cover packaging witnesses. The remaining missing provider is
-the construction that packages the two-chart normalized-limit selector as this
-global family.
-\lean{JacobianChallenge.HolomorphicForms.GenusZeroGlobalPatchFamily, JacobianChallenge.HolomorphicForms.GenusZeroGlobalPatchFamily.patch_cover, JacobianChallenge.HolomorphicForms.GenusZeroGlobalPatchFamily.target_chart_cover, JacobianChallenge.HolomorphicForms.GenusZeroTwoChartMontelCoverSelector.patch_cover_global, JacobianChallenge.HolomorphicForms.GenusZeroTwoChartMontelCoverSelector.target_chart_cover_global}
-\end{lemma}
-
-\begin{lemma}[Montel selector finite patch-family assembly (open)]
+\begin{lemma}[Montel uniformizing patch-family construction (open)]
 \label{lem:montel-selector-finite-patch-family-assembly}
-\uses{lem:uniformization-genus-zero-homeomorphism, lem:montel-global-patch-family-packaging}
-The remaining selector-family provider is the global assembly step: choose
-finitely many normalized Montel-limit chart balls, attach the public
-\(\code{OnePoint}\,\C\) target charts, prove their source cover and target
-cover, and package the result as a \code{GenusZeroGlobalPatchFamily}. The
-subnodes above expose the local-patch, coherence, two-chart-cover, normalized
-limit, and final packaging obligations. No green Lean declaration currently
-packages this finite global extraction.
+\uses{lem:uniformization-genus-zero-homeomorphism, lem:montel-local-patch-realization, lem:montel-coherent-local-selector, lem:montel-chartball-source-domain-selector, lem:montel-two-chart-source-cover, lem:montel-two-chart-target-cover, lem:montel-normalized-limit-two-chart-cover, lem:global-gluing-to-map-exists, lem:global-gluing-chart-expression, lem:global-gluing-local-left-inverse, lem:global-gluing-local-right-inverse, lem:global-gluing-contmdiff-to-map, lem:global-gluing-contmdiff-inv-map}
+From a topological homeomorphism \(X\simeq\code{OnePoint}\,\C\) and the
+genus-zero hypotheses, construct a finite family of normalized holomorphic
+chart-ball patches together with the uniformizing map they determine. This is
+the real open frontier: choose the local Montel limits, prove their coherence,
+extract the finite source cover by compactness, attach the two public
+\(\code{OnePoint}\,\C\) target charts, and feed the resulting compatible data
+into the global-gluing substrate. No green Lean declaration currently performs
+this construction, so the node intentionally has no \code{\textbackslash lean}
+tag.
 \end{lemma}
 
-\begin{lemma}[Montel selector patch family extraction (open)]
+\begin{lemma}[Montel constructed patch family (open)]
 \label{lem:montel-selector-patch-family-extraction}
 \uses{lem:montel-selector-finite-patch-family-assembly}
-The first field of a normalized Montel patch selector is the extracted finite
-\code{GenusZeroGlobalPatchFamily}: normalized source patches, their public
-\(\code{OnePoint}\,\C\) target charts, a source cover, and a target-chart
-cover. The field projection is real; the open work is the assembly provider
-above.
-\lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedMontelPatchSelector.family}
+The construction above must expose its finite patch family: normalized source
+patches, their public \(\code{OnePoint}\,\C\) target charts, a source cover, and
+a target-chart cover. This is a property of the constructed data, not a
+projection from a pre-existing selector structure.
 \end{lemma}
 
-\begin{lemma}[Montel selector coordinate representation (open)]
+\begin{lemma}[Montel constructed coordinate representation (open)]
 \label{lem:montel-selector-coord-represents-uniformization}
-\uses{lem:montel-selector-patch-family-extraction}
-Given the extracted patch family, each selected local coordinate must represent
-the chosen global uniformization in its assigned target chart:
-\code{targetChart.symm (coord x) = uniformization x}. This is the
-\code{coord\_represents\_uniformization} field of
-\code{GenusZeroNormalizedMontelPatchSelector}; it is a separate open provider
-leaf until the Montel-limit coordinates are tied to the global map.
-\lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedMontelPatchSelector.coord_represents_uniformization}
+\uses{lem:montel-selector-finite-patch-family-assembly, lem:montel-selector-patch-family-extraction}
+For the constructed patch family, each selected local coordinate must represent
+the constructed global uniformization in its assigned target chart:
+\code{targetChart.symm (coord x) = uniformization x}. This property depends on
+the construction; it is not an input to it.
 \end{lemma}
 
-\begin{lemma}[Montel selector inverse-coordinate representation (open)]
+\begin{lemma}[Montel constructed inverse-coordinate representation (open)]
 \label{lem:montel-selector-invcoord-represents-uniformization}
-\uses{lem:montel-selector-patch-family-extraction}
-Given the extracted patch family, each selected inverse coordinate branch must
-represent the inverse of the global uniformization on the assigned target
-chart:
-\code{invCoord z = uniformization.symm (targetChart.symm z)}. This is the
-\code{invCoord\_represents\_uniformization} field of the selector and remains a
-separate open provider leaf.
-\lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedMontelPatchSelector.invCoord_represents_uniformization}
+\uses{lem:montel-selector-finite-patch-family-assembly, lem:montel-selector-patch-family-extraction}
+For the constructed patch family, each selected inverse coordinate branch must
+represent the inverse of the constructed global uniformization on the assigned
+target chart:
+\code{invCoord z = uniformization.symm (targetChart.symm z)}. This property
+depends on the construction and on the inverse branches supplied by the local
+Montel chart data.
 \end{lemma}
 
-\begin{lemma}[Montel selector forward smoothness (open)]
+\begin{lemma}[Montel constructed forward smoothness (open)]
 \label{lem:montel-selector-uniformization-contmdiff}
-\uses{lem:montel-selector-patch-family-extraction, lem:montel-selector-coord-represents-uniformization}
-The global uniformization represented by the selected local coordinates must be
-\(\code{ContMDiff}\). This is the
-\code{uniformization\_contMDiff} field of
-\code{GenusZeroNormalizedMontelPatchSelector}; later refinements should connect
-it to the normalized local-chart and two-chart \(\code{OnePoint}\,\C\) atlas
-substrate.
-\lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedMontelPatchSelector.uniformization_contMDiff}
+\uses{lem:montel-selector-finite-patch-family-assembly, lem:montel-selector-coord-represents-uniformization, lem:global-gluing-contmdiff-to-map}
+The constructed global uniformization represented by the selected local
+coordinates must be \(\code{ContMDiff}\). This property follows only after the
+construction has produced coherent local chart expressions and the global
+gluing smoothness theorem applies.
 \end{lemma}
 
-\begin{lemma}[Montel selector inverse smoothness (open)]
+\begin{lemma}[Montel constructed inverse smoothness (open)]
 \label{lem:montel-selector-inverse-uniformization-contmdiff}
-\uses{lem:montel-selector-patch-family-extraction, lem:montel-selector-invcoord-represents-uniformization}
-The inverse of the global uniformization represented by the selected inverse
-coordinate branches must be \(\code{ContMDiff}\). This is the
-\code{inverse\_uniformization\_contMDiff} field of
-\code{GenusZeroNormalizedMontelPatchSelector}; later refinements should connect
-it to inverse-branch regularity in the normalized Montel substrate.
-\lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedMontelPatchSelector.inverse_uniformization_contMDiff}
+\uses{lem:montel-selector-finite-patch-family-assembly, lem:montel-selector-invcoord-represents-uniformization, lem:global-gluing-contmdiff-inv-map}
+The inverse of the constructed global uniformization represented by the selected
+inverse coordinate branches must be \(\code{ContMDiff}\). This property depends
+on the constructed inverse branches and the global gluing smoothness theorem for
+the inverse map.
 \end{lemma}
 
 \begin{lemma}[Normalized Montel patch selector from a sphere homeomorphism (open)]
 \label{lem:montel-selector-of-homeomorph-onepoint}
-\uses{lem:uniformization-genus-zero-homeomorphism, lem:montel-selector-patch-family-extraction, lem:montel-selector-coord-represents-uniformization, lem:montel-selector-invcoord-represents-uniformization, lem:montel-selector-uniformization-contmdiff, lem:montel-selector-inverse-uniformization-contmdiff}
-From a topological homeomorphism \(X\simeq\code{OnePoint}\,\C\), construct the
-\code{GenusZeroNormalizedMontelPatchSelector}. This node packages the five
-graph-visible selector obligations above into the Lean provider
+\uses{lem:montel-selector-finite-patch-family-assembly, lem:montel-selector-patch-family-extraction, lem:montel-selector-coord-represents-uniformization, lem:montel-selector-invcoord-represents-uniformization, lem:montel-selector-uniformization-contmdiff, lem:montel-selector-inverse-uniformization-contmdiff}
+From the constructed uniformizing patch family and its property theorems,
+package the current Lean-facing
+\code{GenusZeroNormalizedMontelPatchSelector}. This node no longer uses the
+selector's own field projections as prerequisites: the construction comes first,
+and the representation and smoothness facts are downstream properties of that
+construction. It is tracked by the current provider
 \code{genusZeroNormalizedMontelPatchSelector\_of\_homeomorph\_onePoint}; it
 stays open because that provider is the remaining uniformization frontier.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint}
