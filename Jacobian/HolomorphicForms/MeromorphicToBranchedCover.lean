@@ -4116,14 +4116,84 @@ theorem genusZero_singlePoleMeromorphicAnalyticData_nonempty
   exact singlePoleAnalyticData_of_biholomorph_onePoint X P e he he_symm
 
 /--
+For a fixed-pole meromorphic map with analytic local data and pole divisor
+`[P]`, the pole modulus-divergence data follows locally.
+-/
+theorem genusZero_fixedPole_poleModulusData_of_analyticData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (_h : analyticGenus ℂ X = 0)
+    (f : MeromorphicMapToSphere X)
+    (_hnc : f.Nonconstant)
+    (_hmem : f.MemRiemannRochSpace (Divisor.point P))
+    (hpole : f.poles = Divisor.point P)
+    (han : f.AnalyticData) :
+    f.PoleModulusData := by
+  classical
+  refine ⟨?_⟩
+  intro Q hQ
+  have hQP : Q = P := by
+    by_contra hne
+    have hzero : (Divisor.point P : Divisor X) Q = 0 :=
+      Divisor.point_apply_ne hne
+    have hzero' : f.poleDivisor Q = 0 := by
+      change f.poles Q = 0
+      rw [hpole]
+      exact hzero
+    rw [hzero'] at hQ
+    exact (lt_irrefl _) hQ
+  refine ⟨fun x => (f.toMap x).getD 0, ?_, ?_⟩
+  · intro x hx
+    have hne_infty : f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) :=
+      f.toMap_ne_infty_of_poleDivisor_zero x hx
+    rcases hfx : f.toMap x with _ | z
+    · exact (hne_infty hfx).elim
+    · simp only [hfx, Option.getD_some]
+      rfl
+  · have horder :
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P
+            (fun x => (f.toMap x).getD 0) =
+          ((-1 : ℤ) : WithTop ℤ) :=
+      orderAt_getD_eq_neg_one_of_mapAnalyticOrderAt_one f P hpole han
+    have hdivP := tendsto_norm_atTop_of_order_neg_one
+      (fun x => (f.toMap x).getD 0) P han.meromorphic_getD horder
+    simpa [hQP] using hdivP
+
+/--
+Narrow fixed-pole analytic-map provider for the bare genus-zero Riemann-Roch
+section route.
+
+This is now the direct RR-chain frontier: produce a nonconstant
+`MeromorphicMapToSphere` in `L([P])` with prescribed pole divisor and
+chart-local analytic data. The pole modulus data is derived downstream by
+`genusZero_fixedPole_poleModulusData_of_analyticData`.
+-/
+theorem genusZero_fixedPole_rr_analyticMap_provider
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    ∃ f : MeromorphicMapToSphere X,
+      f.Nonconstant ∧
+      f.MemRiemannRochSpace (Divisor.point P) ∧
+      f.poles = Divisor.point P ∧
+      f.AnalyticData := by
+  -- Remaining RR frontier: construct the fixed-pole meromorphic map and its
+  -- granular analytic data honestly from `analyticGenus ℂ X = 0`.
+  sorry
+
+/--
 Explicit fixed-pole analytic-data provider for the bare genus-zero
 Riemann-Roch section route.
 
-This is the direct RR-chain frontier: produce a `MeromorphicMapToSphere` with
-the prescribed pole divisor, chart-local analytic data for its finite lift, and
-the pole modulus-divergence data. Downstream RR-section packaging should depend
-on this provider directly rather than routing through #233/#232 uniformization
-wrappers.
+The remaining missing input is now narrowed to
+`genusZero_fixedPole_rr_analyticMap_provider`; modulus divergence is derived
+locally from its pole divisor and analytic-order data.
 -/
 theorem genusZero_fixedPole_rr_analyticData_provider
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -4134,9 +4204,10 @@ theorem genusZero_fixedPole_rr_analyticData_provider
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ f : MeromorphicMapToSphere X,
       f.poles = Divisor.point P ∧ f.AnalyticData ∧ f.PoleModulusData := by
-  -- Remaining RR frontier: construct the fixed-pole meromorphic map and its
-  -- granular analytic/modulus data honestly from `analyticGenus ℂ X = 0`.
-  sorry
+  obtain ⟨f, hnc, hmem, hpole, han⟩ :=
+    genusZero_fixedPole_rr_analyticMap_provider X P h
+  exact ⟨f, hpole, han,
+    genusZero_fixedPole_poleModulusData_of_analyticData X P h f hnc hmem hpole han⟩
 
 /--
 Bare genus-zero RR-section provider, now factored through the direct fixed-pole
