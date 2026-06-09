@@ -68,7 +68,7 @@ For an open partial homeomorphism \(e\), if \(z\in e.\mathrm{target}\), then
 
 \begin{lemma}[Normalized Montel limit agrees with the uniformization (open)]
 \label{lem:montel-selector-normal-limit-agrees-with-uniformization}
-\uses{lem:montel-selector-source-patch-cover, lem:montel-selector-chart-inverse-local-value}
+\uses{lem:montel-selector-normal-limit-source-patch, lem:montel-selector-chart-inverse-local-value, lem:montel-selector-chartball-value-represents-local-coordinate, lem:montel-selector-local-limit-tied-to-global-homeomorphism, lem:montel-selector-normal-limit-equality-bookkeeping}
 The normal-family/Montel extraction must choose local coordinates whose
 target-chart inverse agrees with the global homeomorphism \(F:X\simeq
 \code{OnePoint}\,\C\) on the selected source patch.
@@ -76,6 +76,50 @@ target-chart inverse agrees with the global homeomorphism \(F:X\simeq
 This is the analytic heart of the coordinate-representation field: it is not a
 formal consequence of the existing gluing API, and it should remain an open
 provider until the Montel patch-selector construction supplies it.
+\end{lemma}
+
+\begin{lemma}[Normal-limit source patch for a point (open)]
+\label{lem:montel-selector-normal-limit-source-patch}
+\uses{lem:montel-selector-source-patch-cover}
+For each source point \(x\), choose a selected Montel source patch \(U_i\)
+containing \(x\).  This is the pointwise specialization of the finite
+patch-family cover used by the normal-limit agreement argument.
+\end{lemma}
+
+\begin{lemma}[Chart-ball value represents the selected local coordinate (open)]
+\label{lem:montel-selector-chartball-value-represents-local-coordinate}
+\uses{lem:montel-local-patch-realization, lem:montel-selector-normal-limit-source-patch}
+On the selected source patch, the global patch coordinate is the chart-ball
+normal-family limit evaluated in the source coordinate.  This is the local
+realization payload: it ties the abstract global patch coordinate to the
+normalized Montel chart-ball data.
+\end{lemma}
+
+\begin{lemma}[Selected local limit is tied to the global homeomorphism (open)]
+\label{lem:montel-selector-local-limit-tied-to-global-homeomorphism}
+\uses{lem:montel-coherent-local-selector, lem:montel-selector-chartball-value-represents-local-coordinate}
+The chosen normalized Montel limit is not an arbitrary local chart value: after
+applying the assigned public target chart inverse, it represents the same
+\(\code{OnePoint}\,\C\) point as the global homeomorphism selected by the
+uniformization construction.
+
+This is the genuine analytic provider for the normal-limit agreement branch.
+It remains open until the Montel selector construction proves that the local
+normal-family limits are coherent with the global map.
+\end{lemma}
+
+\begin{lemma}[Normal-limit equality bookkeeping (open)]
+\label{lem:montel-selector-normal-limit-equality-bookkeeping}
+\uses{lem:montel-selector-chart-inverse-local-value, lem:montel-selector-local-limit-tied-to-global-homeomorphism, lem:mathlib-eq-trans, lem:mathlib-eq-symm}
+Once the chart-inverse local candidate and the normalized Montel limit are both
+identified with the same global homeomorphism value \(F(x)\), the desired
+identity
+\[
+  \psi_i^{-1}(z_i(x)) = F(x)
+\]
+is obtained by symmetry and transitivity of equality.  The equality
+bookkeeping is formal; the analytic content is the preceding local-limit
+provider.
 \end{lemma}
 
 \begin{lemma}[Normalized local values are overlap-compatible (open)]
