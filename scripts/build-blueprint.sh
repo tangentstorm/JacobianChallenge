@@ -28,6 +28,19 @@ cd "$REPO_ROOT"
 SRC="blueprint/src"
 WEB="blueprint/web"
 
+# --- Fast graph-only mode ---------------------------------------------------
+# `--graph-only` (a.k.a. `--no-build`): rebuild the web graph from the tex
+# WITHOUT running `lake build` or recomputing node-states.json. Use this for
+# blueprint-refinement work (tex-only edits): no Lean state changed, so the
+# existing node colors stay valid and newly-added tex nodes render with the
+# default (gray) color. Much faster — skips the whole Lean compile.
+GRAPH_ONLY=0
+for arg in "$@"; do
+  case "$arg" in
+    --graph-only|--no-build) GRAPH_ONLY=1 ;;
+  esac
+done
+
 # --- TeX on PATH ------------------------------------------------------------
 # plasTeX needs kpsewhich (to resolve the cross-directory \input{../../tex/...}
 # paths) and pdflatex (for equation imaging). MacTeX/basictex installs to
@@ -105,13 +118,21 @@ fi
 # compiled Jacobian.Solution environment (no per-decl #print axioms). Requires
 # current oleans, so ensure the public target is built first (a no-op when the
 # build is already current).
-echo "==> [2/4] Computing ground-truth node states"
-( cd "$REPO_ROOT" && lake build Jacobian.Solution ) >/dev/null 2>&1 || {
-  echo "error: 'lake build Jacobian.Solution' failed — cannot compute node states." >&2
-  echo "       Run 'lake exe cache get' then retry." >&2
-  exit 1
-}
-"$PY" "$SRC/../../scripts/blueprint-node-states.py" "$WEB/node-states.json"
+if [ "$GRAPH_ONLY" -eq 1 ]; then
+  echo "==> [2/4] Skipping node-state recompute (--graph-only): reusing existing colors; new tex nodes render gray"
+  if [ ! -f "$WEB/node-states.json" ]; then
+    echo "  note: no cached $WEB/node-states.json found — all nodes will use default colors." >&2
+    echo "        Run a full 'bash scripts/build-blueprint.sh' (no flag) once to seed real colors." >&2
+  fi
+else
+  echo "==> [2/4] Computing ground-truth node states"
+  ( cd "$REPO_ROOT" && lake build Jacobian.Solution ) >/dev/null 2>&1 || {
+    echo "error: 'lake build Jacobian.Solution' failed — cannot compute node states." >&2
+    echo "       Run 'lake exe cache get' then retry, or use --graph-only to skip the build." >&2
+    exit 1
+  }
+  "$PY" "$SRC/../../scripts/blueprint-node-states.py" "$WEB/node-states.json"
+fi
 
 # --- 3. Inject (order matters) ---------------------------------------------
 echo "==> [3/4] Injecting post-processing extras"
