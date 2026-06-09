@@ -80,14 +80,76 @@ provider until the Montel patch-selector construction supplies it.
 
 \begin{lemma}[Normalized local values are overlap-compatible (open)]
 \label{lem:montel-selector-overlap-compatible-normalized-values}
-\uses{lem:global-gluing-coord-mem-target}
+\uses{lem:montel-selector-source-overlap-membership, lem:montel-selector-left-overlap-local-candidate, lem:montel-selector-right-overlap-local-candidate, lem:montel-selector-normalized-transition-agreement}
 On overlaps of selected source patches, the two target-chart inverse formulas
 for the normalized Montel coordinates determine the same point of
 \(\code{OnePoint}\,\C\).  This compatibility is what lets the local
 representations define one global uniformization rather than unrelated chart
 values.
 
-This is a planning node with no current Lean declaration.  Downstream green
-gluing lemmas consume this compatibility once the selector field is available,
-but they should not be used as fake providers for constructing the field.
+This is still an open planning node: the downstream green gluing lemma consumes
+overlap compatibility once the selector carries it, but the Montel construction
+must first provide the transition agreement between the selected local limits.
 \end{lemma}
+
+\begin{lemma}[Selected source-overlap membership (open)]
+\label{lem:montel-selector-source-overlap-membership}
+\uses{lem:montel-selector-source-patch-cover}
+For two selected patches \(U_i\) and \(U_j\), the overlap case records the
+hypotheses \(x\in U_i\) and \(x\in U_j\).  This is the bookkeeping input that
+allows both local coordinate formulas to be evaluated at the same source point.
+
+There is no separate Lean declaration for this bookkeeping yet; it is a
+planning leaf resting on the existing finite source-cover substrate.
+\end{lemma}
+
+\begin{lemma}[Left local candidate on an overlap (open)]
+\label{lem:montel-selector-left-overlap-local-candidate}
+\uses{lem:montel-selector-chart-inverse-local-value, lem:montel-selector-source-overlap-membership}
+On the left selected patch \(U_i\), the overlap point determines the local
+candidate value
+\[
+  \psi_i^{-1}(z_i(x)) \in \code{OnePoint}\,\C.
+\]
+This is the left-hand instance of the chart-inverse local-value node.
+\end{lemma}
+
+\begin{lemma}[Right local candidate on an overlap (open)]
+\label{lem:montel-selector-right-overlap-local-candidate}
+\uses{lem:montel-selector-chart-inverse-local-value, lem:montel-selector-source-overlap-membership}
+On the right selected patch \(U_j\), the same overlap point determines the local
+candidate value
+\[
+  \psi_j^{-1}(z_j(x)) \in \code{OnePoint}\,\C.
+\]
+This is the right-hand instance of the chart-inverse local-value node.
+\end{lemma}
+
+\begin{lemma}[Normalized transition agreement on overlaps (open)]
+\label{lem:montel-selector-normalized-transition-agreement}
+\uses{lem:montel-selector-left-overlap-local-candidate, lem:montel-selector-right-overlap-local-candidate, lem:mathlib-eq-trans, lem:mathlib-eq-symm}
+The normalized Montel extraction must make the left and right local candidate
+values agree on source overlaps:
+\[
+  \psi_i^{-1}(z_i(x))=\psi_j^{-1}(z_j(x)).
+\]
+Once both sides are identified with a common normalized value, this final
+bookkeeping step uses symmetry and transitivity of equality.  The analytic
+provider that supplies the common normalized value remains open.
+\end{lemma}
+
+\begin{lemma}[Mathlib: equality transitivity]
+\label{lem:mathlib-eq-trans}
+If \(a=b\) and \(b=c\), then \(a=c\).
+\lean{Eq.trans}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Mathlib: equality symmetry]
+\label{lem:mathlib-eq-symm}
+If \(a=b\), then \(b=a\).
+\lean{Eq.symm}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
