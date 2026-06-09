@@ -3545,6 +3545,79 @@ noncomputable def biholomorphPulledBackSimplePoleCoordinate
   onePointSimplePoleCoordinate (e P) ∘ (e : X → OnePoint ℂ)
 
 /--
+The explicit simple-pole coordinate on `OnePoint ℂ`, pulled back along a
+biholomorphism, is meromorphic at every source point.
+-/
+theorem meromorphicAtX_biholomorphPulledBackSimplePoleCoordinate
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (e : X ≃ₜ OnePoint ℂ)
+    (he :
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) (e : X → OnePoint ℂ)) :
+    ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (biholomorphPulledBackSimplePoleCoordinate P e) p := by
+  intro p
+  unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+  rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+    JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt]
+  set targetF : OnePoint ℂ → ℂ := onePointSimplePoleCoordinate (e P) with htargetF
+  set g : ℂ → ℂ :=
+    (chartAt ℂ (e p)) ∘ (e : X → OnePoint ℂ) ∘ (chartAt ℂ p).symm with hg
+  have htarget :
+      MeromorphicAt
+        (targetF ∘ (chartAt ℂ (e p)).symm)
+        ((chartAt ℂ (e p)) (e p)) := by
+    have h := meromorphicAtX_onePointSimplePoleCoordinate (e P) (e p)
+    unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at h
+    rw [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt,
+      ← htargetF] at h
+    exact h
+  have hg_an : AnalyticAt ℂ g ((chartAt ℂ p) p) := by
+    have hhol := JacobianChallenge.HolomorphicForms.IsHolomorphicAt.of_contMDiff he p
+    unfold JacobianChallenge.HolomorphicForms.IsHolomorphicAt at hhol
+    simpa [g, hg, JacobianChallenge.HolomorphicForms.chartLocalAt, Function.comp_def]
+      using hhol
+  have hg_center : g ((chartAt ℂ p) p) = (chartAt ℂ (e p)) (e p) := by
+    simp [g, Function.comp_def, (chartAt ℂ p).left_inv (mem_chart_source ℂ p)]
+  have hcomp :
+      MeromorphicAt ((targetF ∘ (chartAt ℂ (e p)).symm) ∘ g)
+        ((chartAt ℂ p) p) := by
+    have htarget_g :
+        MeromorphicAt
+          (targetF ∘ (chartAt ℂ (e p)).symm)
+          (g ((chartAt ℂ p) p)) := by
+      rwa [hg_center]
+    simpa [hg_center] using
+      (MeromorphicAt.comp_analyticAt
+        (𝕜 := ℂ) (𝕜' := ℂ)
+        (f := targetF ∘ (chartAt ℂ (e p)).symm) (g := g)
+        (x := (chartAt ℂ p) p) htarget_g hg_an)
+  refine hcomp.congr ?_
+  have hsymm :
+      Filter.Tendsto (fun z : ℂ => (chartAt ℂ p).symm z) (𝓝 ((chartAt ℂ p) p)) (𝓝 p) := by
+    have hcont := (chartAt ℂ p).continuousAt_symm
+      ((chartAt ℂ p).map_source (mem_chart_source ℂ p))
+    change Filter.Tendsto (fun z : ℂ => (chartAt ℂ p).symm z) (𝓝 ((chartAt ℂ p) p))
+      (𝓝 ((chartAt ℂ p).symm ((chartAt ℂ p) p))) at hcont
+    simpa [(chartAt ℂ p).left_inv (mem_chart_source ℂ p)] using hcont
+  have htarget_source :
+      (chartAt ℂ (e p)).source ∈ 𝓝 (e p) :=
+    (chartAt ℂ (e p)).open_source.mem_nhds (mem_chart_source ℂ (e p))
+  have he_cont : Continuous (e : X → OnePoint ℂ) := he.continuous
+  have hsrc :
+      ∀ᶠ z in 𝓝 ((chartAt ℂ p) p),
+        e ((chartAt ℂ p).symm z) ∈ (chartAt ℂ (e p)).source :=
+    hsymm.eventually (he_cont.continuousAt htarget_source)
+  filter_upwards [hsrc.filter_mono nhdsWithin_le_nhds] with z hz
+  simp [biholomorphPulledBackSimplePoleCoordinate, targetF, g,
+    Function.comp_def, (chartAt ℂ (e p)).left_inv hz]
+
+/--
 Narrow facts for the biholomorphic pullback construction of a simple pole.
 
 This record fixes the target lift to the explicit coordinate
@@ -3570,8 +3643,9 @@ Field-level facts for the biholomorphic pullback construction of a simple pole.
 
 This is the exposed shape of the remaining #234 analytic frontier after the
 target meromorphicity, continuity, order-one, and modulus-divergence fields
-have been discharged locally: the four remaining fields are source-transport
-facts for the named pullback along `e`.
+have been discharged locally, and after source meromorphicity has been
+transported through the biholomorphism: the three remaining fields are
+source-transport facts for the named pullback along `e`.
 -/
 structure BiholomorphOnePointSimplePolePullbackFieldFacts
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -3579,11 +3653,6 @@ structure BiholomorphOnePointSimplePolePullbackFieldFacts
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (P : X) (e : X ≃ₜ OnePoint ℂ) where
-  /-- The pulled-back coordinate is meromorphic at every source point. -/
-  source_meromorphic_everywhere :
-    ∀ p : X,
-      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
-        (biholomorphPulledBackSimplePoleCoordinate P e) p
   /-- The source one-point extension is continuous. -/
   source_continuous_extension :
     Continuous (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P)
@@ -3616,9 +3685,8 @@ theorem biholomorphOnePointSimplePolePullbackFieldFacts_of_biholomorph_onePoint
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) (e.symm : OnePoint ℂ → X)) :
     Nonempty (BiholomorphOnePointSimplePolePullbackFieldFacts X P e) := by
-  -- Principal-part frontier: transport source meromorphicity, continuity,
-  -- order-one, and punctured-neighborhood divergence across the biholomorphism
-  -- `e`.
+  -- Principal-part frontier: transport source continuity, order-one, and
+  -- punctured-neighborhood divergence across the biholomorphism `e`.
   sorry
 
 /--
@@ -3652,7 +3720,8 @@ theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
       orderAt_pole := mapAnalyticOrderAt_onePointSimplePoleCoordinate_pole (e P)
       modulus_tendsto := tendsto_norm_onePointSimplePoleCoordinate_atTop (e P) }
     sourcePrincipalPart := {
-      meromorphic_everywhere := h.source_meromorphic_everywhere
+      meromorphic_everywhere :=
+        meromorphicAtX_biholomorphPulledBackSimplePoleCoordinate P e he
       continuous_extension := h.source_continuous_extension
       orderAt_pole := h.source_orderAt_pole
       modulus_tendsto := h.source_modulus_tendsto } }⟩
