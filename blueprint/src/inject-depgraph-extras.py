@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from blueprint_recolor import load_states, recolor_dot  # noqa: E402
+from blueprint_recolor import load_states, load_focus, recolor_dot  # noqa: E402
 
 DOT_RENDER_PAT = re.compile(r"\.renderDot\(`(.*?)`\)", re.DOTALL)
 
@@ -44,6 +44,8 @@ LEGEND_HTML = """
     <dd>the statement's own proof is a direct <span class="ttfamily">sorry</span></dd>
   <dt class="legend-swatch legend-grey-dashed">Grey, dashed</dt>
     <dd>not connected to the public build (not written yet, or formalized but not wired into the public path)</dd>
+  <dt class="legend-swatch legend-purple-fill">Purple fill</dt>
+    <dd>the <b>local root</b> the swarm is currently focused on (overrides its state colour)</dd>
 </dl>
 </details>
 """
@@ -105,10 +107,11 @@ INJECTED_STYLE = """
 .legend-blue-fill::before         { border: 2px solid #1f77b4; background: #A3D6FF; }
 .legend-orange-fill::before       { border: 2px solid #FFAA33; background: #fff5e6; }
 .legend-grey-dashed::before       { border: 2px dashed #888;    background: #f0f0f0; }
+.legend-purple-fill::before       { border: 2px solid #8e44ad; background: #efe1f5; }
 </style>
 """
 
-def inject(html: str, path: Path, states: dict[str, str]) -> str:
+def inject(html: str, path: Path, states: dict[str, str], focus: set[str]) -> str:
     if MARKER in html:
         return html
 
@@ -116,8 +119,9 @@ def inject(html: str, path: Path, states: dict[str, str]) -> str:
         m_dot = DOT_RENDER_PAT.search(html)
         if m_dot:
             original_dot = m_dot.group(1)
-            # Recolour by ground-truth node state (overrides \leanok colours).
-            recoloured = recolor_dot(original_dot, states)
+            # Recolour by ground-truth node state (overrides \leanok colours);
+            # focus nodes get the purple 'local root' highlight.
+            recoloured = recolor_dot(original_dot, states, focus)
             html = html.replace(original_dot, recoloured, 1)
 
     new = LEGEND_REPLACE.sub(LEGEND_HTML.strip(), html, count=1)
@@ -144,10 +148,14 @@ def main(argv: list[str]) -> int:
     else:
         print("inject-depgraph-extras: no node-states.json — keeping upstream \\leanok colours")
 
+    focus = load_focus(root)
+    if focus:
+        print(f"inject-depgraph-extras: focus highlight (purple) on: {', '.join(sorted(focus))}")
+
     n = 0
     for path in root.glob("dep_graph*.html"):
         original = path.read_text(encoding="utf-8")
-        updated = inject(original, path, states)
+        updated = inject(original, path, states, focus)
         if updated != original:
             path.write_text(updated, encoding="utf-8")
             n += 1

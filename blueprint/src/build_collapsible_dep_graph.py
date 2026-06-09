@@ -33,7 +33,7 @@ import sys
 from collections import defaultdict, Counter
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from blueprint_recolor import load_states, recolor_dot  # noqa: E402
+from blueprint_recolor import load_states, load_focus, recolor_dot  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -730,9 +730,11 @@ def main(argv: list[str]) -> int:
     # (overrides \leanok colours). The overview boxes keep their section-
     # aggregate colouring (a different, majority-based abstraction).
     states = load_states(web)
-    if states:
-        detail_dots = {k: recolor_dot(v, states) for k, v in detail_dots.items()}
-        print(f"build_collapsible_dep_graph: recoloured detail graphs by node-states.json ({len(states)} nodes)")
+    focus = load_focus(web)
+    if states or focus:
+        detail_dots = {k: recolor_dot(v, states, focus) for k, v in detail_dots.items()}
+        print(f"build_collapsible_dep_graph: recoloured detail graphs by node-states.json ({len(states)} nodes)"
+              + (f"; focus: {', '.join(sorted(focus))}" if focus else ""))
 
     dots = {"overview": overview_dot, **detail_dots}
     names = display_names(detail_dots, r_to_name)

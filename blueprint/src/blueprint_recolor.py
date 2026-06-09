@@ -31,6 +31,11 @@ STATE_DOT = {
     "sorry-dep":    'color="#1f77b4", fillcolor="#A3D6FF", style=filled',
     "sorry":        'color="#FFAA33", fillcolor="#fff5e6", style=filled',
     "unformalized": 'color="#888888", fillcolor="#f0f0f0", style="filled,dashed"',
+    # The "local root" the swarm is currently focused on. Overrides the node's
+    # state colour (orange/blue/grey/green) so the chosen target is easy to pick
+    # out. A purple that sits alongside the green/blue/orange palette (saturated
+    # border + pale fill, penwidth boosted).
+    "focus":        'color="#8e44ad", fillcolor="#efe1f5", style=filled, penwidth=2.5',
 }
 
 # Human-readable legend rows (color-name, description) in display order.
@@ -39,6 +44,7 @@ LEGEND_ROWS = [
     ("sorry-dep",    "Blue fill",   "formalized, but its proof depends on a <code>sorry</code> / extra axiom somewhere upstream"),
     ("sorry",        "Orange fill", "the statement's own proof is a direct <code>sorry</code>"),
     ("unformalized", "Grey dashed", "not connected to the public build — not written yet, or formalized but not wired into the public path"),
+    ("focus",        "Purple fill", "the 'local root' the swarm is currently focused on (overrides its state colour)"),
 ]
 
 _NODE_PAT = re.compile(r'("([^"]+)")\s*\[([^\]]*)\]')
@@ -57,20 +63,44 @@ def load_states(web_dir: Path) -> dict[str, str]:
         return {}
 
 
-def recolor_dot(dot: str, states: dict[str, str]) -> str:
+def load_focus(web_dir: Path) -> set[str]:
+    """The set of blueprint-node labels to highlight as the 'local root' the
+    swarm is focused on. Read from `<repo>/.sci/focus-node` (one label per line,
+    e.g. `thm:uniformization-genus-zero-biholomorphism`), falling back to
+    `<web_dir>/.focus-node`. Manager-controlled, like the hold sentinel: set/clear
+    it to move the magenta highlight. Blank lines and `#` comments ignored."""
+    repo_root = Path(web_dir).resolve().parents[1]  # blueprint/web -> repo root
+    for cand in (repo_root / ".sci" / "focus-node", Path(web_dir) / ".focus-node"):
+        if cand.is_file():
+            try:
+                out: set[str] = set()
+                for line in cand.read_text(encoding="utf-8").splitlines():
+                    s = line.strip()
+                    if s and not s.startswith("#"):
+                        out.add(s)
+                return out
+            except Exception:
+                return set()
+    return set()
+
+
+def recolor_dot(dot: str, states: dict[str, str], focus: set[str] | None = None) -> str:
     """Rewrite node colour attributes in a graphviz DOT string by true state.
 
     Only nodes whose key (the blueprint label, e.g. "thm:foo") appears in
     `states` are touched; edges (which contain `->`) and unknown nodes are left
-    as-is. If `states` is empty this is a no-op."""
-    if not states:
+    as-is. Nodes whose key is in `focus` are coloured with the `focus` (purple)
+    style regardless of state — this is the 'local root' highlight, applied even
+    to nodes not yet in `states` (e.g. a freshly-added open node)."""
+    focus = focus or set()
+    if not states and not focus:
         return dot
 
     def repl(m: re.Match) -> str:
         quoted, key, attrs = m.group(1), m.group(2), m.group(3)
         if "->" in key:  # not a node definition
             return m.group(0)
-        st = states.get(key)
+        st = "focus" if key in focus else states.get(key)
         if st is None or st not in STATE_DOT:
             return m.group(0)
         rest = _STRIP_ATTRS.sub("", attrs).strip().strip(",").strip()
