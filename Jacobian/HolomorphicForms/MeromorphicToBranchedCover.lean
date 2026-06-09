@@ -3656,6 +3656,29 @@ theorem continuous_onePointExtend_biholomorphPulledBackSimplePoleCoordinate
     simp [biholomorphPulledBackSimplePoleCoordinate]
 
 /--
+The pulled-back explicit simple-pole coordinate diverges in norm along the
+punctured neighborhood of the source pole.
+-/
+theorem tendsto_norm_biholomorphPulledBackSimplePoleCoordinate_atTop
+    {X : Type*} [TopologicalSpace X] (P : X) (e : X ≃ₜ OnePoint ℂ) :
+    Filter.Tendsto (fun x => ‖biholomorphPulledBackSimplePoleCoordinate P e x‖)
+      (nhdsWithin P {P}ᶜ) Filter.atTop := by
+  have htarget :
+      Filter.Tendsto (fun q => ‖onePointSimplePoleCoordinate (e P) q‖)
+        (nhdsWithin (e P) ({e P}ᶜ : Set (OnePoint ℂ))) Filter.atTop :=
+    tendsto_norm_onePointSimplePoleCoordinate_atTop (e P)
+  have he_within :
+      Filter.Tendsto (fun x => e x) (nhdsWithin P ({P}ᶜ : Set X))
+        (nhdsWithin (e P) ({e P}ᶜ : Set (OnePoint ℂ))) := by
+    rw [tendsto_nhdsWithin_iff]
+    refine ⟨?_, ?_⟩
+    · exact e.continuous.continuousAt.tendsto.mono_left nhdsWithin_le_nhds
+    · filter_upwards [self_mem_nhdsWithin] with x hx_ne
+      exact fun hex => hx_ne (e.injective hex)
+  simpa [biholomorphPulledBackSimplePoleCoordinate, Function.comp_def] using
+    htarget.comp he_within
+
+/--
 Narrow facts for the biholomorphic pullback construction of a simple pole.
 
 This record fixes the target lift to the explicit coordinate
@@ -3683,8 +3706,9 @@ This is the exposed shape of the remaining #234 analytic frontier after the
 target meromorphicity, continuity, order-one, and modulus-divergence fields
 have been discharged locally, and after source meromorphicity has been
 transported through the biholomorphism, and after source one-point-extension
-continuity has been transported: the two remaining fields are
-source-transport facts for the named pullback along `e`.
+continuity and punctured-neighborhood modulus divergence have been transported:
+the remaining field is the source order-one transport fact for the named
+pullback along `e`.
 -/
 structure BiholomorphOnePointSimplePolePullbackFieldFacts
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -3696,10 +3720,6 @@ structure BiholomorphOnePointSimplePolePullbackFieldFacts
   source_orderAt_pole :
     JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
       (onePointExtend (biholomorphPulledBackSimplePoleCoordinate P e) P) P = 1
-  /-- The pulled-back coordinate diverges in norm toward `P`. -/
-  source_modulus_tendsto :
-    Filter.Tendsto (fun x => ‖biholomorphPulledBackSimplePoleCoordinate P e x‖)
-      (nhdsWithin P {P}ᶜ) Filter.atTop
 
 /--
 Field-level principal-part facts provider for the explicit biholomorphic
@@ -3761,7 +3781,8 @@ theorem biholomorphOnePointSimplePolePullbackFacts_of_biholomorph_onePoint
       continuous_extension :=
         continuous_onePointExtend_biholomorphPulledBackSimplePoleCoordinate P e he
       orderAt_pole := h.source_orderAt_pole
-      modulus_tendsto := h.source_modulus_tendsto } }⟩
+      modulus_tendsto :=
+        tendsto_norm_biholomorphPulledBackSimplePoleCoordinate_atTop P e } }⟩
 
 /--
 Principal-part data provider for the explicit biholomorphic pullback route.
