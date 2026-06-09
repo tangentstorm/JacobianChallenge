@@ -4211,13 +4211,72 @@ theorem continuous_toMap_of_meromorphic_getD_simple_pole
   simpa [hext] using hcontExt
 
 /--
+An honest fixed-pole meromorphic map is nonconstant: it takes value `∞` at the
+pole and finite values at every other point.
+-/
+theorem MeromorphicMapToSphere.nonconstant_of_poleDivisor_point
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    f.Nonconstant := by
+  classical
+  haveI : Nonempty X := ⟨P⟩
+  obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
+  intro ⟨c, hc⟩
+  by_cases haP : a = P
+  · have hbP : b ≠ P := by
+      intro hbP
+      exact hab (haP.trans hbP.symm)
+    have hcP : c = OnePoint.infty := by
+      rw [← hc a, haP]
+      exact f.toMap_pole_eq_infty_of_poleDivisor_point P hpole
+    have hb : f.toMap b = c := hc b
+    rw [hcP] at hb
+    exact f.toMap_ne_infty_off_pole P hpole b hbP hb
+  · have hcP : c = OnePoint.infty := by
+      rw [← hc P]
+      exact f.toMap_pole_eq_infty_of_poleDivisor_point P hpole
+    have ha : f.toMap a = c := hc a
+    rw [hcP] at ha
+    exact f.toMap_ne_infty_off_pole P hpole a haP ha
+
+/--
+Granular fixed-pole analytic provider for the bare genus-zero Riemann-Roch
+section route.
+
+This is the direct RR-chain frontier: construct a `MeromorphicMapToSphere` in
+`L([P])` with prescribed pole divisor, meromorphic canonical finite lift, and
+order-one extension at the pole. Nonconstancy and the remaining `AnalyticData`
+fields are derived downstream from these granular facts.
+-/
+theorem genusZero_fixedPole_rr_granularAnalytic_provider
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    ∃ f : MeromorphicMapToSphere X,
+      f.MemRiemannRochSpace (Divisor.point P) ∧
+      f.poles = Divisor.point P ∧
+      (∀ p : X,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+          (fun q => (f.toMap q).getD 0) p) ∧
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 := by
+  -- Remaining RR frontier: construct the fixed-pole meromorphic map and its
+  -- granular analytic data honestly from `analyticGenus ℂ X = 0`.
+  sorry
+
+/--
 Granular fixed-pole map provider for the bare genus-zero Riemann-Roch section
 route.
 
-This is the direct RR-chain frontier: construct a nonconstant
-`MeromorphicMapToSphere` in `L([P])` with prescribed pole divisor, meromorphic
-canonical finite lift, and order-one extension at the pole. The remaining
-`AnalyticData` fields are derived downstream from these granular facts.
+The remaining missing input is now narrowed to
+`genusZero_fixedPole_rr_granularAnalytic_provider`; nonconstancy is derived
+locally from the exact simple-pole divisor.
 -/
 theorem genusZero_fixedPole_rr_granularMap_provider
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -4234,9 +4293,9 @@ theorem genusZero_fixedPole_rr_granularMap_provider
         JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
           (fun q => (f.toMap q).getD 0) p) ∧
       JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 := by
-  -- Remaining RR frontier: construct the fixed-pole meromorphic map and its
-  -- granular analytic data honestly from `analyticGenus ℂ X = 0`.
-  sorry
+  obtain ⟨f, hmem, hpole, hmer, hord1⟩ :=
+    genusZero_fixedPole_rr_granularAnalytic_provider X P h
+  exact ⟨f, f.nonconstant_of_poleDivisor_point P hpole, hmem, hpole, hmer, hord1⟩
 
 /--
 Narrow fixed-pole analytic-map provider for the bare genus-zero Riemann-Roch
