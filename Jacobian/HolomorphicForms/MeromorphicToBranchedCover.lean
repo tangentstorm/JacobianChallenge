@@ -4163,13 +4163,88 @@ theorem genusZero_fixedPole_poleModulusData_of_analyticData
     simpa [hQP] using hdivP
 
 /--
+For a fixed-pole meromorphic map whose canonical finite lift is meromorphic and
+whose extension has analytic order one at the pole, global continuity of
+`toMap` follows from the one-point extension of the finite lift.
+-/
+theorem continuous_toMap_of_meromorphic_getD_simple_pole
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p)
+    (P : X) (hpole : f.poles = Divisor.point P)
+    (hord1 : JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1) :
+    Continuous f.toMap := by
+  classical
+  set F : X → ℂ := fun q => (f.toMap q).getD 0 with hF_def
+  have hmerF : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p := by
+    intro p
+    simpa [F, hF_def] using hmer p
+  have hnoPoleOff : ∀ p : X, p ≠ P →
+      (0 : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F := by
+    intro p hp
+    simpa [F, hF_def] using
+      f.noPoleOff_P_of_poleDivisor_point hmer P hpole p hp
+  have hcontOff : ∀ p : X, p ≠ P → ContinuousAt F p := by
+    intro p hp
+    have hcompl : p ∈ ({P}ᶜ : Set X) := hp
+    have hopen : IsOpen ({P}ᶜ : Set X) := isOpen_compl_singleton
+    have hcontOn :=
+      f.continuousOn_getD_off_pole_of_poleDivisor_point P hpole
+    exact (hcontOn.continuousAt (hopen.mem_nhds hcompl))
+  have horder :
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+        ((-1 : ℤ) : WithTop ℤ) := by
+    simpa [F, hF_def] using
+      f.orderAt_getD_eq_neg_one_of_simple_pole hmer P hpole hord1
+  have hcontExt : Continuous (onePointExtend F P) :=
+    continuous_onePointExtend_of_meromorphic_order_neg_one
+      F P hmerF hnoPoleOff hcontOff horder
+  have hext : onePointExtend F P = f.toMap := by
+    simpa [F, hF_def] using onePointExtend_getD_eq_toMap_of_pole f P hpole
+  simpa [hext] using hcontExt
+
+/--
+Granular fixed-pole map provider for the bare genus-zero Riemann-Roch section
+route.
+
+This is the direct RR-chain frontier: construct a nonconstant
+`MeromorphicMapToSphere` in `L([P])` with prescribed pole divisor, meromorphic
+canonical finite lift, and order-one extension at the pole. The remaining
+`AnalyticData` fields are derived downstream from these granular facts.
+-/
+theorem genusZero_fixedPole_rr_granularMap_provider
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    ∃ f : MeromorphicMapToSphere X,
+      f.Nonconstant ∧
+      f.MemRiemannRochSpace (Divisor.point P) ∧
+      f.poles = Divisor.point P ∧
+      (∀ p : X,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+          (fun q => (f.toMap q).getD 0) p) ∧
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 := by
+  -- Remaining RR frontier: construct the fixed-pole meromorphic map and its
+  -- granular analytic data honestly from `analyticGenus ℂ X = 0`.
+  sorry
+
+/--
 Narrow fixed-pole analytic-map provider for the bare genus-zero Riemann-Roch
 section route.
 
-This is now the direct RR-chain frontier: produce a nonconstant
-`MeromorphicMapToSphere` in `L([P])` with prescribed pole divisor and
-chart-local analytic data. The pole modulus data is derived downstream by
-`genusZero_fixedPole_poleModulusData_of_analyticData`.
+The remaining missing input is now narrowed to
+`genusZero_fixedPole_rr_granularMap_provider`; continuity of `toMap` is derived
+locally from the meromorphic finite lift and order-one pole data.
 -/
 theorem genusZero_fixedPole_rr_analyticMap_provider
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -4183,9 +4258,22 @@ theorem genusZero_fixedPole_rr_analyticMap_provider
       f.MemRiemannRochSpace (Divisor.point P) ∧
       f.poles = Divisor.point P ∧
       f.AnalyticData := by
-  -- Remaining RR frontier: construct the fixed-pole meromorphic map and its
-  -- granular analytic data honestly from `analyticGenus ℂ X = 0`.
-  sorry
+  classical
+  obtain ⟨f, hnc, hmem, hpole, hmer, hord1⟩ :=
+    genusZero_fixedPole_rr_granularMap_provider X P h
+  refine ⟨f, hnc, hmem, hpole, ?_⟩
+  refine
+    { continuous_toMap :=
+        continuous_toMap_of_meromorphic_getD_simple_pole f hmer P hpole hord1
+      meromorphic_getD := hmer
+      simple_pole_order_one := ?_ }
+  intro Q hpoleQ
+  have hQP : Q = P := by
+    have hpoint : (Divisor.point P : Divisor X) = Divisor.point Q := by
+      rw [← hpole, hpoleQ]
+    exact (Divisor.point_inj.mp hpoint).symm
+  subst Q
+  simpa using hord1
 
 /--
 Explicit fixed-pole analytic-data provider for the bare genus-zero
