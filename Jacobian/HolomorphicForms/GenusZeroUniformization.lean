@@ -93,6 +93,34 @@ structure GenusZeroGlobalPatchFamily
       z ∈ (patch i).targetChart.target ∧ y = (patch i).targetChart.symm z
 
 /--
+One local normalized Montel chart used to build the global two-chart selector.
+
+The analytic part is the chart-ball power-series limit together with its
+inverse-function-theorem local homeomorphism. The target-chart part records
+which public `OnePoint ℂ` chart this local coordinate is assigned to.
+-/
+structure GenusZeroLocalMontelChartPatch where
+  chartBall : ChartBallPowerSeries
+  localChart : chartBall.LocalNormalizedChartHomeomorphData
+  targetChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ
+  targetChart_standard : targetChart = identityChart ∨ targetChart = inversionChart
+
+/--
+A packaged normalized chart-ball limit with a standard `OnePoint ℂ` target
+chart gives the local Montel chart patch data used by the selector frontier.
+-/
+noncomputable def GenusZeroLocalMontelChartPatch.ofChartBallLimit
+    (chartBall : ChartBallPowerSeries)
+    (localChart : chartBall.LocalNormalizedChartHomeomorphData)
+    (targetChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ)
+    (targetChart_standard : targetChart = identityChart ∨ targetChart = inversionChart) :
+    GenusZeroLocalMontelChartPatch where
+  chartBall := chartBall
+  localChart := localChart
+  targetChart := targetChart
+  targetChart_standard := targetChart_standard
+
+/--
 Analytic patch-selection provider for the genus-zero global gluing step.
 
 This is the narrow uniformization input hidden behind the patch-family
@@ -121,6 +149,36 @@ structure GenusZeroNormalizedMontelPatchSelector
   inverse_uniformization_contMDiff :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) (uniformization.symm : OnePoint ℂ → X)
+
+/--
+Realization of one selected global patch by a normalized local Montel chart.
+
+The source chart identifies points of the source patch with points in the
+chart ball, while the patch coordinate is the Montel-limit chart-ball map in
+that source coordinate. The inverse branch is also required to be compatible
+with the local inverse supplied by the inverse-function-theorem chart package.
+-/
+structure GenusZeroLocalMontelPatchRealization
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (patch : GenusZeroGlobalGluingPatch X)
+    (localPatch : GenusZeroLocalMontelChartPatch) where
+  sourceChart : X → ℂ
+  sourceChart_contMDiffOn :
+    ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) sourceChart patch.source
+  sourceChart_mem_chartBall :
+    ∀ x, x ∈ patch.source →
+      sourceChart x ∈
+        Metric.ball localPatch.chartBall.center (localPatch.chartBall.radius : ℝ)
+  coord_eq_chartBall :
+    ∀ x, x ∈ patch.source →
+      patch.coord x = localPatch.chartBall.toFun (sourceChart x)
+  invCoord_sourceChart_eq_localInverse :
+    ∀ z, z ∈ patch.targetChart.target →
+      sourceChart (patch.invCoord z) = localPatch.localChart.localOpen.symm z
 
 namespace GenusZeroGlobalGluingData
 
@@ -200,16 +258,54 @@ theorem onePointCx_identity_or_inversionChart_source :
       simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
 
 /--
+Finite normalized chart-ball cover provider with the local Montel realizations
+still exposed.
+
+This is the genuine Montel finite-cover frontier. It selects local normalized
+Montel chart patches for each global patch and records that those local
+chart-ball limits realize the projected patch coordinates. Later wrappers
+forget this local realization data into the chart-ball/source-chart interface.
+-/
+theorem genusZeroMontel_finite_normalized_chartBall_cover_with_local_realizations
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (family : GenusZeroGlobalPatchFamily X)
+      (localPatch : family.PatchIndex → GenusZeroLocalMontelChartPatch)
+      (realization :
+        ∀ i, GenusZeroLocalMontelPatchRealization
+          (family.patch i) (localPatch i)),
+      (∀ i, (localPatch i).targetChart = (family.patch i).targetChart) ∧
+      (∃ identityIndex inversionIndex : family.PatchIndex,
+        (family.patch identityIndex).targetChart = identityChart ∧
+        (family.patch inversionIndex).targetChart = inversionChart ∧
+        (∀ i, i = identityIndex ∨ i = inversionIndex) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch identityIndex).chartBall.center 0 1
+          (localPatch identityIndex).chartBall.radius
+          (localPatch identityIndex).chartBall.toFun) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch inversionIndex).chartBall.center 0 1
+          (localPatch inversionIndex).chartBall.radius
+          (localPatch inversionIndex).chartBall.toFun)) := by
+  -- Remaining finite-cover frontier: choose normalized chart-ball limits,
+  -- realize the raw patches by those local coordinates, and prove their
+  -- two-chart assignment.
+  sorry
+
+/--
 Finite normalized chart-ball cover provider, before inserting the public
 candidate homeomorphism, source-cover, coordinate-representation, and public
 `OnePoint ℂ` target-cover theorems.
 
-This is the genuine Montel finite-cover frontier. The target-cover fact for
-the two standard charts is supplied separately by
-`onePointCx_identity_or_inversionChart_source`, and the source-cover fact is
-projected from the returned `GenusZeroGlobalPatchFamily`. The global
-coordinate-representation facts and candidate homeomorphism are supplied by a
-separate gluing/coherence provider.
+This wrapper forgets the local Montel realization data into chart balls and
+source-coordinate maps. The target-cover fact for the two standard charts is
+supplied separately by `onePointCx_identity_or_inversionChart_source`, and the
+source-cover fact is projected from the returned `GenusZeroGlobalPatchFamily`.
+The global coordinate-representation facts and candidate homeomorphism are
+supplied by a separate gluing/coherence provider.
 -/
 theorem genusZeroMontel_finite_normalized_chartBall_cover_without_candidate
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -236,10 +332,11 @@ theorem genusZeroMontel_finite_normalized_chartBall_cover_without_candidate
           (chartBall inversionIndex).center 0 1
           (chartBall inversionIndex).radius
           (chartBall inversionIndex).toFun)) := by
-  -- Remaining finite-cover frontier: choose normalized chart-ball limits,
-  -- realize the raw patches by those local coordinates, and prove their
-  -- two-chart assignment.
-  sorry
+  rcases genusZeroMontel_finite_normalized_chartBall_cover_with_local_realizations X _e with
+    ⟨family, localPatch, realization, _htarget_eq, htwo_chart⟩
+  exact ⟨family, fun i => (localPatch i).chartBall, fun i => (realization i).sourceChart,
+    fun i x hx => (realization i).sourceChart_mem_chartBall x hx,
+    fun i x hx => (realization i).coord_eq_chartBall x hx, htwo_chart⟩
 
 /--
 Finite normalized chart-ball cover provider, before inserting the public

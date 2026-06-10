@@ -1493,13 +1493,24 @@ The identity and inversion public charts must cover
 \leanok
 \end{lemma}
 
+\begin{lemma}[Montel normalized-limit two-chart cover with local realizations (open)]
+\label{lem:montel-normalized-limit-two-chart-cover-with-local-realizations}
+\uses{lem:montel-two-chart-source-cover}
+The raw finite Montel data chooses the normalized identity and inversion local
+Montel chart patches, together with local realization witnesses showing that
+the returned global patch coordinates are the corresponding chart-ball limits.
+This is the finite-cover frontier before forgetting local realizations to raw
+chart balls and source-coordinate maps.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_with_local_realizations}
+\end{lemma}
+
 \begin{lemma}[Montel normalized-limit two-chart cover without candidate (open)]
 \label{lem:montel-normalized-limit-two-chart-cover-without-candidate}
-\uses{lem:montel-two-chart-source-cover}
-The raw finite Montel data chooses the normalized identity and inversion
-chart-ball packages and the coordinate realization for the returned global
-patch family, but does not yet carry a candidate homeomorphism or prove that
-those coordinates represent it globally.
+\uses{lem:montel-normalized-limit-two-chart-cover-with-local-realizations}
+The local-realization-backed finite Montel data forgets to the projected
+chart-ball packages and source-coordinate maps for the returned global patch
+family, but does not yet carry a candidate homeomorphism or prove that those
+coordinates represent it globally.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_without_candidate}
 \end{lemma}
 

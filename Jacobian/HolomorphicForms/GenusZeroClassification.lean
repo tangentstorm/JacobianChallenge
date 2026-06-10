@@ -773,34 +773,6 @@ structure GenusZeroSmoothUniformization
       (⊤ : WithTop ℕ∞) (uniformization.symm : OnePoint ℂ → X)
 
 /--
-One local normalized Montel chart used to build the global two-chart selector.
-
-The analytic part is the chart-ball power-series limit together with its
-inverse-function-theorem local homeomorphism.  The target-chart part records
-which public `OnePoint ℂ` chart this local coordinate is assigned to.
--/
-structure GenusZeroLocalMontelChartPatch where
-  chartBall : ChartBallPowerSeries
-  localChart : chartBall.LocalNormalizedChartHomeomorphData
-  targetChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ
-  targetChart_standard : targetChart = identityChart ∨ targetChart = inversionChart
-
-/--
-A packaged normalized chart-ball limit with a standard `OnePoint ℂ` target
-chart gives the local Montel chart patch data used by the selector frontier.
--/
-noncomputable def GenusZeroLocalMontelChartPatch.ofChartBallLimit
-    (chartBall : ChartBallPowerSeries)
-    (localChart : chartBall.LocalNormalizedChartHomeomorphData)
-    (targetChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ)
-    (targetChart_standard : targetChart = identityChart ∨ targetChart = inversionChart) :
-    GenusZeroLocalMontelChartPatch where
-  chartBall := chartBall
-  localChart := localChart
-  targetChart := targetChart
-  targetChart_standard := targetChart_standard
-
-/--
 Global selector data backed by local normalized Montel chart patches.
 
 This is a stricter provider than `GenusZeroNormalizedMontelPatchSelector`: it
@@ -816,36 +788,6 @@ structure GenusZeroLocalMontelChartSelector
   localPatch : selector.family.PatchIndex → GenusZeroLocalMontelChartPatch
   localPatch_targetChart_eq :
     ∀ i, (localPatch i).targetChart = (selector.family.patch i).targetChart
-
-/--
-Realization of one selected global patch by a normalized local Montel chart.
-
-The source chart identifies points of the source patch with points in the
-chart ball, while the patch coordinate is the Montel-limit chart-ball map in
-that source coordinate.  The inverse branch is also required to be compatible
-with the local inverse supplied by the inverse-function-theorem chart package.
--/
-structure GenusZeroLocalMontelPatchRealization
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (patch : GenusZeroGlobalGluingPatch X)
-    (localPatch : GenusZeroLocalMontelChartPatch) where
-  sourceChart : X → ℂ
-  sourceChart_contMDiffOn :
-    ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞) sourceChart patch.source
-  sourceChart_mem_chartBall :
-    ∀ x, x ∈ patch.source →
-      sourceChart x ∈
-        Metric.ball localPatch.chartBall.center (localPatch.chartBall.radius : ℝ)
-  coord_eq_chartBall :
-    ∀ x, x ∈ patch.source →
-      patch.coord x = localPatch.chartBall.toFun (sourceChart x)
-  invCoord_sourceChart_eq_localInverse :
-    ∀ z, z ∈ patch.targetChart.target →
-      sourceChart (patch.invCoord z) = localPatch.localChart.localOpen.symm z
 
 /--
 Global selector data whose selected patches are all realized by their local
