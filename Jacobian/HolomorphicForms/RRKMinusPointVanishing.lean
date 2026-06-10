@@ -246,7 +246,7 @@ The Riemann-Roch space `L(K - [P])` is trivial in genus zero.
 Since the genus zero canonical divisor `K` has degree -2,
 `K - [P]` has degree -3 < 0.
 -/
-lemma genusZero_riemannRoch_K_minus_point_dim_zero
+lemma genusZero_riemannRoch_K_minus_point_dim_zero_via_principal
     (K : Divisor X) (hK : Divisor.degree K = -2) (P : X)
     (f : MeromorphicFunctionWithDivisors X) :
     ¬ MeromorphicFunctionWithDivisors.MemRiemannRochSpace f (K - Divisor.point P) := by
