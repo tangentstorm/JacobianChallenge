@@ -82,9 +82,7 @@ Green terminal consumers after stage maps and bounds exist:
   nonconstant normalized limit and local inverse packaging.
 - `exists_subseq_tendstoUniformlyOn_closedBall_finite` and
   `exists_diagonal_subseq_tendstoLocallyUniformlyOn_finite` in
-  `MontelDiagonalExtraction.lean`: intended finite-family diagonal extraction.
-  At this survey point the latter still contains an internal `sorry`, so it is
-  a conditional/open consumption-layer item until jc5 repairs it.
+  `MontelDiagonalExtraction.lean`: green finite-family diagonal extraction.
 - `exists_sourceChartPackage_of_chartBallData` and
   `exists_montelRealizedPatch_of_chartBallData` in
   `MontelSourceChartCover.lean`, plus
@@ -372,12 +370,9 @@ E1. Local extraction per patch.
 
 E2. Finite diagonal extraction.
 
-- Intended leaf:
+- Green leaf:
   `exists_diagonal_subseq_tendstoLocallyUniformlyOn_finite`.
-- Current status: conditional/open because the declaration contains a `sorry`
-  in this checkout.
-- Classification: one-commit repair if the proof gap is local; otherwise
-  multi-commit routine.
+- Classification: green/routine once D supplies the hypotheses.
 
 E3. Closed-ball to source-local convergence.
 
@@ -523,7 +518,7 @@ Farmable after E2 tex skeleton:
 - B1: logarithmic singular model packaging.
 - B3 and D2/D3: maximum-principle bounds and Cauchy-circle estimates, split by
   target chart.
-- E1/E2/E3/E4: local extraction, diagonal repair, source-local transfer, and
+- E1/E2/E3/E4: local extraction, finite diagonal extraction, source-local transfer, and
   filler/subsequence packaging.
 - F2/F3: local chart and source-chart realization packaging.
 
