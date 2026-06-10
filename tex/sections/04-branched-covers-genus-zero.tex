@@ -1500,7 +1500,17 @@ The two chosen public-chart patches must retain their normalized chart-ball
 limit packages, one for the identity chart and one for the inversion chart,
 so the finite cover remembers the local Montel normalization used before
 global gluing.
-\lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.identity_normalizedLimit, JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.inversion_normalizedLimit}
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.identity_normalizedLimit, JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.inversion_normalizedLimit, JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover}
+\end{lemma}
+
+\begin{lemma}[Montel global patch-family packaging (open)]
+\label{lem:montel-global-patch-family-packaging}
+\uses{lem:montel-normalized-limit-two-chart-cover}
+The normalized two-chart cover is then forgotten down to the finite
+\code{GenusZeroGlobalPatchFamily}: the finite index type, patch family,
+source-cover field, and target-chart-cover field. The missing provider is the
+construction that packages the normalized-limit cover as this raw family before
+the final selector exists.
 \end{lemma}
 
 \begin{lemma}[Montel uniformizing patch-family construction (open)]
