@@ -1410,6 +1410,42 @@ This is pure packaging plus local chart topology — no new analytic content.
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Raw-source-chart convenience form of the patch package]
+\label{lem:montel-raw-source-chart-package}
+\uses{lem:montel-source-chart-package, lem:mathlib-open-partial-homeomorph-right-inv, lem:mathlib-open-partial-homeomorph-left-inv}
+The domain-ball-restriction convenience form of the source-chart package, for the
+engine's per-patch instantiation point. Starting from a \emph{raw} atlas source
+chart \(\varphi:\code{OpenPartialHomeomorph}\,X\,\C\), restrict it via
+\code{OpenPartialHomeomorph.restrOpen} to the open set
+\(\varphi.\code{source}\cap\varphi^{-1}(\code{ball}\,\code{center}\,\code{domainRadius})\)
+(open by \code{isOpen\_inter\_preimage} on the metric ball). On the restricted
+chart \(\psi\), the awkward all-of-source image hypothesis \code{himage}
+\emph{self-discharges}: every \(x\in\psi.\code{source}\) lies in the preimage, so
+\(\psi\,x=\varphi\,x\) is in the domain ball by membership unfolding. The
+coercion and inverse transfer \code{rfl}-grade (\code{coe\_restrOpen},
+\code{coe\_restrOpen\_symm}), so smoothness transfers by \code{ContMDiffOn.mono}
+and the section laws verbatim.
+
+\emph{Honesty note.} The restricted target \(\psi.\code{target}
+=\varphi.\code{target}\cap\varphi.\code{symm}^{-1}(\dots)\) is genuinely smaller,
+so one might fear an extra \emph{restricted}-image obligation on the
+inverse-function-theorem values \(\code{localOpen.symm}\,z\). But the package
+conclusion's right-inverse clause is stated about the section
+\(\psi.\code{symm}=\varphi.\code{symm}\) applied \emph{directly} to
+\(\code{localOpen.symm}\,z\), and \code{OpenPartialHomeomorph.right\_inv}
+discharges it from \(\code{localOpen.symm}\,z\in\varphi.\code{target}\) alone —
+it never touches \(\psi.\code{target}\). The convenience form is therefore
+\emph{strictly weaker} in hypotheses than the chart-ball form: it drops
+\code{himage} and keeps only the original \code{hsymm\_image}; no restricted-ball
+analogue is owed. The rider
+\code{exists\_montelRealizedPatch\_of\_rawChart} composes this with the
+local-section constructor to yield a \code{MontelRealizedPatch} from a raw chart
+in one call. Pure packaging plus local chart topology — no new analytic content.
+\lean{JacobianChallenge.HolomorphicForms.exists_sourceChartPackage_of_rawChart, JacobianChallenge.HolomorphicForms.exists_montelRealizedPatch_of_rawChart}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Glued-map local agreement on a realized patch family]
 \label{lem:montel-glued-map-local-agreement}
 \uses{lem:montel-realized-patch-bundle, lem:montel-coherent-local-selector, lem:mathlib-open-partial-homeomorph-right-inv}
