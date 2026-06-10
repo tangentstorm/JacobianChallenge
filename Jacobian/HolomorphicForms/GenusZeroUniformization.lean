@@ -575,11 +575,59 @@ theorem genusZeroMontel_raw_global_patch_family
   exact ⟨u, family, hcoord, hinv⟩
 
 /--
-Smoothness provider for a raw Montel patch family.
+Forward smoothness provider for a raw Montel patch family.
 
 Once the raw family represents a candidate uniformization in local public
-target charts and its inverse branches represent the candidate inverse, prove
-that both maps are complex-smooth.
+target charts, prove that the forward map is complex-smooth.
+-/
+theorem genusZeroMontel_raw_global_patch_family_contMDiff_toMap
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X)
+    (hcoord :
+      ∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).targetChart.symm ((family.patch i).coord x) = u x)
+    (hinv :
+      ∀ i z, z ∈ (family.patch i).targetChart.target →
+        (family.patch i).invCoord z =
+          u.symm ((family.patch i).targetChart.symm z)) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (u : X → OnePoint ℂ) := by
+  -- Remaining forward-smoothness frontier: derive global `ContMDiff` from the
+  -- local chart expressions of the Montel family.
+  sorry
+
+/--
+Inverse smoothness provider for a raw Montel patch family.
+
+Once the raw family represents inverse branches for the candidate inverse in
+local public target charts, prove that the inverse map is complex-smooth.
+-/
+theorem genusZeroMontel_raw_global_patch_family_contMDiff_invMap
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X)
+    (hcoord :
+      ∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).targetChart.symm ((family.patch i).coord x) = u x)
+    (hinv :
+      ∀ i z, z ∈ (family.patch i).targetChart.target →
+        (family.patch i).invCoord z =
+          u.symm ((family.patch i).targetChart.symm z)) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (u.symm : OnePoint ℂ → X) := by
+  -- Remaining inverse-smoothness frontier: derive global `ContMDiff` from the
+  -- inverse-branch regularity of the Montel family.
+  sorry
+
+/--
+Smoothness provider for a raw Montel patch family.
+
+This wrapper combines the separate forward and inverse smoothness frontiers.
 -/
 theorem genusZeroMontel_raw_global_patch_family_contMDiff
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -598,9 +646,9 @@ theorem genusZeroMontel_raw_global_patch_family_contMDiff
       (⊤ : WithTop ℕ∞) (u : X → OnePoint ℂ) ∧
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) (u.symm : OnePoint ℂ → X) := by
-  -- Remaining smoothness frontier: derive global `ContMDiff` from the local
-  -- chart expressions and inverse-branch regularity of the Montel family.
-  sorry
+  exact ⟨
+    genusZeroMontel_raw_global_patch_family_contMDiff_toMap X u family hcoord hinv,
+    genusZeroMontel_raw_global_patch_family_contMDiff_invMap X u family hcoord hinv⟩
 
 /--
 Narrow analytic provider for the normalized Montel selector.
