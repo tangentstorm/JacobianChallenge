@@ -1751,6 +1751,31 @@ three neighborhoods are pairwise \(T_2\) separations intersected with the
 chart sources.
 \end{proof}
 
+\begin{lemma}[Stage dipole local singular profiles]
+\label{lem:stage-dipole-local-singular-profiles}
+\uses{lem:stage-marked-topological-control-data}
+Every stage marked-data package carries local logarithmic singular profiles
+at its two marked ends: functions \(u_0, u_\infty : X \to \mathbb{R}\) with
+logarithmic singularity of sign \(+1\) at \(P_0\) and \(-1\) at
+\(P_\infty\), each continuous on the punctured chart source around its
+singular point — hence on the punctured marked neighborhoods \(U_0\),
+\(U_\infty\).  This packages the model-plane and chart-local dipole leaves
+as boundary-data germs for the stage construction; the bordered-stage
+boundary problem itself (Lemma~\ref{lem:stage-dipole-boundary-control})
+remains open engine work.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroStageDipoleProfiles, JacobianChallenge.HolomorphicForms.genusZeroStageDipoleProfiles_nonempty}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Take \(u_0(x) := \log\lVert\varphi_{P_0}(x) - \varphi_{P_0}(P_0)\rVert\) for
+the chart \(\varphi_{P_0}\) at \(P_0\) and
+\(u_\infty := -\log\lVert\varphi_{P_\infty}(\cdot) -
+\varphi_{P_\infty}(P_\infty)\rVert\); singularities by the chart-pullback
+lift of the model-plane log witnesses, continuity off the singular point
+from chart continuity, chart injectivity on the source, and continuity of
+\(\log\) away from \(0\).
+\end{proof}
+
 \begin{lemma}[Stage bordered exhaustion domains (open)]
 \label{lem:stage-bordered-exhaustion-domains}
 \uses{lem:stage-marked-topological-control-data}
@@ -1776,7 +1801,7 @@ cuts and contained in the holomorphic part of the stage.
 
 \begin{lemma}[Stage dipole boundary control (open)]
 \label{lem:stage-dipole-boundary-control}
-\uses{lem:stage-marked-topological-control-data, lem:stage-bordered-exhaustion-domains}
+\uses{lem:stage-marked-topological-control-data, lem:stage-bordered-exhaustion-domains, lem:stage-dipole-local-singular-profiles}
 The stage boundary data is built from logarithmic dipole models at the two
 marked ends, with boundary normalization and compact-subdomain bounds suitable
 for Perron/Dirichlet solving.  Existing model-plane and chart-local dipole
