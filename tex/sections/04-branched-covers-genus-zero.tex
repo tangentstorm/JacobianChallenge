@@ -1351,6 +1351,23 @@ recovered by instantiating the global right-inverse at
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Realized-patch bundle from a domain-restricted section]
+\label{lem:montel-realized-patch-local-section-form}
+\uses{lem:montel-realized-patch-bundle, lem:montel-realized-patch-section-form}
+The most-satisfiable convenience form: the section right-inverse is required only
+at the values the realization and round-trip proofs actually touch —
+\(\code{localOpen.symm}\,z\) for \(z\in\code{targetChart.target}\cup
+\code{localOpen.target}\) — rather than globally on all of \(\C\). The global
+two-sided-section form forces \(\code{sourceChart}\) to be surjective onto \(\C\),
+which a chart that is a homeomorphism onto a proper open subset cannot satisfy;
+the restricted form is dischargeable by such a chart, and the global form factors
+through it. Pure delegation to the general constructor via a case split on the
+target-membership disjunction.
+\lean{JacobianChallenge.HolomorphicForms.montelRealizedPatch_of_sourceChartLocalSection}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Montel coherent local selector (open)]
 \label{lem:montel-coherent-local-selector}
 \uses{lem:montel-local-patch-realization}

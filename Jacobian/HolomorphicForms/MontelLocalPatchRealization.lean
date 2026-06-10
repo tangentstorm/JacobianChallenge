@@ -430,4 +430,126 @@ noncomputable def montelRealizedPatch_of_sourceChartSection
       sourceSection_leftInverse).patch.source = source :=
   rfl
 
+/--
+**Realized-patch bundle constructor from a domain-restricted section.**
+
+The most-satisfiable convenience form: the section right-inverse is required only
+at the values the realization and round-trip proofs actually touch — `localOpen.symm z`
+for `z` in `targetChart.target ∪ localOpen.target` — rather than globally on all of
+`ℂ`.  This matters because the global right-inverse of
+`montelRealizedPatch_of_sourceChartSection` effectively forces `sourceChart` to be
+surjective onto `ℂ`, which a chart that is a homeomorphism onto a *proper* open
+subset cannot satisfy; the restricted version is dischargeable by such a chart.
+
+Pure delegation to `montelRealizedPatch_of_sourceChart` — the two restricted
+section-inverse hypotheses are read off the two disjuncts of the restricted
+right-inverse, the left-inverse passes through verbatim. No new analytic content.
+-/
+noncomputable def montelRealizedPatch_of_sourceChartLocalSection
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (localPatch : GenusZeroLocalMontelChartPatch)
+    (source : Set X) (isOpen_source : IsOpen source)
+    (sourceChart : X → ℂ) (sourceSection : ℂ → X)
+    (sourceChart_contMDiffOn :
+      ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) sourceChart source)
+    (sourceChart_mem_ball :
+      ∀ x, x ∈ source →
+        sourceChart x ∈
+          Metric.ball localPatch.chartBall.center (localPatch.chartBall.radius : ℝ))
+    (sourceChart_mem_domainBall :
+      ∀ x, x ∈ source →
+        sourceChart x ∈
+          Metric.ball localPatch.chartBall.center localPatch.localChart.domainRadius)
+    (sourceSection_rightInverse_onLocal :
+      ∀ z,
+        z ∈ localPatch.targetChart.target ∨
+          z ∈ localPatch.localChart.localOpen.target →
+        sourceChart (sourceSection (localPatch.localChart.localOpen.symm z)) =
+          localPatch.localChart.localOpen.symm z)
+    (sourceSection_leftInverse :
+      ∀ x, x ∈ source → sourceSection (sourceChart x) = x) :
+    MontelRealizedPatch X localPatch :=
+  montelRealizedPatch_of_sourceChart localPatch source isOpen_source sourceChart
+    sourceSection sourceChart_contMDiffOn sourceChart_mem_ball
+    (fun z hz => sourceSection_rightInverse_onLocal z (Or.inl hz))
+    (fun z hz => sourceSection_rightInverse_onLocal z (Or.inr hz))
+    sourceChart_mem_domainBall sourceSection_leftInverse
+
+/-- The bundled patch source is the supplied source set (local-section constructor). -/
+@[simp] theorem montelRealizedPatch_of_sourceChartLocalSection_source
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (localPatch : GenusZeroLocalMontelChartPatch)
+    (source : Set X) (isOpen_source : IsOpen source)
+    (sourceChart : X → ℂ) (sourceSection : ℂ → X)
+    (sourceChart_contMDiffOn :
+      ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) sourceChart source)
+    (sourceChart_mem_ball :
+      ∀ x, x ∈ source →
+        sourceChart x ∈
+          Metric.ball localPatch.chartBall.center (localPatch.chartBall.radius : ℝ))
+    (sourceChart_mem_domainBall :
+      ∀ x, x ∈ source →
+        sourceChart x ∈
+          Metric.ball localPatch.chartBall.center localPatch.localChart.domainRadius)
+    (sourceSection_rightInverse_onLocal :
+      ∀ z,
+        z ∈ localPatch.targetChart.target ∨
+          z ∈ localPatch.localChart.localOpen.target →
+        sourceChart (sourceSection (localPatch.localChart.localOpen.symm z)) =
+          localPatch.localChart.localOpen.symm z)
+    (sourceSection_leftInverse :
+      ∀ x, x ∈ source → sourceSection (sourceChart x) = x) :
+    (montelRealizedPatch_of_sourceChartLocalSection localPatch source isOpen_source sourceChart
+      sourceSection sourceChart_contMDiffOn sourceChart_mem_ball
+      sourceChart_mem_domainBall sourceSection_rightInverse_onLocal
+      sourceSection_leftInverse).patch.source = source :=
+  rfl
+
+/--
+The global honest-section constructor factors through the domain-restricted one:
+a global right-inverse trivially supplies the restricted right-inverse (ignoring
+the membership disjunction), so the two constructors agree.  This records that
+`montelRealizedPatch_of_sourceChartLocalSection` is the genuine generalization.
+-/
+theorem montelRealizedPatch_of_sourceChartSection_eq_localSection
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (localPatch : GenusZeroLocalMontelChartPatch)
+    (source : Set X) (isOpen_source : IsOpen source)
+    (sourceChart : X → ℂ) (sourceSection : ℂ → X)
+    (sourceChart_contMDiffOn :
+      ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) sourceChart source)
+    (sourceChart_mem_ball :
+      ∀ x, x ∈ source →
+        sourceChart x ∈
+          Metric.ball localPatch.chartBall.center (localPatch.chartBall.radius : ℝ))
+    (sourceChart_mem_domainBall :
+      ∀ x, x ∈ source →
+        sourceChart x ∈
+          Metric.ball localPatch.chartBall.center localPatch.localChart.domainRadius)
+    (sourceSection_rightInverse :
+      ∀ w, sourceChart (sourceSection w) = w)
+    (sourceSection_leftInverse :
+      ∀ x, x ∈ source → sourceSection (sourceChart x) = x) :
+    montelRealizedPatch_of_sourceChartSection localPatch source isOpen_source sourceChart
+        sourceSection sourceChart_contMDiffOn sourceChart_mem_ball
+        sourceChart_mem_domainBall sourceSection_rightInverse sourceSection_leftInverse =
+      montelRealizedPatch_of_sourceChartLocalSection localPatch source isOpen_source sourceChart
+        sourceSection sourceChart_contMDiffOn sourceChart_mem_ball
+        sourceChart_mem_domainBall
+        (fun z _ => sourceSection_rightInverse (localPatch.localChart.localOpen.symm z))
+        sourceSection_leftInverse :=
+  rfl
+
 end JacobianChallenge.HolomorphicForms
