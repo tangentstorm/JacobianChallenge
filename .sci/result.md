@@ -1,24 +1,27 @@
-# Result — A2/A3 stage exhaustion interfaces
+# Result — A4 stage dipole boundary-control interface
 
-Added `Jacobian.HolomorphicForms.StageExhaustion` with statement-level
-interfaces for selected compacta, bordered stage domains, finite boundary chart
-control, cut domains, cut avoidance, and the named single-valued-conjugate
-readiness predicate.
+Added `Jacobian.HolomorphicForms.StageDipoleBoundary` with statement-level
+interfaces for stage boundary potentials, base normalization, marked-end
+logarithmic dipole behavior, finite boundary-chart control, and compact
+subdomain bounds.  The only new frontier obligation is
+`exists_stageDipoleBoundaryControl`.
 
-A4 will consume `StageBorderedExhaustion.stage`, `isOpen_stage`,
-`eventually_contains_selected`, and `boundaryData` to formulate stage-local
-Perron/Dirichlet harmonic data on each bordered domain without choosing new
-topological exhaustions.
+`lem:stage-dirichlet-harmonic-exists` will consume
+`StageDipoleBoundaryControl.boundaryPotential`, `base_normalized`,
+`has_pos_log_profile`, `has_neg_log_profile`, and the finite
+`boundaryChartControl` package as the prescribed boundary/singularity data for
+the later Perron/Dirichlet existence theorem.
 
-B2 will consume the shared `StageSelectedCompactFamily` eventual-containment
-interfaces from `StageBorderedExhaustion` and `StageCutSystem` to keep the
-Montel chart-ball compacta inside the active stage domains while comparing
-stage readings on fixed compact sets.
+`lem:stage-chart-reading-uniform-cauchy-bound` will consume
+`StageDipoleBoundaryControl.compactBound` together with
+`boundaryChartControl` to state maximum-principle and Cauchy-circle estimates
+on selected compact chart balls once the harmonic stage solutions and
+normalization exist.
 
-B4 will consume `StageCutSystem.cutDomain`, `cutDomain_subset_stage`,
-`cuts_avoid_selected_eventually`, and `conjugateReady` so harmonic conjugate
-and single-valued holomorphic-coordinate tasks can depend on the cut-system
-interface directly rather than reopening the A2/A3 topology construction.
+`lem:stage-map-normalized-noncollapse` will consume the shared
+`base_normalized` field and the marked-end logarithmic profile fields to keep
+the eventual holomorphic stage maps tied to the A1 normalization data and to
+separate the two marked ends before Montel extraction.
 
-Named A2/A3 open obligations introduced in `StageExhaustion.lean`:
-`exists_stageBorderedExhaustion` and `exists_stageCutSystem`.
+Named A4 open obligation introduced in `StageDipoleBoundary.lean`:
+`exists_stageDipoleBoundaryControl`.
