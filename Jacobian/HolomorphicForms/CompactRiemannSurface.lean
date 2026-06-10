@@ -2959,10 +2959,6 @@ five named sub-leaves matching tex blueprint §14 R8-sub-B.C:
   pointwise ≤ 1.
 * `chart_local_cauchy_derivative_estimate` — Cauchy formula gives
   `|f'_n(z)| ≤ M/r`.
-* `chart_local_equicontinuous` — uniform Lipschitz ⇒ equicontinuous.
-* `chart_local_arzela_ascoli` — Arzelà–Ascoli on the chart disc.
-* `global_totally_bounded_via_chart_cover` — finite-cover assembly
-  with a Lebesgue-number diagonal extraction.
 -/
 
 
@@ -2970,24 +2966,6 @@ theorem chart_local_pointwise_bound : True := by trivial
 
 
 theorem chart_local_cauchy_derivative_estimate : True := by trivial
-
-
-theorem chart_local_equicontinuous : True := by trivial
-
-
-theorem chart_local_arzela_ascoli : True := by trivial
-
-
-theorem global_totally_bounded_via_chart_cover : True := by trivial
-
-
-theorem lebesgue_number_chart_cover : True := by trivial
-
-
-theorem chart_diagonal_extraction : True := by trivial
-
-
-theorem global_sup_via_chart_max : True := by trivial
 
 theorem holomorphicOneForm_montel_subseq_isCauchy
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
