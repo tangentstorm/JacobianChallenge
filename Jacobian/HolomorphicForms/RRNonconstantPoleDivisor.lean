@@ -828,4 +828,115 @@ theorem genusZeroPointRiemannRochElement_with_analyticData_of_carrier_representa
          (Divisor.point P) hmem },
    ⟨g.analyticData_mapToSphere_of_simple_pole_order_one f hmap hpoles hord⟩⟩
 
+/-! ### Span-expression extraction package (germ-to-map bridge Steps 1–2)
+
+The two "routine packaging needed" items of the bridge plan: expose an
+arbitrary element of the germ-space span as a finite `ℂ`-linear combination
+of bounded-section generators (with a nonzero-coefficient refinement), and
+the rewrite identifying a generator's germ family after nonzero scalar
+multiplication. Pure linear algebra over sorry-free definitions; the
+analytic `AddData` step of the bridge is deliberately NOT touched here.
+-/
+
+/--
+**Bridge Step 1 packaging.** Every element of the Riemann-Roch germ space is
+a finite `ℂ`-linear combination of germ families of bounded-section
+generators. Direct unfolding of `Submodule.mem_span_set'` plus a choice of
+generator for each range member.
+-/
+theorem RiemannRochGermSpace.exists_finset_sum_generators
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (D : Divisor X) (F : RiemannRochGermSpace X D) :
+    ∃ (n : ℕ) (c : Fin n → ℂ) (gen : Fin n → RiemannRochBoundedSection X D),
+      (F : MeromorphicGermFamily X) =
+        ∑ i, c i • (gen i).toMeromorphicFunctionWithDivisors.germs := by
+  classical
+  have hF : (F : MeromorphicGermFamily X) ∈
+      Submodule.span ℂ
+        (Set.range fun s : RiemannRochBoundedSection X D =>
+          s.toMeromorphicFunctionWithDivisors.germs) := F.2
+  obtain ⟨n, c, g, hsum⟩ := Submodule.mem_span_set'.mp hF
+  refine ⟨n, c, fun i => (g i).2.choose, ?_⟩
+  rw [← hsum]
+  exact Finset.sum_congr rfl fun i _ =>
+    congrArg (fun t => c i • t) ((g i).2.choose_spec).symm
+
+/--
+**Bridge Step 1–2 packaging, normalized form.** The same finite span
+expression with all coefficients nonzero: zero summands are pruned from the
+expression (they vanish from the sum), then the surviving index set is
+re-enumerated.
+-/
+theorem RiemannRochGermSpace.exists_finset_sum_generators'
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (D : Divisor X) (F : RiemannRochGermSpace X D) :
+    ∃ (n : ℕ) (c : Fin n → ℂ) (gen : Fin n → RiemannRochBoundedSection X D),
+      (∀ i, c i ≠ 0) ∧
+      (F : MeromorphicGermFamily X) =
+        ∑ i, c i • (gen i).toMeromorphicFunctionWithDivisors.germs := by
+  classical
+  obtain ⟨n, c, gen, hsum⟩ :=
+    RiemannRochGermSpace.exists_finset_sum_generators D F
+  let s : Finset (Fin n) := Finset.univ.filter (fun i => c i ≠ 0)
+  have hfilter :
+      ∑ i ∈ s, c i • (gen i).toMeromorphicFunctionWithDivisors.germs =
+        ∑ i, c i • (gen i).toMeromorphicFunctionWithDivisors.germs := by
+    refine Finset.sum_filter_of_ne fun i _ hne hc0 => hne ?_
+    rw [hc0, zero_smul]
+  have hattach :
+      ∑ i ∈ s, c i • (gen i).toMeromorphicFunctionWithDivisors.germs =
+        ∑ x : {i // i ∈ s},
+          c x • (gen x).toMeromorphicFunctionWithDivisors.germs :=
+    (Finset.sum_coe_sort s
+      (fun i => c i • (gen i).toMeromorphicFunctionWithDivisors.germs)).symm
+  have hequiv :
+      ∑ x : {i // i ∈ s},
+          c x • (gen x).toMeromorphicFunctionWithDivisors.germs =
+        ∑ j : Fin s.card,
+          c (s.equivFin.symm j) •
+            (gen (s.equivFin.symm j)).toMeromorphicFunctionWithDivisors.germs := by
+    refine Fintype.sum_equiv s.equivFin _ _ fun x => ?_
+    rw [Equiv.symm_apply_apply]
+  refine ⟨s.card, fun j => c (s.equivFin.symm j),
+          fun j => gen (s.equivFin.symm j), fun j => ?_, ?_⟩
+  · have hmem : ((s.equivFin.symm j : {i // i ∈ s}) : Fin n) ∈
+        Finset.univ.filter (fun i => c i ≠ 0) := (s.equivFin.symm j).2
+    exact (Finset.mem_filter.mp hmem).2
+  · rw [hsum, ← hfilter, hattach, hequiv]
+
+/--
+**Bridge Step 2 packaging.** Nonzero scalar multiplication of a bounded
+section multiplies its germ family by the scalar. Definitional: the carrier
+constructor sets `germs := c • f.germs`.
+-/
+@[simp] theorem RiemannRochBoundedSection.smulNonzero_germs
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {D : Divisor X}
+    (c : ℂ) (hc : c ≠ 0) (s : RiemannRochBoundedSection X D) :
+    (RiemannRochBoundedSection.smulNonzero c hc
+        s).toMeromorphicFunctionWithDivisors.germs =
+      c • s.toMeromorphicFunctionWithDivisors.germs :=
+  rfl
+
+/--
+**Bridge Step 2 packaging, subtype-valued form.** The same identity read
+through the canonical inclusion into the germ-space module carrier.
+-/
+@[simp] theorem RiemannRochBoundedSection.smulNonzero_toRiemannRochGermSpace_val
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {D : Divisor X}
+    (c : ℂ) (hc : c ≠ 0) (s : RiemannRochBoundedSection X D) :
+    ((RiemannRochBoundedSection.smulNonzero c hc s).toRiemannRochGermSpace :
+        MeromorphicGermFamily X) =
+      c • (s.toRiemannRochGermSpace : MeromorphicGermFamily X) :=
+  rfl
+
 end JacobianChallenge.HolomorphicForms

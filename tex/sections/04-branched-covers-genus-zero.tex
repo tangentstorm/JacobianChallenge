@@ -2153,6 +2153,27 @@ identification, analytic data from \code{toFun\_continuous} and
 the pole-divisor copy.
 \end{proof}
 
+\begin{lemma}[Span elements are normalized finite sums of bounded-section generators]
+\label{lem:rr-span-expression-extraction}
+\uses{lem:rr-nonconstant-L-point-germ-space-member}
+Every element of the Riemann--Roch germ space is a finite \(\C\)-linear
+combination of germ families of bounded-section generators, and the
+expression can be normalized so all coefficients are nonzero; nonzero scalar
+multiplication of a generator multiplies its germ family by the scalar
+(definitionally). This is the routine linear-algebra packaging of Steps 1--2
+of the germ-to-map bridge plan (consumed by the open
+Lemma~\ref{lem:rr-germ-to-map-bridge}): the bridge's remaining analytic
+content, the pairwise divisor-compatible addition of bounded sections
+(Step~3), is deliberately NOT covered by this node.
+\lean{JacobianChallenge.HolomorphicForms.RiemannRochGermSpace.exists_finset_sum_generators}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Unfold the span membership via \code{Submodule.mem\_span\_set'}, choose a
+bounded-section preimage for each range member, prune zero coefficients
+(their summands vanish), and re-enumerate the surviving finite index set.
+\end{proof}
+
 \begin{lemma}[A nonconstant element of \(L([P])\) satisfies the granular field matrix]
 \label{lem:rr-nonconstant-L-point-granular-fields}
 \uses{lem:rr-nonconstant-L-point-zero-divisor-effective, lem:rr-nonconstant-L-point-order-one}
