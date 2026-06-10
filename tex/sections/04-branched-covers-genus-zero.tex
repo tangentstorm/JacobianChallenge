@@ -1682,9 +1682,153 @@ finite-cover selection node independent of it.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_without_coord_representation}
 \end{lemma}
 
+\begin{lemma}[Stage marked topological control data (open)]
+\label{lem:stage-marked-topological-control-data}
+The Perron engine uses the input homeomorphism
+\(_e : X \simeq_t \code{OnePoint}\,\C\) only to choose topological control
+data: the two marked source points corresponding to \(0\) and \(\infty\), a
+base normalization point away from them, and separated chart neighborhoods
+around all three points.  This node is topological bookkeeping for the later
+analytic stage construction; it does not assert that \(_e\) is holomorphic.
+\end{lemma}
+
+\begin{lemma}[Stage bordered exhaustion domains (open)]
+\label{lem:stage-bordered-exhaustion-domains}
+\uses{lem:stage-marked-topological-control-data}
+There is an increasing sequence of bordered or chart-polygon stage domains
+\(\Omega_n\subset X\), adapted to the marked data, whose compact interiors
+eventually contain every selected Montel source compactum and whose boundary is
+controlled by finitely many source charts.  These domains are the non-circular
+places where the analytic stage maps will be constructed before being extended
+by filler values outside \(\Omega_n\).
+\end{lemma}
+
+\begin{lemma}[Stage cut-domain conjugate control (open)]
+\label{lem:stage-cut-domain-conjugate-control}
+\uses{lem:stage-bordered-exhaustion-domains}
+For each bordered stage domain one chooses cuts giving a cut stage
+\(\Omega_n^{\mathrm{cut}}\) on which the harmonic conjugates used by the
+Perron engine are single-valued.  The cuts are chosen compatibly with the
+exhaustion so every Montel chart-ball compactum is eventually disjoint from the
+cuts and contained in the holomorphic part of the stage.
+\end{lemma}
+
+\begin{lemma}[Stage dipole boundary control (open)]
+\label{lem:stage-dipole-boundary-control}
+\uses{lem:stage-marked-topological-control-data, lem:stage-bordered-exhaustion-domains}
+The stage boundary data is built from logarithmic dipole models at the two
+marked ends, with boundary normalization and compact-subdomain bounds suitable
+for Perron/Dirichlet solving.  Existing model-plane and chart-local dipole
+lemmas supply only the local singular profiles; the bordered-stage boundary
+problem remains new engine work.
+\end{lemma}
+
+\begin{lemma}[Stage Dirichlet harmonic solution (open)]
+\label{lem:stage-dirichlet-harmonic-exists}
+\uses{lem:stage-bordered-exhaustion-domains, lem:stage-dipole-boundary-control}
+On each cut stage domain, solve the normalized Dirichlet/Perron problem for
+the real harmonic dipole potential with the prescribed boundary control and
+marked-end singular behavior.  This is the load-bearing potential-theory
+frontier of the engine: Mathlib supplies harmonic predicates and Poisson
+formulas for already-harmonic functions, but not this bordered-stage existence
+theorem.
+\end{lemma}
+
+\begin{lemma}[Stage harmonic conjugate on cuts (open)]
+\label{lem:stage-harmonic-conjugate-exists-on-cut}
+\uses{lem:stage-cut-domain-conjugate-control, lem:stage-dirichlet-harmonic-exists}
+The harmonic solution on each cut stage admits a globally compatible harmonic
+conjugate on \(\Omega_n^{\mathrm{cut}}\).  Local harmonic-conjugate and
+dipole-conjugate lemmas supply chart-level models; this node carries the
+period-killing and compatibility work needed to make the conjugate
+single-valued on the chosen cut stage.
+\end{lemma}
+
+\begin{lemma}[Stage holomorphic coordinate from harmonic dipole (open)]
+\label{lem:stage-holomorphic-coordinate-from-harmonic-dipole}
+\uses{lem:stage-dirichlet-harmonic-exists, lem:stage-harmonic-conjugate-exists-on-cut}
+Combining the harmonic potential with its conjugate, then exponentiating or
+integrating the resulting complex differential, gives a holomorphic
+coordinate-like stage map on the cut stage domain.  This is the analytic
+production output before target-chart normalization and before any Montel
+compactness extraction.
+\end{lemma}
+
+\begin{lemma}[Stage map normalization and noncollapse (open)]
+\label{lem:stage-map-normalized-noncollapse}
+\uses{lem:stage-marked-topological-control-data, lem:stage-holomorphic-coordinate-from-harmonic-dipole}
+Normalize the holomorphic stage maps at the fixed marked source data so the
+identity-chart local reading has center value \(0\) and derivative \(1\), with
+the inversion-chart patch normalized compatibly at the other marked end.  This
+exact normalization is the invariant that prevents collapse to a constant in
+the later normal-family limit.
+\end{lemma}
+
+\begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
+\label{lem:stage-chart-reading-uniform-cauchy-bound}
+\uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control}
+The normalized stage maps have uniform bounds on the Cauchy circles of every
+eventually contained selected chart ball.  These bounds are the analytic
+bridge from Perron stage maps to the green local Montel estimates; they are
+proved from boundary control, maximum-principle estimates, and the chosen
+normalization.
+\end{lemma}
+
+\begin{lemma}[Stage chart readings as ChartBallPowerSeries (open)]
+\label{lem:stage-chart-reading-chartBallPowerSeries}
+\uses{lem:stage-cut-domain-conjugate-control, lem:stage-holomorphic-coordinate-from-harmonic-dipole, lem:stage-chart-reading-uniform-cauchy-bound}
+For each selected Montel patch and all sufficiently large stages, the target
+chart reading of the total stage map is packaged on the source chart ball as a
+\code{ChartBallPowerSeries}.  This is where the engine enters the existing
+chart-ball API: after the eventual containment and holomorphicity hypotheses
+are supplied, the local packaging is the standard closed-ball continuous,
+open-ball differentiable chart-reading step.
+\end{lemma}
+
+\begin{lemma}[Stage common diagonal subsequence (open)]
+\label{lem:stage-common-diagonal-subsequence}
+\uses{lem:stage-chart-reading-uniform-cauchy-bound, lem:stage-chart-reading-chartBallPowerSeries}
+The finitely many stage chart-ball families have a single subsequence that
+converges locally uniformly on all selected source chart balls.  The green
+finite diagonal extraction and local Montel compactness declarations consume
+the chart-ball packages and uniform Cauchy bounds produced by the engine.
+\end{lemma}
+
+\begin{lemma}[Stage total filler locally uniform irrelevance (open)]
+\label{lem:stage-total-filler-locally-uniform-irrelevance}
+\uses{lem:stage-bordered-exhaustion-domains, lem:stage-common-diagonal-subsequence}
+The arbitrary filler values used to make each partial stage map a total
+function \(F_n:X\to\code{OnePoint}\,\C\) do not affect locally uniform
+convergence on any selected patch source, because every compact source
+subball is eventually contained in the holomorphic stage domain.  This node is
+routine filter and source-local bookkeeping once the exhaustion containment
+facts are available.
+\end{lemma}
+
+\begin{lemma}[Stage engine common sequence payload (open)]
+\label{lem:stage-engine-common-sequence-payload}
+\uses{lem:stage-common-diagonal-subsequence, lem:stage-total-filler-locally-uniform-irrelevance, lem:stage-map-normalized-noncollapse}
+The Perron engine produces the exact common target sequence payload demanded
+by the realized-patch coordinate-representation provider: a total sequence
+\(F:\mathbb N\to X\to\code{OnePoint}\,\C\) whose target-chart readings
+converge locally uniformly to the realized patch coordinates on every selected
+patch source.  The normalization data also supplies the nonconstant local
+limits used by the realized Montel patches.
+\end{lemma}
+
+\begin{lemma}[Stage engine provider final edge (open)]
+\label{lem:stage-engine-provider-final-edge}
+\uses{lem:stage-engine-common-sequence-payload, lem:montel-normalized-limit-two-chart-cover-with-realized-patches}
+The common sequence payload from the Perron engine is combined with the
+realized two-chart Montel cover, overlap agreement, and local coordinate
+representation bookkeeping to supply the full realized-patch coordinate
+representation provider.  This is the explicit terminal edge from the engine
+subtree into the existing Montel frontier.
+\end{lemma}
+
 \begin{lemma}[Montel finite-cover coordinate representation with realized patches (open)]
 \label{lem:montel-finite-cover-coordinate-representation-with-realized-patches}
-\uses{lem:montel-normalized-limit-two-chart-cover-with-realized-patches, lem:montel-coherent-local-selector}
+\uses{lem:montel-normalized-limit-two-chart-cover-with-realized-patches, lem:montel-coherent-local-selector, lem:stage-engine-provider-final-edge}
 The coherent realized-patch finite-cover data constructs the candidate
 uniformization existentially, carries the common target sequence payload
 demanded by the coherent local selector's overlap-agreement kernel, then proves
