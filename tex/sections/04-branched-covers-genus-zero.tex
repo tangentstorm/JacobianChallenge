@@ -1493,13 +1493,33 @@ The identity and inversion public charts must cover
 \leanok
 \end{lemma}
 
-\begin{lemma}[Montel normalized-limit two-chart cover without source cover (open)]
-\label{lem:montel-normalized-limit-two-chart-cover-without-source-cover}
+\begin{lemma}[Montel normalized-limit two-chart cover without coordinate representation (open)]
+\label{lem:montel-normalized-limit-two-chart-cover-without-coord-rep}
 \uses{lem:montel-two-chart-source-cover}
 The raw finite Montel data chooses the normalized identity and inversion
-chart-ball packages and the coordinate realization for the returned global patch
-family. This provider no longer carries a separate source-cover obligation; the
-cover is recovered from the returned family's \code{patch_cover} field.
+chart-ball packages and the coordinate realization for the returned global
+patch family, but does not yet prove that those coordinates represent the
+candidate uniformization globally.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_without_coord_representation}
+\end{lemma}
+
+\begin{lemma}[Montel finite-cover coordinate representation (open)]
+\label{lem:montel-finite-cover-coordinate-representation}
+\uses{lem:montel-normalized-limit-two-chart-cover-without-coord-rep, lem:montel-coherent-local-selector}
+The normalized finite-cover data must represent the candidate homeomorphism in
+each public target chart, and its inverse branches must represent the candidate
+inverse. This is the gluing/coherence frontier separated from the finite-cover
+selection step.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_cover_coord_representation}
+\end{lemma}
+
+\begin{lemma}[Montel normalized-limit two-chart cover without source cover (open)]
+\label{lem:montel-normalized-limit-two-chart-cover-without-source-cover}
+\uses{lem:montel-normalized-limit-two-chart-cover-without-coord-rep, lem:montel-finite-cover-coordinate-representation}
+Combining the raw finite-cover data with coordinate representation gives the
+normalized identity/inversion chart-ball cover. This provider no longer carries
+a separate source-cover obligation; the cover is recovered from the returned
+family's \code{patch_cover} field.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_without_source_cover}
 \end{lemma}
 
