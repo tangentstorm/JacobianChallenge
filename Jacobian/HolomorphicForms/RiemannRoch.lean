@@ -189,6 +189,43 @@ noncomputable def smulNonzero (c : ℂ) (hc : c ≠ 0)
   rfl
 
 /--
+Nonzero scalar multiplication preserves the explicit constant family. This is
+the scalar-closure ingredient for the future constant-line comparison inside
+the eventual finite-dimensional `L(D)` API.
+-/
+@[simp] theorem smulNonzero_constantNonzero_toFun
+    (D : Divisor X) (hD : Divisor.Effective D)
+    (a : ℂ) (ha : a ≠ 0) (c : ℂ) (hc : c ≠ 0) :
+    ((smulNonzero a ha (constantNonzero (X := X) D hD c hc) :
+      RiemannRochBoundedSection X D) : X → OnePoint ℂ) =
+      fun _ => ((a * c : ℂ) : OnePoint ℂ) := by
+  funext P
+  change (MeromorphicFunctionType.smul_meromorphic a
+      (MeromorphicFunctionType.constant (X := X) c)).toFun P =
+    ((a * c : ℂ) : OnePoint ℂ)
+  simp [MeromorphicFunctionType.smul_meromorphic, ha, MeromorphicFunctionType.constant]
+
+@[simp] theorem smulNonzero_constantNonzero_apply
+    (D : Divisor X) (hD : Divisor.Effective D)
+    (a : ℂ) (ha : a ≠ 0) (c : ℂ) (hc : c ≠ 0) (P : X) :
+    (smulNonzero a ha (constantNonzero (X := X) D hD c hc) :
+      RiemannRochBoundedSection X D) P =
+      ((a * c : ℂ) : OnePoint ℂ) := by
+  simpa using congr_fun
+    (smulNonzero_constantNonzero_toFun (X := X) D hD a ha c hc) P
+
+theorem smulNonzero_constantNonzero_toFun_eq_constantNonzero
+    (D : Divisor X) (hD : Divisor.Effective D)
+    (a : ℂ) (ha : a ≠ 0) (c : ℂ) (hc : c ≠ 0) :
+    ((smulNonzero a ha (constantNonzero (X := X) D hD c hc) :
+      RiemannRochBoundedSection X D) : X → OnePoint ℂ) =
+      ((constantNonzero (X := X) D hD (a * c) (mul_ne_zero ha hc) :
+        RiemannRochBoundedSection X D) : X → OnePoint ℂ) := by
+  funext P
+  rw [smulNonzero_constantNonzero_apply]
+  rfl
+
+/--
 Explicit addition data for bounded sections in the same Riemann-Roch bound
 `L(D)`.
 
