@@ -1279,6 +1279,46 @@ provider currently selects these realizations for the finite family.
 \lean{JacobianChallenge.HolomorphicForms.GenusZeroLocalMontelPatchRealization}
 \end{lemma}
 
+\begin{lemma}[Chart-ball map agrees with the local chart on its source]
+\label{lem:montel-realization-toFun-eq-localOpen}
+The packaged chart-ball map \(\code{chartBall.toFun}\) agrees, on the source of
+the local inverse-function-theorem chart, with the topological partial
+homeomorphism \(\code{localOpen}\). This is the analytic/topological bridge used
+to express the realized patch inverse branch; it is the
+\code{toFun\_eq\_on\_source} field of the local chart data read off as an
+equality of maps.
+\lean{JacobianChallenge.HolomorphicForms.ChartBallPowerSeries.toFun_eq_localOpen_on_source}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Realized patch local right-inverse]
+\label{lem:montel-realization-coord-invcoord}
+\uses{lem:montel-realization-toFun-eq-localOpen, lem:mathlib-open-partial-homeomorph-right-inv}
+For the patch built by the green local-patch realization provider, on the local
+chart target the patch coordinate undoes its inverse branch:
+\(\code{coord}(\code{invCoord}\,z)=z\). This is the local right-inverse fact the
+global-gluing substrate consumes; it follows from the section identity, the
+chart-ball/local-chart agreement, and \code{OpenPartialHomeomorph.right\_inv}.
+\lean{JacobianChallenge.HolomorphicForms.montelRealizationPatch_coord_invCoord}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Realized patch local left-inverse]
+\label{lem:montel-realization-invcoord-coord}
+\uses{lem:montel-realization-toFun-eq-localOpen, lem:mathlib-open-partial-homeomorph-left-inv}
+For the patch built by the green local-patch realization provider, on the patch
+source the inverse branch undoes the coordinate:
+\(\code{invCoord}(\code{coord}\,x)=x\). This is the local left-inverse fact the
+global-gluing substrate consumes; it follows from the chart-ball/local-chart
+agreement, \code{OpenPartialHomeomorph.left\_inv} on the domain ball, and one
+honest section round-trip hypothesis a caller supplies.
+\lean{JacobianChallenge.HolomorphicForms.montelRealizationPatch_invCoord_coord}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Montel coherent local selector (open)]
 \label{lem:montel-coherent-local-selector}
 \uses{lem:montel-local-patch-realization}

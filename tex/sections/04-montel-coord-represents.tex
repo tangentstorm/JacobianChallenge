@@ -66,6 +66,17 @@ For an open partial homeomorphism \(e\), if \(z\in e.\mathrm{target}\), then
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Mathlib: chart reconstructs source coordinates]
+\label{lem:mathlib-open-partial-homeomorph-left-inv}
+For an open partial homeomorphism \(e\), if \(x\in e.\mathrm{source}\), then
+\[
+  e^{-1}(e(x)) = x.
+\]
+\lean{OpenPartialHomeomorph.left_inv}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Normalized Montel limit agrees with the uniformization (open)]
 \label{lem:montel-selector-normal-limit-agrees-with-uniformization}
 \uses{lem:montel-selector-normal-limit-source-patch, lem:montel-selector-chart-inverse-local-value, lem:montel-selector-chartball-value-represents-local-coordinate, lem:montel-selector-local-limit-tied-to-global-homeomorphism, lem:montel-selector-normal-limit-equality-bookkeeping}
