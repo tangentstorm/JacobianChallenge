@@ -1481,9 +1481,133 @@ simple-pole / degree-one meromorphic data of the classical proof is then
 \emph{obtained from} this biholomorphism, not used to construct it.
 \end{proof}
 
+\subsection{Path B: Riemann--Roch single-pole map decomposition}
+\label{sec:path-b-rr-single-pole-map}
+
+\begin{lemma}[Hard core: dimension of \(L([P])\) in genus zero (open)]
+\label{lem:rr-dim-L-point-eq-two-core}
+The irreducible Riemann--Roch input for the Path B fixed-pole route is the
+dimension count
+\[
+  \dim_\C L([P]) = 2
+\]
+for every \(P:X\) when \(\mathrm{analyticGenus}_{\C}(X)=0\). A precise future
+Lean-facing theorem should expose the actual finite-dimensional
+Riemann--Roch space, not merely an existential proxy:
+\[
+\begin{gathered}
+  (X : \mathrm{Type}) \to [\cdots] \to
+  (P : X) \to (h : \code{analyticGenus}\,\C\,X = 0) \to\\
+  \code{finrank}\,\C\,(\code{RiemannRochSpace}\,X\,(\code{Divisor.point}\,P)) = 2.
+\end{gathered}
+\]
+The current Lean declaration below is only the structural arithmetic placeholder
+for the Riemann--Roch difference term; it does \emph{not} constitute a completed
+RR vector-space API or the actual dimension theorem. This is the single hard
+core that must be built from the project's divisor, meromorphic-function, and
+\(\code{analyticGenus}\) / holomorphic-one-form finiteness machinery.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_difference_eq_two}
+\end{lemma}
+
+\begin{lemma}[Vanishing of the residual \(K-[P]\) term (supporting)]
+\label{lem:rr-K-minus-point-vanishes}
+\uses{lem:rr-dim-L-point-eq-two-core}
+The complementary Riemann--Roch term has dimension zero in genus zero:
+\[
+  \dim_\C L(K-[P]) = 0.
+\]
+In the current Lean scaffold this is represented by the structural placeholder
+\[
+\code{genusZero\_riemannRoch\_K\_minus\_point\_dim\_zero}
+  : \exists \ell_{K-P}:\mathbb{N},\ \ell_{K-P}=0.
+\]
+An honest proof should reduce this to negative-degree vanishing for
+meromorphic sections of \(K-[P]\), using \(g_{\mathrm{an}}(X)=0\) to identify
+\(\deg K=-2\).
+\lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_K_minus_point_dim_zero}
+\end{lemma}
+
+\begin{lemma}[Dimension \(>1\) gives a nonconstant element of \(L([P])\)]
+\label{lem:rr-dim-ge-two-nonconstant}
+\uses{lem:rr-dim-L-point-eq-two-core, lem:rr-K-minus-point-vanishes}
+Once the real \(\dim_\C L([P])=2\) theorem is available, pure linear algebra
+should produce a nonconstant \(f\in L([P])\): constants give a one-dimensional
+subspace, so a two-dimensional ambient space contains an element outside the
+constant line. The intended Lean shape is the existing theorem
+\[
+\begin{gathered}
+\code{riemannRochSpace\_dim\_ge\_two\_implies\_nonconstant\_meromorphic}\\
+  (X) (P) (h : \code{analyticGenus}\,\C\,X = 0) :
+  \exists f : \code{MeromorphicMapToSphere}\,X,\ 
+    f.\code{Nonconstant} \wedge
+    f.\code{MemRiemannRochSpace}\,(\code{Divisor.point}\,P).
+\end{gathered}
+\]
+At present that declaration projects from the fixed-pole provider instead of
+being a linear-algebra consequence of a genuine RR space. It is therefore part
+of the decomposition target, not evidence that the core has been proved.
+\lean{JacobianChallenge.HolomorphicForms.riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic}
+\end{lemma}
+
+\begin{lemma}[A nonconstant element of \(L([P])\) has pole divisor \([P]\)]
+\label{lem:rr-nonconstant-L-point-has-exact-pole}
+\uses{lem:rr-dim-ge-two-nonconstant}
+If \(f\in L([P])\) is nonconstant on a compact connected genus-zero surface, the
+Riemann--Roch membership condition gives \(\mathrm{poles}(f)\le [P]\). The pole
+divisor is effective and cannot be zero, since a holomorphic meromorphic map on
+a compact connected surface is constant. Hence \(\mathrm{poles}(f)=[P]\).
+\lean{JacobianChallenge.HolomorphicForms.genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Path B fixed-pole effective granular provider (open)]
+\label{lem:rr-effective-granular-provider}
+\uses{lem:rr-nonconstant-L-point-has-exact-pole}
+The direct Path B frontier packages the Riemann--Roch construction as a
+\(\code{MeromorphicMapToSphere}\) with the exact simple-pole divisor and the
+granular analytic fields needed downstream:
+\[
+\begin{gathered}
+\exists f : \code{MeromorphicMapToSphere}\,X,\ 
+  \code{Divisor.Effective}\,f.\code{zeroDivisor} \wedge
+  f.\code{poles} = \code{Divisor.point}\,P \wedge\\
+  (\forall p:X,\ \code{MeromorphicAtX}\,(\lambda q,\ (f.\code{toMap}\,q).\code{getD}\,0)\,p)
+  \wedge
+  \code{mapAnalyticOrderAt}\,f.\code{toMap}\,P = 1.
+\end{gathered}
+\]
+This provider should be built from the nonconstant \(L([P])\) element and the
+local Laurent/order analysis of that RR section. It must not use the already
+packaged single-pole data, the biholomorphism route, or any field projection
+from the structure it is trying to construct.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_fixedPole_rr_effectiveGranular_provider}
+\end{lemma}
+
+\begin{lemma}[Effective granular provider packages the analytic RR witness]
+\label{lem:rr-effective-granular-packages-analytic-data}
+\uses{lem:rr-effective-granular-provider}
+From the effective granular provider, the existing sorry-free assembly derives
+Riemann--Roch membership, nonconstancy, continuity of the map to
+\(\code{OnePoint}\,\C\), the \(\code{AnalyticData}\) record, and pole-modulus
+divergence. The current Lean chain is
+\[
+\code{genusZero\_fixedPole\_rr\_granularAnalytic\_provider}
+\to
+\code{genusZero\_fixedPole\_rr\_granularMap\_provider}
+\to
+\code{genusZero\_fixedPole\_rr\_analyticMap\_provider}
+\to
+\code{genusZero\_fixedPole\_rr\_analyticData\_provider}.
+\]
+Thus the only open construction beneath this packaging chain is
+Lemma~\ref{lem:rr-effective-granular-provider}.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_fixedPole_rr_analyticData_provider}
+\end{lemma}
+
 \begin{lemma}[Analytic genus zero gives a sphere homeomorphism]
 \label{lem:analytic-genus-zero-homeomorphic-sphere}
-\uses{lem:meromorphic-to-branched-cover-data, thm:degree-one-bijective}
+\uses{lem:rr-effective-granular-packages-analytic-data, lem:meromorphic-to-branched-cover-data, thm:degree-one-bijective}
 If a compact connected Riemann surface has analytic genus zero, then it is
 homeomorphic to the standard \(2\)-sphere.
 \lean{JacobianChallenge.HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero}
