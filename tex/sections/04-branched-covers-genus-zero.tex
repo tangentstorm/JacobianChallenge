@@ -1515,6 +1515,7 @@ extract the finite source cover by compactness, attach the two public
 into the global-gluing substrate. No green Lean declaration currently performs
 this construction, so the node intentionally has no \code{\textbackslash lean}
 tag.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_raw_global_patch_family}
 \end{lemma}
 
 \begin{lemma}[Montel constructed patch family (open)]
@@ -1533,6 +1534,7 @@ For the constructed patch family, each selected local coordinate must represent
 the constructed global uniformization in its assigned target chart:
 \code{targetChart.symm (coord x) = uniformization x}. This property depends on
 the construction; it is not an input to it.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_raw_global_patch_family}
 \end{lemma}
 
 \begin{lemma}[Montel constructed inverse-coordinate representation (open)]
@@ -1544,6 +1546,7 @@ target chart:
 \code{invCoord z = uniformization.symm (targetChart.symm z)}. This property
 depends on the construction and on the inverse branches supplied by the local
 Montel chart data.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_raw_global_patch_family}
 \end{lemma}
 
 \begin{lemma}[Montel constructed forward smoothness (open)]
@@ -1553,6 +1556,7 @@ The constructed global uniformization represented by the selected local
 coordinates must be \(\code{ContMDiff}\). This property follows only after the
 construction has produced coherent local chart expressions and the global
 gluing smoothness theorem applies.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_raw_global_patch_family_contMDiff}
 \end{lemma}
 
 \begin{lemma}[Montel constructed inverse smoothness (open)]
@@ -1562,6 +1566,7 @@ The inverse of the constructed global uniformization represented by the selected
 inverse coordinate branches must be \(\code{ContMDiff}\). This property depends
 on the constructed inverse branches and the global gluing smoothness theorem for
 the inverse map.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_raw_global_patch_family_contMDiff}
 \end{lemma}
 
 \begin{lemma}[Normalized Montel patch selector from a sphere homeomorphism (open)]

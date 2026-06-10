@@ -188,15 +188,62 @@ theorem genusZeroGlobalGluing_coord_mem_target_on_patch
     simp [inversionChart]
 
 /--
-Narrow analytic provider for the normalized Montel selector.
+Raw Montel patch-family provider for the normalized selector.
 
 Given only a topological homeomorphism `X ≃ₜ OnePoint ℂ`, construct the
-finite normalized source patches, their two public `OnePoint ℂ` target charts,
-overlap-compatible local coordinates, inverse branches, and the smooth
-uniformization represented by those local coordinates.
+candidate uniformization, the finite global patch family, and the coordinate
+representation facts that tie the local Montel coordinates and inverse
+branches to that candidate.
+-/
+theorem genusZeroMontel_raw_global_patch_family
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X),
+      (∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).targetChart.symm ((family.patch i).coord x) = u x) ∧
+      (∀ i z, z ∈ (family.patch i).targetChart.target →
+        (family.patch i).invCoord z =
+          u.symm ((family.patch i).targetChart.symm z)) := by
+  -- Remaining analytic frontier: choose the normalized Montel chart-ball
+  -- limits, prove overlap coherence, and package the raw finite family.
+  sorry
 
-This is the remaining analytic selector existence frontier behind the public
-genus-zero uniformization theorem.
+/--
+Smoothness provider for a raw Montel patch family.
+
+Once the raw family represents a candidate uniformization in local public
+target charts and its inverse branches represent the candidate inverse, prove
+that both maps are complex-smooth.
+-/
+theorem genusZeroMontel_raw_global_patch_family_contMDiff
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X)
+    (hcoord :
+      ∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).targetChart.symm ((family.patch i).coord x) = u x)
+    (hinv :
+      ∀ i z, z ∈ (family.patch i).targetChart.target →
+        (family.patch i).invCoord z =
+          u.symm ((family.patch i).targetChart.symm z)) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (u : X → OnePoint ℂ) ∧
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (u.symm : OnePoint ℂ → X) := by
+  -- Remaining smoothness frontier: derive global `ContMDiff` from the local
+  -- chart expressions and inverse-branch regularity of the Montel family.
+  sorry
+
+/--
+Narrow analytic provider for the normalized Montel selector.
+
+The selector itself is now only an assembly step from raw Montel patch-family
+data and smoothness. The remaining open leaves are the two raw providers above.
 -/
 theorem genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -205,9 +252,17 @@ theorem genusZeroNormalizedMontelPatchSelector_of_homeomorph_onePoint
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (GenusZeroNormalizedMontelPatchSelector X) := by
-  -- Remaining uniformization frontier: extract a finite normalized Montel
-  -- patch selector from the topological sphere identification.
-  sorry
+  rcases genusZeroMontel_raw_global_patch_family X _e with
+    ⟨u, family, hcoord, hinv⟩
+  rcases genusZeroMontel_raw_global_patch_family_contMDiff X u family hcoord hinv with
+    ⟨hu, hinvu⟩
+  exact ⟨
+    { uniformization := u
+      family := family
+      coord_represents_uniformization := hcoord
+      invCoord_represents_uniformization := hinv
+      uniformization_contMDiff := hu
+      inverse_uniformization_contMDiff := hinvu }⟩
 
 /--
 Completed global gluing data from the normalized Montel selector.
