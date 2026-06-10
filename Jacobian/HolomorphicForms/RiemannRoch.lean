@@ -34,6 +34,97 @@ or over `MeromorphicFunctionWithDivisors` with explicit operation
 compatibility proofs.
 -/
 
+/-! ### Divisor-compatible Riemann-Roch bounded sections -/
+
+/--
+The concrete carrier for the Riemann-Roch bounded-section set `L(D)`, built on
+the divisor-compatible meromorphic-function API.
+
+This is intentionally just a carrier, not yet a vector space: addition of
+meromorphic functions must be supplied through germ/divisor-compatible data so
+that pole cancellation is represented correctly.
+
+Future dimension theorem shape, once the algebraic API is available:
+`finrank ℂ (RiemannRochBoundedSection X (Divisor.point P)) = 2` under
+`analyticGenus ℂ X = 0`.
+-/
+structure RiemannRochBoundedSection
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (D : Divisor X) where
+  /-- The underlying divisor-compatible meromorphic function. -/
+  toMeromorphicFunctionWithDivisors : MeromorphicFunctionWithDivisors X
+  /-- The bounded-pole condition `(f) + D ≥ 0`. -/
+  memRiemannRochSpace :
+    toMeromorphicFunctionWithDivisors.MemRiemannRochSpace D
+
+namespace RiemannRochBoundedSection
+
+variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
+  {D : Divisor X}
+
+instance : CoeFun (RiemannRochBoundedSection X D) (fun _ => X → OnePoint ℂ) where
+  coe s := s.toMeromorphicFunctionWithDivisors.toFunction.toFun
+
+/-- The underlying raw meromorphic function. -/
+def toMeromorphicFunctionType (s : RiemannRochBoundedSection X D) :
+    MeromorphicFunctionType X :=
+  s.toMeromorphicFunctionWithDivisors.toFunction
+
+@[simp] theorem toMeromorphicFunctionType_toFun
+    (s : RiemannRochBoundedSection X D) :
+    s.toMeromorphicFunctionType.toFun = s :=
+  rfl
+
+@[simp] theorem coe_mk
+    (f : MeromorphicFunctionWithDivisors X)
+    (hmem : f.MemRiemannRochSpace D) :
+    ((RiemannRochBoundedSection.mk f hmem : RiemannRochBoundedSection X D) :
+      X → OnePoint ℂ) = f.toFunction.toFun :=
+  rfl
+
+@[simp] theorem toMeromorphicFunctionWithDivisors_mk
+    (f : MeromorphicFunctionWithDivisors X)
+    (hmem : f.MemRiemannRochSpace D) :
+    (RiemannRochBoundedSection.mk f hmem :
+      RiemannRochBoundedSection X D).toMeromorphicFunctionWithDivisors = f :=
+  rfl
+
+@[simp] theorem memRiemannRochSpace_mk
+    (f : MeromorphicFunctionWithDivisors X)
+    (hmem : f.MemRiemannRochSpace D) :
+    (RiemannRochBoundedSection.mk f hmem :
+      RiemannRochBoundedSection X D).memRiemannRochSpace = hmem :=
+  rfl
+
+/-- Nonzero constants lie in `L(D)` for every effective divisor `D`. -/
+def constantNonzero (D : Divisor X) (hD : Divisor.Effective D)
+    (c : ℂ) (hc : c ≠ 0) :
+    RiemannRochBoundedSection X D where
+  toMeromorphicFunctionWithDivisors :=
+    MeromorphicFunctionWithDivisors.constantNonzero (X := X) c hc
+  memRiemannRochSpace := by
+    unfold MeromorphicFunctionWithDivisors.MemRiemannRochSpace
+    rw [MeromorphicFunctionWithDivisors.constantNonzero_principal]
+    simpa using hD
+
+@[simp] theorem constantNonzero_toMeromorphicFunctionWithDivisors
+    (D : Divisor X) (hD : Divisor.Effective D) (c : ℂ) (hc : c ≠ 0) :
+    (constantNonzero (X := X) D hD c hc).toMeromorphicFunctionWithDivisors =
+      MeromorphicFunctionWithDivisors.constantNonzero (X := X) c hc :=
+  rfl
+
+@[simp] theorem constantNonzero_toFun
+    (D : Divisor X) (hD : Divisor.Effective D) (c : ℂ) (hc : c ≠ 0) :
+    ((constantNonzero (X := X) D hD c hc : RiemannRochBoundedSection X D) :
+      X → OnePoint ℂ) = fun _ => (c : OnePoint ℂ) :=
+  rfl
+
+end RiemannRochBoundedSection
+
 /-- A nonconstant element of the Riemann-Roch space `L([P])`. -/
 structure GenusZeroPointRiemannRochElement
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
