@@ -164,4 +164,51 @@ theorem genusZero_mapAnalyticOrderAt_eq_one_of_GenusZeroPointRiemannRochElement
   genusZero_mapAnalyticOrderAt_eq_one_of_nonconstant_mem_L_point
     X P f.meromorphicMap han f.nonconstant f.mem_L_point
 
+/--
+**Path B leaf (#232), branched-cover degree corollary.** A nonconstant
+`f ∈ L([P])` carrying honest analytic data packages as a branched cover of the
+sphere whose branched degree over `∞` is `f.poleDivisor.degree.toNat = 1`.
+
+This is the gateway datum for the biholomorphism / injectivity step: it is
+derived here from the *weaker* hypotheses
+`f.Nonconstant + f.MemRiemannRochSpace [P] + f.AnalyticData` rather than from a
+pre-supplied `f.poles = Divisor.point P`. The proof composes
+`genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point'` (this file, which
+pins the pole divisor) with the simple-pole branched-cover constructor
+`MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole`
+(in `MeromorphicToBranchedCover`; cited, not edited).
+-/
+theorem genusZero_branchedCoverDataOfPoleDegree_of_nonconstant_mem_L_point
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (f : MeromorphicMapToSphere X)
+    (han : f.AnalyticData)
+    (hnc : f.Nonconstant)
+    (hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    f.BranchedCoverDataOfPoleDegree := by
+  have hpole : f.poles = Divisor.point P :=
+    genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point' X P f hnc hmem
+  exact f.branchedCoverDataOfPoleDegree_of_simple_pole P hnc hpole han
+
+/--
+**Path B leaf (#232), branched-cover degree corollary, packaged form.** The same
+`BranchedCoverDataOfPoleDegree` conclusion for a
+`GenusZeroPointRiemannRochElement` together with its analytic data. Delegates to
+the bare form above.
+-/
+theorem genusZero_branchedCoverDataOfPoleDegree_of_GenusZeroPointRiemannRochElement
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : GenusZeroPointRiemannRochElement X P h)
+    (han : f.meromorphicMap.AnalyticData) :
+    f.meromorphicMap.BranchedCoverDataOfPoleDegree :=
+  genusZero_branchedCoverDataOfPoleDegree_of_nonconstant_mem_L_point
+    X P f.meromorphicMap han f.nonconstant f.mem_L_point
+
 end JacobianChallenge.HolomorphicForms
