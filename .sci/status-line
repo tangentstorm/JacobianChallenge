@@ -1,1 +1,1 @@
-READY: realized Montel coordinate representation split
+WORKING: Montel inverse per-patch smoothness (new file MontelInverseSmoothness.lean)

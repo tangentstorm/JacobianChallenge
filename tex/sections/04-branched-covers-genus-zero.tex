@@ -1422,6 +1422,35 @@ with the Montel chart-ball limit. Selector-free.
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Mathlib: atlas member is smooth]
+\label{lem:mathlib-contmdiffon-of-mem-maximalatlas}
+For an open partial homeomorphism \(e\) in the maximal atlas of a \(C^n\)
+manifold, \(e\) is \(\code{ContMDiffOn}\) on \(e.\mathrm{source}\). Green (Mathlib).
+\lean{contMDiffOn_of_mem_maximalAtlas}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Per-patch inverse smoothness of the candidate uniformization]
+\label{lem:montel-inverse-per-patch-smoothness}
+\uses{lem:montel-forward-per-patch-smoothness, lem:mathlib-contmdiffon-of-mem-maximalatlas, lem:montel-realization-coord-invcoord}
+The inverse mirror of the per-patch forward reading — the last local ingredient
+underneath the inverse-smoothness leaf
+(\(\code{genusZeroMontel\_raw\_global\_patch\_family\_contMDiff\_invMap}\)). If a
+Montel patch family represents the inverse branches of a candidate
+\(u:X\simeq\code{OnePoint}\,\C\) in local public target charts (\texttt{hinv}) and
+each inverse branch is \(\code{ContMDiffOn}\) on its target-chart target
+(\texttt{hinv\_smooth}, an honest input — \(\code{invCoord}\) smoothness is not a
+patch field, unlike the forward \(\code{coord\_contMDiffOn}\)), then
+\(u^{-1}\) is \(\code{ContMDiffOn}\) on each patch's target-chart source. On the
+source, \(u^{-1}=\code{invCoord}\circ\code{targetChart}\) (from \texttt{hinv} via
+\(\code{targetChart.left\_inv}\)); the forward chart is \(\code{ContMDiffOn}\) as
+an atlas member (\code{targetChart\_contMDiffOn}). Selector-free.
+\lean{JacobianChallenge.HolomorphicForms.targetChart_contMDiffOn, JacobianChallenge.HolomorphicForms.montelInverse_contMDiffOn_uSymm_on_patch}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Montel coherent local selector (open)]
 \label{lem:montel-coherent-local-selector}
 \uses{lem:montel-local-patch-realization, lem:montel-overlap-agreement}
