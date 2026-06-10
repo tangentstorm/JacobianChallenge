@@ -1446,6 +1446,30 @@ in one call. Pure packaging plus local chart topology — no new analytic conten
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Raw-source-chart realized-patch family]
+\label{lem:montel-raw-source-chart-realized-family}
+\uses{lem:montel-raw-source-chart-package}
+The indexed family form of the raw-chart realized-patch corollary, sharpening the
+engine's consumption boundary. The engine's final-edge payload does not consume
+one realized patch but a \emph{materialized} indexed family
+\(\code{realizedPatch}:\forall i,\ \code{MontelRealizedPatch}\,X\,(\code{localPatch}\,i)\)
+over its patch index, whereas
+\code{exists\_montelRealizedPatch\_of\_rawChart} yields only the single-patch
+\code{Nonempty}. From a family of raw atlas charts \(\varphi\,i\), each with the
+M-D hypotheses for \(\code{localPatch}\,i\) (per-index smoothness and
+inverse-branch target membership), this produces the materialized pi-type
+\(\code{Nonempty}\,(\forall i,\ \code{MontelRealizedPatch}\,X\,(\code{localPatch}\,i))\).
+Since \code{MontelRealizedPatch} is \emph{data}, the family is materialized by
+\code{Classical.choice} through each pointwise \code{Nonempty}; no \code{Fintype}
+or \code{Nonempty}\,\(\iota\) is consumed, so the statement is at full generality
+\(\iota:\code{Type}^*\) and the engine instantiates \(\iota\) at its
+\code{Fintype}-indexed \code{PatchIndex}. Assembly-only over the M-D corollary —
+no new analytic content.
+\lean{JacobianChallenge.HolomorphicForms.exists_montelRealizedPatch_family_of_rawChart}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Glued-map local agreement on a realized patch family]
 \label{lem:montel-glued-map-local-agreement}
 \uses{lem:montel-realized-patch-bundle, lem:montel-coherent-local-selector, lem:mathlib-open-partial-homeomorph-right-inv}

@@ -325,4 +325,61 @@ theorem exists_montelRealizedPatch_of_rawChart
   exact ⟨montelRealizedPatch_of_sourceChartLocalSection localPatch source hopen
     sourceChart sourceSection hsmooth hball hdomain hright hleft⟩
 
+/-!
+## M-E — indexed family form of the raw-chart realized-patch corollary
+
+The engine's consumption boundary
+(`genusZero_stage_engine_payload`, and the `…with_local_realizations` provider in
+`GenusZeroUniformization.lean`) does not consume one realized patch — it consumes
+a **materialized indexed family**
+`realizedPatch : ∀ i, MontelRealizedPatch X (localPatch i)` over its patch index.
+`exists_montelRealizedPatch_of_rawChart` produces only the single-patch
+`Nonempty (MontelRealizedPatch X localPatch)`.
+
+The family form below closes that last gap: from a per-index family of raw charts
+`φ i` with the per-index M-D hypotheses, it produces the materialized pi-type
+`Nonempty (∀ i, MontelRealizedPatch X (localPatch i))`.  Since
+`MontelRealizedPatch` is *data*, materializing the family choices through each
+pointwise `Nonempty` (`Classical.choice` per index — no `Fintype`/`Nonempty ι`
+is consumed by the choice, so we state it at full generality `ι : Type*` and let
+the engine instantiate at its `Fintype`-indexed `PatchIndex`).
+-/
+
+/--
+**Raw-source-chart realized-patch family** (M-E).
+
+Indexed family form of `exists_montelRealizedPatch_of_rawChart`: from a family of
+raw atlas charts `φ i`, each with the M-D hypotheses for `localPatch i`, produce
+the materialized family `∀ i, MontelRealizedPatch X (localPatch i)`.  This is the
+shape the engine's final-edge payload consumes (one `MontelRealizedPatch` per
+patch index, materialized, not merely nonempty).
+
+Stated at full generality in the index type `ι : Type*` — no `Fintype` or
+`Nonempty ι` is used, the materialization is pointwise `Classical.choice`; the
+engine instantiates `ι` at its `Fintype`-indexed `PatchIndex`. -/
+theorem exists_montelRealizedPatch_family_of_rawChart
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {ι : Type*}
+    (localPatch : ι → GenusZeroLocalMontelChartPatch)
+    (φ : ι → OpenPartialHomeomorph X ℂ)
+    (hφ_smooth :
+      ∀ i,
+        ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+          (⊤ : WithTop ℕ∞) (φ i) (φ i).source)
+    (hsymm_image :
+      ∀ i z,
+        z ∈ (localPatch i).targetChart.target ∨
+          z ∈ (localPatch i).localChart.localOpen.target →
+        (localPatch i).localChart.localOpen.symm z ∈ (φ i).target) :
+    Nonempty (∀ i, MontelRealizedPatch X (localPatch i)) := by
+  -- Each index gives a nonempty realized patch by the single-patch M-D corollary.
+  have hpt : ∀ i, Nonempty (MontelRealizedPatch X (localPatch i)) := fun i =>
+    exists_montelRealizedPatch_of_rawChart (localPatch i) (φ i) (hφ_smooth i)
+      (hsymm_image i)
+  -- Materialize the family by choosing through each pointwise `Nonempty`.
+  exact ⟨fun i => (hpt i).some⟩
+
 end JacobianChallenge.HolomorphicForms
