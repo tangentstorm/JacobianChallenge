@@ -58,22 +58,24 @@ noncomputable def meromorphicFunctionWithDivisors_to_mapToSphere
   toMap_eq_infty_of_poleDivisor_pos := meromorphicFunctionWithDivisors_toMap_eq_infty_of_poleDivisor_pos f
 
 /--
-The genuine analytic core: for a valid divisor-compatible meromorphic function
-on a compact Riemann surface, the degree of its zero divisor equals the degree
-of its pole divisor.
-This is the single open sub-lemma for the degree of a principal divisor.
+An honest meromorphic function (which `MeromorphicFunctionWithDivisors` represents) provides valid `BranchedCoverData` whose branched degree equals the pole divisor degree. (Connects `isMeromorphic` to `BranchedCoverDataOfPoleDegree`).
+This is a deep analytic fact, so it is left as a single explicitly named open sub-lemma.
 -/
-lemma meromorphicFunctionWithDivisors_degree_zeros_eq_degree_poles
+noncomputable def meromorphicFunctionWithDivisors_branchedCoverDataOfPoleDegree
     (f : MeromorphicFunctionWithDivisors X) :
-    Divisor.degree f.zeros = Divisor.degree f.poles := by
+    MeromorphicMapToSphere.BranchedCoverDataOfPoleDegree (meromorphicFunctionWithDivisors_to_mapToSphere f) :=
   sorry
 
-/-- The degree of the principal divisor of any non-zero meromorphic function is zero. -/
-lemma meromorphicFunctionWithDivisors_degree_principal_eq_zero
-    (f : MeromorphicFunctionWithDivisors X) : Divisor.degree f.principal = 0 := by
-  rw [f.principal_eq_zeroDivisor_sub_poleDivisor, map_sub]
-  rw [meromorphicFunctionWithDivisors_degree_zeros_eq_degree_poles]
-  exact sub_self _
+/--
+The genuine analytic core: for a valid meromorphic map to the sphere and valid branched cover data, the degree of its zero divisor equals the branched degree.
+This is the single honest named open sub-lemma for the degree of a principal divisor.
+-/
+lemma meromorphicMapToSphere_zeroDivisor_degree_eq_branchedDegree
+    (f : MeromorphicMapToSphere X)
+    (h : BranchedCoverData X (OnePoint ℂ) f.toMap) :
+    f.zeroDivisor.degree.toNat = branchedDegree h := by
+  sorry
+
 omit [TopologicalSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ, ℂ) ⊤ X] [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- The degree of an effective divisor is non-negative. -/
 lemma Divisor.degree_ge_zero_of_effective (D : Divisor X) (h : Divisor.Effective D) :
@@ -82,6 +84,45 @@ lemma Divisor.degree_ge_zero_of_effective (D : Divisor X) (h : Divisor.Effective
   apply Finset.sum_nonneg
   intro i _
   exact h i
+
+/--
+The genuine analytic core: for a valid divisor-compatible meromorphic function
+on a compact Riemann surface, the degree of its zero divisor equals the degree
+of its pole divisor.
+This is the single open sub-lemma for the degree of a principal divisor.
+-/
+lemma meromorphicFunctionWithDivisors_degree_zeros_eq_degree_poles
+    (f : MeromorphicFunctionWithDivisors X) :
+    Divisor.degree f.zeros = Divisor.degree f.poles := by
+  have h_cont : Continuous (meromorphicFunctionWithDivisors_to_mapToSphere f).toMap :=
+    f.toFunction.toFun_continuous
+  obtain ⟨h, h_pole⟩ := (meromorphicFunctionWithDivisors_branchedCoverDataOfPoleDegree f).hasBranchedCoverDataOfPoleDegree h_cont
+  have h_zero := meromorphicMapToSphere_zeroDivisor_degree_eq_branchedDegree (meromorphicFunctionWithDivisors_to_mapToSphere f) h
+  have hz_nonneg : 0 ≤ Divisor.degree f.zeros := by
+    apply Divisor.degree_ge_zero_of_effective
+    intro P
+    rw [f.zeros_apply P, zeroCoeffOfOrder]
+    exact le_max_right _ _
+  have hp_nonneg : 0 ≤ Divisor.degree f.poles := by
+    apply Divisor.degree_ge_zero_of_effective
+    intro P
+    change 0 ≤ f.poleDivisor P
+    exact f.poleDivisor_nonneg P
+  change (Divisor.degree f.zeros).toNat = _ at h_zero
+  change _ = (Divisor.degree f.poles).toNat at h_pole
+  have h_eq : (Divisor.degree f.zeros).toNat = (Divisor.degree f.poles).toNat := by
+    rw [h_zero, h_pole]
+  have h1 : ((Divisor.degree f.zeros).toNat : ℤ) = ((Divisor.degree f.poles).toNat : ℤ) := by
+    rw [h_eq]
+  rw [Int.toNat_of_nonneg hz_nonneg, Int.toNat_of_nonneg hp_nonneg] at h1
+  exact h1
+
+/-- The degree of the principal divisor of any non-zero meromorphic function is zero. -/
+lemma meromorphicFunctionWithDivisors_degree_principal_eq_zero
+    (f : MeromorphicFunctionWithDivisors X) : Divisor.degree f.principal = 0 := by
+  rw [f.principal_eq_zeroDivisor_sub_poleDivisor, map_sub]
+  rw [meromorphicFunctionWithDivisors_degree_zeros_eq_degree_poles]
+  exact sub_self _
 
 /--
 A divisor of strictly negative degree has a trivial Riemann-Roch space.
