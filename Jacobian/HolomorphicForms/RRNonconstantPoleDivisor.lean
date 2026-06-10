@@ -320,4 +320,199 @@ theorem genusZero_homeomorph_onePoint_of_GenusZeroPointRiemannRochElement
   genusZero_homeomorph_onePoint_of_nonconstant_mem_L_point
     X P f.meromorphicMap han f.nonconstant f.mem_L_point
 
+/-! ### Bridge into the sound germ-space Riemann-Roch carrier
+
+The carrier `RiemannRochBoundedSection X D` (and through it the module-facing
+span `RiemannRochGermSpace X D`) is built on `MeromorphicFunctionWithDivisors`,
+whose `order`-compatibility fields force the zero divisor to be effective.
+`MeromorphicMapToSphere` carries no such effectivity, but for a nonconstant
+element of `L([P])` it is derivable: the pole-divisor leaf of this file pins
+`poles = [P]`, so at `P` disjointness forces `zeros P = 0`, and away from `P`
+Riemann-Roch membership gives `zeros Q ≥ 0` directly.
+-/
+
+/--
+**Path B leaf (#232), zero-divisor effectivity.** A nonconstant `f ∈ L([P])`
+has effective zero divisor. This is one of the four demanded fields of the
+open effective granular provider, derived here from the honest hypotheses
+alone (no `AnalyticData` needed).
+-/
+theorem genusZero_zeroDivisor_effective_of_nonconstant_mem_L_point
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (f : MeromorphicMapToSphere X)
+    (hnc : f.Nonconstant)
+    (hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    Divisor.Effective f.zeroDivisor := by
+  classical
+  have hpole : f.poles = Divisor.point P :=
+    genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point' X P f hnc hmem
+  intro Q
+  by_cases hQP : Q = P
+  · -- At `P` the pole divisor is `1 ≠ 0`, so disjointness pins `zeros P = 0`.
+    subst hQP
+    have hpQ : f.poleDivisor Q = 1 := by
+      have h := congrArg (fun D : Divisor X => D Q) hpole
+      simpa [MeromorphicMapToSphere.poles, Divisor.point_apply_self] using h
+    rcases f.zero_or_pole_eq_zero Q with hz | hp
+    · rw [hz]
+    · rw [hp] at hpQ
+      omega
+  · -- Away from `P` the membership inequality reduces to `zeros Q ≥ 0`.
+    have hpQ : f.poleDivisor Q = 0 := by
+      have h := congrArg (fun D : Divisor X => D Q) hpole
+      simpa [MeromorphicMapToSphere.poles, Divisor.point_apply_ne hQP] using h
+    unfold MeromorphicMapToSphere.MemRiemannRochSpace at hmem
+    rw [MeromorphicMapToSphere.principal_eq_zeroDivisor_sub_poleDivisor] at hmem
+    have h_eff := hmem Q
+    simp [Finsupp.add_apply, Finsupp.sub_apply, Divisor.point_apply_ne hQP, hpQ]
+      at h_eff
+    omega
+
+/--
+**General bridge into the divisor-compatible carrier.** A
+`MeromorphicMapToSphere` with honest analytic data and an effective zero
+divisor packages as a `MeromorphicFunctionWithDivisors`: the underlying
+function and germs come from the analytic-data lift
+`toMeromorphicFunctionType` (cited from `MeromorphicToBranchedCover`, not
+edited), the divisor fields are copied, and the recorded order function is the
+principal-divisor coefficient, whose compatibility with the zero/pole fields
+is exactly disjointness plus the two effectivity facts.
+-/
+noncomputable def MeromorphicMapToSphere.toMeromorphicFunctionWithDivisors
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData)
+    (heff : Divisor.Effective f.zeroDivisor) :
+    MeromorphicFunctionWithDivisors X where
+  toFunction := f.toMeromorphicFunctionType han
+  germs := (f.toMeromorphicFunctionType han).germFamily
+  germs_eq_toFunction := rfl
+  zeroDivisor := f.zeroDivisor
+  poleDivisor := f.poleDivisor
+  principalDivisor := f.principalDivisor
+  order := fun Q => (f.principalDivisor Q : WithTop ℤ)
+  zeroDivisor_apply := by
+    intro Q
+    have hpe : f.principalDivisor Q = f.zeroDivisor Q - f.poleDivisor Q := by
+      rw [f.principalDivisor_eq, Finsupp.sub_apply]
+    have hnn := f.poleDivisor_nonneg Q
+    have heffQ := heff Q
+    rw [zeroCoeffOfOrder, WithTop.untopD_coe, hpe]
+    rcases f.zero_or_pole_eq_zero Q with hz | hp
+    · rw [hz]
+      exact (max_eq_right (by omega)).symm
+    · rw [hp, sub_zero]
+      exact (max_eq_left heffQ).symm
+  poleDivisor_apply := by
+    intro Q
+    have hpe : f.principalDivisor Q = f.zeroDivisor Q - f.poleDivisor Q := by
+      rw [f.principalDivisor_eq, Finsupp.sub_apply]
+    have hnn := f.poleDivisor_nonneg Q
+    have heffQ := heff Q
+    rw [poleCoeffOfOrder, WithTop.untopD_coe, hpe]
+    rcases f.zero_or_pole_eq_zero Q with hz | hp
+    · rw [hz, zero_sub, neg_neg]
+      exact (max_eq_left hnn).symm
+    · rw [hp]
+      exact (max_eq_right (by omega)).symm
+  principalDivisor_apply := by
+    intro Q
+    rw [principalCoeffOfOrder, WithTop.untopD_coe]
+  principalDivisor_eq := f.principalDivisor_eq
+  poleDivisor_nonneg := f.poleDivisor_nonneg
+  zero_or_pole_eq_zero := f.zero_or_pole_eq_zero
+  toFun_ne_infty_of_poleDivisor_zero := by
+    intro Q hQ
+    simpa using f.toMap_ne_infty_of_poleDivisor_zero Q hQ
+
+/--
+Riemann-Roch membership transfers along the bridge: both sides are
+`Divisor.Effective (principal + D)` and the principal divisors are copied.
+-/
+theorem MeromorphicMapToSphere.memRiemannRochSpace_toMeromorphicFunctionWithDivisors
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData)
+    (heff : Divisor.Effective f.zeroDivisor)
+    (D : Divisor X) (hmem : f.MemRiemannRochSpace D) :
+    (f.toMeromorphicFunctionWithDivisors han heff).MemRiemannRochSpace D :=
+  hmem
+
+/--
+A `MeromorphicMapToSphere` in `L(D)` with analytic data and effective zero
+divisor is a divisor-compatible Riemann-Roch bounded section.
+-/
+noncomputable def MeromorphicMapToSphere.toRiemannRochBoundedSection
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData)
+    (heff : Divisor.Effective f.zeroDivisor)
+    (D : Divisor X) (hmem : f.MemRiemannRochSpace D) :
+    RiemannRochBoundedSection X D :=
+  ⟨f.toMeromorphicFunctionWithDivisors han heff,
+   f.memRiemannRochSpace_toMeromorphicFunctionWithDivisors han heff D hmem⟩
+
+@[simp] theorem MeromorphicMapToSphere.toRiemannRochBoundedSection_coe
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X) (han : f.AnalyticData)
+    (heff : Divisor.Effective f.zeroDivisor)
+    (D : Divisor X) (hmem : f.MemRiemannRochSpace D) :
+    ⇑(f.toRiemannRochBoundedSection han heff D hmem) = f.toMap :=
+  rfl
+
+/--
+**Path B lane meet (#232).** A nonconstant `f ∈ L([P])` with honest analytic
+data lands in the sound germ-space Riemann-Roch carrier: it packages as a
+`RiemannRochBoundedSection X [P]` whose underlying function **is** `f.toMap`,
+and hence (via `toRiemannRochGermSpace`, cited from `RiemannRoch`, not edited)
+its germs are a member of `RiemannRochGermSpace X [P]` — the span whose
+`finrank = 2` computation is the Path-B dimension core. This is the point
+where the jc3 consumer chain and the germ-space carrier lane meet on one
+object.
+-/
+theorem genusZero_riemannRochBoundedSection_of_nonconstant_mem_L_point
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (f : MeromorphicMapToSphere X)
+    (han : f.AnalyticData)
+    (hnc : f.Nonconstant)
+    (hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    ∃ s : RiemannRochBoundedSection X (Divisor.point P), ⇑s = f.toMap := by
+  have heff : Divisor.Effective f.zeroDivisor :=
+    genusZero_zeroDivisor_effective_of_nonconstant_mem_L_point X P f hnc hmem
+  exact ⟨f.toRiemannRochBoundedSection han heff (Divisor.point P) hmem, rfl⟩
+
+/--
+**Path B lane meet (#232), packaged form.** The same bounded-section
+conclusion for a `GenusZeroPointRiemannRochElement` together with its analytic
+data. Delegates to the bare form above.
+-/
+theorem genusZero_riemannRochBoundedSection_of_GenusZeroPointRiemannRochElement
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : GenusZeroPointRiemannRochElement X P h)
+    (han : f.meromorphicMap.AnalyticData) :
+    ∃ s : RiemannRochBoundedSection X (Divisor.point P),
+      ⇑s = f.meromorphicMap.toMap :=
+  genusZero_riemannRochBoundedSection_of_nonconstant_mem_L_point
+    X P f.meromorphicMap han f.nonconstant f.mem_L_point
+
 end JacobianChallenge.HolomorphicForms

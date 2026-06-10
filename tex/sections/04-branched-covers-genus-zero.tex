@@ -1860,6 +1860,45 @@ Lemma~\ref{lem:mathlib-homeo-of-equiv-compact-to-t2} promotes it to a
 homeomorphism with the same underlying map.
 \end{proof}
 
+\begin{lemma}[A nonconstant element of \(L([P])\) has effective zero divisor]
+\label{lem:rr-nonconstant-L-point-zero-divisor-effective}
+\uses{lem:rr-nonconstant-L-point-has-exact-pole}
+A nonconstant \(f\in L([P])\) has \(\mathrm{zeros}(f)\ge 0\): at \(P\) the
+exact pole divisor \([P]\) forces \(\mathrm{zeros}(f)(P)=0\) by
+zero/pole-support disjointness, and away from \(P\) the Riemann--Roch
+membership inequality reduces to \(\mathrm{zeros}(f)(Q)\ge 0\) directly. This
+is one of the four demanded fields of the open effective granular provider
+(Lemma~\ref{lem:rr-effective-granular-provider}), derived from the honest
+hypotheses alone.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_zeroDivisor_effective_of_nonconstant_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[A nonconstant element of \(L([P])\) lands in the germ-space carrier]
+\label{lem:rr-nonconstant-L-point-germ-space-member}
+\uses{lem:rr-nonconstant-L-point-zero-divisor-effective}
+A nonconstant \(f\in L([P])\) with analytic data packages as a
+divisor-compatible Riemann--Roch bounded section
+\(s : \code{RiemannRochBoundedSection}\,X\,[P]\) whose underlying function
+\emph{is} \(f\) (the carried identification \(s = f.\code{toMap}\) as
+functions). Hence its germs are a member of the sound germ-space module
+carrier \(\code{RiemannRochGermSpace}\,X\,[P]\) — the span whose
+\(\dim_\C = 2\) computation is the Path-B dimension core. This is the seam
+where the consumer chain of the preceding nodes and the germ-space carrier
+lane meet on one object.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRochBoundedSection_of_nonconstant_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+The effectivity lemma supplies the zero-divisor field obligation; the
+analytic-data lift supplies the underlying meromorphic function and its local
+germ family; the divisor fields are copied, with the recorded order function
+given by the principal-divisor coefficient, whose compatibility is exactly
+zero/pole disjointness plus the two effectivity facts. Riemann--Roch
+membership transfers verbatim since the principal divisors agree.
+\end{proof}
+
 \begin{lemma}[Path B fixed-pole effective granular provider (open)]
 \label{lem:rr-effective-granular-provider}
 \uses{lem:rr-nonconstant-L-point-has-exact-pole}
