@@ -1821,6 +1821,28 @@ cuts and contained in the holomorphic part of the stage.
 \lean{JacobianChallenge.HolomorphicForms.StageCutSystem, JacobianChallenge.HolomorphicForms.StageConjugateReady, JacobianChallenge.HolomorphicForms.exists_stageCutSystem}
 \end{lemma}
 
+\begin{lemma}[Stage eventual-containment bounds]
+\label{lem:stage-eventual-containment-bounds}
+\uses{lem:stage-bordered-exhaustion-domains, lem:stage-cut-domain-conjugate-control}
+The filter-level containment and avoidance promises of the exhaustion and
+cut-system interfaces yield the concrete bounds the analytic stage
+consumers invoke: for each selected compactum a threshold \(N\) past which
+it is contained in the stage (resp.\ contained in the cut domain and
+disjoint from the cuts, simultaneously); a \emph{uniform} such threshold
+for any finite family of selected compacta; and subset wrappers so closed
+coordinate subballs inherit all bounds.  Pure filter algebra over the
+interface fields — independent of how the open exhaustion and cut-system
+obligations are eventually discharged.
+\lean{JacobianChallenge.HolomorphicForms.StageBorderedExhaustion.exists_uniform_stage_bound, JacobianChallenge.HolomorphicForms.StageCutSystem.exists_uniform_contains_and_avoids_bound, JacobianChallenge.HolomorphicForms.StageCutSystem.exists_contains_and_avoids_bound_of_subset}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Unfold \(\forall^f n\) at \texttt{atTop} via \texttt{eventually\_atTop};
+conjoin containment and avoidance with \texttt{Eventually.and}; pass to
+finite families with \texttt{eventually\_all\_finset}; subset wrappers are
+transitivity of \(\subseteq\) and \texttt{Disjoint.mono\_left}.
+\end{proof}
+
 \begin{lemma}[Stage dipole boundary control (open)]
 \label{lem:stage-dipole-boundary-control}
 \uses{lem:stage-marked-topological-control-data, lem:stage-bordered-exhaustion-domains, lem:stage-dipole-local-singular-profiles}
