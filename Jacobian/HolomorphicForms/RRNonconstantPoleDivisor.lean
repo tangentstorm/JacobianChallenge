@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.RiemannRoch
+import Jacobian.HolomorphicForms.RRKMinusPointVanishing
 
 /-!
 # Path B leaf: a nonconstant `L([P])` element has pole divisor exactly `[P]`
@@ -938,5 +939,97 @@ through the canonical inclusion into the germ-space module carrier.
         MeromorphicGermFamily X) =
       c • (s.toRiemannRochGermSpace : MeromorphicGermFamily X) :=
   rfl
+
+/-! ### Bridge Step 5: bounded sections package as sphere maps
+
+The reverse packaging direction of the germ-to-map bridge plan (§5–§7):
+consume a bounded section, produce the `MeromorphicMapToSphere` with divisor
+data and `L([P])` membership transferred, and instantiate this file's
+statement-level carrier pipeline with the wrapper — every linking hypothesis
+(`hmap`, `hprin`, `hpoles`) discharges by `rfl` because the wrapper copies
+the carrier's function and divisor fields.
+
+**Taint disclosure (deliberate, established policy):** the wrapper
+`meromorphicFunctionWithDivisors_to_mapToSphere` (in `RRKMinusPointVanishing`;
+imported and cited per brokered terms, never edited) discharges its
+`toMap_eq_infty_of_poleDivisor_pos` field through the carrier-gated
+germ-order bridge, which is sorried. Every declaration below therefore
+inherits `sorryAx` through exactly that one documented chain and nothing
+else. When the carrier is made order-sound upstream, this section greens
+automatically with zero edits.
+-/
+
+/--
+**Bridge Step 5 constructor.** A divisor-compatible Riemann-Roch bounded
+section packages as a meromorphic map to the sphere via the carrier wrapper.
+-/
+noncomputable def RiemannRochBoundedSection.toMeromorphicMapToSphere
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {D : Divisor X} (s : RiemannRochBoundedSection X D) :
+    MeromorphicMapToSphere X :=
+  meromorphicFunctionWithDivisors_to_mapToSphere s.toMeromorphicFunctionWithDivisors
+
+/--
+**Bridge Step 5 membership.** The packaged sphere map keeps the bounded
+section's Riemann-Roch membership: the wrapper copies the principal divisor,
+so the accepted statement-level transfer applies with a definitional link.
+-/
+theorem RiemannRochBoundedSection.toMeromorphicMapToSphere_memRiemannRochSpace
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {D : Divisor X} (s : RiemannRochBoundedSection X D) :
+    s.toMeromorphicMapToSphere.MemRiemannRochSpace D :=
+  s.toMeromorphicFunctionWithDivisors.memRiemannRochSpace_mapToSphere_of_principal_eq
+    s.toMeromorphicMapToSphere rfl D s.memRiemannRochSpace
+
+/--
+**Bridge §5–§7 element production.** A bounded section of `L([P])` whose germ
+family lies outside the constant line yields a
+`GenusZeroPointRiemannRochElement`: the statement-level carrier pipeline
+instantiated with the wrapper, all linking hypotheses by `rfl`.
+-/
+theorem genusZeroPointRiemannRochElement_of_boundedSection
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (s : RiemannRochBoundedSection X (Divisor.point P))
+    (hg : s.toMeromorphicFunctionWithDivisors.germs ∉ constantGermFamilyLine X) :
+    Nonempty (GenusZeroPointRiemannRochElement X P h) :=
+  genusZeroPointRiemannRochElement_of_carrier_representative X P h
+    s.toMeromorphicFunctionWithDivisors s.toMeromorphicMapToSphere
+    rfl rfl s.memRiemannRochSpace hg
+
+/--
+**Bridge §5–§7 element production with analytic data.** Same hypotheses plus
+the order-soundness side condition (carrier-side; provably underivable from
+current carrier fields, hence a named hypothesis) yield the element WITH its
+`AnalyticData` — the exact input of this file's packaged corollaries. With
+this, the germ-to-map bridge's remaining content is precisely its Steps 1–4:
+the span expression (delivered by this file) and the `AddData` analytic fold.
+-/
+theorem genusZeroPointRiemannRochElement_with_analyticData_of_boundedSection
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (s : RiemannRochBoundedSection X (Divisor.point P))
+    (hg : s.toMeromorphicFunctionWithDivisors.germs ∉ constantGermFamilyLine X)
+    (hord : ∀ Q : X,
+      s.toMeromorphicFunctionWithDivisors.poles = Divisor.point Q →
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+        s.toMeromorphicFunctionWithDivisors.toFunction.toFun Q = 1) :
+    ∃ fe : GenusZeroPointRiemannRochElement X P h,
+      Nonempty fe.meromorphicMap.AnalyticData :=
+  genusZeroPointRiemannRochElement_with_analyticData_of_carrier_representative
+    X P h s.toMeromorphicFunctionWithDivisors s.toMeromorphicMapToSphere
+    rfl rfl rfl s.memRiemannRochSpace hg hord
 
 end JacobianChallenge.HolomorphicForms
