@@ -180,6 +180,27 @@ structure GenusZeroLocalMontelPatchRealization
     ∀ z, z ∈ patch.targetChart.target →
       sourceChart (patch.invCoord z) = localPatch.localChart.localOpen.symm z
 
+/--
+Packaged realized Montel patch.
+
+This bundle is selector-free: it contains one constructed global gluing patch,
+the local Montel realization witness for that patch, and the two local
+round-trip identities needed by downstream gluing consumers.
+-/
+structure MontelRealizedPatch
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (localPatch : GenusZeroLocalMontelChartPatch) where
+  patch : GenusZeroGlobalGluingPatch X
+  realization : GenusZeroLocalMontelPatchRealization patch localPatch
+  coord_invCoord :
+    ∀ z, z ∈ localPatch.localChart.localOpen.target →
+      patch.coord (patch.invCoord z) = z
+  invCoord_coord :
+    ∀ x, x ∈ patch.source → patch.invCoord (patch.coord x) = x
+
 namespace GenusZeroGlobalGluingData
 
 /-- The homeomorphism obtained after the global gluing data is complete. -/
@@ -258,6 +279,45 @@ theorem onePointCx_identity_or_inversionChart_source :
       simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
 
 /--
+Finite normalized chart-ball cover provider with realized Montel patch bundles
+still exposed.
+
+This is the genuine finite-cover frontier before the public
+`with_local_realizations` wrapper forgets each `MontelRealizedPatch` to its raw
+`GenusZeroLocalMontelPatchRealization` field.
+-/
+theorem genusZeroMontel_finite_normalized_chartBall_cover_with_realized_patches
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (PatchIndex : Type*) (_ : Fintype PatchIndex) (_ : Nonempty PatchIndex)
+      (localPatch : PatchIndex → GenusZeroLocalMontelChartPatch)
+      (realizedPatch : ∀ i, MontelRealizedPatch X (localPatch i)),
+      (∀ x : X, ∃ i : PatchIndex, x ∈ (realizedPatch i).patch.source) ∧
+      (∀ y : OnePoint ℂ, ∃ (i : PatchIndex) (z : ℂ),
+        z ∈ (realizedPatch i).patch.targetChart.target ∧
+          y = (realizedPatch i).patch.targetChart.symm z) ∧
+      (∀ i, (localPatch i).targetChart = (realizedPatch i).patch.targetChart) ∧
+      (∃ identityIndex inversionIndex : PatchIndex,
+        (realizedPatch identityIndex).patch.targetChart = identityChart ∧
+        (realizedPatch inversionIndex).patch.targetChart = inversionChart ∧
+        (∀ i, i = identityIndex ∨ i = inversionIndex) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch identityIndex).chartBall.center 0 1
+          (localPatch identityIndex).chartBall.radius
+          (localPatch identityIndex).chartBall.toFun) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch inversionIndex).chartBall.center 0 1
+          (localPatch inversionIndex).chartBall.radius
+          (localPatch inversionIndex).chartBall.toFun)) := by
+  -- Remaining finite-cover frontier: choose normalized chart-ball limits,
+  -- build realized Montel patch bundles for those local coordinates, and prove
+  -- their two-chart assignment.
+  sorry
+
+/--
 Finite normalized chart-ball cover provider with the local Montel realizations
 still exposed.
 
@@ -274,7 +334,7 @@ theorem genusZeroMontel_finite_normalized_chartBall_cover_with_local_realization
     (_e : X ≃ₜ OnePoint ℂ) :
     ∃ (family : GenusZeroGlobalPatchFamily X)
       (localPatch : family.PatchIndex → GenusZeroLocalMontelChartPatch)
-      (realization :
+      (_realization :
         ∀ i, GenusZeroLocalMontelPatchRealization
           (family.patch i) (localPatch i)),
       (∀ i, (localPatch i).targetChart = (family.patch i).targetChart) ∧
@@ -290,10 +350,22 @@ theorem genusZeroMontel_finite_normalized_chartBall_cover_with_local_realization
           (localPatch inversionIndex).chartBall.center 0 1
           (localPatch inversionIndex).chartBall.radius
           (localPatch inversionIndex).chartBall.toFun)) := by
-  -- Remaining finite-cover frontier: choose normalized chart-ball limits,
-  -- realize the raw patches by those local coordinates, and prove their
-  -- two-chart assignment.
-  sorry
+  rcases
+    genusZeroMontel_finite_normalized_chartBall_cover_with_realized_patches X _e with
+    ⟨PatchIndex, patch_fintype, patch_nonempty, localPatch, realizedPatch,
+      hsource_cover, htarget_cover, htarget_eq, htwo_chart⟩
+  letI : Fintype PatchIndex := patch_fintype
+  letI : Nonempty PatchIndex := patch_nonempty
+  let family : GenusZeroGlobalPatchFamily X :=
+    { PatchIndex := PatchIndex
+      patch_fintype := patch_fintype
+      patch_nonempty := patch_nonempty
+      patch := fun i => (realizedPatch i).patch
+      patch_cover := hsource_cover
+      target_chart_cover := htarget_cover }
+  refine ⟨family, localPatch, fun i => (realizedPatch i).realization, ?_, ?_⟩
+  · simpa [family] using htarget_eq
+  · simpa [family] using htwo_chart
 
 /--
 Finite normalized chart-ball cover provider, before inserting the public

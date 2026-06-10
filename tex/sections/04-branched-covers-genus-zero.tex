@@ -1527,14 +1527,26 @@ The identity and inversion public charts must cover
 \leanok
 \end{lemma}
 
+\begin{lemma}[Montel normalized-limit two-chart cover with realized patches (open)]
+\label{lem:montel-normalized-limit-two-chart-cover-with-realized-patches}
+\uses{lem:montel-two-chart-source-cover, lem:montel-realized-patch-bundle}
+The finite Montel data chooses the normalized identity and inversion local
+Montel chart patches, together with realized-patch bundles showing that each
+returned global patch is constructed from the corresponding chart-ball limit.
+This is the finite-cover frontier before forgetting the packaged
+\code{MontelRealizedPatch} data to raw local realization witnesses.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_with_realized_patches}
+\end{lemma}
+
 \begin{lemma}[Montel normalized-limit two-chart cover with local realizations (open)]
 \label{lem:montel-normalized-limit-two-chart-cover-with-local-realizations}
-\uses{lem:montel-two-chart-source-cover}
-The raw finite Montel data chooses the normalized identity and inversion local
-Montel chart patches, together with local realization witnesses showing that
-the returned global patch coordinates are the corresponding chart-ball limits.
-This is the finite-cover frontier before forgetting local realizations to raw
-chart balls and source-coordinate maps.
+\uses{lem:montel-normalized-limit-two-chart-cover-with-realized-patches}
+The realized-patch finite Montel data forgets each
+\code{MontelRealizedPatch} to its raw
+\code{GenusZeroLocalMontelPatchRealization} witness while preserving the same
+finite family, source cover, target-chart cover, and two public target-chart
+assignment. This is the finite-cover frontier before forgetting local
+realizations to raw chart balls and source-coordinate maps.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_with_local_realizations}
 \end{lemma}
 

@@ -233,30 +233,6 @@ theorem montelRealizationPatch_invCoord_coord
   rw [hval, localPatch.localChart.localOpen.left_inv hsrc, section_sourceChart x hx]
 
 /--
-**Packaged realized Montel patch.**
-
-A single bundle for downstream gluing consumers (jc1/jc5): the constructed global
-gluing patch, its local Montel realization witness, and both local round-trip
-identities (`coord ∘ invCoord = id` on the local chart target,
-`invCoord ∘ coord = id` on the patch source).  Holding these together lets a
-consumer obtain a complete, ready-to-glue realized patch in one value instead of
-re-threading the same source-chart hypotheses across four separate calls.
--/
-structure MontelRealizedPatch
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (localPatch : GenusZeroLocalMontelChartPatch) where
-  patch : GenusZeroGlobalGluingPatch X
-  realization : GenusZeroLocalMontelPatchRealization patch localPatch
-  coord_invCoord :
-    ∀ z, z ∈ localPatch.localChart.localOpen.target →
-      patch.coord (patch.invCoord z) = z
-  invCoord_coord :
-    ∀ x, x ∈ patch.source → patch.invCoord (patch.coord x) = x
-
-/--
 **Realized-patch bundle constructor.**
 
 From the chart-ball substrate and source-chart data, assemble the complete
