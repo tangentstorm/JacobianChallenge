@@ -313,6 +313,79 @@ noncomputable def RiemannRochGermSpace
     (Set.range fun s : RiemannRochBoundedSection X D =>
       s.toMeromorphicFunctionWithDivisors.germs)
 
+/-- The linear map sending a scalar to the corresponding constant germ family. -/
+noncomputable def constantGermFamilyLinearMap
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    ℂ →ₗ[ℂ] MeromorphicGermFamily X where
+  toFun c := fun P => MeromorphicGermAt.constant (X := X) (p := P) c
+  map_add' c d := by
+    funext P
+    ext
+    rfl
+  map_smul' a c := by
+    funext P
+    ext
+    rfl
+
+@[simp] theorem constantGermFamilyLinearMap_apply
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (c : ℂ) :
+    constantGermFamilyLinearMap X c =
+      (fun P => MeromorphicGermAt.constant (X := X) (p := P) c) :=
+  rfl
+
+@[simp] theorem constantGermFamilyLinearMap_apply_at
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (c : ℂ) (P : X) :
+    constantGermFamilyLinearMap X c P =
+      MeromorphicGermAt.constant (X := X) (p := P) c :=
+  rfl
+
+/-- The submodule of constant meromorphic germ families. -/
+noncomputable def constantGermFamilyLine
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    Submodule ℂ (MeromorphicGermFamily X) :=
+  LinearMap.range (constantGermFamilyLinearMap X)
+
+theorem constantGermFamilyLinearMap_mem_constantGermFamilyLine
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (c : ℂ) :
+    constantGermFamilyLinearMap X c ∈ constantGermFamilyLine X :=
+  ⟨c, rfl⟩
+
+theorem constantGermFamilyLinearMap_injective
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] [Nonempty X] :
+    Function.Injective (constantGermFamilyLinearMap X) := by
+  intro c d h
+  obtain ⟨P⟩ := ‹Nonempty X›
+  have hP : MeromorphicGermAt.constant (X := X) (p := P) c =
+      MeromorphicGermAt.constant (X := X) (p := P) d := by
+    simpa using congr_fun h P
+  have hgerm := congrArg MeromorphicGermAt.germ hP
+  haveI : (puncturedNhds P).NeBot := punctured_nhds_neBot_of_chartedSpaceComplex P
+  simpa using hgerm
+
+theorem constantGermFamilyLine_finrank
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] [Nonempty X] :
+    Module.finrank ℂ (constantGermFamilyLine X) = 1 := by
+  rw [constantGermFamilyLine,
+    LinearMap.finrank_range_of_inj (constantGermFamilyLinearMap_injective (X := X))]
+  exact Module.finrank_self ℂ
+
 namespace RiemannRochBoundedSection
 
 variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -354,6 +427,24 @@ noncomputable def toRiemannRochGermSpace
   rfl
 
 end RiemannRochBoundedSection
+
+/-- Constant germ families lie in the Riemann-Roch germ space for every effective divisor. -/
+theorem constantGermFamilyLine_le_RiemannRochGermSpace
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (D : Divisor X) (hD : Divisor.Effective D) :
+    constantGermFamilyLine X ≤ RiemannRochGermSpace X D := by
+  rintro _ ⟨c, rfl⟩
+  by_cases hc : c = 0
+  · rw [hc]
+    exact (RiemannRochGermSpace X D).zero_mem
+  · have hmem :=
+      RiemannRochBoundedSection.germs_mem_RiemannRochGermSpace
+        (X := X) (D := D)
+        (RiemannRochBoundedSection.constantNonzero (X := X) D hD c hc)
+    simpa [constantGermFamilyLinearMap, RiemannRochBoundedSection.constantNonzero,
+      MeromorphicFunctionWithDivisors.constantNonzero] using hmem
 
 /--
 Future genus-zero dimension target, now stated against the sound germ-space
