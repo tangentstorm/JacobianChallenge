@@ -27,7 +27,17 @@ lemma meromorphicFunctionWithDivisors_toFiniteFun_mdifferentiable
     (g : X → ℂ)
     (hg : f.toFunction.toFun = fun x => ((g x : ℂ) : OnePoint ℂ)) :
     MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g := by
-  sorry
+  have h_ne : ∀ x, f.toFunction.toFun x ≠ ∞ := by
+    intro x
+    rw [hg]
+    exact OnePoint.coe_ne_infty (g x)
+  have h_mdiff := MeromorphicFunctionType.mdifferentiable_toFiniteFun_of_no_infty f.toFunction h_ne
+  have h_eq : f.toFunction.toFiniteFun = g := by
+    ext x
+    unfold MeromorphicFunctionType.toFiniteFun
+    rw [hg]
+    rfl
+  rwa [h_eq] at h_mdiff
 
 /-- 
 The germ-order bridge. 
