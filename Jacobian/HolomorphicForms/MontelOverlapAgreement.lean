@@ -15,17 +15,100 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
+lemma identityChart_source_eq : (identityChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ).source = range ((↑) : ℂ → OnePoint ℂ) := by
+  simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+
+lemma inversionChart_source_eq : (inversionChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ).source = {↑(0 : ℂ)}ᶜ := rfl
+
+lemma identityChart_apply_coe (z : ℂ) : (identityChart : OnePoint ℂ → ℂ) ↑z = z :=
+  OnePoint.isOpenEmbedding_coe.toOpenPartialHomeomorph_left_inv
+
+lemma eventual_mem_source (e e' : OpenPartialHomeomorph (OnePoint ℂ) ℂ)
+    (h_std : e = identityChart ∨ e = inversionChart)
+    (h_std' : e' = identityChart ∨ e' = inversionChart)
+    (h_diff : e ≠ e')
+    (F : ℕ → OnePoint ℂ) (z z' : ℂ) (hz : z ≠ 0) (hz' : z' ≠ 0)
+    (h_lim : Tendsto (fun n => e (F n)) atTop (𝓝 z))
+    (h_lim' : Tendsto (fun n => e' (F n)) atTop (𝓝 z')) :
+    ∀ᶠ n in atTop, F n ∈ e.source ∩ e'.source := by
+  have h_id_0 : (identityChart : OnePoint ℂ → ℂ) ↑(0:ℂ) = 0 := identityChart_apply_coe 0
+  have h_inv_infty : (inversionChart : OnePoint ℂ → ℂ) ∞ = 0 := rfl
+  have h_ev : ∀ᶠ n in atTop, e (F n) ≠ 0 :=
+    Tendsto.eventually_ne h_lim hz
+  have h_ev' : ∀ᶠ n in atTop, e' (F n) ≠ 0 :=
+    Tendsto.eventually_ne h_lim' hz'
+  filter_upwards [h_ev, h_ev'] with n hn hn'
+  rcases h_std with rfl | rfl
+  · rcases h_std' with rfl | rfl
+    · contradiction
+    · constructor
+      · rw [identityChart_source_eq]
+        have : F n ≠ ∞ := by
+          intro h; rw [h] at hn'; exact hn' h_inv_infty
+        cases h : F n with
+        | infty => exact (this h).elim
+        | coe w => exact ⟨w, rfl⟩
+      · rw [inversionChart_source_eq]
+        have : F n ≠ ↑(0:ℂ) := by
+          intro h; rw [h] at hn; exact hn h_id_0
+        exact this
+  · rcases h_std' with rfl | rfl
+    · constructor
+      · rw [inversionChart_source_eq]
+        have : F n ≠ ↑(0:ℂ) := by
+          intro h; rw [h] at hn'; exact hn' h_id_0
+        exact this
+      · rw [identityChart_source_eq]
+        have : F n ≠ ∞ := by
+          intro h; rw [h] at hn; exact hn h_inv_infty
+        cases h : F n with
+        | infty => exact (this h).elim
+        | coe w => exact ⟨w, rfl⟩
+    · contradiction
+
 /--
 Helper lemma: when the target charts differ, they evaluate as multiplicative
-inverses on `OnePoint ℂ`.
+inverses on their common honest domain in `OnePoint ℂ`.
 -/
 lemma targetChart_inv_eq (e e' : OpenPartialHomeomorph (OnePoint ℂ) ℂ)
     (h_std : e = identityChart ∨ e = inversionChart)
     (h_std' : e' = identityChart ∨ e' = inversionChart)
     (h_diff : e ≠ e')
-    (y : OnePoint ℂ) :
+    (y : OnePoint ℂ)
+    (hy : y ∈ e.source)
+    (hy' : y ∈ e'.source) :
     e' y = (e y)⁻¹ := by
-  sorry
+  rcases h_std with rfl | rfl
+  · rcases h_std' with rfl | rfl
+    · contradiction
+    · have hy_id : y ∈ identityChart.source := hy
+      have hy_inv : y ∈ inversionChart.source := hy'
+      rw [identityChart_source_eq] at hy_id
+      obtain ⟨z, hz_eq⟩ := hy_id
+      subst hz_eq
+      have hz_ne_zero : z ≠ 0 := by
+        intro h
+        subst h
+        rw [inversionChart_source_eq] at hy_inv
+        exact hy_inv rfl
+      have h1 : (identityChart : OnePoint ℂ → ℂ) ↑z = z := identityChart_apply_coe z
+      have h2 : (inversionChart : OnePoint ℂ → ℂ) ↑z = z⁻¹ := rfl
+      rw [h1, h2]
+  · rcases h_std' with rfl | rfl
+    · have hy_inv : y ∈ inversionChart.source := hy
+      have hy_id : y ∈ identityChart.source := hy'
+      rw [identityChart_source_eq] at hy_id
+      obtain ⟨z, hz_eq⟩ := hy_id
+      subst hz_eq
+      have hz_ne_zero : z ≠ 0 := by
+        intro h
+        subst h
+        rw [inversionChart_source_eq] at hy_inv
+        exact hy_inv rfl
+      have h1 : (identityChart : OnePoint ℂ → ℂ) ↑z = z := identityChart_apply_coe z
+      have h2 : (inversionChart : OnePoint ℂ → ℂ) ↑z = z⁻¹ := rfl
+      rw [h1, h2, inv_inv]
+    · contradiction
 
 /--
 Helper lemma: when the target charts differ, their inverses respect the
@@ -37,12 +120,17 @@ lemma targetChart_symm_inv_eq (e e' : OpenPartialHomeomorph (OnePoint ℂ) ℂ)
     (h_diff : e ≠ e')
     (z : ℂ) (hz : z ≠ 0) :
     e.symm z = e'.symm z⁻¹ := by
-  sorry
+  rcases h_std with rfl | rfl
+  · rcases h_std' with rfl | rfl
+    · contradiction
+    · change ↑z = invBwd z⁻¹
+      have : z⁻¹ ≠ 0 := inv_ne_zero hz
+      rw [invBwd_ne_zero this, inv_inv]
+  · rcases h_std' with rfl | rfl
+    · change invBwd z = ↑(z⁻¹)
+      rw [invBwd_ne_zero hz]
+    · contradiction
 
-/--
-The normalized Montel chart-ball realizations of the finite patch family
-agree on patch overlaps when their target charts are the same.
--/
 lemma genusZeroMontel_overlap_agreement_same_chart
     (family : GenusZeroGlobalPatchFamily X)
     (localPatch : family.PatchIndex → GenusZeroLocalMontelChartPatch)
@@ -108,16 +196,19 @@ lemma genusZeroMontel_overlap_agreement_cross_chart
   have hxi_pt := TendstoLocallyUniformlyOn.tendsto_at hi hxi
   have hxj_pt := TendstoLocallyUniformlyOn.tendsto_at hj hxj
   
-  have h_inv : ∀ n, (family.patch j).targetChart (F n x) = ((family.patch i).targetChart (F n x))⁻¹ := by
-    intro n
-    exact targetChart_inv_eq ((family.patch i).targetChart) ((family.patch j).targetChart)
-      (family.patch i).targetChart_standard (family.patch j).targetChart_standard diff_chart (F n x)
-  
+  have h_nz_j := cross_chart_overlap_nonzero j i x hxj hxi diff_chart.symm
+  have h_ev_mem := eventual_mem_source ((family.patch i).targetChart) ((family.patch j).targetChart)
+    (family.patch i).targetChart_standard (family.patch j).targetChart_standard diff_chart
+    (fun n => F n x) ((family.patch i).coord x) ((family.patch j).coord x) h_nz_i h_nz_j
+    hxi_pt hxj_pt
+
   have hj_pt_rewritten : Tendsto (fun n => ((family.patch i).targetChart (F n x))⁻¹) atTop (𝓝 ((family.patch j).coord x)) := by
-    have h_eq : (fun n => ((family.patch i).targetChart (F n x))⁻¹) = (fun n => (family.patch j).targetChart (F n x)) := by
-      ext n; rw [← h_inv n]
-    rw [h_eq]
-    exact hxj_pt
+    have h_eq_ev : ∀ᶠ n in atTop, ((family.patch i).targetChart (F n x))⁻¹ = (family.patch j).targetChart (F n x) := by
+      filter_upwards [h_ev_mem] with n hn
+      have h_inv_eq := targetChart_inv_eq ((family.patch i).targetChart) ((family.patch j).targetChart)
+        (family.patch i).targetChart_standard (family.patch j).targetChart_standard diff_chart (F n x) hn.1 hn.2
+      rw [h_inv_eq]
+    exact (tendsto_congr' h_eq_ev).mpr hxj_pt
 
   have h_lim_inv := Tendsto.inv₀ hxi_pt h_nz_i
   have h_coord_j_eq : (family.patch j).coord x = ((family.patch i).coord x)⁻¹ := tendsto_nhds_unique hj_pt_rewritten h_lim_inv

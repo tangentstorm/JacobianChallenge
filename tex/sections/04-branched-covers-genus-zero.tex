@@ -1462,12 +1462,13 @@ compatibility identifies overlapping coordinates as the same
 \lean{JacobianChallenge.HolomorphicForms.GenusZeroLocalMontelChartSelector.localPatch_targetChart_eq, JacobianChallenge.HolomorphicForms.GenusZeroCoherentLocalMontelChartSelector, JacobianChallenge.HolomorphicForms.GenusZeroTransitionCoherentLocalMontelChartSelector}
 \end{lemma}
 
-\begin{lemma}[Montel overlap agreement kernel (open)]
+\begin{lemma}[Montel overlap agreement kernel]
 \label{lem:montel-overlap-agreement}
 \uses{lem:montel-overlap-agreement-same-chart, lem:montel-overlap-agreement-cross-chart}
 The normalized Montel chart-ball realizations of the finite patch family
 agree on patch overlaps.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_normalized_limits_agree_on_overlaps}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Montel limit uniqueness]
@@ -1487,19 +1488,21 @@ coordinate on the overlap, reducing agreement to the identity theorem.
 \leanok
 \end{lemma}
 
-\begin{lemma}[Montel overlap agreement cross-chart case (open)]
+\begin{lemma}[Montel overlap agreement cross-chart case]
 \label{lem:montel-overlap-agreement-cross-chart}
 \uses{lem:montel-overlap-agreement-same-chart, lem:montel-chart-transition-reduction}
 When the target charts differ, conjugate one side through the public transition
 to reduce to the same-chart case.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_overlap_agreement_cross_chart}
+\leanok
 \end{lemma}
 
-\begin{lemma}[Montel chart transition reduction (open)]
+\begin{lemma}[Montel chart transition reduction]
 \label{lem:montel-chart-transition-reduction}
 \uses{lem:onepoint-cx-chart-overlap-derivative}
 Conjugate through the public transition \(z \mapsto z^{-1}\) on the overlap of chart targets.
 \lean{JacobianChallenge.HolomorphicForms.targetChart_inv_eq, JacobianChallenge.HolomorphicForms.targetChart_symm_inv_eq}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Montel chart-ball source-domain selector (open)]
