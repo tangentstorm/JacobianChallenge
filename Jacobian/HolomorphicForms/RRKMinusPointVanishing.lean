@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.MeromorphicFunctionVector
 import Jacobian.HolomorphicForms.Divisor
+import Jacobian.HolomorphicForms.Meromorphic
 
 open scoped Manifold OnePoint Topology
 
@@ -8,6 +9,53 @@ namespace JacobianChallenge.HolomorphicForms
 variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
+
+/--
+A valid meromorphic function is globally continuous.
+-/
+lemma meromorphicFunctionWithDivisors_continuousOn_ne_infty
+    (f : MeromorphicFunctionWithDivisors X) :
+    ContinuousOn f.toFunction.toFun {x : X | f.toFunction.toFun x ≠ (OnePoint.infty : OnePoint ℂ)} :=
+  f.toFunction.toFun_continuous.continuousOn
+
+/--
+Any global complex-valued lift of the map is smooth (meromorphic map with no poles is holomorphic).
+This is an open analytic sub-lemma.
+-/
+lemma meromorphicFunctionWithDivisors_toFiniteFun_mdifferentiable
+    (f : MeromorphicFunctionWithDivisors X)
+    (g : X → ℂ)
+    (hg : f.toFunction.toFun = fun x => ((g x : ℂ) : OnePoint ℂ)) :
+    MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g := by
+  sorry
+
+/--
+At a positive-order pole, the map evaluates to infinity.
+This is an open analytic sub-lemma.
+-/
+lemma meromorphicFunctionWithDivisors_toMap_eq_infty_of_poleDivisor_pos
+    (f : MeromorphicFunctionWithDivisors X) :
+    ∀ P : X, 0 < f.poleDivisor P → f.toFunction.toFun P = (OnePoint.infty : OnePoint ℂ) := by
+  sorry
+
+/--
+Bridge the sound Riemann-Roch carrier to the existing degree machinery
+by wrapping it into a `MeromorphicMapToSphere`.
+-/
+noncomputable def meromorphicFunctionWithDivisors_to_mapToSphere
+    (f : MeromorphicFunctionWithDivisors X) : MeromorphicMapToSphere X where
+  toMap := f.toFunction.toFun
+  locally_meromorphic := True
+  zeroDivisor := f.zeroDivisor
+  poleDivisor := f.poleDivisor
+  principalDivisor := f.principalDivisor
+  principalDivisor_eq := f.principalDivisor_eq
+  poleDivisor_nonneg := f.poleDivisor_nonneg
+  zero_or_pole_eq_zero := f.zero_or_pole_eq_zero
+  toMap_ne_infty_of_poleDivisor_zero := f.toFun_ne_infty_of_poleDivisor_zero
+  continuousOn_ne_infty := meromorphicFunctionWithDivisors_continuousOn_ne_infty f
+  toFiniteFun_mdifferentiable := meromorphicFunctionWithDivisors_toFiniteFun_mdifferentiable f
+  toMap_eq_infty_of_poleDivisor_pos := meromorphicFunctionWithDivisors_toMap_eq_infty_of_poleDivisor_pos f
 
 /--
 The genuine analytic core: for a valid divisor-compatible meromorphic function
