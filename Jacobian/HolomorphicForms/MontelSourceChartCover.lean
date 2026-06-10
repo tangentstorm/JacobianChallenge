@@ -473,4 +473,62 @@ theorem exists_realizedPatchCover_of_components.{u}
   ⟨ι, inferInstance, inferInstance, localPatch, realizedPatch, hsource_cover,
     htarget_cover, htarget_eq, htwo_chart⟩
 
+/-!
+## M-G — one-call per-patch realization over `ofChartBallLimit`
+
+This is the green seam just *upstream* of M-D.  Per patch, the engine produces a
+normalized chart-ball limit, promotes it to a
+`ChartBallPowerSeries.LocalNormalizedChartHomeomorphData` (F2 green leaf
+`exists_localNormalizedChartHomeomorphData_of_tendstoLocallyUniformlyOn`), and
+assembles a `GenusZeroLocalMontelChartPatch` via
+`GenusZeroLocalMontelChartPatch.ofChartBallLimit`; only then does it realize the
+patch.  `exists_montelRealizedPatch_ofChartBallLimit` composes the
+`ofChartBallLimit` assembly with the M-D corollary into one call.
+
+Following the M-F design lesson, the local-chart datum and the raw source chart
+are taken **explicitly** so the engine controls the concrete witnesses it states
+the M-D `hsymm_image` hypothesis against.  Because `ofChartBallLimit` sets its
+fields definitionally, `(ofChartBallLimit chartBall localChart …).localChart`
+reduces to `localChart` (and `.chartBall` to `chartBall`), so the M-D hypotheses
+are stated against the concrete `localChart` the caller holds and transfer by
+`rfl` — no restatement.  No new analytic content; not gated on the open spine
+(the normalized-limit data is an input). -/
+
+/--
+**One-call per-patch realization over `ofChartBallLimit`** (M-G).
+
+Given the data assembling a `GenusZeroLocalMontelChartPatch` from a normalized
+chart-ball limit — a `ChartBallPowerSeries`, its
+`LocalNormalizedChartHomeomorphData`, a standard target chart — together with a
+raw source chart `φ` satisfying the M-D hypotheses for the assembled patch,
+produce a `MontelRealizedPatch` for that patch in one call.  Composes
+`GenusZeroLocalMontelChartPatch.ofChartBallLimit` with
+`exists_montelRealizedPatch_of_rawChart` (M-D); the `ofChartBallLimit`
+projections are definitional, so the hypotheses match by `rfl`. -/
+theorem exists_montelRealizedPatch_ofChartBallLimit
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (chartBall : ChartBallPowerSeries)
+    (localChart : chartBall.LocalNormalizedChartHomeomorphData)
+    (targetChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ)
+    (hstd : targetChart = identityChart ∨ targetChart = inversionChart)
+    (φ : OpenPartialHomeomorph X ℂ)
+    (hφ_smooth :
+      ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) φ φ.source)
+    (hsymm_image :
+      ∀ z,
+        z ∈ targetChart.target ∨ z ∈ localChart.localOpen.target →
+        localChart.localOpen.symm z ∈ φ.target) :
+    Nonempty
+      (MontelRealizedPatch X
+        (GenusZeroLocalMontelChartPatch.ofChartBallLimit chartBall localChart
+          targetChart hstd)) :=
+  exists_montelRealizedPatch_of_rawChart
+    (GenusZeroLocalMontelChartPatch.ofChartBallLimit chartBall localChart
+      targetChart hstd)
+    φ hφ_smooth hsymm_image
+
 end JacobianChallenge.HolomorphicForms

@@ -1497,6 +1497,29 @@ with.
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Per-patch realization over the chart-ball-limit patch]
+\label{lem:montel-realized-patch-ofChartBallLimit}
+\uses{lem:montel-raw-source-chart-package}
+The green seam just upstream of the raw-chart realization corollary. Per patch,
+the engine produces a normalized chart-ball limit, promotes it to a
+\code{LocalNormalizedChartHomeomorphData} (the F2 local-chart leaf), and assembles
+a \code{GenusZeroLocalMontelChartPatch} via
+\code{GenusZeroLocalMontelChartPatch.ofChartBallLimit}; only then is the patch
+realized. This corollary composes the \code{ofChartBallLimit} assembly with the
+raw-chart M-D realization into one call: given the chart-ball power series, its
+local normalized chart-homeomorphism data, a standard target chart, and a raw
+source chart \(\varphi\) satisfying the M-D hypotheses for the assembled patch, it
+produces \(\code{Nonempty}\,(\code{MontelRealizedPatch}\,X\,(\code{ofChartBallLimit}\,\dots))\).
+The local-chart datum and raw chart are taken \emph{explicitly} (as in the
+cover-packaging adapter) so the caller controls the witnesses the
+\code{hsymm\_image} hypothesis is stated against; since \code{ofChartBallLimit}
+sets its fields definitionally, the M-D hypotheses transfer by \code{rfl} with no
+restatement. Pure assembly --- no analytic content, not gated on the open spine.
+\lean{JacobianChallenge.HolomorphicForms.exists_montelRealizedPatch_ofChartBallLimit}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Glued-map local agreement on a realized patch family]
 \label{lem:montel-glued-map-local-agreement}
 \uses{lem:montel-realized-patch-bundle, lem:montel-coherent-local-selector, lem:mathlib-open-partial-homeomorph-right-inv}
