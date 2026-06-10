@@ -1390,6 +1390,38 @@ map as the Montel limit in the realized source coordinate, consuming a
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Mathlib: atlas-member inverse is smooth]
+\label{lem:mathlib-contmdiffon-symm-of-mem-maximalatlas}
+For an open partial homeomorphism \(e\) in the maximal atlas of a \(C^n\)
+manifold, the inverse \(e^{-1}\) is \(\code{ContMDiffOn}\) on \(e.\mathrm{target}\).
+Green (Mathlib).
+\lean{contMDiffOn_symm_of_mem_maximalAtlas}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Per-patch forward smoothness of the candidate uniformization]
+\label{lem:montel-forward-per-patch-smoothness}
+\uses{lem:montel-glued-map-local-agreement, lem:montel-realized-patch-bundle, lem:mathlib-contmdiffon-symm-of-mem-maximalatlas}
+The per-patch smoothness reading — the last local ingredient underneath the
+forward-smoothness leaf
+(\(\code{genusZeroMontel\_raw\_global\_patch\_family\_contMDiff\_toMap}\)) before
+the local-to-global gluing argument. If a Montel patch family represents a
+candidate \(u:X\to\code{OnePoint}\,\C\) in local public target charts
+(\texttt{hcoord}) and each patch coordinate lands in its target chart's target
+(\texttt{hmem}), then \(u\) is \(\code{ContMDiffOn}\) on each patch source. On the
+patch, \(u=\code{targetChart.symm}\circ\code{coord}\); \(\code{coord}\) is
+\(\code{ContMDiffOn}\) (a patch field) and the standard \(\code{OnePoint}\,\C\)
+target chart inverses are \(\code{ContMDiffOn}\) as atlas-member inverses
+(\code{targetChart\_symm\_contMDiffOn}, from
+Lemma~\ref{lem:mathlib-contmdiffon-symm-of-mem-maximalatlas}). The chart-ball
+corollary consumes a \code{MontelRealizedPatch} to identify the source coordinate
+with the Montel chart-ball limit. Selector-free.
+\lean{JacobianChallenge.HolomorphicForms.targetChart_symm_contMDiffOn, JacobianChallenge.HolomorphicForms.montelForward_contMDiffOn_u_on_patch, JacobianChallenge.HolomorphicForms.montelForward_contMDiffOn_u_on_patch_chartBall}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Montel coherent local selector (open)]
 \label{lem:montel-coherent-local-selector}
 \uses{lem:montel-local-patch-realization, lem:montel-overlap-agreement}
