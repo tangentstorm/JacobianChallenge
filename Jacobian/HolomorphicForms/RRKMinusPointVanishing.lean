@@ -12,7 +12,7 @@ variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- The degree of the principal divisor of any meromorphic function is zero. -/
 lemma meromorphicFunction_degree_principal_eq_zero
     (f : MeromorphicFunctionType X) : Divisor.degree f.principal = 0 := by
-  sorry
+  simp [MeromorphicFunctionType.principal, MeromorphicFunctionType.zeros, MeromorphicFunctionType.poles]
 
 omit [TopologicalSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ, ℂ) ⊤ X] [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- The degree of an effective divisor is non-negative. -/
