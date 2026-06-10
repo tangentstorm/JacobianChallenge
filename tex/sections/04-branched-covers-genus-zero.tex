@@ -2022,6 +2022,28 @@ zero/pole disjointness plus the two effectivity facts. Riemann--Roch
 membership transfers verbatim since the principal divisors agree.
 \end{proof}
 
+\begin{lemma}[A nonconstant element of \(L([P])\) satisfies the granular field matrix]
+\label{lem:rr-nonconstant-L-point-granular-fields}
+\uses{lem:rr-nonconstant-L-point-zero-divisor-effective, lem:rr-nonconstant-L-point-order-one}
+A nonconstant \(f\in L([P])\) with analytic data satisfies the exact
+four-field matrix demanded by the open effective granular provider
+(Lemma~\ref{lem:rr-effective-granular-provider}): effective zero divisor,
+pole divisor exactly \([P]\), pointwise meromorphic canonical finite lift,
+and order-one extension at the pole. The accompanying existential reduction
+\code{genusZero\_fixedPole\_rr\_effectiveGranular\_of\_element} states the
+provider's literal goal conditional on an element plus its analytic data, so
+the remaining Path-B gap is precisely the extraction frontier: produce a
+\code{GenusZeroPointRiemannRochElement} together with its
+\code{AnalyticData}.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_effectiveGranular_fields_of_nonconstant_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Conjunction of the zero-divisor effectivity and exact-pole-divisor leaves,
+the \code{meromorphic\_getD} field of the analytic data, and the order-one
+bridge.
+\end{proof}
+
 \begin{lemma}[Path B fixed-pole effective granular provider (open)]
 \label{lem:rr-effective-granular-provider}
 \uses{lem:rr-nonconstant-L-point-has-exact-pole}

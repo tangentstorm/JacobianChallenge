@@ -515,4 +515,99 @@ theorem genusZero_riemannRochBoundedSection_of_GenusZeroPointRiemannRochElement
   genusZero_riemannRochBoundedSection_of_nonconstant_mem_L_point
     X P f.meromorphicMap han f.nonconstant f.mem_L_point
 
+/-! ### The granular-provider field matrix
+
+The open Path-B frontier `genusZero_fixedPole_rr_effectiveGranular_provider`
+(in `MeromorphicToBranchedCover`; cited, never edited) demands a
+`MeromorphicMapToSphere` with four granular fields. The leaves of this file
+plus one `AnalyticData` field prove all four for ANY nonconstant element of
+`L([P])` with analytic data, so the provider's remaining content is exactly
+"produce a `GenusZeroPointRiemannRochElement` together with its
+`AnalyticData`" — the extraction frontier. The statements below copy the
+provider's conjunction shape verbatim so the reduction is definitional.
+-/
+
+/--
+**Path B leaf (#232), granular field matrix.** A nonconstant `f ∈ L([P])`
+with honest analytic data satisfies the exact four-field matrix of the open
+effective granular provider: effective zero divisor, pole divisor exactly
+`[P]`, pointwise meromorphic canonical finite lift, and order-one extension
+at the pole.
+-/
+theorem genusZero_effectiveGranular_fields_of_nonconstant_mem_L_point
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (f : MeromorphicMapToSphere X)
+    (han : f.AnalyticData)
+    (hnc : f.Nonconstant)
+    (hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    Divisor.Effective f.zeroDivisor ∧
+    f.poles = Divisor.point P ∧
+    (∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p) ∧
+    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 :=
+  ⟨genusZero_zeroDivisor_effective_of_nonconstant_mem_L_point X P f hnc hmem,
+   genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point' X P f hnc hmem,
+   han.meromorphic_getD,
+   genusZero_mapAnalyticOrderAt_eq_one_of_nonconstant_mem_L_point
+     X P f han hnc hmem⟩
+
+/--
+**Path B leaf (#232), granular field matrix, packaged form.** The same
+four-field matrix for a `GenusZeroPointRiemannRochElement` together with its
+analytic data. Delegates to the bare form above.
+-/
+theorem genusZero_effectiveGranular_fields_of_GenusZeroPointRiemannRochElement
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : GenusZeroPointRiemannRochElement X P h)
+    (han : f.meromorphicMap.AnalyticData) :
+    Divisor.Effective f.meromorphicMap.zeroDivisor ∧
+    f.meromorphicMap.poles = Divisor.point P ∧
+    (∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.meromorphicMap.toMap q).getD 0) p) ∧
+    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+      f.meromorphicMap.toMap P = 1 :=
+  genusZero_effectiveGranular_fields_of_nonconstant_mem_L_point
+    X P f.meromorphicMap han f.nonconstant f.mem_L_point
+
+/--
+**Path B reduction (#232).** The literal existential goal of the open
+effective granular provider follows from a `GenusZeroPointRiemannRochElement`
+together with its analytic data. Once the extraction frontier produces such
+an element, the open provider closes by `exact` on this theorem — the
+remaining Path-B gap is therefore precisely "element + `AnalyticData`".
+
+This theorem does NOT claim the unconditioned provider: the element and its
+analytic data are honest hypotheses, with no routing through the circular
+fixed-pole providers.
+-/
+theorem genusZero_fixedPole_rr_effectiveGranular_of_element
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : GenusZeroPointRiemannRochElement X P h)
+    (han : f.meromorphicMap.AnalyticData) :
+    ∃ f' : MeromorphicMapToSphere X,
+      Divisor.Effective f'.zeroDivisor ∧
+      f'.poles = Divisor.point P ∧
+      (∀ p : X,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+          (fun q => (f'.toMap q).getD 0) p) ∧
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f'.toMap P = 1 :=
+  ⟨f.meromorphicMap,
+   genusZero_effectiveGranular_fields_of_GenusZeroPointRiemannRochElement
+     X P h f han⟩
+
 end JacobianChallenge.HolomorphicForms
