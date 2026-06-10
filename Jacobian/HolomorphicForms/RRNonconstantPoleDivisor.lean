@@ -681,4 +681,151 @@ theorem MeromorphicFunctionWithDivisors.nonconstant_of_germs_notMem_constantGerm
   rintro ⟨c, hc⟩
   exact hg (g.germs_mem_constantGermFamilyLine_of_forall_toFun_eq c hc)
 
+/-! ### Carrier representative ⟹ element + AnalyticData (statement-level)
+
+Pipeline from a divisor-compatible carrier representative to the inputs of
+this file's packaged corollaries. Per manager triage (duplicate-declaration
+clash between `RiemannRoch` and `RRKMinusPointVanishing`, queued upstream),
+the carrier-to-sphere wrapper is NOT imported: each lemma instead takes the
+wrapper's outputs as statement-level hypotheses — a sphere map `f` linked to
+the carrier element `g` by `f.toMap = g.toFunction.toFun` and the divisor-copy
+facts. The future instantiation site (the wrapper, once the duplicate-decl
+reconciliation lands) discharges these hypotheses definitionally; any
+`sorryAx` taint stays there, so the declarations below are axiom-clean.
+
+The `simple_pole_order_one` input is provably NOT derivable from the current
+carrier fields (a counter-model with recorded order `0` against a genuine
+order-`3` root satisfies all fields), so it is taken as the named
+order-soundness side condition, never a `sorry`.
+-/
+
+/--
+**Membership transfer (carrier → sphere, statement-level).** Riemann-Roch
+membership for the divisor-compatible carrier transfers to any sphere map
+whose principal divisor copies the carrier's: both sides are
+`Divisor.Effective (principal + D)`. Mirror of the accepted sphere→carrier
+transfer.
+-/
+theorem MeromorphicFunctionWithDivisors.memRiemannRochSpace_mapToSphere_of_principal_eq
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (g : MeromorphicFunctionWithDivisors X) (f : MeromorphicMapToSphere X)
+    (hprin : f.principalDivisor = g.principalDivisor)
+    (D : Divisor X) (hmem : g.MemRiemannRochSpace D) :
+    f.MemRiemannRochSpace D := by
+  unfold MeromorphicMapToSphere.MemRiemannRochSpace
+  unfold MeromorphicFunctionWithDivisors.MemRiemannRochSpace at hmem
+  have hp : f.principal = g.principal := hprin
+  rw [hp]
+  exact hmem
+
+/--
+**AnalyticData production from carrier facts (statement-level).** A sphere
+map whose underlying function is a carrier element's function has honest
+analytic data, given the order-soundness side condition (stated carrier-side)
+as a hypothesis: global continuity and pointwise meromorphicity of the finite
+lift are carried by the underlying `MeromorphicFunctionType`
+(`toFun_continuous`, `isMeromorphic`) and transported along the function
+identification; the simple-pole order-one field is the hypothesis transported
+along the pole-divisor copy.
+-/
+noncomputable def MeromorphicFunctionWithDivisors.analyticData_mapToSphere_of_simple_pole_order_one
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (g : MeromorphicFunctionWithDivisors X) (f : MeromorphicMapToSphere X)
+    (hmap : f.toMap = g.toFunction.toFun)
+    (hpoles : f.poleDivisor = g.poleDivisor)
+    (hord : ∀ Q : X, g.poles = Divisor.point Q →
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+        g.toFunction.toFun Q = 1) :
+    f.AnalyticData where
+  continuous_toMap := by
+    rw [hmap]
+    exact g.toFunction.toFun_continuous
+  meromorphic_getD := by
+    intro p
+    simp only [hmap]
+    exact g.toFunction.isMeromorphic p
+  simple_pole_order_one := by
+    intro Q hQ
+    have hgpoles : g.poles = Divisor.point Q := by
+      show g.poleDivisor = Divisor.point Q
+      rw [← hpoles]
+      exact hQ
+    simp only [hmap]
+    exact hord Q hgpoles
+
+/--
+**Element production from a carrier representative (statement-level).** A
+divisor-compatible carrier representative in `L([P])` whose germ family lies
+outside the constant line yields a `GenusZeroPointRiemannRochElement`, for
+any sphere map linked to it by the function identification and the
+principal-divisor copy: membership transfers, and nonconstancy is the
+accepted germ-seam transfer transported along the identification.
+-/
+theorem genusZeroPointRiemannRochElement_of_carrier_representative
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (g : MeromorphicFunctionWithDivisors X) (f : MeromorphicMapToSphere X)
+    (hmap : f.toMap = g.toFunction.toFun)
+    (hprin : f.principalDivisor = g.principalDivisor)
+    (hmem : g.MemRiemannRochSpace (Divisor.point P))
+    (hg : g.germs ∉ constantGermFamilyLine X) :
+    Nonempty (GenusZeroPointRiemannRochElement X P h) :=
+  ⟨{ meromorphicMap := f
+     nonconstant := by
+       have hnc := g.nonconstant_of_germs_notMem_constantGermFamilyLine hg
+       show ¬ ∃ c : OnePoint ℂ, ∀ x : X, f.toMap x = c
+       simp only [hmap]
+       exact hnc
+     mem_L_point :=
+       g.memRiemannRochSpace_mapToSphere_of_principal_eq f hprin
+         (Divisor.point P) hmem }⟩
+
+/--
+**Pipeline payoff (statement-level).** A carrier representative in `L([P])`
+outside the constant line, together with a linked sphere map and the
+order-soundness side condition, yields a `GenusZeroPointRiemannRochElement`
+WITH its `AnalyticData` — the exact input shape of this file's packaged
+corollaries (granular field matrix, degree-one bijectivity, sphere
+homeomorphism, bounded-section lane meet). The open germ-to-map bridge
+therefore reduces to producing the representative and its linked map; the
+hypotheses here are discharged definitionally by the carrier wrapper once the
+upstream duplicate-declaration reconciliation lands.
+-/
+theorem genusZeroPointRiemannRochElement_with_analyticData_of_carrier_representative
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (g : MeromorphicFunctionWithDivisors X) (f : MeromorphicMapToSphere X)
+    (hmap : f.toMap = g.toFunction.toFun)
+    (hprin : f.principalDivisor = g.principalDivisor)
+    (hpoles : f.poleDivisor = g.poleDivisor)
+    (hmem : g.MemRiemannRochSpace (Divisor.point P))
+    (hg : g.germs ∉ constantGermFamilyLine X)
+    (hord : ∀ Q : X, g.poles = Divisor.point Q →
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+        g.toFunction.toFun Q = 1) :
+    ∃ fe : GenusZeroPointRiemannRochElement X P h,
+      Nonempty fe.meromorphicMap.AnalyticData :=
+  ⟨{ meromorphicMap := f
+     nonconstant := by
+       have hnc := g.nonconstant_of_germs_notMem_constantGermFamilyLine hg
+       show ¬ ∃ c : OnePoint ℂ, ∀ x : X, f.toMap x = c
+       simp only [hmap]
+       exact hnc
+     mem_L_point :=
+       g.memRiemannRochSpace_mapToSphere_of_principal_eq f hprin
+         (Divisor.point P) hmem },
+   ⟨g.analyticData_mapToSphere_of_simple_pole_order_one f hmap hpoles hord⟩⟩
+
 end JacobianChallenge.HolomorphicForms

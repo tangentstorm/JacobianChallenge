@@ -2117,6 +2117,38 @@ hence constant germ at every point, hence germ family
 contrapose.
 \end{proof}
 
+\begin{lemma}[A carrier representative yields the Riemann--Roch element with analytic data]
+\label{lem:rr-carrier-representative-element}
+\uses{lem:rr-nonconstant-L-point-germ-space-member, lem:rr-germs-outside-constants-nonconstant}
+A divisor-compatible carrier representative \(g\) in \(L([P])\) whose germ
+family lies outside the constant line yields a
+\code{GenusZeroPointRiemannRochElement} \emph{with} its \code{AnalyticData},
+for any sphere map \(f\) linked to \(g\) by the function identification
+\(f.\code{toMap} = g.\code{toFunction}.\code{toFun}\) and the divisor-copy
+facts, given the order-soundness side condition (simple pole \(\Rightarrow\)
+chart-local order one, stated carrier-side) as a hypothesis. Membership
+transfers since the principal divisors agree; nonconstancy is the germ-seam
+transfer (Lemma~\ref{lem:rr-germs-outside-constants-nonconstant}); analytic
+data is carried by the underlying meromorphic function type except for the
+order-one field, which is the hypothesis. The side condition is provably not
+derivable from current carrier fields (see the CARRIER-GATED
+Lemma~\ref{lem:germ-order-bridge}); the statement-level hypotheses here are
+instantiated definitionally by the carrier wrapper once the upstream
+duplicate-declaration reconciliation and carrier order-soundness land, at
+which point the open germ-to-map bridge
+(Lemma~\ref{lem:rr-germ-to-map-bridge}) reduces to producing the
+representative.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroPointRiemannRochElement_with_analyticData_of_carrier_representative}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Assemble the element from the linked map: membership by the principal-divisor
+copy, nonconstancy by the germ-seam transfer along the function
+identification, analytic data from \code{toFun\_continuous} and
+\code{isMeromorphic} plus the order-soundness hypothesis transported along
+the pole-divisor copy.
+\end{proof}
+
 \begin{lemma}[A nonconstant element of \(L([P])\) satisfies the granular field matrix]
 \label{lem:rr-nonconstant-L-point-granular-fields}
 \uses{lem:rr-nonconstant-L-point-zero-divisor-effective, lem:rr-nonconstant-L-point-order-one}
