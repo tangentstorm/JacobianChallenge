@@ -123,6 +123,101 @@ def constantNonzero (D : Divisor X) (hD : Divisor.Effective D)
       X → OnePoint ℂ) = fun _ => (c : OnePoint ℂ) :=
   rfl
 
+/--
+Nonzero scalar multiplication of a bounded section.
+
+This is a constructor, not a global `SMul` instance: the zero scalar and
+addition still require divisor-compatible data to represent zero divisors and
+pole cancellation honestly.
+-/
+noncomputable def smulNonzero (c : ℂ) (hc : c ≠ 0)
+    (s : RiemannRochBoundedSection X D) :
+    RiemannRochBoundedSection X D where
+  toMeromorphicFunctionWithDivisors :=
+    MeromorphicFunctionWithDivisors.smulNonzero c hc s.toMeromorphicFunctionWithDivisors
+  memRiemannRochSpace := by
+    exact (MeromorphicFunctionWithDivisors.smulNonzero_memRiemannRochSpace_iff
+      c hc s.toMeromorphicFunctionWithDivisors D).mpr s.memRiemannRochSpace
+
+@[simp] theorem smulNonzero_toMeromorphicFunctionWithDivisors
+    (c : ℂ) (hc : c ≠ 0) (s : RiemannRochBoundedSection X D) :
+    (smulNonzero c hc s).toMeromorphicFunctionWithDivisors =
+      MeromorphicFunctionWithDivisors.smulNonzero c hc
+        s.toMeromorphicFunctionWithDivisors :=
+  rfl
+
+@[simp] theorem smulNonzero_toFun
+    (c : ℂ) (hc : c ≠ 0) (s : RiemannRochBoundedSection X D) :
+    ((smulNonzero c hc s : RiemannRochBoundedSection X D) : X → OnePoint ℂ) =
+      (MeromorphicFunctionWithDivisors.smulNonzero c hc
+        s.toMeromorphicFunctionWithDivisors).toFunction.toFun :=
+  rfl
+
+/--
+Explicit addition data for bounded sections in the same Riemann-Roch bound
+`L(D)`.
+
+This wraps `MeromorphicFunctionWithDivisors.AddData` and records that its
+result stays in `L(D)`. It deliberately does not define a total addition
+operation: callers must still supply the divisor-compatible sum data, including
+any pole cancellation.
+-/
+structure AddData (s t : RiemannRochBoundedSection X D) where
+  /-- Divisor-compatible addition data for the underlying meromorphic functions. -/
+  underlying :
+    MeromorphicFunctionWithDivisors.AddData
+      s.toMeromorphicFunctionWithDivisors t.toMeromorphicFunctionWithDivisors
+
+namespace AddData
+
+variable {s t : RiemannRochBoundedSection X D}
+
+/-- The bounded-section result of addition data. -/
+def result (h : AddData s t) : RiemannRochBoundedSection X D where
+  toMeromorphicFunctionWithDivisors := h.underlying.result
+  memRiemannRochSpace :=
+    h.underlying.result_memRiemannRochSpace D
+      s.memRiemannRochSpace t.memRiemannRochSpace
+
+@[simp] theorem result_toMeromorphicFunctionWithDivisors (h : AddData s t) :
+    h.result.toMeromorphicFunctionWithDivisors = h.underlying.result :=
+  rfl
+
+@[simp] theorem result_toFun (h : AddData s t) :
+    ((h.result : RiemannRochBoundedSection X D) : X → OnePoint ℂ) =
+      h.underlying.result.toFunction.toFun :=
+  rfl
+
+theorem germs_eq_add (h : AddData s t) :
+    h.result.toMeromorphicFunctionWithDivisors.germs =
+      s.toMeromorphicFunctionWithDivisors.germs +
+        t.toMeromorphicFunctionWithDivisors.germs :=
+  h.underlying.germs_eq_add
+
+@[simp] theorem germs_eq_add_at (h : AddData s t) (P : X) :
+    h.result.toMeromorphicFunctionWithDivisors.germs P =
+      s.toMeromorphicFunctionWithDivisors.germs P +
+        t.toMeromorphicFunctionWithDivisors.germs P :=
+  h.underlying.germs_eq_add_at P
+
+theorem order_bound (h : AddData s t) (P : X) :
+    min (s.toMeromorphicFunctionWithDivisors.order P)
+        (t.toMeromorphicFunctionWithDivisors.order P) ≤
+      h.result.toMeromorphicFunctionWithDivisors.order P :=
+  h.underlying.order_bound P
+
+theorem toFun_eq_on_common_regular (h : AddData s t)
+    (P : X)
+    (hs : s.toMeromorphicFunctionWithDivisors.poles P = 0)
+    (ht : t.toMeromorphicFunctionWithDivisors.poles P = 0) :
+    h.result.toMeromorphicFunctionWithDivisors.toFunction.toFun P =
+      (((s.toMeromorphicFunctionWithDivisors.toFunction.toFun P).getD 0 +
+          (t.toMeromorphicFunctionWithDivisors.toFunction.toFun P).getD 0 : ℂ) :
+        OnePoint ℂ) :=
+  h.underlying.toFun_eq_on_common_regular P hs ht
+
+end AddData
+
 end RiemannRochBoundedSection
 
 /-- A nonconstant element of the Riemann-Roch space `L([P])`. -/
