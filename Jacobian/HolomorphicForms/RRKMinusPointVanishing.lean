@@ -9,11 +9,23 @@ variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
+/--
+The genuine analytic core: for a valid divisor-compatible meromorphic function
+on a compact Riemann surface, the degree of its zero divisor equals the degree
+of its pole divisor.
+This is the single open sub-lemma for the degree of a principal divisor.
+-/
+lemma meromorphicFunctionWithDivisors_degree_zeros_eq_degree_poles
+    (f : MeromorphicFunctionWithDivisors X) :
+    Divisor.degree f.zeros = Divisor.degree f.poles := by
+  sorry
+
 /-- The degree of the principal divisor of any non-zero meromorphic function is zero. -/
 lemma meromorphicFunctionWithDivisors_degree_principal_eq_zero
     (f : MeromorphicFunctionWithDivisors X) : Divisor.degree f.principal = 0 := by
-  sorry
-
+  rw [f.principal_eq_zeroDivisor_sub_poleDivisor, map_sub]
+  rw [meromorphicFunctionWithDivisors_degree_zeros_eq_degree_poles]
+  exact sub_self _
 omit [TopologicalSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ, ℂ) ⊤ X] [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- The degree of an effective divisor is non-negative. -/
 lemma Divisor.degree_ge_zero_of_effective (D : Divisor X) (h : Divisor.Effective D) :
