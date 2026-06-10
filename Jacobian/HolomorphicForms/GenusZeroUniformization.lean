@@ -379,36 +379,33 @@ theorem genusZeroMontel_finite_normalized_chartBall_cover_without_coord_represen
 Coordinate representation for the finite Montel cover.
 
 This is the gluing/coherence frontier separated from the finite chart-ball
-selection data: it proves that the selected local patch coordinates and inverse
-branches represent the candidate homeomorphism.
+selection data: it constructs the candidate uniformization and proves that the
+selected local patch coordinates and inverse branches represent it.
 -/
 theorem genusZeroMontel_finite_cover_coord_representation
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X)
-    (chartBall : family.PatchIndex → ChartBallPowerSeries)
-    (sourceChart : family.PatchIndex → X → ℂ)
-    (hsource_mem :
-      ∀ i x, x ∈ (family.patch i).source →
-        sourceChart i x ∈ Metric.ball (chartBall i).center ((chartBall i).radius : ℝ))
-    (hcoord_chart :
-      ∀ i x, x ∈ (family.patch i).source →
-        (family.patch i).coord x = (chartBall i).toFun (sourceChart i x))
-    (htwo_chart :
-      ∃ identityIndex inversionIndex : family.PatchIndex,
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X)
+      (localPatch : family.PatchIndex → GenusZeroLocalMontelChartPatch)
+      (realization :
+        ∀ i, GenusZeroLocalMontelPatchRealization
+          (family.patch i) (localPatch i)),
+      (∀ i, (localPatch i).targetChart = (family.patch i).targetChart) ∧
+      (∃ identityIndex inversionIndex : family.PatchIndex,
         (family.patch identityIndex).targetChart = identityChart ∧
         (family.patch inversionIndex).targetChart = inversionChart ∧
         (∀ i, i = identityIndex ∨ i = inversionIndex) ∧
         Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
-          (chartBall identityIndex).center 0 1
-          (chartBall identityIndex).radius
-          (chartBall identityIndex).toFun) ∧
+          (localPatch identityIndex).chartBall.center 0 1
+          (localPatch identityIndex).chartBall.radius
+          (localPatch identityIndex).chartBall.toFun) ∧
         Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
-          (chartBall inversionIndex).center 0 1
-          (chartBall inversionIndex).radius
-          (chartBall inversionIndex).toFun)) :
+          (localPatch inversionIndex).chartBall.center 0 1
+          (localPatch inversionIndex).chartBall.radius
+          (localPatch inversionIndex).chartBall.toFun)) ∧
       (∀ i x, x ∈ (family.patch i).source →
         (family.patch i).targetChart.symm ((family.patch i).coord x) = u x) ∧
       (∀ i z, z ∈ (family.patch i).targetChart.target →
@@ -455,12 +452,11 @@ theorem genusZeroMontel_finite_normalized_chartBall_cover_without_source_cover
       (∀ i z, z ∈ (family.patch i).targetChart.target →
         (family.patch i).invCoord z =
           u.symm ((family.patch i).targetChart.symm z)) := by
-  rcases genusZeroMontel_finite_normalized_chartBall_cover_without_coord_representation X _e with
-    ⟨u, family, chartBall, sourceChart, hsource_mem, hcoord_chart, htwo_chart⟩
-  rcases genusZeroMontel_finite_cover_coord_representation X u family chartBall sourceChart
-      hsource_mem hcoord_chart htwo_chart with
-    ⟨hcoord, hinv⟩
-  exact ⟨u, family, chartBall, sourceChart, hsource_mem, hcoord_chart, htwo_chart, hcoord, hinv⟩
+  rcases genusZeroMontel_finite_cover_coord_representation X _e with
+    ⟨u, family, localPatch, realization, _htarget_eq, htwo_chart, hcoord, hinv⟩
+  exact ⟨u, family, fun i => (localPatch i).chartBall, fun i => (realization i).sourceChart,
+    fun i x hx => (realization i).sourceChart_mem_chartBall x hx,
+    fun i x hx => (realization i).coord_eq_chartBall x hx, htwo_chart, hcoord, hinv⟩
 
 /--
 Finite normalized chart-ball cover provider, before inserting the public
