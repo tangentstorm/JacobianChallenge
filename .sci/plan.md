@@ -295,6 +295,12 @@ surveyed in goal.md (§ FIRST JOB) — ~59 sorry-free substrate lemmas to turn i
       vanish. This should be independent once the section model for `K-[P]` is
       fixed.
 
+- [x] **B-RR2.1. Germ-Order Bridge.** The carrier `MeromorphicFunctionWithDivisors`
+      records an `order` field for bookkeeping, but lacks the bridge to actual
+      analytic germ behavior. We will state an exact open bridge relating `f.order P`
+      to `orderAt` of the function's finite lift or germ, and use this to prove
+      `toMap_eq_infty_of_poleDivisor_pos`. (Sorry count 4 → 4).
+
 - [ ] **B-RR3. Independent support leaf.** Prove the pure linear-algebra
       extraction: if constants embed as a one-dimensional subspace of `L([P])`
       and `finrank L([P]) = 2`, then there exists a nonconstant

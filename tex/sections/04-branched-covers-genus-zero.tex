@@ -2066,11 +2066,22 @@ in the inversion chart instead.
 A global complex-valued lift of a meromorphic map with no poles is holomorphic.
 \end{lemma}
 
+\begin{lemma}[Germ-order bridge]
+\label{lem:germ-order-bridge}
+\lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_order_eq_orderAt}
+Relates the Divisor order function to the analytic vanishing order.
+\end{lemma}
+
 \begin{lemma}[Value at positive pole]
 \label{lem:to-map-eq-infty-of-pole-divisor-pos}
+\uses{lem:germ-order-bridge}
 \lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_toMap_eq_infty_of_poleDivisor_pos}
 At a positive-order pole, a meromorphic map evaluates to infinity.
 \end{lemma}
+\begin{proof}
+\leanok
+Follows by analytic contradiction: finite evaluation implies non-negative germ order.
+\end{proof}
 
 \begin{lemma}[Branched cover data of pole degree]
 \label{lem:branched-cover-data-of-pole-degree}

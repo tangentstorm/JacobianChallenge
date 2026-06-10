@@ -29,6 +29,15 @@ lemma meromorphicFunctionWithDivisors_toFiniteFun_mdifferentiable
     MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g := by
   sorry
 
+/-- 
+The germ-order bridge. 
+Relates the `Divisor` order function to the analytic `VanishingOrder.orderAt`.
+-/
+lemma meromorphicFunctionWithDivisors_order_eq_orderAt
+    (f : MeromorphicFunctionWithDivisors X) (P : X) :
+    f.order P = VanishingOrder.orderAt P (fun q => (f.toFunction.toFun q).getD 0) := by
+  sorry
+
 /--
 At a positive-order pole, the map evaluates to infinity.
 This is an open analytic sub-lemma.
@@ -36,7 +45,76 @@ This is an open analytic sub-lemma.
 lemma meromorphicFunctionWithDivisors_toMap_eq_infty_of_poleDivisor_pos
     (f : MeromorphicFunctionWithDivisors X) :
     ∀ P : X, 0 < f.poleDivisor P → f.toFunction.toFun P = (OnePoint.infty : OnePoint ℂ) := by
-  sorry
+  intro P hP
+  by_contra h_ne
+  -- We have a finite value `c : ℂ`
+  obtain ⟨c, hc⟩ := OnePoint.ne_infty_iff_exists.mp h_ne
+  have hc_eq : f.toFunction.toFun P = (c : OnePoint ℂ) := hc.symm
+  -- The function `f.toFun` is continuous
+  have h_cont : Continuous f.toFunction.toFun := f.toFunction.toFun_continuous
+  have h_contAt : ContinuousAt f.toFunction.toFun P := h_cont.continuousAt
+  -- The finite lift `g q = (f.toFun q).getD 0`
+  set g := fun q => (f.toFunction.toFun q).getD 0
+  
+  have h_getD_cont : ContinuousAt (fun (y : OnePoint ℂ) => y.getD 0) (c : OnePoint ℂ) := by
+    rw [OnePoint.continuousAt_coe]
+    have h_eq : (fun y : OnePoint ℂ => y.getD 0) ∘ OnePoint.some = (fun x : ℂ => x) := by
+      funext x
+      rfl
+    rw [Function.comp_def] at h_eq ⊢
+    rw [h_eq]
+    exact continuousAt_id
+  
+  have h_g_cont : ContinuousAt g P := by
+    have h_getD_cont_P : ContinuousAt (fun (y : OnePoint ℂ) => y.getD 0) (f.toFunction.toFun P) :=
+      hc_eq.symm ▸ h_getD_cont
+    exact ContinuousAt.comp h_getD_cont_P h_contAt
+
+  have h_e_symm_cont : ContinuousAt (chartAt ℂ P).symm ((chartAt ℂ P) P) :=
+    (chartAt ℂ P).continuousAt_symm ((chartAt ℂ P).map_source (mem_chart_source ℂ P))
+
+  have h_g_comp_cont : ContinuousAt (g ∘ ⇑(chartAt ℂ P).symm) ((chartAt ℂ P) P) := by
+    apply ContinuousAt.comp
+    · have heq : (chartAt ℂ P).symm ((chartAt ℂ P) P) = P :=
+        (chartAt ℂ P).left_inv (mem_chart_source ℂ P)
+      exact heq.symm ▸ h_g_cont
+    · exact h_e_symm_cont
+
+  -- Since `g` is continuous at `P`, its orderAt is non-negative
+  have h_orderAt_nonneg : 0 ≤ VanishingOrder.orderAt P g := by
+    rw [VanishingOrder.orderAt_eq_chartAt]
+    apply (tendsto_nhds_iff_meromorphicOrderAt_nonneg _).mp
+    · have h_tendsto := h_g_comp_cont.tendsto.mono_left (nhdsWithin_le_nhds : 𝓝[≠] ((chartAt ℂ P) P) ≤ 𝓝 ((chartAt ℂ P) P))
+      have h_g_P : (g ∘ ⇑(chartAt ℂ P).symm) ((chartAt ℂ P) P) = g P := by
+        simp only [Function.comp_apply]
+        rw [(chartAt ℂ P).left_inv (mem_chart_source ℂ P)]
+      exact ⟨g P, h_g_P ▸ h_tendsto⟩
+    · have h_mero := f.toFunction.isMeromorphic P
+      unfold VanishingOrder.MeromorphicAtX at h_mero
+      rw [VanishingOrder.extChartAt_symm_eq_chartAt_symm, VanishingOrder.extChartAt_eq_chartAt] at h_mero
+      exact h_mero
+
+  -- But poleDivisor > 0 implies orderAt < 0
+  have h1 : f.poleDivisor P = poleCoeffOfOrder (f.order P) := f.poleDivisor_apply P
+  have h2 : 0 < poleCoeffOfOrder (f.order P) := by omega
+  have h3 : (f.order P).untopD 0 < 0 := by
+    unfold poleCoeffOfOrder at h2
+    omega
+  have h4 : (VanishingOrder.orderAt P g).untopD 0 < 0 := by
+    have h_bridge := meromorphicFunctionWithDivisors_order_eq_orderAt f P
+    rw [← h_bridge]
+    exact h3
+  
+  have h5 : VanishingOrder.orderAt P g < 0 := by
+    revert h4
+    cases h_ord : VanishingOrder.orderAt P g
+    · simp
+    · intro h
+      exact WithTop.coe_lt_coe.mpr h
+
+  have h_contra : (0 : WithTop ℤ) ≤ VanishingOrder.orderAt P g ∧ VanishingOrder.orderAt P g < 0 := ⟨h_orderAt_nonneg, h5⟩
+  revert h_contra
+  simp
 
 /--
 Bridge the sound Riemann-Roch carrier to the existing degree machinery
