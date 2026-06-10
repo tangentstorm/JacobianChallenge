@@ -47,7 +47,7 @@ Relates the `Divisor` order function to the analytic `VanishingOrder.orderAt`.
 lemma meromorphicFunctionWithDivisors_order_eq_orderAt
     (f : MeromorphicFunctionWithDivisors X) (P : X) :
     f.order P = VanishingOrder.orderAt P (fun q => (f.toFunction.toFun q).getD 0) := by
-  sorry
+  exact f.order_eq_orderAt P
 
 /--
 At a positive-order pole, the map evaluates to infinity.

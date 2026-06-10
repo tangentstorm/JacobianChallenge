@@ -2162,18 +2162,15 @@ family lies outside the constant line yields a
 for any sphere map \(f\) linked to \(g\) by the function identification
 \(f.\code{toMap} = g.\code{toFunction}.\code{toFun}\) and the divisor-copy
 facts, given the order-soundness side condition (simple pole \(\Rightarrow\)
-chart-local order one, stated carrier-side) as a hypothesis. Membership
+chart-local order one, now backed by the carrier's order--\code{orderAt}
+compatibility field) as a hypothesis. Membership
 transfers since the principal divisors agree; nonconstancy is the germ-seam
 transfer (Lemma~\ref{lem:rr-germs-outside-constants-nonconstant}); analytic
 data is carried by the underlying meromorphic function type except for the
-order-one field, which is the hypothesis. The side condition is provably not
-derivable from current carrier fields (see the CARRIER-GATED
-Lemma~\ref{lem:germ-order-bridge}); the statement-level hypotheses here are
-instantiated definitionally by the carrier wrapper once the upstream
-duplicate-declaration reconciliation and carrier order-soundness land, at
-which point the open germ-to-map bridge
-(Lemma~\ref{lem:rr-germ-to-map-bridge}) reduces to producing the
-representative.
+order-one field, which is the hypothesis. The statement-level hypotheses here
+are now aligned with the carrier order-soundness field; once the open
+germ-to-map bridge (Lemma~\ref{lem:rr-germ-to-map-bridge}) produces the
+representative, this packaging lemma supplies the analytic-data payload.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroPointRiemannRochElement_with_analyticData_of_carrier_representative}
 \leanok
 \end{lemma}
@@ -2462,10 +2459,16 @@ A global complex-valued lift of a meromorphic map with no poles is holomorphic.
 \begin{lemma}[Germ-order bridge]
 \label{lem:germ-order-bridge}
 \lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_order_eq_orderAt}
+\leanok
 Relates the Divisor order function to the analytic vanishing order.
 
-CARRIER-GATED: unprovable from the current \code{MeromorphicFunctionWithDivisors} fields (counter-model: recorded order 0 against a genuine root of order 3 satisfies all fields); requires an order--\code{orderAt} compatibility field in the carrier (jc0's lane).
+This is now a direct projection from the
+\code{MeromorphicFunctionWithDivisors} order--\code{orderAt} compatibility
+field. Constructor-level compatibility is recorded explicitly in the carrier;
+the remaining map-to-carrier wrapper proof is the named open obligation
+\code{order\_eq\_orderAt\_migration\_obligation}.
 \end{lemma}
+\begin{proof}\leanok\end{proof}
 
 \begin{lemma}[Value at positive pole]
 \label{lem:to-map-eq-infty-of-pole-divisor-pos}

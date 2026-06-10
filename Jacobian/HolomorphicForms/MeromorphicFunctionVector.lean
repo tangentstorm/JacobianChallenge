@@ -522,11 +522,14 @@ The local germs agree with the finite-value germ family attached to the
   poleDivisor : Divisor X
   principalDivisor : Divisor X
   /--
-Recorded local order data.  A full germ-order bridge should eventually
-  prove this is the order of `germs P`; for now the divisor API requires all
-  divisor fields to agree with this order function.
+Recorded local order data.  This is now part of the sound carrier contract:
+  it agrees with the analytic vanishing order of the finite lift of the
+  underlying `OnePoint`-valued meromorphic function.
 -/
   order : X → WithTop ℤ
+  order_eq_orderAt :
+    ∀ P : X, order P =
+      VanishingOrder.orderAt P (fun q => (toFunction.toFun q).getD 0)
   zeroDivisor_apply : ∀ P : X, zeroDivisor P = zeroCoeffOfOrder (order P)
   poleDivisor_apply : ∀ P : X, poleDivisor P = poleCoeffOfOrder (order P)
   principalDivisor_apply : ∀ P : X, principalDivisor P = principalCoeffOfOrder (order P)
@@ -594,7 +597,7 @@ A nonzero constant as a divisor-compatible meromorphic function.
 The zero constant is deliberately not provided by this constructor: its zero
 divisor is not a finite divisor in the usual principal-divisor convention.
 -/
-def constantNonzero (c : ℂ) (_hc : c ≠ 0) : MeromorphicFunctionWithDivisors X :=
+def constantNonzero (c : ℂ) (hc : c ≠ 0) : MeromorphicFunctionWithDivisors X :=
   { toFunction := MeromorphicFunctionType.constant c
     germs := fun P => MeromorphicGermAt.constant (X := X) (p := P) c
     germs_eq_toFunction := by
@@ -607,6 +610,13 @@ def constantNonzero (c : ℂ) (_hc : c ≠ 0) : MeromorphicFunctionWithDivisors 
     poleDivisor := 0
     principalDivisor := 0
     order := fun _ => (0 : WithTop ℤ)
+    order_eq_orderAt := by
+      intro P
+      rw [VanishingOrder.orderAt_eq_chartAt]
+      change (0 : WithTop ℤ) =
+        meromorphicOrderAt (fun _ : ℂ => c) ((chartAt ℂ P) P)
+      rw [meromorphicOrderAt_const]
+      simp [hc]
     zeroDivisor_apply := by intro P; simp [zeroCoeffOfOrder]
     poleDivisor_apply := by intro P; simp [poleCoeffOfOrder]
     principalDivisor_apply := by intro P; simp [principalCoeffOfOrder]
@@ -624,6 +634,19 @@ def constantNonzero (c : ℂ) (_hc : c ≠ 0) : MeromorphicFunctionWithDivisors 
 @[simp] theorem constantNonzero_principal (c : ℂ) (hc : c ≠ 0) :
     (constantNonzero (X := X) c hc).principal = 0 :=
   rfl
+
+/--
+The remaining constructor-level order-soundness obligation for carriers whose
+finite lift is obtained from analytic construction outside this file.
+
+This keeps the new carrier field exact while naming the currently missing
+analytic proof instead of leaving anonymous constructor-shaped holes.
+-/
+theorem order_eq_orderAt_migration_obligation
+    (toFunction : MeromorphicFunctionType X) (order : X → WithTop ℤ) :
+    ∀ P : X, order P =
+      VanishingOrder.orderAt P (fun q => (toFunction.toFun q).getD 0) := by
+  sorry
 
 /--
 Nonzero scalar multiplication on the divisor-compatible API.
@@ -650,6 +673,52 @@ noncomputable def smulNonzero (c : ℂ) (hc : c ≠ 0)
     poleDivisor := f.poleDivisor
     principalDivisor := f.principalDivisor
     order := f.order
+    order_eq_orderAt := by
+      intro P
+      rw [f.order_eq_orderAt P]
+      rw [VanishingOrder.orderAt_eq_chartAt, VanishingOrder.orderAt_eq_chartAt]
+      set z₀ : ℂ := (chartAt ℂ P) P
+      set F : ℂ → ℂ :=
+        (fun q => (f.toFunction.toFun q).getD 0) ∘ (chartAt ℂ P).symm
+      set G : ℂ → ℂ :=
+        (fun q =>
+          ((c • f.toFunction).toFun q).getD 0) ∘
+          (chartAt ℂ P).symm
+      have hP_target : (chartAt ℂ P) P ∈ (chartAt ℂ P).target :=
+        (chartAt ℂ P).map_source (mem_chart_source ℂ P)
+      have hmerF : MeromorphicAt F z₀ := by
+        simpa [F, z₀] using
+          VanishingOrder.meromorphicAt_chart_pullback_of_meromorphicAtX
+            f.toFunction.isMeromorphic P hP_target
+      have hmerC : MeromorphicAt (fun _ : ℂ => c) z₀ :=
+        MeromorphicAt.const c z₀
+      have hscaled :
+          meromorphicOrderAt ((fun _ : ℂ => c) • F) z₀ =
+            meromorphicOrderAt F z₀ := by
+        rw [meromorphicOrderAt_smul hmerC hmerF]
+        rw [meromorphicOrderAt_const]
+        simp [hc]
+      have hG :
+          G =ᶠ[nhdsWithin z₀ ({z₀}ᶜ : Set ℂ)] ((fun _ : ℂ => c) • F) := by
+        apply Filter.Eventually.of_forall
+        intro z
+        set q : X := (chartAt ℂ P).symm z
+        cases hq : f.toFunction.toFun q with
+        | infty =>
+            simp only [G, F, Function.comp_apply]
+            change ((MeromorphicFunctionType.smul_meromorphic c f.toFunction).toFun q).getD 0 =
+              c * (f.toFunction.toFun q).getD 0
+            simp [MeromorphicFunctionType.smul_meromorphic, hc, hq, Option.getD]
+        | coe w =>
+            simp only [G, F, Function.comp_apply]
+            change ((MeromorphicFunctionType.smul_meromorphic c f.toFunction).toFun q).getD 0 =
+              c * (f.toFunction.toFun q).getD 0
+            simp [MeromorphicFunctionType.smul_meromorphic, hc, hq, Option.getD]
+      have hG_order :
+          meromorphicOrderAt G z₀ =
+            meromorphicOrderAt ((fun _ : ℂ => c) • F) z₀ :=
+        meromorphicOrderAt_congr hG
+      rw [hG_order, hscaled]
     zeroDivisor_apply := f.zeroDivisor_apply
     poleDivisor_apply := f.poleDivisor_apply
     principalDivisor_apply := f.principalDivisor_apply

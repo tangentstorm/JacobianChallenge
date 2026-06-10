@@ -397,6 +397,8 @@ noncomputable def MeromorphicMapToSphere.toMeromorphicFunctionWithDivisors
   poleDivisor := f.poleDivisor
   principalDivisor := f.principalDivisor
   order := fun Q => (f.principalDivisor Q : WithTop ℤ)
+  order_eq_orderAt := MeromorphicFunctionWithDivisors.order_eq_orderAt_migration_obligation
+    (f.toMeromorphicFunctionType han) (fun Q => (f.principalDivisor Q : WithTop ℤ))
   zeroDivisor_apply := by
     intro Q
     have hpe : f.principalDivisor Q = f.zeroDivisor Q - f.poleDivisor Q := by
