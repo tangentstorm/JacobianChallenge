@@ -1827,6 +1827,16 @@ this node is intentionally left without \(\code{\textbackslash leanok}\).
 \lean{JacobianChallenge.HolomorphicForms.GenusZeroPointRiemannRochGermSpaceDimensionInput}
 \end{definition}
 
+\begin{lemma}[Genus-zero point RR germ-space dimension provider]
+\label{lem:rr-germ-space-dimension-input-provider}
+\uses{def:rr-germ-space-dimension-input}
+The named open provider for the Path B dimension layer inhabits the point
+Riemann--Roch germ-space dimension-input interface. This is the remaining
+Riemann--Roch dimension theorem for the sound germ-space carrier, and it is
+intentionally left open.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_pointRiemannRochGermSpaceDimensionInput}
+\end{lemma}
+
 \begin{lemma}[Constant germ line in the RR germ space]
 \label{lem:rr-germ-space-constant-line}
 \uses{def:rr-germ-space-carrier}
@@ -1883,7 +1893,7 @@ transitively on that open provider.
 
 \begin{lemma}[Hard core: dimension of \(L([P])\) in genus zero (open)]
 \label{lem:rr-dim-L-point-eq-two-core}
-\uses{def:rr-germ-space-carrier, def:rr-germ-space-dimension-input}
+\uses{def:rr-germ-space-carrier, lem:rr-germ-space-dimension-input-provider}
 The irreducible Riemann--Roch input for the Path B fixed-pole route is the
 dimension count
 \[
@@ -1900,16 +1910,17 @@ Riemann--Roch space, not merely an existential proxy:
 \end{gathered}
 \]
 The current Lean declaration below is only the structural arithmetic placeholder
-for the Riemann--Roch difference term; it does \emph{not} constitute a completed
-RR vector-space API or the actual dimension theorem. This is the single hard
-core that must be built from the project's divisor, meromorphic-function, and
-\(\code{analyticGenus}\) / holomorphic-one-form finiteness machinery.
+for the Riemann--Roch difference term, now open pending the RR dimension input;
+it does \emph{not} constitute a completed RR vector-space API or the actual
+dimension theorem. This is the single hard core that must be built from the
+project's divisor, meromorphic-function, and \(\code{analyticGenus}\) /
+holomorphic-one-form finiteness machinery.
 \lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_difference_eq_two}
 \end{lemma}
 
 \begin{lemma}[Vanishing of the residual \(K-[P]\) term (supporting)]
 \label{lem:rr-K-minus-point-vanishes}
-\uses{lem:rr-dim-L-point-eq-two-core}
+\uses{lem:rr-germ-space-dimension-input-provider}
 The complementary Riemann--Roch term has dimension zero in genus zero:
 \[
   \dim_\C L(K-[P]) = 0.
@@ -1921,7 +1932,8 @@ In the current Lean scaffold this is represented by the structural placeholder
 \]
 An honest proof should reduce this to negative-degree vanishing for
 meromorphic sections of \(K-[P]\), using \(g_{\mathrm{an}}(X)=0\) to identify
-\(\deg K=-2\).
+\(\deg K=-2\). The current Lean declaration is open pending the RR dimension
+input.
 \lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_K_minus_point_dim_zero}
 \end{lemma}
 
@@ -2333,6 +2345,7 @@ The degree of the zero divisor of a meromorphic map equals the branched degree o
 \label{lem:zeros-degree-eq-poles-degree}
 \uses{lem:to-finite-fun-mdifferentiable, lem:to-map-eq-infty-of-pole-divisor-pos, lem:branched-cover-data-of-pole-degree, lem:zero-divisor-degree-eq-branched-degree}
 \lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_degree_zeros_eq_degree_poles}
+\notready
 For a valid divisor-compatible meromorphic function on a compact Riemann surface, the degree of its zero divisor equals the degree of its pole divisor (open pending the four frontiers).
 \end{lemma}
 \begin{proof}
@@ -2343,6 +2356,7 @@ Obtain branched cover data, compute degrees.
 \label{lem:principal-divisor-degree-is-zero}
 \uses{lem:zeros-degree-eq-poles-degree}
 \lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_degree_principal_eq_zero}
+\notready
 The degree of the principal divisor of any non-zero meromorphic function is zero (open pending the four frontiers).
 \end{lemma}
 \begin{proof}
@@ -2353,10 +2367,9 @@ Subtract pole degree from zero degree.
 \label{thm:genus-zero-riemann-roch-k-minus-p}
 \uses{lem:principal-divisor-degree-is-zero}
 \lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_K_minus_point_dim_zero}
-The cited Lean declaration is currently a structural placeholder (\(\exists \ell, \ell = 0\)). The real statement awaits the \(K-[P]\) germ-space carrier (see jc0's \code{GenusZeroPointRiemannRochGermSpaceDimensionInput} work). 
+The cited Lean declaration is currently open pending the RR dimension input via
+jc0's \code{genusZero\_pointRiemannRochGermSpaceDimensionInput} provider. The
+real statement awaits the \(K-[P]\) germ-space carrier.
 
 Once formalized, the intended statement is: The Riemann-Roch space \(L(K - [P])\) is trivial in genus zero.
 \end{theorem}
-\begin{proof}
-(Not yet formalized). Since the canonical degree is -2, the degree of \(K-[P]\) is -3. Any non-zero section would have a principal divisor of degree 0, but \(0 \le \deg(D + (f)) = -3 + 0\), a contradiction.
-\end{proof}

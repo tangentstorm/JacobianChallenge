@@ -545,8 +545,8 @@ noncomputable abbrev genusZero_pointRiemannRochGermSpace_finrank_target
   Module.finrank ℂ (RiemannRochGermSpace X (Divisor.point P)) = 2
 
 /--
-The named hard input needed to turn the Path B Riemann-Roch arithmetic
-placeholder into a statement about the sound germ-space carrier.
+The interface for the hard Path B Riemann-Roch dimension input on the sound
+germ-space carrier.
 
 The `point_finrank_eq_two` field is the real `L([P])` dimension target.  The
 residual field keeps the current `K - [P]` placeholder shape until the
@@ -562,6 +562,24 @@ structure GenusZeroPointRiemannRochGermSpaceDimensionInput
   point_finrank_eq_two :
     Module.finrank ℂ (RiemannRochGermSpace X (Divisor.point P)) = 2
   residual_dim_zero : ∃ ℓKP : ℕ, ℓKP = 0
+
+/--
+Named provider for the remaining genus-zero Riemann-Roch dimension input on
+the point germ-space carrier.
+
+This is the single hard open input for the current Path B dimension layer:
+it packages the point `L([P])` finrank computation together with the residual
+`K - [P]` vanishing shape.
+-/
+theorem genusZero_pointRiemannRochGermSpaceDimensionInput
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    GenusZeroPointRiemannRochGermSpaceDimensionInput X P h := by
+  sorry
 
 theorem genusZero_riemannRoch_difference_eq_two_of_germSpaceDimensionInput
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -723,10 +741,9 @@ theorem MeromorphicMapToSphere.toFiniteFun_of_no_poles
 The real open frontier is the germ-space dimension input
 `GenusZeroPointRiemannRochGermSpaceDimensionInput`: it states
 `Module.finrank ℂ (RiemannRochGermSpace X (Divisor.point P)) = 2` plus the
-residual `K - [P]` vanishing shape.  The theorem
-`genusZero_riemannRoch_difference_eq_two_of_germSpaceDimensionInput` records how
-that future input implies this old arithmetic interface.  This public
-placeholder remains directly inhabited until that hard input is proved.
+residual `K - [P]` vanishing shape.  This public arithmetic interface is now
+proved from the named open provider
+`genusZero_pointRiemannRochGermSpaceDimensionInput`.
 -/
 theorem genusZero_riemannRoch_difference_eq_two
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -736,9 +753,8 @@ theorem genusZero_riemannRoch_difference_eq_two
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ ℓP ℓKP : ℕ, (ℓP : ℤ) - (ℓKP : ℤ) = 2 := by
-  have _P_used : X := P
-  have _h_used : analyticGenus ℂ X = 0 := h
-  exact ⟨2, 0, by norm_num⟩
+  exact genusZero_riemannRoch_difference_eq_two_of_germSpaceDimensionInput X P h
+    (genusZero_pointRiemannRochGermSpaceDimensionInput X P h)
 
 /--
 **Structural placeholder (S2b).** A negative-degree line bundle on a compact
@@ -749,7 +765,8 @@ This remains in the old existential shape because the residual `K - [P]`
 germ-space carrier has not yet been introduced.  Its value is also recorded as
 the residual field in `GenusZeroPointRiemannRochGermSpaceDimensionInput`, so the
 point-space finrank theorem and residual vanishing can later replace the raw
-arithmetic scaffold together.
+arithmetic scaffold together.  This public interface is now proved from the
+named open provider `genusZero_pointRiemannRochGermSpaceDimensionInput`.
 -/
 theorem genusZero_riemannRoch_K_minus_point_dim_zero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -759,9 +776,7 @@ theorem genusZero_riemannRoch_K_minus_point_dim_zero
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ ℓKP : ℕ, ℓKP = 0 := by
-  have _P_used : X := P
-  have _h_used : analyticGenus ℂ X = 0 := h
-  exact ⟨0, rfl⟩
+  exact (genusZero_pointRiemannRochGermSpaceDimensionInput X P h).residual_dim_zero
 
 /-! ### Local properties of meromorphic maps and divisors -/
 
