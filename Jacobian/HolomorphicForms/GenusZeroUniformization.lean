@@ -201,23 +201,23 @@ theorem onePointCx_identity_or_inversionChart_source :
 
 /--
 Finite normalized chart-ball cover provider, before inserting the public
-source-cover, coordinate-representation, and public `OnePoint ℂ` target-cover
-theorems.
+candidate homeomorphism, source-cover, coordinate-representation, and public
+`OnePoint ℂ` target-cover theorems.
 
 This is the genuine Montel finite-cover frontier. The target-cover fact for
 the two standard charts is supplied separately by
 `onePointCx_identity_or_inversionChart_source`, and the source-cover fact is
 projected from the returned `GenusZeroGlobalPatchFamily`. The global
-coordinate-representation facts are supplied by a separate gluing/coherence
-provider.
+coordinate-representation facts and candidate homeomorphism are supplied by a
+separate gluing/coherence provider.
 -/
-theorem genusZeroMontel_finite_normalized_chartBall_cover_without_coord_representation
+theorem genusZeroMontel_finite_normalized_chartBall_cover_without_candidate
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
-    ∃ (u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X)
+    ∃ (family : GenusZeroGlobalPatchFamily X)
       (chartBall : family.PatchIndex → ChartBallPowerSeries)
       (sourceChart : family.PatchIndex → X → ℂ),
       (∀ i x, x ∈ (family.patch i).source →
@@ -240,6 +240,43 @@ theorem genusZeroMontel_finite_normalized_chartBall_cover_without_coord_represen
   -- realize the raw patches by those local coordinates, and prove their
   -- two-chart assignment.
   sorry
+
+/--
+Finite normalized chart-ball cover provider, before inserting the public
+source-cover, coordinate-representation, and public `OnePoint ℂ` target-cover
+theorems.
+
+This wrapper reinserts the candidate homeomorphism from the input while keeping
+the finite-cover selection frontier independent of that unused field.
+-/
+theorem genusZeroMontel_finite_normalized_chartBall_cover_without_coord_representation
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (_u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X)
+      (chartBall : family.PatchIndex → ChartBallPowerSeries)
+      (sourceChart : family.PatchIndex → X → ℂ),
+      (∀ i x, x ∈ (family.patch i).source →
+        sourceChart i x ∈ Metric.ball (chartBall i).center ((chartBall i).radius : ℝ)) ∧
+      (∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).coord x = (chartBall i).toFun (sourceChart i x)) ∧
+      (∃ identityIndex inversionIndex : family.PatchIndex,
+        (family.patch identityIndex).targetChart = identityChart ∧
+        (family.patch inversionIndex).targetChart = inversionChart ∧
+        (∀ i, i = identityIndex ∨ i = inversionIndex) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (chartBall identityIndex).center 0 1
+          (chartBall identityIndex).radius
+          (chartBall identityIndex).toFun) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (chartBall inversionIndex).center 0 1
+          (chartBall inversionIndex).radius
+          (chartBall inversionIndex).toFun)) := by
+  rcases genusZeroMontel_finite_normalized_chartBall_cover_without_candidate X _e with
+    ⟨family, chartBall, sourceChart, hsource_mem, hcoord_chart, htwo_chart⟩
+  exact ⟨_e, family, chartBall, sourceChart, hsource_mem, hcoord_chart, htwo_chart⟩
 
 /--
 Coordinate representation for the finite Montel cover.

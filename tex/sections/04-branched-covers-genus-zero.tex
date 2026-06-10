@@ -1493,13 +1493,23 @@ The identity and inversion public charts must cover
 \leanok
 \end{lemma}
 
-\begin{lemma}[Montel normalized-limit two-chart cover without coordinate representation (open)]
-\label{lem:montel-normalized-limit-two-chart-cover-without-coord-rep}
+\begin{lemma}[Montel normalized-limit two-chart cover without candidate (open)]
+\label{lem:montel-normalized-limit-two-chart-cover-without-candidate}
 \uses{lem:montel-two-chart-source-cover}
 The raw finite Montel data chooses the normalized identity and inversion
 chart-ball packages and the coordinate realization for the returned global
-patch family, but does not yet prove that those coordinates represent the
-candidate uniformization globally.
+patch family, but does not yet carry a candidate homeomorphism or prove that
+those coordinates represent it globally.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_without_candidate}
+\end{lemma}
+
+\begin{lemma}[Montel normalized-limit two-chart cover without coordinate representation (open)]
+\label{lem:montel-normalized-limit-two-chart-cover-without-coord-rep}
+\uses{lem:montel-normalized-limit-two-chart-cover-without-candidate}
+The finite-cover data together with the input homeomorphism
+\(_e : X \simeq_t \code{OnePoint}\,\C\) gives the normalized two-chart cover
+before coordinate representation. The candidate is reinserted here, keeping the
+finite-cover selection node independent of it.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_without_coord_representation}
 \end{lemma}
 
