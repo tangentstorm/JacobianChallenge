@@ -1319,6 +1319,22 @@ honest section round-trip hypothesis a caller supplies.
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Packaged realized Montel patch bundle]
+\label{lem:montel-realized-patch-bundle}
+\uses{lem:montel-local-patch-realization, lem:montel-realization-coord-invcoord, lem:montel-realization-invcoord-coord}
+A single bundle for the downstream gluing consumers: the constructed global
+gluing patch, its local Montel realization witness, and both local round-trip
+identities (\(\code{coord}\circ\code{invCoord}=\mathrm{id}\) on the local chart
+target, \(\code{invCoord}\circ\code{coord}=\mathrm{id}\) on the patch source). The
+constructor assembles it from the chart-ball substrate and source-chart data as a
+pure composition of the three accepted green leaves, so a consumer obtains a
+complete, ready-to-glue realized patch in one value rather than re-threading the
+source-chart hypotheses across four separate calls.
+\lean{JacobianChallenge.HolomorphicForms.MontelRealizedPatch, JacobianChallenge.HolomorphicForms.montelRealizedPatch_of_sourceChart}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Montel coherent local selector (open)]
 \label{lem:montel-coherent-local-selector}
 \uses{lem:montel-local-patch-realization}
