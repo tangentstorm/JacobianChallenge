@@ -4412,6 +4412,8 @@ theorem genusZero_fixedPole_rr_analyticData_provider
 /--
 Bare genus-zero RR-section provider, now factored through the direct fixed-pole
 analytic-data frontier instead of the #233/#232 uniformization route.
+
+CIRCULAR - do not use; see B-RR3g.
 -/
 theorem genusZero_pointRRSection_outside_constants_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -4499,6 +4501,7 @@ theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
     X P h f han.meromorphic_getD hpole (han.simple_pole_order_one P hpole) hmod
 
 
+/-- CIRCULAR - do not use; see B-RR3g. -/
 theorem genusZero_fixedPole_rrSection_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -4511,6 +4514,7 @@ theorem genusZero_fixedPole_rrSection_nonempty
   exact ⟨s.toRiemannRochSectionAtPoint⟩
 
 
+/-- CIRCULAR - do not use; see B-RR3g. -/
 theorem genusZero_fixedPole_simplePoleRRSection_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -4523,6 +4527,7 @@ theorem genusZero_fixedPole_simplePoleRRSection_nonempty
   exact ⟨s.toSimplePoleRRSection⟩
 
 
+/-- CIRCULAR - do not use; see B-RR3g. -/
 theorem genusZero_fixedPole_analyticRRWitness_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -4535,6 +4540,8 @@ theorem genusZero_fixedPole_analyticRRWitness_nonempty
   exact ⟨s.toGenusZeroFixedPoleAnalyticRRWitness⟩
 
 /--
+CIRCULAR - do not use; see B-RR3g.
+
 * a meromorphic-map-to-sphere `f` with `f.poles = Divisor.point P`;
 * the per-point chart-local `f.AnalyticData` (meromorphicity of the
   canonical finite lift at every point, global continuity, and
@@ -4554,6 +4561,7 @@ theorem genusZero_fixedPole_rr_analyticData_nonempty
   exact ⟨w.map, w.poleDivisor_eq, w.analyticData, w.poleModulusData⟩
 
 
+/-- CIRCULAR - do not use; see B-RR3g. -/
 theorem genusZero_fixedPole_complexPrincipalPart_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -4568,6 +4576,7 @@ theorem genusZero_fixedPole_complexPrincipalPart_nonempty
     complexPrincipalPart_of_meromorphicMap_analyticData P f hpole han hmod⟩
 
 
+/-- CIRCULAR - do not use; see B-RR3g. -/
 theorem genusZero_fixedPole_simplePoleToSphereData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -4580,6 +4589,7 @@ theorem genusZero_fixedPole_simplePoleToSphereData_nonempty
   exact ⟨SimplePoleToSphereData.of_complexPrincipalPart F P hF⟩
 
 
+/-- CIRCULAR - do not use; see B-RR3g. -/
 theorem genusZero_fixedPole_analyticRouteData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -4592,6 +4602,7 @@ theorem genusZero_fixedPole_analyticRouteData_nonempty
   exact singlePoleAnalyticData_of_simplePoleToSphereData (X := X) P d
 
 
+/-- CIRCULAR - do not use; see B-RR3g. -/
 theorem genusZero_fixedPole_singlePoleRouteData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -4614,6 +4625,8 @@ theorem genusZero_fixedPole_singlePoleRouteData_nonempty
 
 /--
 **Fixed-pole route-data assembly wrapper.**
+
+CIRCULAR - do not use; see B-RR3g.
 
 This is the entry point used by `GenusZeroClassification.lean`.
 -/

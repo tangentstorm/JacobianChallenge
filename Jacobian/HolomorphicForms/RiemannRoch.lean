@@ -884,6 +884,8 @@ lemma not_continuous_two_point_indicator
 **Structural axiom: genus-zero RR provides a `MeromorphicMapToSphere`
 with full analytic + RR-space-membership content.**
 
+CIRCULAR - do not use; see B-RR3g.
+
 The exact upstream content needed to discharge
 `genusZero_pointRRSection_outside_constants_exists` (in
 `MeromorphicToBranchedCover.lean`) plus
@@ -1088,6 +1090,8 @@ theorem genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point
 **Headline obligation (final packaging).** Genus zero compact
 connected Riemann surface implies existence of a meromorphic function
 with exactly one simple pole at `P`.
+
+CIRCULAR - do not use; see B-RR3g.
 
 **Refactored (2026-05-27, follow-on to commit `cfca8ac3`)**: this
 theorem now routes through the narrower named provider
