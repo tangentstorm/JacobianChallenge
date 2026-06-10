@@ -1456,9 +1456,13 @@ theorem genusZero_complexStructureUnique_pointRRSection_at_infty_nonempty
     Nonempty (PointRiemannRochSection X (e.symm OnePoint.infty)) := by
   letI : FiniteDimensionalHolomorphicOneForms ℂ X :=
     compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier X
-  exact genusZero_pointRRSection_outside_constants_exists X
-    (e.symm OnePoint.infty)
-    (genusZero_complexStructureUnique_analyticGenus_eq_zero X e)
+  let P : X := e.symm OnePoint.infty
+  let h : analyticGenus ℂ X = 0 :=
+    genusZero_complexStructureUnique_analyticGenus_eq_zero X e
+  obtain ⟨f, hpole, han, hmod⟩ :=
+    genusZero_fixedPole_rr_analyticData_provider X P h
+  exact ⟨PointRiemannRochSection.of_meromorphicMap_meromorphic_getD_simple_pole
+    f han.meromorphic_getD P hpole (han.simple_pole_order_one P hpole) hmod⟩
 
 /--
 Fixed-pole principal-part assembly for the Riemann sphere: a fixed-pole
@@ -2049,7 +2053,9 @@ theorem genusZeroRiemannRochFixedPoleData_nonempty
     (P : X)
     (h : analyticGenus ℂ X = 0) :
     Nonempty (GenusZeroRiemannRochFixedPoleData X P h) := by
-  exact genusZero_fixedPole_meromorphicData_nonempty X P h
+  obtain ⟨f, hpole, _han, _hmod⟩ :=
+    genusZero_fixedPole_rr_analyticData_provider X P h
+  exact ⟨{ meromorphicMap := f, poleDivisor_eq_point := hpole }⟩
 
 /--
 **Fixed-pole Riemann-Roch data assembly.** Extracts the map/certificate

@@ -1480,9 +1480,8 @@ theorem complexPrincipalPart_of_meromorphicMap_analyticData
 /-!
 ### Production analytic Riemann-Roch witness
 
-The current divisor-level Riemann-Roch route (e.g. the assembly
-`genusZero_fixedPole_meromorphicData_nonempty`, which under the hood
-selects `singlePoleMeromorphicMap P`) is correct only for
+The old divisor-level Riemann-Roch route, which under the hood selected
+`singlePoleMeromorphicMap P`, was correct only for
 divisor/topology-level claims: the underlying map is the bump-cutoff
 scaffold, whose canonical finite lift is *not* meromorphic everywhere
 and whose chart-local order at `P` is not the analytic order-one of a
@@ -1899,8 +1898,7 @@ modulus-divergence data, and no analytic-extension fields. Those are
 local consequences of the algebraic data, isolated as separate provider
 lemmas below.
 
-The Riemann-Roch provider `genusZero_pointRRSection_outside_constants_exists`
-asks for the algebraic input only. The order-extraction lemma
+The order-extraction lemma
 `PointRiemannRochSection.orderAt_P_eq_neg_one` deduces
 `orderAt P f = -1` from the algebraic data plus the compact-Liouville
 provider `meromorphic_no_poles_constant`. The conversion
@@ -4100,9 +4098,8 @@ Genus-zero compact connected Riemann surfaces admit an honest analytic
 single-pole meromorphic-map package at any prescribed point.
 
 The proof deliberately routes through the explicit biholomorphic
-uniformization frontier and not through
-`genusZero_pointRRSection_outside_constants_exists` or its downstream
-fixed-pole RR-section chain, which depends on this theorem.
+uniformization frontier and not through the deleted fixed-pole RR-section
+chain, which depended on this theorem.
 -/
 theorem genusZero_singlePoleMeromorphicAnalyticData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -4410,25 +4407,6 @@ theorem genusZero_fixedPole_rr_analyticData_provider
     genusZero_fixedPole_poleModulusData_of_analyticData X P h f hnc hmem hpole han⟩
 
 /--
-Bare genus-zero RR-section provider, now factored through the direct fixed-pole
-analytic-data frontier instead of the #233/#232 uniformization route.
-
-CIRCULAR - do not use; see B-RR3g.
--/
-theorem genusZero_pointRRSection_outside_constants_exists
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0) :
-    Nonempty (PointRiemannRochSection X P) := by
-  obtain ⟨f, hpole, han, hmod⟩ :=
-    genusZero_fixedPole_rr_analyticData_provider X P h
-  exact ⟨PointRiemannRochSection.of_meromorphicMap_meromorphic_getD_simple_pole
-    f han.meromorphic_getD P hpole (han.simple_pole_order_one P hpole) hmod⟩
-
-/--
 **Canonical explicit-input form of L2779 (granular).**
 
 Given a `MeromorphicMapToSphere X` `f`, the granular projections
@@ -4443,12 +4421,6 @@ sorry-free by the canonical granular assembly primitive
 The convenience wrapper
 `genusZero_pointRRSection_outside_constants_exists_with_analyticData`
 below takes a full `AnalyticData` record instead and delegates here.
-
-The bare form `genusZero_pointRRSection_outside_constants_exists`
-(above) is now factored through
-`genusZero_fixedPole_rr_analyticData_provider`, the direct fixed-pole
-frontier for producing `MeromorphicMapToSphere` plus granular analytic
-and modulus content honestly.
 -/
 theorem genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -4500,133 +4472,8 @@ theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
   genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
     X P h f han.meromorphic_getD hpole (han.simple_pole_order_one P hpole) hmod
 
-
-/-- CIRCULAR - do not use; see B-RR3g. -/
-theorem genusZero_fixedPole_rrSection_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0) :
-    Nonempty (RiemannRochSectionAtPoint X P) := by
-  obtain ⟨s⟩ := genusZero_pointRRSection_outside_constants_exists X P h
-  exact ⟨s.toRiemannRochSectionAtPoint⟩
-
-
-/-- CIRCULAR - do not use; see B-RR3g. -/
-theorem genusZero_fixedPole_simplePoleRRSection_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0) :
-    Nonempty (SimplePoleRRSection X P) := by
-  obtain ⟨s⟩ := genusZero_fixedPole_rrSection_nonempty X P h
-  exact ⟨s.toSimplePoleRRSection⟩
-
-
-/-- CIRCULAR - do not use; see B-RR3g. -/
-theorem genusZero_fixedPole_analyticRRWitness_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0) :
-    Nonempty (GenusZeroFixedPoleAnalyticRRWitness X P) := by
-  obtain ⟨s⟩ := genusZero_fixedPole_simplePoleRRSection_nonempty X P h
-  exact ⟨s.toGenusZeroFixedPoleAnalyticRRWitness⟩
-
-/--
-CIRCULAR - do not use; see B-RR3g.
-
-* a meromorphic-map-to-sphere `f` with `f.poles = Divisor.point P`;
-* the per-point chart-local `f.AnalyticData` (meromorphicity of the
-  canonical finite lift at every point, global continuity, and
-  order-one at the simple pole);
-* the modulus-divergence `f.PoleModulusData`.
--/
-theorem genusZero_fixedPole_rr_analyticData_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0) :
-    ∃ f : MeromorphicMapToSphere X,
-      f.poles = Divisor.point P ∧ f.AnalyticData ∧ f.PoleModulusData := by
-  obtain ⟨w⟩ := genusZero_fixedPole_analyticRRWitness_nonempty X P h
-  exact ⟨w.map, w.poleDivisor_eq, w.analyticData, w.poleModulusData⟩
-
-
-/-- CIRCULAR - do not use; see B-RR3g. -/
-theorem genusZero_fixedPole_complexPrincipalPart_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0) :
-    ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F P := by
-  obtain ⟨f, hpole, han, hmod⟩ :=
-    genusZero_fixedPole_rr_analyticData_nonempty X P h
-  exact ⟨fun x => (f.toMap x).getD 0,
-    complexPrincipalPart_of_meromorphicMap_analyticData P f hpole han hmod⟩
-
-
-/-- CIRCULAR - do not use; see B-RR3g. -/
-theorem genusZero_fixedPole_simplePoleToSphereData_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0) :
-    Nonempty (SimplePoleToSphereData X P) := by
-  obtain ⟨F, hF⟩ := genusZero_fixedPole_complexPrincipalPart_nonempty X P h
-  exact ⟨SimplePoleToSphereData.of_complexPrincipalPart F P hF⟩
-
-
-/-- CIRCULAR - do not use; see B-RR3g. -/
-theorem genusZero_fixedPole_analyticRouteData_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0) :
-    Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
-  obtain ⟨d⟩ := genusZero_fixedPole_simplePoleToSphereData_nonempty X P h
-  exact singlePoleAnalyticData_of_simplePoleToSphereData (X := X) P d
-
-
-/-- CIRCULAR - do not use; see B-RR3g. -/
-theorem genusZero_fixedPole_singlePoleRouteData_nonempty
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0) :
-    Nonempty (SinglePoleMeromorphicMapData (X := X) P) := by
-  obtain ⟨route⟩ := genusZero_fixedPole_analyticRouteData_nonempty X P h
-  have hbranch : route.map.BranchedCoverDataOfPoleDegree :=
-    route.map.branchedCoverDataOfPoleDegree_of_simple_pole P
-      route.nonconstant route.poleDivisor_eq route.analyticData
-  exact ⟨{
-    map := route.map
-    poleDivisor_eq := route.poleDivisor_eq
-    nonconstant := route.nonconstant
-    poleModulusData := route.poleModulusData
-    analyticData := route.analyticData
-    branchedCoverDataOfPoleDegree := hbranch }⟩
-
 /--
 **Fixed-pole route-data assembly wrapper.**
-
-CIRCULAR - do not use; see B-RR3g.
 
 This is the entry point used by `GenusZeroClassification.lean`.
 -/
@@ -4641,10 +4488,15 @@ theorem genusZero_fixedPole_meromorphicData_with_routeData_nonempty
       { data : GenusZeroFixedPoleMeromorphicData X P h //
         data.meromorphicMap.PoleModulusData ∧
         data.meromorphicMap.BranchedCoverDataOfPoleDegree } := by
-  obtain ⟨route⟩ := genusZero_fixedPole_singlePoleRouteData_nonempty X P h
+  obtain ⟨f, hpole, han, hmod⟩ :=
+    genusZero_fixedPole_rr_analyticData_provider X P h
+  have hnc : f.Nonconstant :=
+    f.nonconstant_of_poleDivisor_point P hpole
+  have hbranch : f.BranchedCoverDataOfPoleDegree :=
+    f.branchedCoverDataOfPoleDegree_of_simple_pole P hnc hpole han
   let data : GenusZeroFixedPoleMeromorphicData X P h :=
-    { meromorphicMap := route.map
-      poleDivisor_eq_point := route.poleDivisor_eq }
-  exact ⟨⟨data, route.poleModulusData, route.branchedCoverDataOfPoleDegree⟩⟩
+    { meromorphicMap := f
+      poleDivisor_eq_point := hpole }
+  exact ⟨⟨data, hmod, hbranch⟩⟩
 
 end JacobianChallenge.HolomorphicForms
