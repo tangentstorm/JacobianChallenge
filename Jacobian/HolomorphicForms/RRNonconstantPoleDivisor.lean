@@ -118,4 +118,50 @@ theorem genusZero_poleDivisor_eq_point_of_GenusZeroPointRiemannRochElement
   genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point'
     X P f.meromorphicMap f.nonconstant f.mem_L_point
 
+/--
+**Path B leaf (#232), analytic-order corollary.** A nonconstant `f ∈ L([P])`
+that carries honest analytic data has chart-local analytic order exactly `1`
+at `P`.
+
+This is the precise fact the branched-cover / degree chain consumes
+(`mapAnalyticOrderAt f.toMap P = 1`), derived here from the *weaker* hypotheses
+`f.Nonconstant + f.MemRiemannRochSpace [P] + f.AnalyticData` rather than from a
+pre-supplied `f.poles = Divisor.point P`. The proof composes
+`genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point'` (this file, which
+pins the pole divisor) with the analytic-order projection
+`MeromorphicMapToSphere.mapAnalyticOrderAt_toMap_eq_one_of_analyticData`
+(in `MeromorphicToBranchedCover`; cited, not edited).
+-/
+theorem genusZero_mapAnalyticOrderAt_eq_one_of_nonconstant_mem_L_point
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (f : MeromorphicMapToSphere X)
+    (han : f.AnalyticData)
+    (hnc : f.Nonconstant)
+    (hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 := by
+  have hpole : f.poles = Divisor.point P :=
+    genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point' X P f hnc hmem
+  exact f.mapAnalyticOrderAt_toMap_eq_one_of_analyticData han P hpole
+
+/--
+**Path B leaf (#232), analytic-order corollary, packaged form.** The same
+`mapAnalyticOrderAt = 1` conclusion for a `GenusZeroPointRiemannRochElement`
+together with its analytic data. Delegates to the bare form above.
+-/
+theorem genusZero_mapAnalyticOrderAt_eq_one_of_GenusZeroPointRiemannRochElement
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : GenusZeroPointRiemannRochElement X P h)
+    (han : f.meromorphicMap.AnalyticData) :
+    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.meromorphicMap.toMap P = 1 :=
+  genusZero_mapAnalyticOrderAt_eq_one_of_nonconstant_mem_L_point
+    X P f.meromorphicMap han f.nonconstant f.mem_L_point
+
 end JacobianChallenge.HolomorphicForms
