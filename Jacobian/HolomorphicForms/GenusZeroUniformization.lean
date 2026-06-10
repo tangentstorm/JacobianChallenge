@@ -187,6 +187,62 @@ theorem genusZeroGlobalGluing_coord_mem_target_on_patch
   · rw [hchart]
     simp [inversionChart]
 
+/-- The two public charts on `OnePoint ℂ` cover the target. -/
+theorem onePointCx_identity_or_inversionChart_source :
+    ∀ y : OnePoint ℂ, y ∈ identityChart.source ∨ y ∈ inversionChart.source := by
+  intro y
+  cases y with
+  | infty =>
+      right
+      simp [inversionChart]
+  | coe z =>
+      left
+      simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+
+/--
+Finite normalized chart-ball cover provider, before inserting the public
+`OnePoint ℂ` target-cover theorem.
+
+This is the genuine Montel finite-cover frontier. The target-cover fact for
+the two standard charts is supplied separately by
+`onePointCx_identity_or_inversionChart_source`.
+-/
+theorem genusZeroMontel_finite_normalized_chartBall_cover_without_target_cover
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X)
+      (chartBall : family.PatchIndex → ChartBallPowerSeries)
+      (sourceChart : family.PatchIndex → X → ℂ),
+      (∀ i x, x ∈ (family.patch i).source →
+        sourceChart i x ∈ Metric.ball (chartBall i).center ((chartBall i).radius : ℝ)) ∧
+      (∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).coord x = (chartBall i).toFun (sourceChart i x)) ∧
+      (∀ x : X, ∃ i, x ∈ (family.patch i).source) ∧
+      (∃ identityIndex inversionIndex : family.PatchIndex,
+        (family.patch identityIndex).targetChart = identityChart ∧
+        (family.patch inversionIndex).targetChart = inversionChart ∧
+        (∀ i, i = identityIndex ∨ i = inversionIndex) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (chartBall identityIndex).center 0 1
+          (chartBall identityIndex).radius
+          (chartBall identityIndex).toFun) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (chartBall inversionIndex).center 0 1
+          (chartBall inversionIndex).radius
+          (chartBall inversionIndex).toFun)) ∧
+      (∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).targetChart.symm ((family.patch i).coord x) = u x) ∧
+      (∀ i z, z ∈ (family.patch i).targetChart.target →
+        (family.patch i).invCoord z =
+          u.symm ((family.patch i).targetChart.symm z)) := by
+  -- Remaining finite-cover frontier: choose normalized chart-ball limits,
+  -- realize the raw patches by those local coordinates, and prove their source
+  -- cover, two-chart assignment, and representation properties.
+  sorry
+
 /--
 Finite normalized chart-ball cover provider for the raw Montel construction.
 
@@ -228,10 +284,11 @@ theorem genusZeroMontel_finite_normalized_chartBall_cover
       (∀ i z, z ∈ (family.patch i).targetChart.target →
         (family.patch i).invCoord z =
           u.symm ((family.patch i).targetChart.symm z)) := by
-  -- Remaining finite-cover frontier: choose normalized chart-ball limits,
-  -- realize the raw patches by those local coordinates, and prove their
-  -- two-chart cover and representation properties.
-  sorry
+  rcases genusZeroMontel_finite_normalized_chartBall_cover_without_target_cover X _e with
+    ⟨u, family, chartBall, sourceChart, hsource_mem, hcoord_chart, hsource_cover,
+      htwo_chart, hcoord, hinv⟩
+  exact ⟨u, family, chartBall, sourceChart, hsource_mem, hcoord_chart, hsource_cover,
+    onePointCx_identity_or_inversionChart_source, htwo_chart, hcoord, hinv⟩
 
 /--
 Raw Montel patch-family provider for the normalized selector.

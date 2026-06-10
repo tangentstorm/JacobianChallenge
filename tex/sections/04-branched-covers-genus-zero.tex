@@ -1493,13 +1493,23 @@ The identity and inversion public charts must cover
 \leanok
 \end{lemma}
 
+\begin{lemma}[Montel normalized-limit two-chart cover without target cover (open)]
+\label{lem:montel-normalized-limit-two-chart-cover-without-target-cover}
+\uses{lem:montel-two-chart-source-cover}
+The two chosen public-chart patches retain their normalized chart-ball limit
+packages, one for the identity chart and one for the inversion chart, so the
+finite cover remembers the local Montel normalization used before global
+gluing. This raw provider omits the target-cover fact, which is already the
+green public-chart cover Lemma~\ref{lem:montel-two-chart-target-cover}.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_without_target_cover}
+\end{lemma}
+
 \begin{lemma}[Montel normalized-limit two-chart cover (open)]
 \label{lem:montel-normalized-limit-two-chart-cover}
-\uses{lem:montel-two-chart-source-cover, lem:montel-two-chart-target-cover}
-The two chosen public-chart patches must retain their normalized chart-ball
-limit packages, one for the identity chart and one for the inversion chart,
-so the finite cover remembers the local Montel normalization used before
-global gluing.
+\uses{lem:montel-normalized-limit-two-chart-cover-without-target-cover, lem:montel-two-chart-target-cover}
+The finite normalized Montel cover together with the green identity/inversion
+target-cover theorem gives the normalized two-chart cover provider used by the
+raw patch-family construction.
 \lean{JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.identity_normalizedLimit, JacobianChallenge.HolomorphicForms.GenusZeroNormalizedLimitTwoChartMontelCoverSelector.inversion_normalizedLimit, JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover}
 \end{lemma}
 

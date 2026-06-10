@@ -182,18 +182,6 @@ private lemma onePointCx_identityChart_symm_apply (z : ℂ) :
 private lemma onePointCx_inversionChart_symm_apply (w : ℂ) :
     (inversionChart.symm : ℂ → OnePoint ℂ) w = invBwd w := rfl
 
-/-- The two public charts on `OnePoint ℂ` cover the target. -/
-theorem onePointCx_identity_or_inversionChart_source :
-    ∀ y : OnePoint ℂ, y ∈ identityChart.source ∨ y ∈ inversionChart.source := by
-  intro y
-  cases y with
-  | infty =>
-      right
-      simp [inversionChart]
-  | coe z =>
-      left
-      simp [identityChart, Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
-
 /--
 The coefficient obtained by first reading `ω` in `identityChart` and
 then evaluating the resulting covector on `1 : ℂ`.
