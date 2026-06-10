@@ -1370,13 +1370,49 @@ target-membership disjunction.
 
 \begin{lemma}[Montel coherent local selector (open)]
 \label{lem:montel-coherent-local-selector}
-\uses{lem:montel-local-patch-realization}
+\uses{lem:montel-local-patch-realization, lem:montel-overlap-agreement}
 The selected local patches must be coherent with the global selector:
 their assigned target charts agree with the family target charts, every global
 patch is realized by its local chart-ball data, and local transition
 compatibility identifies overlapping coordinates as the same
 \(\code{OnePoint}\,\C\) point.
 \lean{JacobianChallenge.HolomorphicForms.GenusZeroLocalMontelChartSelector.localPatch_targetChart_eq, JacobianChallenge.HolomorphicForms.GenusZeroCoherentLocalMontelChartSelector, JacobianChallenge.HolomorphicForms.GenusZeroTransitionCoherentLocalMontelChartSelector}
+\end{lemma}
+
+\begin{lemma}[Montel overlap agreement kernel (open)]
+\label{lem:montel-overlap-agreement}
+\uses{lem:montel-overlap-agreement-same-chart, lem:montel-overlap-agreement-cross-chart}
+The normalized Montel chart-ball realizations of the finite patch family
+agree on patch overlaps.
+\lean{genusZeroMontel_normalized_limits_agree_on_overlaps}
+\end{lemma}
+
+\begin{lemma}[Montel limit uniqueness]
+\label{lem:montel-limit-uniqueness}
+Two locally-uniform holomorphic limits of the same coordinate function that agree
+on a connected overlap must be identical.
+\lean{eqOn_of_tendstoLocallyUniformlyOn_same}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Montel overlap agreement same-chart case (open)]
+\label{lem:montel-overlap-agreement-same-chart}
+\uses{lem:montel-limit-uniqueness}
+When the target charts are the same, the two realizations represent the same
+coordinate on the overlap, reducing agreement to the identity theorem.
+\end{lemma}
+
+\begin{lemma}[Montel overlap agreement cross-chart case (open)]
+\label{lem:montel-overlap-agreement-cross-chart}
+\uses{lem:montel-overlap-agreement-same-chart, lem:montel-chart-transition-reduction}
+When the target charts differ, conjugate one side through the public transition
+to reduce to the same-chart case.
+\end{lemma}
+
+\begin{lemma}[Montel chart transition reduction (open)]
+\label{lem:montel-chart-transition-reduction}
+\uses{lem:onepoint-cx-chart-overlap-derivative}
+Conjugate through the public transition \(z \mapsto z^{-1}\) on the overlap of chart targets.
 \end{lemma}
 
 \begin{lemma}[Montel chart-ball source-domain selector (open)]
