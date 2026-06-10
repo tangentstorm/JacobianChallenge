@@ -211,4 +211,61 @@ theorem genusZero_branchedCoverDataOfPoleDegree_of_GenusZeroPointRiemannRochElem
   genusZero_branchedCoverDataOfPoleDegree_of_nonconstant_mem_L_point
     X P f.meromorphicMap han f.nonconstant f.mem_L_point
 
+/--
+**Path B leaf (#232), degree-one bijectivity package.** A nonconstant
+`f ∈ L([P])` carrying honest analytic data yields the full
+`MeromorphicDegreeOneData` record: `f.toMap` is continuous, **bijective**, and
+its pole divisor has degree one. This is the exact record downstream consumers
+(`GenusZeroClassification`, `AnalyticOfCurveBasis`) read via `bijective_toMap`.
+
+Compared with `meromorphicDegreeOneData_of_poleDivisor_point`
+(in `MeromorphicDegree`; cited, not edited), the hypotheses here are *weaker*
+on two counts: the pole divisor is pinned by Riemann–Roch membership rather
+than pre-supplied, and continuity comes directly from
+`AnalyticData.continuous_toMap`, so no separate `PoleModulusData` is needed.
+The proof composes this file's pole-divisor and branched-cover leaves with the
+degree bookkeeping and bijectivity bridges of `MeromorphicDegree`.
+-/
+theorem genusZero_meromorphicDegreeOneData_of_nonconstant_mem_L_point
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (f : MeromorphicMapToSphere X)
+    (han : f.AnalyticData)
+    (hnc : f.Nonconstant)
+    (hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    Nonempty (MeromorphicDegreeOneData X f) := by
+  have hpole : f.poles = Divisor.point P :=
+    genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point' X P f hnc hmem
+  have hcont : Continuous f.toMap := han.continuous_toMap
+  have hdegree : Divisor.degree f.poles = 1 :=
+    meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point f P hpole
+  have hbranch : f.BranchedCoverDataOfPoleDegree :=
+    genusZero_branchedCoverDataOfPoleDegree_of_nonconstant_mem_L_point
+      X P f han hnc hmem
+  exact ⟨{ continuous_toMap := hcont
+           bijective_toMap :=
+             meromorphicMapToSphere_bijective_of_poleDivisor_degree_one
+               X f hcont hdegree hbranch
+           degree_eq_pole_degree := hdegree }⟩
+
+/--
+**Path B leaf (#232), degree-one bijectivity package, packaged form.** The same
+`MeromorphicDegreeOneData` conclusion for a `GenusZeroPointRiemannRochElement`
+together with its analytic data. Delegates to the bare form above.
+-/
+theorem genusZero_meromorphicDegreeOneData_of_GenusZeroPointRiemannRochElement
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : GenusZeroPointRiemannRochElement X P h)
+    (han : f.meromorphicMap.AnalyticData) :
+    Nonempty (MeromorphicDegreeOneData X f.meromorphicMap) :=
+  genusZero_meromorphicDegreeOneData_of_nonconstant_mem_L_point
+    X P f.meromorphicMap han f.nonconstant f.mem_L_point
+
 end JacobianChallenge.HolomorphicForms
