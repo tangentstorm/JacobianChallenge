@@ -622,6 +622,43 @@ structure GenusZeroPointRiemannRochElement
   nonconstant : meromorphicMap.Nonconstant
   mem_L_point : meromorphicMap.MemRiemannRochSpace (Divisor.point P)
 
+/--
+Narrow representation bridge from the sound germ-space carrier to an honest
+meromorphic map in `L([P])`.
+
+This is the remaining frontier after the linear-algebra extraction: an
+outside-constant element of the point `RiemannRochGermSpace` must be represented
+by an actual divisor-compatible meromorphic map to the sphere.
+-/
+theorem genusZero_pointRiemannRochElement_of_germSpace_outside_constants
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (F : RiemannRochGermSpace X (Divisor.point P))
+    (hF : (F : MeromorphicGermFamily X) ∉ constantGermFamilyLine X) :
+    Nonempty (GenusZeroPointRiemannRochElement X P h) := by
+  sorry
+
+/--
+The finrank-two point germ-space input yields a nonconstant Riemann-Roch
+element, conditional only on the narrow germ-to-map representation bridge.
+-/
+theorem genusZero_pointRiemannRochElement_of_germSpaceDimensionInput
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (input : GenusZeroPointRiemannRochGermSpaceDimensionInput X P h) :
+    Nonempty (GenusZeroPointRiemannRochElement X P h) := by
+  obtain ⟨F, hF⟩ :=
+    genusZero_pointRiemannRochGermSpace_exists_outside_constants X P h input
+  exact genusZero_pointRiemannRochElement_of_germSpace_outside_constants X P h F hF
+
 /-! ### Structural companions on `MeromorphicMapToSphere` -/
 
 /--

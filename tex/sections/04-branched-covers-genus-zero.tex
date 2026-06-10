@@ -1769,6 +1769,28 @@ constant.
 \leanok
 \end{proof}
 
+\begin{lemma}[RR germ-to-map representation bridge]
+\label{lem:rr-germ-to-map-bridge}
+\uses{lem:rr-germ-space-outside-constants}
+The remaining representation bridge converts an outside-constant element of the
+point RR germ-space carrier into an honest
+\(\code{GenusZeroPointRiemannRochElement}\), i.e. a nonconstant meromorphic
+map to the sphere in \(L([P])\). This is the current narrow open frontier:
+the abstract span element must be represented by divisor-compatible
+meromorphic data.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_pointRiemannRochElement_of_germSpace_outside_constants}
+\end{lemma}
+
+\begin{lemma}[RR element from the germ-space finrank input]
+\label{lem:rr-element-of-germ-space-dimension-input}
+\uses{def:rr-germ-space-dimension-input, lem:rr-germ-to-map-bridge}
+Assuming the point RR germ-space finrank input and the representation bridge,
+there is a nonconstant Riemann--Roch element in \(L([P])\). This node remains
+open pending the germ-to-map bridge, since the Lean theorem depends
+transitively on that open provider.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_pointRiemannRochElement_of_germSpaceDimensionInput}
+\end{lemma}
+
 \begin{lemma}[Hard core: dimension of \(L([P])\) in genus zero (open)]
 \label{lem:rr-dim-L-point-eq-two-core}
 \uses{def:rr-germ-space-carrier, def:rr-germ-space-dimension-input}
@@ -1815,7 +1837,7 @@ meromorphic sections of \(K-[P]\), using \(g_{\mathrm{an}}(X)=0\) to identify
 
 \begin{lemma}[Dimension \(>1\) gives a nonconstant element of \(L([P])\)]
 \label{lem:rr-dim-ge-two-nonconstant}
-\uses{lem:rr-dim-L-point-eq-two-core, lem:rr-K-minus-point-vanishes, lem:rr-germ-space-outside-constants}
+\uses{lem:rr-dim-L-point-eq-two-core, lem:rr-K-minus-point-vanishes, lem:rr-element-of-germ-space-dimension-input}
 Once the real \(\dim_\C L([P])=2\) theorem is available, pure linear algebra
 should produce a nonconstant \(f\in L([P])\): constants give a one-dimensional
 subspace, so a two-dimensional ambient space contains an element outside the
