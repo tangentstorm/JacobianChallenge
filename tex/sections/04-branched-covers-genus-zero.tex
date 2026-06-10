@@ -2056,3 +2056,65 @@ Same chart-trivialisation argument as
 Lemma~\ref{lem:section-localRepr-identity-chart-contdiff}, applied
 in the inversion chart instead.
 \end{proof}
+
+\subsection{Riemann-Roch \(K-[P]\) Vanishing (Path B)}
+\label{sec:rr-k-minus-p-vanishing}
+
+\begin{lemma}[Differentiability of finite lift]
+\label{lem:to-finite-fun-mdifferentiable}
+\lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_toFiniteFun_mdifferentiable}
+A global complex-valued lift of a meromorphic map with no poles is holomorphic.
+\end{lemma}
+
+\begin{lemma}[Value at positive pole]
+\label{lem:to-map-eq-infty-of-pole-divisor-pos}
+\lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_toMap_eq_infty_of_poleDivisor_pos}
+At a positive-order pole, a meromorphic map evaluates to infinity.
+\end{lemma}
+
+\begin{lemma}[Branched cover data of pole degree]
+\label{lem:branched-cover-data-of-pole-degree}
+\uses{def:branched-degree}
+\lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_branchedCoverDataOfPoleDegree}
+A meromorphic function provides valid branched cover data whose branched degree equals the pole divisor degree.
+\end{lemma}
+
+\begin{lemma}[Zero divisor degree equals branched degree]
+\label{lem:zero-divisor-degree-eq-branched-degree}
+\uses{def:branched-degree}
+\lean{JacobianChallenge.HolomorphicForms.meromorphicMapToSphere_zeroDivisor_degree_eq_branchedDegree}
+The degree of the zero divisor of a meromorphic map equals the branched degree of the map.
+\end{lemma}
+
+\begin{lemma}[Zeros degree equals poles degree]
+\label{lem:zeros-degree-eq-poles-degree}
+\uses{lem:to-finite-fun-mdifferentiable, lem:to-map-eq-infty-of-pole-divisor-pos, lem:branched-cover-data-of-pole-degree, lem:zero-divisor-degree-eq-branched-degree}
+\lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_degree_zeros_eq_degree_poles}
+For a valid divisor-compatible meromorphic function on a compact Riemann surface, the degree of its zero divisor equals the degree of its pole divisor (open pending the four frontiers).
+\end{lemma}
+\begin{proof}
+Obtain branched cover data, compute degrees.
+\end{proof}
+
+\begin{lemma}[Principal divisor degree is zero]
+\label{lem:principal-divisor-degree-is-zero}
+\uses{lem:zeros-degree-eq-poles-degree}
+\lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionWithDivisors_degree_principal_eq_zero}
+The degree of the principal divisor of any non-zero meromorphic function is zero (open pending the four frontiers).
+\end{lemma}
+\begin{proof}
+Subtract pole degree from zero degree.
+\end{proof}
+
+\begin{theorem}[Genus zero Riemann-Roch \(K-[P]\) dimension is zero]
+\label{thm:genus-zero-riemann-roch-k-minus-p}
+\uses{lem:principal-divisor-degree-is-zero}
+\lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_K_minus_point_dim_zero}
+The cited Lean declaration is currently a structural placeholder (\(\exists \ell, \ell = 0\)). The real statement awaits the \(K-[P]\) germ-space carrier (see jc0's \code{GenusZeroPointRiemannRochGermSpaceDimensionInput} work). 
+
+Once formalized, the intended statement is: The Riemann-Roch space \(L(K - [P])\) is trivial in genus zero.
+\end{theorem}
+\begin{proof}
+(Not yet formalized). Since the canonical degree is -2, the degree of \(K-[P]\) is -3. Any non-zero section would have a principal divisor of degree 0, but \(0 \le \deg(D + (f)) = -3 + 0\), a contradiction.
+\end{proof}
+

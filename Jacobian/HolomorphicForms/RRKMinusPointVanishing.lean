@@ -61,9 +61,9 @@ noncomputable def meromorphicFunctionWithDivisors_to_mapToSphere
 An honest meromorphic function (which `MeromorphicFunctionWithDivisors` represents) provides valid `BranchedCoverData` whose branched degree equals the pole divisor degree. (Connects `isMeromorphic` to `BranchedCoverDataOfPoleDegree`).
 This is a deep analytic fact, so it is left as a single explicitly named open sub-lemma.
 -/
-noncomputable def meromorphicFunctionWithDivisors_branchedCoverDataOfPoleDegree
+lemma meromorphicFunctionWithDivisors_branchedCoverDataOfPoleDegree
     (f : MeromorphicFunctionWithDivisors X) :
-    MeromorphicMapToSphere.BranchedCoverDataOfPoleDegree (meromorphicFunctionWithDivisors_to_mapToSphere f) :=
+    Nonempty (MeromorphicMapToSphere.BranchedCoverDataOfPoleDegree (meromorphicFunctionWithDivisors_to_mapToSphere f)) := by
   sorry
 
 /--
@@ -96,7 +96,8 @@ lemma meromorphicFunctionWithDivisors_degree_zeros_eq_degree_poles
     Divisor.degree f.zeros = Divisor.degree f.poles := by
   have h_cont : Continuous (meromorphicFunctionWithDivisors_to_mapToSphere f).toMap :=
     f.toFunction.toFun_continuous
-  obtain ⟨h, h_pole⟩ := (meromorphicFunctionWithDivisors_branchedCoverDataOfPoleDegree f).hasBranchedCoverDataOfPoleDegree h_cont
+  obtain ⟨h_data⟩ := meromorphicFunctionWithDivisors_branchedCoverDataOfPoleDegree f
+  obtain ⟨h, h_pole⟩ := h_data.hasBranchedCoverDataOfPoleDegree h_cont
   have h_zero := meromorphicMapToSphere_zeroDivisor_degree_eq_branchedDegree (meromorphicFunctionWithDivisors_to_mapToSphere f) h
   have hz_nonneg : 0 ≤ Divisor.degree f.zeros := by
     apply Divisor.degree_ge_zero_of_effective
