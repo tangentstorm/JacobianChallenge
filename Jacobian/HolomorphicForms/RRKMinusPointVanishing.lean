@@ -155,6 +155,16 @@ lemma meromorphicFunctionWithDivisors_branchedCoverDataOfPoleDegree
   sorry
 
 /--
+The true analytic core gap: the degree of the formal zero divisor equals the sum of the
+local branched degrees over the preimages of 0.
+-/
+lemma meromorphicMapToSphere_zeroDivisor_degree_eq_weightedFiberCard_zero
+    (f : MeromorphicMapToSphere X)
+    (h : BranchedCoverData X (OnePoint ℂ) f.toMap) :
+    f.zeroDivisor.degree.toNat = weightedFiberCard h (0 : OnePoint ℂ) := by
+  sorry
+
+/--
 The genuine analytic core: for a valid meromorphic map to the sphere and valid branched cover data, the degree of its zero divisor equals the branched degree.
 This is the single honest named open sub-lemma for the degree of a principal divisor.
 -/
@@ -162,8 +172,8 @@ lemma meromorphicMapToSphere_zeroDivisor_degree_eq_branchedDegree
     (f : MeromorphicMapToSphere X)
     (h : BranchedCoverData X (OnePoint ℂ) f.toMap) :
     f.zeroDivisor.degree.toNat = branchedDegree h := by
-  sorry
-
+  rw [meromorphicMapToSphere_zeroDivisor_degree_eq_weightedFiberCard_zero f h]
+  exact (branchedDegree_eq_weightedFiberCard h 0).symm
 omit [TopologicalSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ, ℂ) ⊤ X] [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- The degree of an effective divisor is non-negative. -/
 lemma Divisor.degree_ge_zero_of_effective (D : Divisor X) (h : Divisor.Effective D) :
