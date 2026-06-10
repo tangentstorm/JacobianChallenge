@@ -2080,6 +2080,30 @@ zero/pole disjointness plus the two effectivity facts. Riemann--Roch
 membership transfers verbatim since the principal divisors agree.
 \end{proof}
 
+\begin{lemma}[Germ families outside the constant line have nonconstant functions]
+\label{lem:rr-germs-outside-constants-nonconstant}
+\uses{lem:rr-nonconstant-L-point-germ-space-member}
+A divisor-compatible meromorphic function whose germ family lies outside the
+constant germ-family line is nonconstant as a function to
+\(\code{OnePoint}\,\C\). Pointwise-constant functions — including the
+everywhere-\(\infty\) case, whose finite \(\code{getD}\,0\) lift is the
+constant \(0\) — all have constant germ families inside the line, so the
+contrapositive transfers the linear-algebra hypothesis
+\(F\notin\code{constantGermFamilyLine}\) of the germ-space extraction into
+the map-level \code{Nonconstant} field. This is the seam interface consumed
+by the open germ-to-map bridge
+(Lemma~\ref{lem:rr-germ-to-map-bridge}) when it represents an
+outside-constants span element by an honest carrier function.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionWithDivisors.nonconstant_of_germs_notMem_constantGermFamilyLine}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+A pointwise-constant function has finite lift constantly \(c.\code{getD}\,0\),
+hence constant germ at every point, hence germ family
+\(\code{constantGermFamilyLinearMap}\,(c.\code{getD}\,0)\) inside the line;
+contrapose.
+\end{proof}
+
 \begin{lemma}[A nonconstant element of \(L([P])\) satisfies the granular field matrix]
 \label{lem:rr-nonconstant-L-point-granular-fields}
 \uses{lem:rr-nonconstant-L-point-zero-divisor-effective, lem:rr-nonconstant-L-point-order-one}

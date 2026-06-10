@@ -610,4 +610,75 @@ theorem genusZero_fixedPole_rr_effectiveGranular_of_element
    genusZero_effectiveGranular_fields_of_GenusZeroPointRiemannRochElement
      X P h f han⟩
 
+/-! ### Nonconstancy transfer at the germ seam
+
+Interface lemmas for the open germ-to-map bridge
+(`genusZero_pointRiemannRochElement_of_germSpace_outside_constants`, in
+`RiemannRoch`; cited, never edited): the bridge receives a germ family
+outside the constant line and must construct a map-level `Nonconstant`
+witness. The connective is proved here on the carrier types.
+
+The degenerate `toFun ≡ ∞` case needs no infiniteness argument: germ families
+are built from the finite lift `getD 0`, so an everywhere-`∞` function has
+the constant-`0` germ family, which lies in the constant line like every
+other pointwise-constant case. The contrapositive is the transfer.
+-/
+
+/--
+**Germ computation.** A pointwise-constant meromorphic function (constant as
+a map to `OnePoint ℂ`, including the everywhere-`∞` case) has the constant
+germ at every point, with value the finite projection `c.getD 0`.
+-/
+theorem MeromorphicFunctionType.germAt_eq_constant_of_forall_toFun_eq
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicFunctionType X) (c : OnePoint ℂ)
+    (hc : ∀ x, f.toFun x = c) (p : X) :
+    f.germAt p = MeromorphicGermAt.constant (X := X) (p := p) (c.getD 0) := by
+  have hfin : f.toFiniteFun = fun _ => c.getD 0 := by
+    funext q
+    simp [MeromorphicFunctionType.toFiniteFun, hc q]
+  ext
+  rw [MeromorphicFunctionType.germAt_germ, hfin]
+  rfl
+
+/--
+**Constant-line membership.** A divisor-compatible meromorphic function that
+is pointwise constant as a map to `OnePoint ℂ` has germ family inside the
+constant germ-family line, witnessed by the finite projection of the constant
+value.
+-/
+theorem MeromorphicFunctionWithDivisors.germs_mem_constantGermFamilyLine_of_forall_toFun_eq
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (g : MeromorphicFunctionWithDivisors X) (c : OnePoint ℂ)
+    (hc : ∀ x, g.toFunction.toFun x = c) :
+    g.germs ∈ constantGermFamilyLine X := by
+  refine ⟨c.getD 0, ?_⟩
+  rw [g.germs_eq_toFunction]
+  funext P
+  rw [constantGermFamilyLinearMap_apply_at]
+  exact (g.toFunction.germAt_eq_constant_of_forall_toFun_eq c hc P).symm
+
+/--
+**Nonconstancy transfer (the seam interface).** A divisor-compatible
+meromorphic function whose germ family lies outside the constant line is
+nonconstant as a function to `OnePoint ℂ`. The conclusion is literally the
+`MeromorphicMapToSphere.Nonconstant` shape for any map whose `toMap` is
+`g.toFunction.toFun`, so the germ-to-map bridge can construct its
+`nonconstant` field by `exact` from the extraction hypothesis
+`F ∉ constantGermFamilyLine X` once `F` is represented by `g`.
+-/
+theorem MeromorphicFunctionWithDivisors.nonconstant_of_germs_notMem_constantGermFamilyLine
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (g : MeromorphicFunctionWithDivisors X)
+    (hg : g.germs ∉ constantGermFamilyLine X) :
+    ¬ ∃ c : OnePoint ℂ, ∀ x : X, g.toFunction.toFun x = c := by
+  rintro ⟨c, hc⟩
+  exact hg (g.germs_mem_constantGermFamilyLine_of_forall_toFun_eq c hc)
+
 end JacobianChallenge.HolomorphicForms
