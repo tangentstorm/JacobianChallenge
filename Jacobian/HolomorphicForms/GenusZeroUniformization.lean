@@ -716,6 +716,62 @@ theorem genusZeroMontel_raw_global_patch_family
   exact ⟨u, family, hcoord, hinv⟩
 
 /--
+Standard `OnePoint ℂ` target-chart inverse is smooth.
+
+Each of the two public target charts (`identityChart`, `inversionChart`) is an
+atlas member of the `OnePoint ℂ` charted space, hence of the maximal atlas, so
+its inverse is `ContMDiffOn` on the chart target by
+`contMDiffOn_symm_of_mem_maximalAtlas`.
+-/
+theorem targetChart_symm_contMDiffOn
+    (tc : OpenPartialHomeomorph (OnePoint ℂ) ℂ)
+    (h : tc = identityChart ∨ tc = inversionChart) :
+    ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (tc.symm : ℂ → OnePoint ℂ) tc.target := by
+  have hmem : tc ∈ atlas ℂ (OnePoint ℂ) := by
+    show tc ∈ ({identityChart, inversionChart} : Set _)
+    rcases h with h | h <;> simp [h]
+  exact contMDiffOn_symm_of_mem_maximalAtlas
+    (IsManifold.subset_maximalAtlas (I := modelWithCornersSelf ℂ ℂ)
+      (n := (⊤ : WithTop ℕ∞)) hmem)
+
+/--
+Per-patch forward smoothness of the candidate uniformization.
+
+If a Montel patch family represents `u` in local public target charts
+(`hcoord`) and each patch coordinate lands in its target-chart's target
+(`hmem`), then `u` is `ContMDiffOn` on each patch source.
+-/
+theorem montelForward_contMDiffOn_u_on_patch
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (family : GenusZeroGlobalPatchFamily X) (u : X → OnePoint ℂ)
+    (hcoord :
+      ∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).targetChart.symm ((family.patch i).coord x) = u x)
+    (hmem :
+      ∀ i x, x ∈ (family.patch i).source →
+        (family.patch i).coord x ∈ (family.patch i).targetChart.target)
+    (i : family.PatchIndex) :
+    ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) u (family.patch i).source := by
+  have hchart :
+      ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) ((family.patch i).targetChart.symm : ℂ → OnePoint ℂ)
+        (family.patch i).targetChart.target :=
+    targetChart_symm_contMDiffOn (family.patch i).targetChart
+      (family.patch i).targetChart_standard
+  have hcomp :
+      ContMDiffOn (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞)
+        ((family.patch i).targetChart.symm ∘ (family.patch i).coord)
+        (family.patch i).source :=
+    hchart.comp (family.patch i).coord_contMDiffOn (fun x hx => hmem i x hx)
+  exact hcomp.congr (fun x hx => (hcoord i x hx).symm)
+
+/--
 Forward smoothness provider for a raw Montel patch family.
 
 Once the raw family represents a candidate uniformization in local public
@@ -730,15 +786,28 @@ theorem genusZeroMontel_raw_global_patch_family_contMDiff_toMap
     (hcoord :
       ∀ i x, x ∈ (family.patch i).source →
         (family.patch i).targetChart.symm ((family.patch i).coord x) = u x)
-    (hinv :
+    (_hinv :
       ∀ i z, z ∈ (family.patch i).targetChart.target →
         (family.patch i).invCoord z =
           u.symm ((family.patch i).targetChart.symm z)) :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) (u : X → OnePoint ℂ) := by
-  -- Remaining forward-smoothness frontier: derive global `ContMDiff` from the
-  -- local chart expressions of the Montel family.
-  sorry
+  refine contMDiff_of_contMDiffOn_iUnion_of_isOpen
+    (I := modelWithCornersSelf ℂ ℂ) (I' := modelWithCornersSelf ℂ ℂ)
+    (n := (⊤ : WithTop ℕ∞)) (f := (u : X → OnePoint ℂ))
+    (s := fun i : family.PatchIndex => (family.patch i).source) ?_ ?_ ?_
+  · intro i
+    exact montelForward_contMDiffOn_u_on_patch family (u : X → OnePoint ℂ) hcoord
+      (genusZeroGlobalGluing_coord_mem_target_on_patch family) i
+  · intro i
+    exact (family.patch i).isOpen_source
+  · ext x
+    constructor
+    · intro _hx
+      trivial
+    · intro _hx
+      rcases family.patch_cover x with ⟨i, hxi⟩
+      exact Set.mem_iUnion.mpr ⟨i, hxi⟩
 
 /--
 Inverse smoothness provider for a raw Montel patch family.
