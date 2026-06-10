@@ -1368,6 +1368,28 @@ target-membership disjunction.
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Glued-map local agreement on a realized patch family]
+\label{lem:montel-glued-map-local-agreement}
+\uses{lem:montel-realized-patch-bundle, lem:montel-coherent-local-selector, lem:mathlib-open-partial-homeomorph-right-inv}
+The first consumer of the realized-patch toolkit: a selector-free local-formula
+step underneath the glued forward map's smoothness. The canonical forward
+candidate \(\code{genusZeroGlobalGluing\_toMap}\) is defined for a bare patch
+family (\(\code{Classical.choose}\) over the cover, then
+\(\code{targetChart.symm}\circ\code{coord}\)); on each source patch \(i\),
+applying that patch's target chart to it recovers the patch's own coordinate,
+\(\code{targetChart}_i(\code{toMap}\,x)=\code{coord}_i(x)\). Proved from overlap
+compatibility \texttt{hcompat} — exactly the conclusion shape of the coherent
+local selector's overlap-agreement kernel — and per-patch target membership
+\texttt{hmem}, via \(\code{OpenPartialHomeomorph.right\_inv}\), \emph{without}
+\(\code{genusZeroGlobalGluing\_toMap\_eq\_uniformization}\) or any normalized
+Montel patch selector accessor. The chart-ball corollary then reads the glued
+map as the Montel limit in the realized source coordinate, consuming a
+\code{MontelRealizedPatch} via its \code{coord\_eq\_chartBall} field.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_targetChart_toMap_eq_coord, JacobianChallenge.HolomorphicForms.genusZeroGlobalGluing_targetChart_toMap_eq_chartBall}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Montel coherent local selector (open)]
 \label{lem:montel-coherent-local-selector}
 \uses{lem:montel-local-patch-realization, lem:montel-overlap-agreement}

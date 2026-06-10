@@ -85,12 +85,15 @@ def emit : CoreM Unit := do
 
 def main : IO Unit := do
   initSearchPath (← findSysroot)
-  -- Path-A Montel local-patch-realization leaf sits outside Solution's import
-  -- closure (its green providers are not yet consumed downstream), so add it as
-  -- an extra root to keep the blueprint node states honest (per the note above).
+  -- Path-A Montel local-patch-realization leaves sit outside Solution's import
+  -- closure (their green providers are not yet consumed downstream), so add them
+  -- as extra roots to keep the blueprint node states honest (per the note above).
+  -- `MontelGluedMapLocalAgreement` imports `MontelLocalPatchRealization`, so the
+  -- latter is reached transitively; both are listed for clarity.
   let env ← importModules
     #[{ module := `Jacobian.Solution },
-      { module := `Jacobian.HolomorphicForms.MontelLocalPatchRealization }] {}
+      { module := `Jacobian.HolomorphicForms.MontelLocalPatchRealization },
+      { module := `Jacobian.HolomorphicForms.MontelGluedMapLocalAgreement }] {}
   let coreCtx : Core.Context := { fileName := "DepGraph", fileMap := default }
   let coreState : Core.State := { env }
   let _ ← (emit.run coreCtx coreState).toIO'
