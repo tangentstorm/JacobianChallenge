@@ -1335,6 +1335,22 @@ source-chart hypotheses across four separate calls.
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Realized-patch bundle from an honest two-sided section]
+\label{lem:montel-realized-patch-section-form}
+\uses{lem:montel-realized-patch-bundle}
+A convenience form of the realized-patch bundle constructor for the case a gluing
+consumer actually instantiates: the section is a genuine two-sided inverse of the
+source chart — a global right-inverse
+(\(\code{sourceChart}\circ\code{sourceSection}=\mathrm{id}\)) together with a
+left-inverse on the patch source. This collapses the general constructor's three
+restricted section hypotheses into these two honest facts; the restricted ones are
+recovered by instantiating the global right-inverse at
+\(w=\code{localOpen.symm}\,z\). Pure delegation to the general constructor.
+\lean{JacobianChallenge.HolomorphicForms.montelRealizedPatch_of_sourceChartSection}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Montel coherent local selector (open)]
 \label{lem:montel-coherent-local-selector}
 \uses{lem:montel-local-patch-realization}
