@@ -382,4 +382,95 @@ theorem exists_montelRealizedPatch_family_of_rawChart
   -- Materialize the family by choosing through each pointwise `Nonempty`.
   exact ⟨fun i => (hpt i).some⟩
 
+/-!
+## M-F — packaging adapter for the realized-patch finite-cover existential
+
+The engine's selection target
+`genusZeroMontel_finite_normalized_chartBall_cover_with_realized_patches`
+(`GenusZeroUniformization.lean`) owes three things: choose the normalized
+chart-ball limits [engine spine], build realized Montel patch bundles for those
+local coordinates [M-D/M-E, above], and prove the two-chart assignment while
+packaging the existential.  This last packaging step is pure assembly, but doing
+it from `Nonempty.some` is awkward: the engine wants to control the concrete
+`realizedPatch` witness it proves the bookkeeping about.
+
+`exists_realizedPatchCover_of_components` is that green seam: it takes the
+realized family as an **explicit** argument (the engine's chosen witness) plus the
+cover / target-cover / `targetChart`-agreement / two-chart bookkeeping stated
+about it, and assembles the exact existential conclusion of the selection target.
+With it, the engine's remaining proof reduces to: build the components (raw
+charts via M-E, normalized limits, the two-chart facts) and
+`exact exists_realizedPatchCover_of_components …`.  No analytic content — pure
+existential repackaging; it consumes the spine's outputs as hypotheses and
+asserts nothing about the construction, so it is not gated on the open spine.
+-/
+
+/--
+**Realized-patch finite-cover packaging adapter** (M-F).
+
+Assemble the existential conclusion of
+`genusZeroMontel_finite_normalized_chartBall_cover_with_realized_patches` from an
+explicit realized patch family and its bookkeeping facts.  The hypotheses mirror
+the four conjuncts of that conclusion verbatim:
+
+* `hsource_cover` — the realized patch sources cover `X`;
+* `htarget_cover` — every `OnePoint ℂ` value is hit by some patch target chart;
+* `htarget_eq` — each local patch's `targetChart` agrees with its realization's;
+* the two-chart clause — identity/inversion indices, the exhaustive alternative,
+  and the two normalized-chart-ball-limit nonemptiness facts.
+
+Stated at full generality in `ι : Type*` (the engine instantiates it at its
+`Fintype`-indexed `PatchIndex`); this is the green callee the engine `exact`s to
+discharge the packaging half of its selection `sorry`. -/
+theorem exists_realizedPatchCover_of_components.{u}
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {ι : Type u} [Fintype ι] [Nonempty ι]
+    (localPatch : ι → GenusZeroLocalMontelChartPatch)
+    (realizedPatch : ∀ i, MontelRealizedPatch X (localPatch i))
+    (hsource_cover : ∀ x : X, ∃ i : ι, x ∈ (realizedPatch i).patch.source)
+    (htarget_cover :
+      ∀ y : OnePoint ℂ, ∃ (i : ι) (z : ℂ),
+        z ∈ (realizedPatch i).patch.targetChart.target ∧
+          y = (realizedPatch i).patch.targetChart.symm z)
+    (htarget_eq :
+      ∀ i, (localPatch i).targetChart = (realizedPatch i).patch.targetChart)
+    (htwo_chart :
+      ∃ identityIndex inversionIndex : ι,
+        (realizedPatch identityIndex).patch.targetChart = identityChart ∧
+        (realizedPatch inversionIndex).patch.targetChart = inversionChart ∧
+        (∀ i, i = identityIndex ∨ i = inversionIndex) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch identityIndex).chartBall.center 0 1
+          (localPatch identityIndex).chartBall.radius
+          (localPatch identityIndex).chartBall.toFun) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch inversionIndex).chartBall.center 0 1
+          (localPatch inversionIndex).chartBall.radius
+          (localPatch inversionIndex).chartBall.toFun)) :
+    ∃ (PatchIndex : Type u) (_ : Fintype PatchIndex) (_ : Nonempty PatchIndex)
+      (localPatch : PatchIndex → GenusZeroLocalMontelChartPatch)
+      (realizedPatch : ∀ i, MontelRealizedPatch X (localPatch i)),
+      (∀ x : X, ∃ i : PatchIndex, x ∈ (realizedPatch i).patch.source) ∧
+      (∀ y : OnePoint ℂ, ∃ (i : PatchIndex) (z : ℂ),
+        z ∈ (realizedPatch i).patch.targetChart.target ∧
+          y = (realizedPatch i).patch.targetChart.symm z) ∧
+      (∀ i, (localPatch i).targetChart = (realizedPatch i).patch.targetChart) ∧
+      (∃ identityIndex inversionIndex : PatchIndex,
+        (realizedPatch identityIndex).patch.targetChart = identityChart ∧
+        (realizedPatch inversionIndex).patch.targetChart = inversionChart ∧
+        (∀ i, i = identityIndex ∨ i = inversionIndex) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch identityIndex).chartBall.center 0 1
+          (localPatch identityIndex).chartBall.radius
+          (localPatch identityIndex).chartBall.toFun) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch inversionIndex).chartBall.center 0 1
+          (localPatch inversionIndex).chartBall.radius
+          (localPatch inversionIndex).chartBall.toFun)) :=
+  ⟨ι, inferInstance, inferInstance, localPatch, realizedPatch, hsource_cover,
+    htarget_cover, htarget_eq, htwo_chart⟩
+
 end JacobianChallenge.HolomorphicForms

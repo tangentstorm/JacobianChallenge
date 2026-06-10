@@ -1470,6 +1470,33 @@ no new analytic content.
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Realized-patch finite-cover packaging adapter]
+\label{lem:montel-realized-patch-cover-packaging}
+\uses{lem:montel-raw-source-chart-realized-family}
+The green assembly seam from the realized-patch toolkit into the Perron engine's
+selection target. The engine's selection node
+\code{genusZeroMontel\_finite\_normalized\_chartBall\_cover\_with\_realized\_patches}
+owes three things: choose the normalized chart-ball limits (engine spine), build
+the realized Montel patch bundles for those coordinates (the M-D/M-E corollaries),
+and package the finite-cover existential. This adapter handles the packaging:
+given an \emph{explicit} realized patch family
+\(\code{realizedPatch}:\forall i,\ \code{MontelRealizedPatch}\,X\,(\code{localPatch}\,i)\)
+over a finite nonempty index, together with the bookkeeping facts stated about it
+(source cover, target cover, \code{targetChart} agreement, and the two-chart
+clause: identity/inversion indices, exhaustive alternative, and the two
+\code{NormalizedChartBallLimit} nonemptiness facts), it produces the existential
+conclusion of the selection target verbatim. Taking the realized family
+explicitly lets the engine control the concrete witness it proves the bookkeeping
+about, rather than reconstructing it from a \code{Nonempty.some}. Pure existential
+repackaging --- no analytic content, and not gated on the open analytic spine
+(it consumes the spine's outputs as hypotheses). This is the callee
+\code{lem:stage-engine-provider-final-edge} discharges the selection packaging
+with.
+\lean{JacobianChallenge.HolomorphicForms.exists_realizedPatchCover_of_components}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Glued-map local agreement on a realized patch family]
 \label{lem:montel-glued-map-local-agreement}
 \uses{lem:montel-realized-patch-bundle, lem:montel-coherent-local-selector, lem:mathlib-open-partial-homeomorph-right-inv}
