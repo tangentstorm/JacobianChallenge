@@ -1406,14 +1406,14 @@ compatibility identifies overlapping coordinates as the same
 \uses{lem:montel-overlap-agreement-same-chart, lem:montel-overlap-agreement-cross-chart}
 The normalized Montel chart-ball realizations of the finite patch family
 agree on patch overlaps.
-\lean{genusZeroMontel_normalized_limits_agree_on_overlaps}
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_normalized_limits_agree_on_overlaps}
 \end{lemma}
 
 \begin{lemma}[Montel limit uniqueness]
 \label{lem:montel-limit-uniqueness}
 Two locally-uniform holomorphic limits of the same coordinate function that agree
 on a connected overlap must be identical.
-\lean{eqOn_of_tendstoLocallyUniformlyOn_same}
+\lean{JacobianChallenge.HolomorphicForms.eqOn_of_tendstoLocallyUniformlyOn_same}
 \leanok
 \end{lemma}
 
@@ -1422,6 +1422,8 @@ on a connected overlap must be identical.
 \uses{lem:montel-limit-uniqueness}
 When the target charts are the same, the two realizations represent the same
 coordinate on the overlap, reducing agreement to the identity theorem.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_overlap_agreement_same_chart}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Montel overlap agreement cross-chart case (open)]
