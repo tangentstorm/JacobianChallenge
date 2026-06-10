@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.UniformizationLocal
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
+import Mathlib.Topology.UniformSpace.LocallyUniformConvergence
 
 namespace JacobianChallenge.HolomorphicForms
 
@@ -448,6 +449,58 @@ theorem genusZeroMontel_finite_normalized_chartBall_cover_without_coord_represen
   exact ⟨_e, family, chartBall, sourceChart, hsource_mem, hcoord_chart, htwo_chart⟩
 
 /--
+Coordinate representation for the finite Montel cover, with realized patches
+and the common target sequence still exposed.
+
+This is the gluing/coherence frontier separated from the finite chart-ball
+selection data. The extra common sequence payload is the diagonal Montel input
+needed by the overlap-agreement kernel before the existing public wrapper
+forgets it.
+-/
+theorem genusZeroMontel_finite_cover_coord_representation_with_realized_patches
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (u : X ≃ₜ OnePoint ℂ)
+      (PatchIndex : Type*) (_ : Fintype PatchIndex) (_ : Nonempty PatchIndex)
+      (localPatch : PatchIndex → GenusZeroLocalMontelChartPatch)
+      (realizedPatch : ∀ i, MontelRealizedPatch X (localPatch i)),
+      (∀ x : X, ∃ i : PatchIndex, x ∈ (realizedPatch i).patch.source) ∧
+      (∀ y : OnePoint ℂ, ∃ (i : PatchIndex) (z : ℂ),
+        z ∈ (realizedPatch i).patch.targetChart.target ∧
+          y = (realizedPatch i).patch.targetChart.symm z) ∧
+      (∀ i, (localPatch i).targetChart = (realizedPatch i).patch.targetChart) ∧
+      (∃ identityIndex inversionIndex : PatchIndex,
+        (realizedPatch identityIndex).patch.targetChart = identityChart ∧
+        (realizedPatch inversionIndex).patch.targetChart = inversionChart ∧
+        (∀ i, i = identityIndex ∨ i = inversionIndex) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch identityIndex).chartBall.center 0 1
+          (localPatch identityIndex).chartBall.radius
+          (localPatch identityIndex).chartBall.toFun) ∧
+        Nonempty (ChartBallPowerSeries.NormalizedChartBallLimit
+          (localPatch inversionIndex).chartBall.center 0 1
+          (localPatch inversionIndex).chartBall.radius
+          (localPatch inversionIndex).chartBall.toFun)) ∧
+      (∃ F : ℕ → X → OnePoint ℂ, ∀ i,
+        TendstoLocallyUniformlyOn
+          (fun n x => (realizedPatch i).patch.targetChart (F n x))
+          (realizedPatch i).patch.coord Filter.atTop
+          (realizedPatch i).patch.source) ∧
+      (∀ i x, x ∈ (realizedPatch i).patch.source →
+        (realizedPatch i).patch.targetChart.symm
+          ((realizedPatch i).patch.coord x) = u x) ∧
+      (∀ i z, z ∈ (realizedPatch i).patch.targetChart.target →
+        (realizedPatch i).patch.invCoord z =
+          u.symm ((realizedPatch i).patch.targetChart.symm z)) := by
+  -- Remaining gluing/coherence frontier: show the finite normalized realized
+  -- patch data has a common Montel target sequence, agrees on overlaps, and
+  -- represents the candidate uniformization.
+  sorry
+
+/--
 Coordinate representation for the finite Montel cover.
 
 This is the gluing/coherence frontier separated from the finite chart-ball
@@ -462,7 +515,7 @@ theorem genusZeroMontel_finite_cover_coord_representation
     (_e : X ≃ₜ OnePoint ℂ) :
     ∃ (u : X ≃ₜ OnePoint ℂ) (family : GenusZeroGlobalPatchFamily X)
       (localPatch : family.PatchIndex → GenusZeroLocalMontelChartPatch)
-      (realization :
+      (_realization :
         ∀ i, GenusZeroLocalMontelPatchRealization
           (family.patch i) (localPatch i)),
       (∀ i, (localPatch i).targetChart = (family.patch i).targetChart) ∧
@@ -483,9 +536,25 @@ theorem genusZeroMontel_finite_cover_coord_representation
       (∀ i z, z ∈ (family.patch i).targetChart.target →
         (family.patch i).invCoord z =
           u.symm ((family.patch i).targetChart.symm z)) := by
-  -- Remaining gluing/coherence frontier: show the finite normalized local
-  -- chart data agrees on overlaps and represents the candidate uniformization.
-  sorry
+  rcases
+    genusZeroMontel_finite_cover_coord_representation_with_realized_patches X _e with
+    ⟨u, PatchIndex, patch_fintype, patch_nonempty, localPatch, realizedPatch,
+      hsource_cover, htarget_cover, htarget_eq, htwo_chart, _hcommon_sequence,
+      hcoord, hinv⟩
+  letI : Fintype PatchIndex := patch_fintype
+  letI : Nonempty PatchIndex := patch_nonempty
+  let family : GenusZeroGlobalPatchFamily X :=
+    { PatchIndex := PatchIndex
+      patch_fintype := patch_fintype
+      patch_nonempty := patch_nonempty
+      patch := fun i => (realizedPatch i).patch
+      patch_cover := hsource_cover
+      target_chart_cover := htarget_cover }
+  refine ⟨u, family, localPatch, fun i => (realizedPatch i).realization, ?_, ?_, ?_, ?_⟩
+  · simpa [family] using htarget_eq
+  · simpa [family] using htwo_chart
+  · simpa [family] using hcoord
+  · simpa [family] using hinv
 
 /--
 Finite normalized chart-ball cover provider, before inserting the public

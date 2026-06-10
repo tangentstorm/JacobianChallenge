@@ -1570,14 +1570,29 @@ finite-cover selection node independent of it.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_without_coord_representation}
 \end{lemma}
 
+\begin{lemma}[Montel finite-cover coordinate representation with realized patches (open)]
+\label{lem:montel-finite-cover-coordinate-representation-with-realized-patches}
+\uses{lem:montel-normalized-limit-two-chart-cover-with-realized-patches, lem:montel-coherent-local-selector}
+The coherent realized-patch finite-cover data constructs the candidate
+uniformization existentially, carries the common target sequence payload
+demanded by the coherent local selector's overlap-agreement kernel, then proves
+that the selected realized patch coordinates represent the candidate in each
+public target chart and that the inverse branches represent the candidate
+inverse. This is the gluing/coherence frontier separated from the finite-cover
+selection step while still exposing the realized-patch bundle data.
+\lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_cover_coord_representation_with_realized_patches}
+\end{lemma}
+
 \begin{lemma}[Montel finite-cover coordinate representation (open)]
 \label{lem:montel-finite-cover-coordinate-representation}
-\uses{lem:montel-normalized-limit-two-chart-cover-with-local-realizations, lem:montel-coherent-local-selector}
-The coherent local-realization-backed finite-cover data constructs the
-candidate uniformization existentially, then proves that the selected local
-patch coordinates represent it in each public target chart and that the inverse
-branches represent the candidate inverse. This is the gluing/coherence frontier
-separated from the finite-cover selection step.
+\uses{lem:montel-finite-cover-coordinate-representation-with-realized-patches}
+The realized-patch coordinate-representation provider forgets each
+\code{MontelRealizedPatch} to its raw
+\code{GenusZeroLocalMontelPatchRealization} witness and discards the common
+target sequence payload. The public provider preserves the existing downstream
+statement: it returns the candidate uniformization, the raw global patch family,
+local realization witnesses, and the coordinate/inverse-coordinate
+representation facts.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_cover_coord_representation}
 \end{lemma}
 
@@ -2314,4 +2329,3 @@ Once formalized, the intended statement is: The Riemann-Roch space \(L(K - [P])\
 \begin{proof}
 (Not yet formalized). Since the canonical degree is -2, the degree of \(K-[P]\) is -3. Any non-zero section would have a principal divisor of degree 0, but \(0 \le \deg(D + (f)) = -3 + 0\), a contradiction.
 \end{proof}
-
