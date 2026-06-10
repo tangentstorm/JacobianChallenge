@@ -1,456 +1,386 @@
-# Phase 0: construct-first paper proof of the Montel providers
+# Germ-to-map bridge Phase 0: paper proof of the representation step
 
-## Targets
+## Problem Statement
 
-This proof plan targets exactly the two current Path A provider sorries:
-
-```lean
-genusZeroMontel_finite_normalized_chartBall_cover_with_realized_patches
-genusZeroMontel_finite_cover_coord_representation_with_realized_patches
-```
-
-Both are in `Jacobian/HolomorphicForms/GenusZeroUniformization.lean`.  They have
-no dedicated blueprint lemma labels yet; the closest blueprint subtree is the
-Montel coordinate-representation subtree
-`sec:montel-coord-represents`, especially
-`lem:montel-selector-coord-represents-uniformization`,
-`lem:montel-selector-normal-limit-agrees-with-uniformization`, and
-`lem:montel-selector-overlap-compatible-normalized-values`.
-
-The construction must be global-first.  It must not choose unrelated local
-limits and later try to cohere them.  The common target sequence is the central
-object from which the finite patch family, local chart-ball limits, realized
-patches, candidate `u`, and coordinate representation are read off.
-
-## Construct-first proof
-
-### 1. Build one global approximating sequence
-
-Start from the given topological homeomorphism
+The open bridge is:
 
 ```lean
-_e : X ≃ₜ OnePoint ℂ
+genusZero_pointRiemannRochElement_of_germSpace_outside_constants
 ```
 
-and build a single sequence
+Its input is:
 
 ```lean
-F : ℕ → X → OnePoint ℂ
+F : RiemannRochGermSpace X (Divisor.point P)
+hF : (F : MeromorphicGermFamily X) ∉ constantGermFamilyLine X
 ```
 
-of finite-stage approximating maps.  Each `F n` is read in either public
-`OnePoint ℂ` chart by composing with `identityChart` or `inversionChart`.
-Locally, after choosing a source chart on `X`, the chart-reading is packaged as
-a `ChartBallPowerSeries`.
-
-Support status:
-
-- Blueprint: the global sequence is implicit in
-  `lem:montel-selector-local-limit-tied-to-global-homeomorphism` and
-  `lem:montel-selector-normalized-transition-agreement`, but there is no
-  construct-first blueprint node for it.
-- Lean: no existing declaration constructs this `F` from `_e`.
-- Status: new analytic work.  This is the first hard missing theorem.
-
-The local chart-ball analytic substrate for individual chart readings already
-exists:
-
-- Blueprint: formalization note in `sec:uniformization-lite-iter3`, local
-  chart-ball power series and normal-family extraction bullets.
-- Lean: `ChartBallPowerSeries`,
-  `ChartBallPowerSeries.ofDiffContOnCl`,
-  `ChartBallPowerSeries.hasFPowerSeriesOnBall_of_diffContOnCl`,
-  `ChartBallPowerSeries.tendstoLocallyUniformlyOn_partialSum`,
-  `ChartBallPowerSeries.tendstoUniformlyOn_partialSum_of_lt`.
-- Status: green/sorry-free local substrate.
-
-What is missing at this step is not local power-series packaging; it is the
-global construction which turns `_e` into one sequence whose two chart readings
-feed all selected patches simultaneously.
-
-### 2. Extract finite normalized chart-ball limits from the same sequence
-
-Choose the finite public target-chart index type with two indices,
-corresponding to `identityChart` and `inversionChart`.  On each selected source
-neighborhood, apply the chart reading of the same `F` to obtain a normal family
-of chart-ball functions.  Use Montel/Arzela-Ascoli extraction and diagonal
-subsequence selection to get a common subsequence, still denoted `F`, such that
-each chart-reading converges locally uniformly on its selected source patch:
+and its output is:
 
 ```lean
-TendstoLocallyUniformlyOn
-  (fun n x => (realizedPatch i).patch.targetChart (F n x))
-  (realizedPatch i).patch.coord Filter.atTop
-  (realizedPatch i).patch.source
+Nonempty (GenusZeroPointRiemannRochElement X P h)
 ```
 
-Local support that already exists:
-
-- Blueprint: local Montel extraction bullet in the formalization note;
-  no precise construct-first node.
-- Lean:
-  `ChartBallPowerSeries.family_uniform_equicontinuousOn_of_cauchy_bound`,
-  `ChartBallPowerSeries.isCompact_closure_boundedContinuousOnClosedBall_range`,
-  `ChartBallPowerSeries.exists_tendsto_subseq_boundedContinuousOnClosedBall`,
-  `ChartBallPowerSeries.tendstoUniformlyOn_of_tendsto_boundedContinuousOnClosedBall`,
-  `ChartBallPowerSeries.exists_subseq_tendstoUniformlyOn_closedBall`.
-- Status: green/sorry-free local closed-ball Montel substrate.
-
-Normalization support that already exists:
-
-- Blueprint: local chart-ball and inverse-function bullets in the same
-  formalization note.
-- Lean:
-  `ChartBallPowerSeries.differentiableOn_limit_of_tendstoLocallyUniformlyOn_chartBall`,
-  `ChartBallPowerSeries.tendstoLocallyUniformlyOn_deriv_of_chartBall_limit`,
-  `ChartBallPowerSeries.limit_apply_center_of_tendstoLocallyUniformlyOn_chartBall`,
-  `ChartBallPowerSeries.deriv_limit_center_of_tendstoLocallyUniformlyOn_chartBall`,
-  `ChartBallPowerSeries.deriv_limit_center_ne_zero_of_tendstoLocallyUniformlyOn_chartBall`,
-  `ChartBallPowerSeries.NormalizedChartBallLimit`,
-  `ChartBallPowerSeries.normalizedChartBallLimit_of_tendstoLocallyUniformlyOn`.
-- Status: green/sorry-free local normalization substrate.
-
-Local inverse-function support that already exists:
-
-- Blueprint: inverse-function local chart bullet in the formalization note.
-- Lean:
-  `ChartBallPowerSeries.exists_localNormalizedChartHomeomorphData`,
-  `ChartBallPowerSeries.exists_localNormalizedChartHomeomorphData_of_normalizedLimit`,
-  `ChartBallPowerSeries.exists_localNormalizedChartHomeomorphData_of_tendstoLocallyUniformlyOn`.
-- Status: green/sorry-free local inverse-function substrate.
-
-Missing global support:
-
-- A real finite-cover theorem that chooses chart balls whose strict closed
-  subballs cover `X`, with the common sequence restricted to each.
-- A real diagonal extraction theorem for a finite family of chart readings,
-  preserving one subsequence for all selected patches.
-- A real globally compatible conversion from closed-ball convergence in source
-  coordinates to `TendstoLocallyUniformlyOn` on the corresponding patch source.
-
-The six declarations
-`chart_local_equicontinuous`, `chart_local_arzela_ascoli`,
-`global_totally_bounded_via_chart_cover`, `lebesgue_number_chart_cover`,
-`chart_diagonal_extraction`, and `global_sup_via_chart_max` in
-`CompactRiemannSurface.lean` are not support here; they are `True` stubs.
-
-### 3. Package local limits as `GenusZeroLocalMontelChartPatch`
-
-For every selected patch index `i`, let `chartBall i` be the chart-ball
-power-series limit produced in Step 2.  Its preserved normalization supplies
+where `GenusZeroPointRiemannRochElement` packages a
+`MeromorphicMapToSphere X`, its `Nonconstant` proof, and its membership in
+`L([P])`:
 
 ```lean
-ChartBallPowerSeries.NormalizedChartBallLimit
-  (chartBall i).center 0 1 (chartBall i).radius (chartBall i).toFun
+structure GenusZeroPointRiemannRochElement ... where
+  meromorphicMap : MeromorphicMapToSphere X
+  nonconstant : meromorphicMap.Nonconstant
+  mem_L_point : meromorphicMap.MemRiemannRochSpace (Divisor.point P)
 ```
 
-and the inverse-function theorem supplies
+The key representation issue is that
 
 ```lean
-(chartBall i).LocalNormalizedChartHomeomorphData
+RiemannRochGermSpace X D
 ```
 
-Define
+is not a space of concrete functions. It is the submodule
 
 ```lean
-localPatch i :
-  GenusZeroLocalMontelChartPatch
+Submodule.span ℂ
+  (Set.range fun s : RiemannRochBoundedSection X D =>
+    s.toMeromorphicFunctionWithDivisors.germs)
 ```
 
-using
+inside `MeromorphicGermFamily X`. Thus an arbitrary `F` is only known as a
+finite `ℂ`-linear combination of germ families of bounded sections. The bridge
+must realize that finite germ-family sum as an honest divisor-compatible
+meromorphic function/map. The hard point is pole cancellation: the sum is
+valid in local `Filter.Germ`s, but pointwise `OnePoint ℂ` addition cannot be
+used to construct the global map because it sends any summand equal to `∞` to
+`∞` and loses cancellation.
+
+## Construct-First Route
+
+The implementation should construct a representative first, then reuse the
+existing transfer lemmas.
+
+### 1. Extract a finite span expression
+
+Unfold only the carrier definition enough to obtain a finite expression for
+`F` as a `ℂ`-linear combination of generators
 
 ```lean
-GenusZeroLocalMontelChartPatch.ofChartBallLimit
+sᵢ.toMeromorphicFunctionWithDivisors.germs
 ```
 
-with target chart `identityChart` or `inversionChart`.
-
-Support status:
-
-- Blueprint: local chart-ball power-series and inverse-function bullets in
-  `sec:uniformization-lite-iter3`.
-- Lean:
-  `GenusZeroLocalMontelChartPatch`,
-  `GenusZeroLocalMontelChartPatch.ofChartBallLimit`,
-  `ChartBallPowerSeries.NormalizedChartBallLimit`,
-  `ChartBallPowerSeries.exists_localNormalizedChartHomeomorphData_of_normalizedLimit`.
-- Status: green/sorry-free packaging once Step 2 supplies the limits.
-
-### 4. Build realized patches from source charts and sections
-
-For each `localPatch i`, choose the source set, source coordinate
-`sourceChart i : X → ℂ`, and local section `sourceSection i : ℂ → X` coming
-from the source chart.  Then build
+where each
 
 ```lean
-realizedPatch i : MontelRealizedPatch X (localPatch i)
+sᵢ : RiemannRochBoundedSection X (Divisor.point P)
 ```
 
-by the local-section constructor.
-
-Support status:
-
-- Blueprint: `lem:montel-local-patch-realization` for the realization concept;
-  `lem:montel-selector-chartball-value-represents-local-coordinate` for the
-  coordinate equation it supplies.
-- Lean:
-  `MontelRealizedPatch`,
-  `GenusZeroLocalMontelPatchRealization`,
-  `montelRealizedPatch_of_sourceChartLocalSection`,
-  `montelRealizedPatch_of_sourceChart`,
-  `montelLocalPatchRealization`,
-  `montelRealizationPatch_coord_invCoord`,
-  `montelRealizationPatch_invCoord_coord`,
-  `ChartBallPowerSeries.contMDiffOn_toFun_ball`.
-- Status: green/sorry-free realization substrate, assuming the caller supplies
-  the honest source chart, section, source membership, and section inverse
-  hypotheses.
-
-Missing support:
-
-- A source-chart finite-cover theorem that supplies the actual source sets,
-  smooth source charts, local sections, source membership in the selected
-  chart balls, and the section left/right inverse hypotheses required by
-  `montelRealizedPatch_of_sourceChartLocalSection`.
-
-### 5. Read off the first provider
-
-The first target provider is then a pure payload read:
+comes with
 
 ```lean
-genusZeroMontel_finite_normalized_chartBall_cover_with_realized_patches
+sᵢ.memRiemannRochSpace :
+  sᵢ.toMeromorphicFunctionWithDivisors.MemRiemannRochSpace (Divisor.point P)
 ```
 
-Return:
+Existing declarations:
 
-- `PatchIndex`, `Fintype PatchIndex`, and `Nonempty PatchIndex` from the finite
-  two-chart cover;
-- `localPatch`;
-- `realizedPatch`;
-- source cover from the finite source-cover construction;
-- target cover from the two public charts on `OnePoint ℂ`;
-- `(localPatch i).targetChart = (realizedPatch i).patch.targetChart`, which is
-  definitional for realized patches built from `localPatch`;
-- identity and inversion indices;
-- the two normalized limit witnesses from Step 2.
+- `RiemannRochGermSpace`
+- `RiemannRochBoundedSection`
+- `RiemannRochBoundedSection.germs_mem_RiemannRochGermSpace`
+- `RiemannRochBoundedSection.toRiemannRochGermSpace`
+- `RiemannRochBoundedSection.toRiemannRochGermSpace_val`
 
-Support status:
-
-- Blueprint: finite-cover/gluing part of `sec:uniformization-lite-iter3`; no
-  exact construct-first blueprint node for this exposed provider.
-- Lean:
-  target provider
-  `genusZeroMontel_finite_normalized_chartBall_cover_with_realized_patches`
-  is open;
-  projection wrapper
-  `genusZeroMontel_finite_normalized_chartBall_cover_with_local_realizations`
-  is green conditional on this provider;
-  `onePointCx_identity_or_inversionChart_source` is green/sorry-free for the
-  two public chart cover.
-- Status: provider remains open because Steps 1, 2, and the source-chart cover
-  are missing.
-
-### 6. Define the candidate `u`
-
-Define the candidate global value on a point `x : X` by selecting any patch
-`i` containing `x` and setting
+Routine packaging needed:
 
 ```lean
-u x = (realizedPatch i).patch.targetChart.symm
-        ((realizedPatch i).patch.coord x)
+RiemannRochGermSpace.exists_finset_sum_generators
 ```
 
-The construction is independent of the selected patch because both local
-chart readings are limits of the same global sequence `F`.  For same target
-charts, uniqueness of the pointwise limit gives equality directly.  For
-different target charts, the identity/inversion transition rewrites one chart
-reading as the inverse of the other, and uniqueness of limits gives the
-transition equality.
+or an equivalent lemma over `Submodule.mem_span` that exposes a `Finset`,
+coefficients, and bounded-section generators. This is routine linear-algebra
+packaging, not the analytic obstruction.
 
-Support status:
+### 2. Normalize scalar multiples
 
-- Blueprint:
-  `lem:montel-selector-overlap-compatible-normalized-values`,
-  `lem:montel-selector-normalized-transition-agreement`,
-  `lem:global-gluing-overlap-compatible`.
-- Lean:
-  `genusZeroMontel_normalized_limits_agree_on_overlaps`,
-  `genusZeroMontel_overlap_agreement_same_chart`,
-  `genusZeroMontel_overlap_agreement_cross_chart`,
-  `TendstoLocallyUniformlyOn.tendsto_at`,
-  `tendsto_nhds_unique`,
-  `eqOn_of_tendstoLocallyUniformlyOn_same`.
-- Status: partially open.  The same-chart and cross-chart overlap lemmas are
-  present, but `MontelOverlapAgreement.lean` still has two `sorry` helpers:
-  `targetChart_inv_eq` and `targetChart_symm_inv_eq`.  The overlap theorem also
-  assumes, rather than constructs, overlap preconnectedness and cross-chart
-  nonzero coordinate facts.
-
-Missing support:
-
-- Real proofs of the identity/inversion chart transition helper lemmas.
-- A theorem supplying preconnectedness of selected source overlaps.
-- A theorem proving cross-chart overlap coordinates are nonzero.
-- A formal definition/assembly theorem turning the overlap agreement into a
-  continuous bijective `u : X ≃ₜ OnePoint ℂ`.
-
-### 7. Read off the common target sequence
-
-The payload
+For each nonzero coefficient, use the existing nonzero scalar constructors:
 
 ```lean
-∃ F : ℕ → X → OnePoint ℂ, ∀ i,
-  TendstoLocallyUniformlyOn
-    (fun n x => (realizedPatch i).patch.targetChart (F n x))
-    (realizedPatch i).patch.coord Filter.atTop
-    (realizedPatch i).patch.source
+MeromorphicFunctionWithDivisors.smulNonzero
+RiemannRochBoundedSection.smulNonzero
+MeromorphicFunctionWithDivisors.smulNonzero_memRiemannRochSpace_iff
 ```
 
-is not additional work after Step 2.  It is exactly the global sequence and
-finite-family locally-uniform convergence proved there.
+Zero coefficients can be removed from the finite support before the analytic
+construction. Nonzero scalar multiplication is already sound because it
+preserves zero, pole, principal, and order data and has the correct germ-family
+equation.
 
-Support status:
-
-- Blueprint: this is the construct-first replacement for the open selector
-  nodes `lem:montel-selector-local-limit-tied-to-global-homeomorphism` and
-  `lem:montel-selector-normalized-transition-agreement`.
-- Lean: the payload occurs explicitly in
-  `genusZeroMontel_finite_cover_coord_representation_with_realized_patches`.
-- Status: open until the global sequence and finite diagonal extraction theorem
-  are proved.
-
-### 8. Prove coordinate and inverse-coordinate representation
-
-For every patch and `x` in its source, the coordinate representation is
+Routine packaging needed:
 
 ```lean
-(realizedPatch i).patch.targetChart.symm
-  ((realizedPatch i).patch.coord x) = u x
+RiemannRochBoundedSection.smulNonzero_toRiemannRochGermSpace_val
 ```
 
-by the definition of `u` plus overlap independence.  For every `z` in a target
-chart, inverse-coordinate representation is
+or a small rewrite lemma identifying the generator after scalar multiplication.
+
+### 3. Build the finite sum by iterated divisor-compatible addition
+
+The available addition interface is conditional:
 
 ```lean
-(realizedPatch i).patch.invCoord z =
-  u.symm ((realizedPatch i).patch.targetChart.symm z)
+MeromorphicFunctionWithDivisors.AddData
+RiemannRochBoundedSection.AddData
+RiemannRochBoundedSection.AddData.result
+RiemannRochBoundedSection.AddData.germs_eq_add
+MeromorphicFunctionWithDivisors.AddData.result_memRiemannRochSpace
 ```
 
-using the local right-inverse/left-inverse fields of `MontelRealizedPatch` and
-the definition of `u`.
-
-Support status:
-
-- Blueprint:
-  `lem:montel-selector-coord-represents-uniformization`,
-  `lem:montel-selector-normal-limit-agrees-with-uniformization`,
-  `lem:montel-selector-chartball-value-represents-local-coordinate`,
-  `lem:montel-selector-normal-limit-equality-bookkeeping`.
-- Lean:
-  `MontelRealizedPatch.coord_invCoord`,
-  `MontelRealizedPatch.invCoord_coord`,
-  `genusZeroGlobalGluing_coord_mem_target_on_patch`,
-  `OpenPartialHomeomorph.map_target`,
-  `OpenPartialHomeomorph.right_inv`,
-  `OpenPartialHomeomorph.left_inv`.
-- Status: mostly green local algebra after `u` is constructed, but the global
-  `u : X ≃ₜ OnePoint ℂ` assembly is still missing.
-
-### 9. Read off the second provider
-
-The second target provider
+These declarations are consumers of an already-constructed sum. They are not
+constructors for the sum. The missing analytic step is therefore:
 
 ```lean
-genusZeroMontel_finite_cover_coord_representation_with_realized_patches
+MeromorphicFunctionWithDivisors.addData_of_germ_sum
 ```
 
-returns all payloads from the first provider, plus:
+with a shape like:
 
-- `u`;
-- the common target sequence from Step 7;
-- coordinate representation from Step 8;
-- inverse-coordinate representation from Step 8.
+```lean
+theorem MeromorphicFunctionWithDivisors.addData_of_same_bound
+    (f g : MeromorphicFunctionWithDivisors X)
+    (D : Divisor X)
+    (hf : f.MemRiemannRochSpace D)
+    (hg : g.MemRiemannRochSpace D) :
+    Nonempty (MeromorphicFunctionWithDivisors.AddData f g)
+```
 
-Support status:
+or, more narrowly for the current task:
 
-- Blueprint: same coordinate-representation subtree as Step 8.
-- Lean: target provider is open; wrapper
-  `genusZeroMontel_finite_cover_coord_representation` is green conditional on
-  this provider.
-- Status: open until Steps 1, 2, 6, and 8 are formalized.
+```lean
+theorem RiemannRochBoundedSection.addData_point
+    (s t : RiemannRochBoundedSection X (Divisor.point P)) :
+    Nonempty (RiemannRochBoundedSection.AddData s t)
+```
+
+The proof cannot use pointwise `OnePoint` addition. It must construct the
+finite lift of the sum locally from the meromorphic germ representatives,
+prove the local definitions agree on overlaps, glue them to a global
+`MeromorphicFunctionType`, and then construct compatible divisor fields for
+the resulting `MeromorphicFunctionWithDivisors`. Its required fields are
+visible in `MeromorphicFunctionWithDivisors.AddData`:
+
+- `germs_eq_add`, the exact germ-level sum;
+- `order_le_result`, where strict inequality records pole cancellation;
+- `toFun_eq_on_common_regular`, only at points where both summands are finite;
+- `memRiemannRochSpace_of_mem`, preserving the chosen divisor bound.
+
+This is the main NEW ANALYTIC WORK.
+
+### 4. Fold the finite expression
+
+Once pairwise addition data exists, define an iterated sum over the finite span
+expression by induction on the `Finset`. Each induction step uses
+`RiemannRochBoundedSection.AddData.result` and
+`RiemannRochBoundedSection.AddData.germs_eq_add`. The final bounded section
+
+```lean
+sF : RiemannRochBoundedSection X (Divisor.point P)
+```
+
+should satisfy
+
+```lean
+sF.toMeromorphicFunctionWithDivisors.germs = (F : MeromorphicGermFamily X)
+```
+
+and still has
+
+```lean
+sF.memRiemannRochSpace
+```
+
+by the additive membership-preservation fields.
+
+Routine packaging needed:
+
+```lean
+RiemannRochGermSpace.exists_boundedSection_representative
+```
+
+with target shape:
+
+```lean
+∃ s : RiemannRochBoundedSection X (Divisor.point P),
+  s.toMeromorphicFunctionWithDivisors.germs = (F : MeromorphicGermFamily X)
+```
+
+This lemma is routine once Step 3 is available.
+
+### 5. Convert the bounded-section representative to a sphere map
+
+From
+
+```lean
+g := sF.toMeromorphicFunctionWithDivisors
+```
+
+construct a `MeromorphicMapToSphere X` with
+
+```lean
+toMap := g.toFunction.toFun
+```
+
+and transfer the divisor and `L([P])` membership fields. The forward lane in
+the repository currently goes from a `MeromorphicMapToSphere` with analytic
+data to a `MeromorphicFunctionWithDivisors`:
+
+```lean
+MeromorphicMapToSphere.toMeromorphicFunctionWithDivisors
+MeromorphicMapToSphere.memRiemannRochSpace_toMeromorphicFunctionWithDivisors
+MeromorphicMapToSphere.toRiemannRochBoundedSection
+MeromorphicMapToSphere.toRiemannRochBoundedSection_coe
+genusZero_riemannRochBoundedSection_of_nonconstant_mem_L_point
+genusZero_riemannRochBoundedSection_of_GenusZeroPointRiemannRochElement
+```
+
+The bridge needs the reverse packaging direction:
+
+```lean
+MeromorphicFunctionWithDivisors.toMeromorphicMapToSphere
+```
+
+or a narrower constructor:
+
+```lean
+RiemannRochBoundedSection.toMeromorphicMapToSphere
+```
+
+This should be mostly packaging if `MeromorphicFunctionWithDivisors.toFunction`
+already satisfies the fields required by `MeromorphicMapToSphere`. Its
+membership field follows from `sF.memRiemannRochSpace`.
+
+### 6. Transfer nonconstancy from the outside-constant hypothesis
+
+This part is supplied by commit `111ff1df`. The exact declarations are:
+
+```lean
+MeromorphicFunctionType.germAt_eq_constant_of_forall_toFun_eq
+MeromorphicFunctionWithDivisors.germs_mem_constantGermFamilyLine_of_forall_toFun_eq
+MeromorphicFunctionWithDivisors.nonconstant_of_germs_notMem_constantGermFamilyLine
+```
+
+After Step 4 gives
+
+```lean
+sF.toMeromorphicFunctionWithDivisors.germs = (F : MeromorphicGermFamily X)
+```
+
+the hypothesis `hF` rewrites to
+
+```lean
+sF.toMeromorphicFunctionWithDivisors.germs ∉ constantGermFamilyLine X
+```
+
+and
+`MeromorphicFunctionWithDivisors.nonconstant_of_germs_notMem_constantGermFamilyLine`
+gives the `MeromorphicMapToSphere.Nonconstant`-shaped proof for the map whose
+`toMap` is `g.toFunction.toFun`.
+
+### 7. Package the final bridge
+
+With the map `f`, nonconstancy, and membership in `L([P])`, return:
+
+```lean
+⟨{ meromorphicMap := f
+   nonconstant := ...
+   mem_L_point := ... }⟩
+```
+
+Then the existing B-RR3f theorem
+
+```lean
+genusZero_pointRiemannRochElement_of_germSpaceDimensionInput
+```
+
+continues to consume the bridge and needs no redesign.
+
+## Supplied Pieces
+
+Do not redo the following work:
+
+- Linear carrier and constant-line setup:
+  `RiemannRochGermSpace`, `constantGermFamilyLine`,
+  `constantGermFamilyLine_le_RiemannRochGermSpace`,
+  `constantGermFamilyLineInRiemannRoch_finrank`, and
+  `genusZero_pointRiemannRochGermSpace_exists_outside_constants`.
+- Conditional extraction above this bridge:
+  `genusZero_pointRiemannRochElement_of_germSpaceDimensionInput`.
+- Forward map-to-carrier membership bookkeeping from jc3:
+  `MeromorphicMapToSphere.toMeromorphicFunctionWithDivisors`,
+  `MeromorphicMapToSphere.memRiemannRochSpace_toMeromorphicFunctionWithDivisors`,
+  `MeromorphicMapToSphere.toRiemannRochBoundedSection`, and
+  `genusZero_riemannRochBoundedSection_of_nonconstant_mem_L_point`.
+- Nonconstancy transfer from commit `111ff1df`:
+  `MeromorphicFunctionWithDivisors.nonconstant_of_germs_notMem_constantGermFamilyLine`
+  and its constant-line precursor
+  `MeromorphicFunctionWithDivisors.germs_mem_constantGermFamilyLine_of_forall_toFun_eq`.
 
 ## NEW ANALYTIC WORK
 
-1. **Global approximating sequence from `_e`.**  Prove a theorem constructing a
-   single sequence `F : ℕ → X → OnePoint ℂ` from `_e : X ≃ₜ OnePoint ℂ` whose
-   identity-chart and inversion-chart readings are locally holomorphic
-   chart-ball families on the selected source neighborhoods.  Proposed shape:
-   a provider returning `F`, finite source neighborhoods, source charts, and
-   chart-reading `ChartBallPowerSeries` data for each target chart.  This is
-   genuinely hard analytic/topological content.
+Genuinely hard missing content:
 
-2. **Real finite chart-ball cover.**  Prove that the selected source chart balls
-   and target chart assignments form a finite cover of `X`, with strict closed
-   subballs available for Montel extraction.  This replaces any temptation to
-   cite `lebesgue_number_chart_cover` or `global_sup_via_chart_max`, which are
-   only `True` stubs.  This is hard finite-cover analytic topology.
+1. `MeromorphicFunctionWithDivisors.addData_of_same_bound` or the narrower
+   `RiemannRochBoundedSection.addData_point`: construct the actual meromorphic
+   sum of two divisor-compatible representatives with the same RR bound. This
+   is where pole cancellation must be proved at the function level.
+2. A local-to-global gluing lemma for finite-lift representatives of compatible
+   meromorphic germs. A likely target is:
 
-3. **Finite-family diagonal Montel extraction for one common subsequence.**
-   Upgrade the green one-closed-ball extraction lemmas to a theorem for the
-   finite family of chart readings of the same `F`, producing one subsequence
-   whose readings converge locally uniformly on every selected source patch.
-   This replaces `chart_diagonal_extraction`; the existing declaration is a
-   `True` stub.  This is hard but standard diagonal/compactness work.
+   ```lean
+   MeromorphicGermFamily.exists_meromorphicFunctionWithDivisors_of_finite_sum
+   ```
 
-4. **Source-coordinate convergence transfer.**  Convert uniform convergence on
-   closed balls in source coordinates to
-   `TendstoLocallyUniformlyOn` on the corresponding patch source for
-   `(fun n x => targetChart (F n x))`.  This is routine but currently not a
-   named theorem.
+   or the more local
 
-5. **Source chart and local section package.**  Supply, for each selected patch,
-   a smooth source chart, an open source set, a local section, source membership
-   in the chart ball/domain ball, and the local section inverse hypotheses
-   required by `montelRealizedPatch_of_sourceChartLocalSection`.  The local
-   realized-patch constructor is green; this provider is the missing caller
-   package.  This is mostly packaging plus local chart topology.
+   ```lean
+   MeromorphicGermAt.add_representatives_compatible_on_overlaps
+   ```
 
-6. **Standard chart transition helpers without `sorry`.**  Replace the two open
-   helper proofs in `MontelOverlapAgreement.lean`:
-   `targetChart_inv_eq` and `targetChart_symm_inv_eq`.  These are routine
-   two-chart computations for `identityChart` and `inversionChart`, but they
-   are not green yet.
+   feeding the `AddData` constructor.
+3. Divisor/order extraction for the constructed sum: prove the sum has finite
+   zero and pole divisors, prove `principalDivisor = zeroDivisor - poleDivisor`,
+   prove disjointness of zero/pole supports, and prove the `L([P])` membership
+   preservation field.
+4. Reverse packaging:
 
-7. **Overlap topological hypotheses.**  Prove that selected source overlaps are
-   preconnected where needed, and prove the cross-chart nonzero coordinate
-   condition used by `genusZeroMontel_overlap_agreement_cross_chart`.  This is
-   genuine topology/atlas work.
+   ```lean
+   MeromorphicFunctionWithDivisors.toMeromorphicMapToSphere
+   ```
 
-8. **Global `u` assembly as a homeomorphism.**  Package the overlap-independent
-   local formula into `u : X ≃ₜ OnePoint ℂ`, including continuity, inverse
-   formula, and left/right inverse proofs.  The local algebra is green through
-   `MontelRealizedPatch.coord_invCoord` and
-   `MontelRealizedPatch.invCoord_coord`; the global quotient/gluing assembly is
-   not yet a named green theorem.
+   or
 
-9. **Provider assembly theorem.**  After items 1-8, add a narrow theorem that
-   returns the exact payload of
-   `genusZeroMontel_finite_normalized_chartBall_cover_with_realized_patches`
-   and
-   `genusZeroMontel_finite_cover_coord_representation_with_realized_patches`.
-   This should be mostly existential packaging, not additional analysis.
+   ```lean
+   RiemannRochBoundedSection.toMeromorphicMapToSphere
+   ```
 
-## Explicit non-substrate
+   if not already derivable from `MeromorphicFunctionWithDivisors.toFunction`.
 
-The following declarations in
-`Jacobian/HolomorphicForms/CompactRiemannSurface.lean` must not be cited as
-Montel support until replaced by real theorems:
+Routine packaging after those hard leaves:
 
-- `chart_local_equicontinuous`
-- `chart_local_arzela_ascoli`
-- `global_totally_bounded_via_chart_cover`
-- `lebesgue_number_chart_cover`
-- `chart_diagonal_extraction`
-- `global_sup_via_chart_max`
+1. Expose finite span expressions from `Submodule.span`.
+2. Fold a finite list of bounded sections using pairwise `AddData`.
+3. Rewrite the final representative's germs to the original `F`.
+4. Apply the supplied nonconstancy transfer and package
+   `GenusZeroPointRiemannRochElement`.
 
-They currently prove only `True`.
+## Carrier Decision
+
+Choose to add an order-`orderAt` compatibility field to
+`MeromorphicFunctionWithDivisors`, but only as a separate micro task. The
+current carrier records `order : X → WithTop ℤ` and derives divisor
+coefficients from it, yet it does not assert that this order is the analytic
+order of the recorded germ or finite lift. jc2's counter-model shows that the
+germ-order bridge is unsound without such a field: a carrier could have correct
+shape fields while lying about analytic order. Adding the field is the right
+long-term choice because the addition constructor must prove exactly how pole
+cancellation changes order. It should not be bundled into the representation
+bridge proof, because every existing constructor for
+`MeromorphicFunctionWithDivisors` must migrate.
