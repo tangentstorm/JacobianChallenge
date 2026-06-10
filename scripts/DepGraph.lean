@@ -95,7 +95,8 @@ def main : IO Unit := do
       { module := `Jacobian.HolomorphicForms.MontelLocalPatchRealization },
       { module := `Jacobian.HolomorphicForms.MontelGluedMapLocalAgreement },
       { module := `Jacobian.HolomorphicForms.MontelForwardSmoothness },
-      { module := `Jacobian.HolomorphicForms.MontelInverseSmoothness }] {}
+      { module := `Jacobian.HolomorphicForms.MontelInverseSmoothness },
+      { module := `Jacobian.HolomorphicForms.MontelSourceChartCover }] {}
   let coreCtx : Core.Context := { fileName := "DepGraph", fileMap := default }
   let coreState : Core.State := { env }
   let _ ← (emit.run coreCtx coreState).toIO'

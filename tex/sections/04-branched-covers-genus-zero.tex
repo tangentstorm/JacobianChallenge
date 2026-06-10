@@ -1378,6 +1378,30 @@ target-membership disjunction.
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Source-chart package per chart-ball datum]
+\label{lem:montel-source-chart-package}
+\uses{lem:montel-chartball-normalized-local-chart, lem:montel-realized-patch-local-section-form, lem:mathlib-open-partial-homeomorph-right-inv, lem:mathlib-open-partial-homeomorph-left-inv}
+The caller package the finite-cover construction needs, stated abstractly per
+chart-ball datum (the selected patches do not exist yet). Given one local
+normalized Montel chart patch together with a source chart on \(X\) modeled as an
+\code{OpenPartialHomeomorph}\,\(X\,\C\) that realizes its chart-ball coordinate —
+smooth on its source, landing inside the chart-ball domain ball, and with the
+inverse-function-theorem inverse values of the chart-ball lying in the source
+chart's image — it produces a source set, source chart and local section
+satisfying \emph{every} hypothesis of the domain-restricted realized-patch
+constructor. The witnesses are \(\code{source}=\varphi.\code{source}\),
+\(\code{sourceChart}=\varphi\), \(\code{sourceSection}=\varphi.\code{symm}\); the
+radius-ball membership follows from the domain ball via
+\code{domainRadius\_lt\_chart} and \code{Metric.ball\_subset\_ball}, the section
+inverses from \code{OpenPartialHomeomorph.right\_inv}/\code{left\_inv}. The rider
+\code{exists\_montelRealizedPatch\_of\_chartBallData} composes this with the
+constructor to yield a \code{MontelRealizedPatch} per selected patch in one call.
+This is pure packaging plus local chart topology — no new analytic content.
+\lean{JacobianChallenge.HolomorphicForms.exists_sourceChartPackage_of_chartBallData}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Glued-map local agreement on a realized patch family]
 \label{lem:montel-glued-map-local-agreement}
 \uses{lem:montel-realized-patch-bundle, lem:montel-coherent-local-selector, lem:mathlib-open-partial-homeomorph-right-inv}
