@@ -123,6 +123,41 @@ def constantNonzero (D : Divisor X) (hD : Divisor.Effective D)
       X → OnePoint ℂ) = fun _ => (c : OnePoint ℂ) :=
   rfl
 
+@[simp] theorem constantNonzero_apply
+    (D : Divisor X) (hD : Divisor.Effective D) (c : ℂ) (hc : c ≠ 0)
+    (P : X) :
+    (constantNonzero (X := X) D hD c hc : RiemannRochBoundedSection X D) P =
+      (c : OnePoint ℂ) :=
+  rfl
+
+/--
+The nonzero constant bounded sections form an injective family, provided the
+source has at least one point. This is the constant-line ingredient for the
+future linear-algebra step comparing constants with the ambient `L(D)`.
+-/
+theorem constantNonzero_injective_of_toFun_eq [Nonempty X]
+    (D : Divisor X) (hD : Divisor.Effective D)
+    {c d : ℂ} (hc : c ≠ 0) (hd : d ≠ 0)
+    (h :
+      ((constantNonzero (X := X) D hD c hc : RiemannRochBoundedSection X D) :
+        X → OnePoint ℂ) =
+      ((constantNonzero (X := X) D hD d hd : RiemannRochBoundedSection X D) :
+        X → OnePoint ℂ)) :
+    c = d := by
+  obtain ⟨P⟩ := ‹Nonempty X›
+  exact OnePoint.coe_injective (congr_fun h P)
+
+theorem constantNonzero_eq_of_toFun_eq [Nonempty X]
+    (D : Divisor X) (hD : Divisor.Effective D)
+    {c d : ℂ} (hc : c ≠ 0) (hd : d ≠ 0)
+    (h :
+      ((constantNonzero (X := X) D hD c hc : RiemannRochBoundedSection X D) :
+        X → OnePoint ℂ) =
+      ((constantNonzero (X := X) D hD d hd : RiemannRochBoundedSection X D) :
+        X → OnePoint ℂ)) :
+    c = d :=
+  constantNonzero_injective_of_toFun_eq D hD hc hd h
+
 /--
 Nonzero scalar multiplication of a bounded section.
 
