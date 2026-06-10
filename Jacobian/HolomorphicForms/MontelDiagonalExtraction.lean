@@ -219,6 +219,73 @@ lemma nat_strictMono_le (f : ℕ → ℕ) (h : StrictMono f) (n : ℕ) : n ≤ f
   | zero => exact Nat.zero_le _
   | succ k ih => exact Nat.succ_le_of_lt (lt_of_le_of_lt ih (h (Nat.lt_succ_self k)))
 
+lemma diagonal_subseq_tendsto
+    {ι : Type*} [Fintype ι]
+    (data : ι → ℕ → (ℂ → ℂ))
+    (c : ι → ℂ) (R : ι → ℝ)
+    (Φ : ℕ → ℕ → ℕ)
+    (step : ℕ → ℕ → ℕ)
+    (h_sub : ∀ m k, Φ (m + 1) k = Φ m (step m k))
+    (step_mono : ∀ m, StrictMono (step m))
+    (h_unif_m : ∀ (m : ℕ) i, ∃ limit : ℂ → ℂ, TendstoUniformlyOn (fun k z => data i (Φ (m + 1) k) z) limit atTop (Metric.closedBall (c i) (R i - 1 / (m + 1 : ℝ)))) :
+    ∀ i (m : ℕ), ∃ L : ℂ → ℂ, TendstoUniformlyOn (fun k z => data i (Φ k k) z) L atTop (Metric.closedBall (c i) (R i - 1 / (m + 1 : ℝ))) := by
+  intro i m
+  rcases h_unif_m m i with ⟨L, hL⟩
+  use L
+  have h_gj : ∀ j : ℕ, ∃ g_j : ℕ → ℕ, StrictMono g_j ∧ Φ (m + 1 + j) = Φ (m + 1) ∘ g_j := by
+    intro j
+    induction j with
+    | zero =>
+      use id
+      constructor
+      · exact strictMono_id
+      · rfl
+    | succ j ih =>
+      rcases ih with ⟨g_j, hg_j_mono, hg_j_eq⟩
+      use g_j ∘ step (m + 1 + j)
+      constructor
+      · exact StrictMono.comp hg_j_mono (step_mono (m + 1 + j))
+      · funext k
+        calc Φ (m + 1 + j + 1) k = Φ (m + 1 + j) (step (m + 1 + j) k) := h_sub (m + 1 + j) k
+          _ = (Φ (m + 1) ∘ g_j) (step (m + 1 + j) k) := by rw [hg_j_eq]
+          _ = Φ (m + 1) (g_j (step (m + 1 + j) k)) := rfl
+  
+  let idx := fun k : ℕ => if hk : m + 1 ≤ k then Classical.choose (h_gj (k - (m + 1))) k else 0
+  have h_diag_tail : ∀ k, m + 1 ≤ k → Φ k k = Φ (m + 1) (idx k) := by
+    intro k hk
+    have eq_idx : idx k = Classical.choose (h_gj (k - (m + 1))) k := dif_pos hk
+    have h2 : m + 1 + (k - (m + 1)) = k := Nat.add_sub_of_le hk
+    have h3 := (Classical.choose_spec (h_gj (k - (m + 1)))).2
+    calc Φ k k = Φ (m + 1 + (k - (m + 1))) k := by congr 1; exact h2.symm
+      _ = (Φ (m + 1) ∘ Classical.choose (h_gj (k - (m + 1)))) k := congrFun h3 k
+      _ = Φ (m + 1) (Classical.choose (h_gj (k - (m + 1))) k) := rfl
+      _ = Φ (m + 1) (idx k) := by rw [eq_idx]
+
+  have h_idx_tendsto : Tendsto idx atTop atTop := by
+    rw [Filter.tendsto_atTop_atTop]
+    intro A
+    use max (m + 1) A
+    intro b hb
+    have hm : m + 1 ≤ b := le_trans (le_max_left (m + 1) A) hb
+    have hA : A ≤ b := le_trans (le_max_right (m + 1) A) hb
+    have eq1 : idx b = Classical.choose (h_gj (b - (m + 1))) b := dif_pos hm
+    rw [eq1]
+    have h_g_mono : StrictMono (Classical.choose (h_gj (b - (m + 1)))) := (Classical.choose_spec (h_gj (b - (m + 1)))).1
+    have h_g_le : b ≤ Classical.choose (h_gj (b - (m + 1))) b := nat_strictMono_le _ h_g_mono b
+    exact le_trans hA h_g_le
+
+  have hL_comp : TendstoUniformlyOn (fun k z => data i (Φ (m + 1) (idx k)) z) L atTop (Metric.closedBall (c i) (R i - 1 / (m + 1 : ℝ))) :=
+    tendstoUniformlyOn_subseq hL h_idx_tendsto
+
+  rw [Metric.tendstoUniformlyOn_iff] at hL_comp ⊢
+  intro ε hε
+  have h1 := hL_comp ε hε
+  filter_upwards [h1, eventually_ge_atTop (m + 1)] with k hk hm_le z hz
+  have heq : data i (Φ k k) z = data i (Φ (m + 1) (idx k)) z := by
+    rw [h_diag_tail k hm_le]
+  rw [heq]
+  exact hk z hz
+
 lemma exists_diagonal_subseq_tendstoLocallyUniformlyOn_finite
     {ι : Type*} [Fintype ι]
     (data : ι → ℕ → ChartBallPowerSeries)
@@ -251,15 +318,11 @@ lemma exists_diagonal_subseq_tendstoLocallyUniformlyOn_finite
   use diagonal, h_diag_mono
   
   have h_unif : ∀ i (m : ℕ), ∃ L : ℂ → ℂ, TendstoUniformlyOn (fun k z => (data i (diagonal k)).toFun z) L atTop (Metric.closedBall (c i) (R i - 1 / (m + 1 : ℝ))) := by
-    intro i m
-    have h_unif_m : ∃ limit : ℂ → ℂ, TendstoUniformlyOn (fun k z => (data i (Φ m (step m k))).toFun z) limit atTop (Metric.closedBall (c i) (R i - 1 / (m + 1 : ℝ))) := (extract_step data c R hclosed target htarget hrange heq m (Φ m)).2.2 i
-    rcases h_unif_m with ⟨L, hL⟩
-    use L
-    -- we need to show that diagonal k is a subsequence of Φ m (step m k)
-    -- actually diagonal (m + 1 + k) = Φ (m + 1 + k) (m + 1 + k)
-    -- this is a subsequence of Φ (m + 1) k.
-    sorry
+    apply diagonal_subseq_tendsto (fun i k z => (data i k).toFun z) c R Φ step h_sub step_mono
+    intro m i
+    exact (extract_step data c R hclosed target htarget hrange heq m (Φ m)).2.2 i
 
   exact tendstoLocallyUniformlyOn_of_tendstoUniformlyOn_subballs (fun i k z => (data i (diagonal k)).toFun z) c R h_unif
 
 end JacobianChallenge.HolomorphicForms
+
