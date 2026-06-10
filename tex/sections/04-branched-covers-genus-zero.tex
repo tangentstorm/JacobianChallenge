@@ -1706,7 +1706,7 @@ finite-cover selection node independent of it.
 \lean{JacobianChallenge.HolomorphicForms.genusZeroMontel_finite_normalized_chartBall_cover_without_coord_representation}
 \end{lemma}
 
-\begin{lemma}[Stage marked topological control data (open)]
+\begin{lemma}[Stage marked topological control data]
 \label{lem:stage-marked-topological-control-data}
 The Perron engine uses the input homeomorphism
 \(_e : X \simeq_t \code{OnePoint}\,\C\) only to choose topological control
@@ -1714,7 +1714,15 @@ data: the two marked source points corresponding to \(0\) and \(\infty\), a
 base normalization point away from them, and separated chart neighborhoods
 around all three points.  This node is topological bookkeeping for the later
 analytic stage construction; it does not assert that \(_e\) is holomorphic.
+\lean{JacobianChallenge.HolomorphicForms.GenusZeroStageMarkedData, JacobianChallenge.HolomorphicForms.genusZeroStageMarkedData_nonempty}
+\leanok
 \end{lemma}
+\begin{proof}\leanok
+Take \(P_0 := e^{-1}(0)\), \(P_\infty := e^{-1}(\infty)\), and base point
+\(e^{-1}(1)\); distinctness follows from injectivity of \(e^{-1}\), and the
+three neighborhoods are pairwise \(T_2\) separations intersected with the
+chart sources.
+\end{proof}
 
 \begin{lemma}[Stage bordered exhaustion domains (open)]
 \label{lem:stage-bordered-exhaustion-domains}
