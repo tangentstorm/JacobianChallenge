@@ -1754,6 +1754,21 @@ one-dimensional subspace of constants.
 \leanok
 \end{proof}
 
+\begin{lemma}[RR germ outside constants from the finrank input]
+\label{lem:rr-germ-space-outside-constants}
+\uses{def:rr-germ-space-dimension-input, lem:rr-germ-space-constant-line}
+Given the point RR germ-space finrank input, the one-dimensional constant line
+is a proper submodule of
+\(\code{RiemannRochGermSpace}\,X\,(\code{Divisor.point}\,P)\). Hence there is
+an RR germ-space element whose underlying meromorphic germ family is not
+constant.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_pointRiemannRochGermSpace_exists_outside_constants}
+\leanok
+\end{lemma}
+\begin{proof}
+\leanok
+\end{proof}
+
 \begin{lemma}[Hard core: dimension of \(L([P])\) in genus zero (open)]
 \label{lem:rr-dim-L-point-eq-two-core}
 \uses{def:rr-germ-space-carrier, def:rr-germ-space-dimension-input}
@@ -1800,7 +1815,7 @@ meromorphic sections of \(K-[P]\), using \(g_{\mathrm{an}}(X)=0\) to identify
 
 \begin{lemma}[Dimension \(>1\) gives a nonconstant element of \(L([P])\)]
 \label{lem:rr-dim-ge-two-nonconstant}
-\uses{lem:rr-dim-L-point-eq-two-core, lem:rr-K-minus-point-vanishes, lem:rr-germ-space-constant-line}
+\uses{lem:rr-dim-L-point-eq-two-core, lem:rr-K-minus-point-vanishes, lem:rr-germ-space-outside-constants}
 Once the real \(\dim_\C L([P])=2\) theorem is available, pure linear algebra
 should produce a nonconstant \(f\in L([P])\): constants give a one-dimensional
 subspace, so a two-dimensional ambient space contains an element outside the

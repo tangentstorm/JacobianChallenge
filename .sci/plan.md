@@ -305,6 +305,12 @@ surveyed in goal.md (§ FIRST JOB) — ~59 sorry-free substrate lemmas to turn i
       extraction: if constants embed as a one-dimensional subspace of `L([P])`
       and `finrank L([P]) = 2`, then there exists a nonconstant
       `MeromorphicMapToSphere` in `L([P])`.
+      - [x] **B-RR3d.** Built the constant germ-family line
+        `constantGermFamilyLine`, proved its finrank is `1`, and proved it lies
+        in `RiemannRochGermSpace X D` for every effective divisor `D`.
+      - [x] **B-RR3e.** Use the constant line and the finrank-2 germ-space
+        input to produce an element of `RiemannRochGermSpace X (Divisor.point P)`
+        outside constants.
 
 - [ ] **B-RR4. Independent support leaf.** Connect a constructed nonconstant
       RR element to the direct granular provider: exact pole divisor `[P]`,

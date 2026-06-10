@@ -5,6 +5,7 @@ import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Jacobian.HolomorphicForms.ChartedSpaceComplexPoints
 import Jacobian.HolomorphicForms.HolomorphicMap
 import Jacobian.HolomorphicForms.MeromorphicToBranchedCover
+import Jacobian.HolomorphicForms.RRDimGeTwoNonconstant
 import Mathlib.Geometry.Manifold.Complex
 import Mathlib.LinearAlgebra.Dimension.Finrank
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
@@ -446,6 +447,86 @@ theorem constantGermFamilyLine_le_RiemannRochGermSpace
     simpa [constantGermFamilyLinearMap, RiemannRochBoundedSection.constantNonzero,
       MeromorphicFunctionWithDivisors.constantNonzero] using hmem
 
+/-- Constants as a linear map into the Riemann-Roch germ-space carrier. -/
+noncomputable def constantGermFamilyToRiemannRochLinearMap
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (D : Divisor X) (hD : Divisor.Effective D) :
+    ℂ →ₗ[ℂ] RiemannRochGermSpace X D where
+  toFun c :=
+    ⟨constantGermFamilyLinearMap X c,
+      constantGermFamilyLine_le_RiemannRochGermSpace D hD
+        (constantGermFamilyLinearMap_mem_constantGermFamilyLine X c)⟩
+  map_add' c d := by
+    apply Subtype.ext
+    exact map_add (constantGermFamilyLinearMap X) c d
+  map_smul' a c := by
+    apply Subtype.ext
+    exact map_smul (constantGermFamilyLinearMap X) a c
+
+@[simp] theorem constantGermFamilyToRiemannRochLinearMap_apply_coe
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (D : Divisor X) (hD : Divisor.Effective D) (c : ℂ) :
+    ((constantGermFamilyToRiemannRochLinearMap (X := X) D hD c :
+        RiemannRochGermSpace X D) : MeromorphicGermFamily X) =
+      constantGermFamilyLinearMap X c :=
+  rfl
+
+/-- The constant line as a submodule internal to a Riemann-Roch germ space. -/
+noncomputable def constantGermFamilyLineInRiemannRoch
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (D : Divisor X) (hD : Divisor.Effective D) :
+    Submodule ℂ (RiemannRochGermSpace X D) :=
+  LinearMap.range (constantGermFamilyToRiemannRochLinearMap (X := X) D hD)
+
+theorem constantGermFamilyLineInRiemannRoch_coe_mem
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {D : Divisor X} {hD : Divisor.Effective D}
+    {F : RiemannRochGermSpace X D}
+    (hF : F ∈ constantGermFamilyLineInRiemannRoch X D hD) :
+    (F : MeromorphicGermFamily X) ∈ constantGermFamilyLine X := by
+  rcases hF with ⟨c, rfl⟩
+  exact constantGermFamilyLinearMap_mem_constantGermFamilyLine X c
+
+theorem constantGermFamilyLineInRiemannRoch_mem_of_coe_mem
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {D : Divisor X} {hD : Divisor.Effective D}
+    {F : RiemannRochGermSpace X D}
+    (hF : (F : MeromorphicGermFamily X) ∈ constantGermFamilyLine X) :
+    F ∈ constantGermFamilyLineInRiemannRoch X D hD := by
+  rcases hF with ⟨c, hc⟩
+  refine ⟨c, ?_⟩
+  exact Subtype.ext hc
+
+theorem constantGermFamilyToRiemannRochLinearMap_injective
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] [Nonempty X]
+    (D : Divisor X) (hD : Divisor.Effective D) :
+    Function.Injective (constantGermFamilyToRiemannRochLinearMap (X := X) D hD) := by
+  intro c d h
+  exact constantGermFamilyLinearMap_injective (X := X) (congrArg Subtype.val h)
+
+theorem constantGermFamilyLineInRiemannRoch_finrank
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] [Nonempty X]
+    (D : Divisor X) (hD : Divisor.Effective D) :
+    Module.finrank ℂ (constantGermFamilyLineInRiemannRoch X D hD) = 1 := by
+  rw [constantGermFamilyLineInRiemannRoch,
+    LinearMap.finrank_range_of_inj
+      (constantGermFamilyToRiemannRochLinearMap_injective (X := X) D hD)]
+  exact Module.finrank_self ℂ
+
 /--
 Future genus-zero dimension target, now stated against the sound germ-space
 module carrier rather than the non-additive bounded-section record.
@@ -495,6 +576,38 @@ theorem genusZero_riemannRoch_difference_eq_two_of_germSpaceDimensionInput
   refine ⟨Module.finrank ℂ (RiemannRochGermSpace X (Divisor.point P)), ℓKP, ?_⟩
   rw [input.point_finrank_eq_two, hℓKP]
   norm_num
+
+/--
+The finrank-two point Riemann-Roch germ-space input produces a germ-space
+element outside the constant line.
+-/
+theorem genusZero_pointRiemannRochGermSpace_exists_outside_constants
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (input : GenusZeroPointRiemannRochGermSpaceDimensionInput X P h) :
+    ∃ F : RiemannRochGermSpace X (Divisor.point P),
+      (F : MeromorphicGermFamily X) ∉ constantGermFamilyLine X := by
+  classical
+  letI : Nonempty X := ⟨P⟩
+  have hD : Divisor.Effective (Divisor.point P : Divisor X) :=
+    Divisor.effective_point P
+  have hC :
+      Module.finrank ℂ
+          (constantGermFamilyLineInRiemannRoch X (Divisor.point P) hD) = 1 :=
+    constantGermFamilyLineInRiemannRoch_finrank X (Divisor.point P) hD
+  have hV : 2 ≤ Module.finrank ℂ (RiemannRochGermSpace X (Divisor.point P)) := by
+    rw [input.point_finrank_eq_two]
+  obtain ⟨F, hF⟩ :=
+    exists_outside_oneDim_of_finrank_ge_two
+      (C := constantGermFamilyLineInRiemannRoch X (Divisor.point P) hD) hC hV
+  refine ⟨F, ?_⟩
+  intro hF_constant
+  exact hF (constantGermFamilyLineInRiemannRoch_mem_of_coe_mem
+    (hD := hD) hF_constant)
 
 /-- A nonconstant element of the Riemann-Roch space `L([P])`. -/
 structure GenusZeroPointRiemannRochElement
