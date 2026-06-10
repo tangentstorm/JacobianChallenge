@@ -946,13 +946,12 @@ meromorphic map in `L([P])`.
 This is no longer derived from a raw `Submodule ℂ (MeromorphicFunctionType X)`;
 that derivation relied on the removed false vector-space instance.
 
-**Refactored (2026-05-27, manager-authorized multi-file commit)**:
-this theorem now routes through the narrower named provider
-`genusZero_pointRRSection_meromorphic_getD_exists` (above) instead of
-referencing the bump scaffold `singlePoleMeromorphicMap` directly. The
-narrower provider carries the full analytic + nonconstancy +
-RR-space-membership content under a single named sorry; this theorem
-projects the (a) nonconstancy and (b) RR-space-membership components.
+The proof now routes through the Path B germ-space spine:
+`genusZero_pointRiemannRochGermSpaceDimensionInput` supplies the dimension
+input, and `genusZero_pointRiemannRochElement_of_germSpaceDimensionInput`
+applies the germ-to-map representation bridge. This removes the old dependency
+on the fixed-pole analytic RR provider
+`genusZero_pointRRSection_meromorphic_getD_exists`.
 -/
 theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -963,9 +962,9 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ f : MeromorphicMapToSphere X,
       f.Nonconstant ∧ f.MemRiemannRochSpace (Divisor.point P) := by
-  obtain ⟨f, _hpole, hnc, hmem, _hmer, _hord1⟩ :=
-    genusZero_pointRRSection_meromorphic_getD_exists X P h
-  exact ⟨f, hnc, hmem⟩
+  let input := genusZero_pointRiemannRochGermSpaceDimensionInput X P h
+  obtain ⟨f⟩ := genusZero_pointRiemannRochElement_of_germSpaceDimensionInput X P h input
+  exact ⟨f.meromorphicMap, f.nonconstant, f.mem_L_point⟩
 
 /--
 **Structural axiom (S3).** From the genus-zero Riemann-Roch

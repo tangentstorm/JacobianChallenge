@@ -1966,9 +1966,13 @@ constant line. The intended Lean shape is the existing theorem
     f.\code{MemRiemannRochSpace}\,(\code{Divisor.point}\,P).
 \end{gathered}
 \]
-At present that declaration projects from the fixed-pole provider instead of
-being a linear-algebra consequence of a genuine RR space. It is therefore part
-of the decomposition target, not evidence that the core has been proved.
+The Lean declaration now routes through the point RR germ-space dimension
+provider and the germ-to-map representation bridge:
+\code{genusZero\_pointRiemannRochGermSpaceDimensionInput} supplies the
+dimension input and
+\code{genusZero\_pointRiemannRochElement\_of\_germSpaceDimensionInput}
+packages the resulting element. The node remains open transitively on those
+providers, but no longer depends on the fixed-pole analytic RR provider.
 \lean{JacobianChallenge.HolomorphicForms.riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic}
 \end{lemma}
 
