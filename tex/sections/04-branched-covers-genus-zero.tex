@@ -1650,6 +1650,76 @@ a compact connected surface is constant. Hence \(\mathrm{poles}(f)=[P]\).
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[A nonconstant element of \(L([P])\) has analytic order one at \(P\)]
+\label{lem:rr-nonconstant-L-point-order-one}
+\uses{lem:rr-nonconstant-L-point-has-exact-pole}
+If \(f\in L([P])\) is nonconstant and carries honest analytic data, the
+chart-local analytic order of \(f\) at \(P\) is exactly \(1\): the pole divisor
+is pinned to \([P]\) by
+Lemma~\ref{lem:rr-nonconstant-L-point-has-exact-pole}, and at a simple pole the
+analytic-data record reads off order one in the inversion chart.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_mapAnalyticOrderAt_eq_one_of_nonconstant_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[A nonconstant element of \(L([P])\) is a branched cover of degree one]
+\label{lem:rr-nonconstant-L-point-branched-cover-datum}
+\uses{lem:rr-nonconstant-L-point-order-one}
+A nonconstant \(f\in L([P])\) with analytic data packages as a
+\code{BranchedCoverDataOfPoleDegree}: a branched cover of \(\CPone\) whose
+branched degree over \(\infty\) equals
+\(\deg(\mathrm{poles}(f))=\deg([P])=1\). The simple-pole constructor consumes
+the exact pole divisor and the order-one fact of the preceding nodes.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_branchedCoverDataOfPoleDegree_of_nonconstant_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Degree-one bijectivity package for a nonconstant element of \(L([P])\)]
+\label{lem:rr-nonconstant-L-point-degree-one-package}
+\uses{lem:rr-nonconstant-L-point-branched-cover-datum, thm:degree-one-bijectivity-meromorphic}
+A nonconstant \(f\in L([P])\) with analytic data yields the full
+\code{MeromorphicDegreeOneData} record: \(f\) is continuous, \emph{bijective}
+onto \(\CPone\), and its pole divisor has degree one. Continuity comes from the
+analytic data (so, unlike the generic assembly, no separate pole-modulus
+divergence datum is needed), the degree from \(\deg([P])=1\), and bijectivity
+from Theorem~\ref{thm:degree-one-bijectivity-meromorphic} applied to the
+branched-cover datum of the preceding node.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_meromorphicDegreeOneData_of_nonconstant_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{lemma}[Mathlib: compact-to-Hausdorff continuous bijection is a homeomorphism]
+\label{lem:mathlib-homeo-of-equiv-compact-to-t2}
+\lean{Continuous.homeoOfEquivCompactToT2}
+A continuous bijection from a compact space to a Hausdorff space is a closed
+map, hence its set-theoretic inverse is continuous and the bijection promotes
+to a homeomorphism. This is the Mathlib primitive behind the topological
+uniformization payoff of the Path-B chain. Green (Mathlib).
+\leanok
+\end{lemma}
+
+\begin{lemma}[A nonconstant element of \(L([P])\) realizes the sphere homeomorphism]
+\label{lem:rr-nonconstant-L-point-homeomorph-sphere}
+\uses{lem:rr-nonconstant-L-point-degree-one-package, lem:mathlib-homeo-of-equiv-compact-to-t2}
+A nonconstant \(f\in L([P])\) with analytic data realizes a homeomorphism
+\(e : X\simeq\code{OnePoint}\,\C\) whose underlying map \emph{is}
+\(f.\code{toMap}\). The carried identification \(e = f.\code{toMap}\) (as
+functions) lets downstream consumers transport forward holomorphy of \(f\)
+along \(e\) toward the genus-zero biholomorphism (\#232) and supplies the
+topological \(X\simeq\code{OnePoint}\,\C\) input of \#233.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_homeomorph_onePoint_of_nonconstant_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+The degree-one bijectivity package gives a continuous bijection
+\(f : X\to\code{OnePoint}\,\C\) from a compact space to a Hausdorff space;
+Lemma~\ref{lem:mathlib-homeo-of-equiv-compact-to-t2} promotes it to a
+homeomorphism with the same underlying map.
+\end{proof}
+
 \begin{lemma}[Path B fixed-pole effective granular provider (open)]
 \label{lem:rr-effective-granular-provider}
 \uses{lem:rr-nonconstant-L-point-has-exact-pole}

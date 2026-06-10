@@ -268,4 +268,56 @@ theorem genusZero_meromorphicDegreeOneData_of_GenusZeroPointRiemannRochElement
   genusZero_meromorphicDegreeOneData_of_nonconstant_mem_L_point
     X P f.meromorphicMap han f.nonconstant f.mem_L_point
 
+/--
+**Path B leaf (#232), topological uniformization payoff.** A nonconstant
+`f ∈ L([P])` carrying honest analytic data realizes a homeomorphism
+`X ≃ₜ OnePoint ℂ` whose underlying map **is** `f.toMap`.
+
+The carried identification `⇑e = f.toMap` is the point of the statement: a
+downstream consumer can transport forward smoothness
+(`MeromorphicMapToSphere.contMDiff_toMap_of_analyticData`, cited not edited)
+along `e` toward the #232 biholomorphism, and the bare homeomorphism feeds the
+`*_of_homeomorph_onePoint` providers and the `X ≃ₜ OnePoint ℂ` input of #233.
+
+The proof is pure composition: the accepted degree-one bijectivity package of
+this file supplies a continuous bijection, and Mathlib's
+`Continuous.homeoOfEquivCompactToT2` promotes a continuous bijection from a
+compact space to a T2 space to a homeomorphism.
+-/
+theorem genusZero_homeomorph_onePoint_of_nonconstant_mem_L_point
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (f : MeromorphicMapToSphere X)
+    (han : f.AnalyticData)
+    (hnc : f.Nonconstant)
+    (hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    ∃ e : X ≃ₜ OnePoint ℂ, ⇑e = f.toMap := by
+  obtain ⟨data⟩ :=
+    genusZero_meromorphicDegreeOneData_of_nonconstant_mem_L_point
+      X P f han hnc hmem
+  let equiv : X ≃ OnePoint ℂ := Equiv.ofBijective f.toMap data.bijective_toMap
+  have hcont : Continuous equiv := by
+    simpa [equiv] using data.continuous_toMap
+  exact ⟨hcont.homeoOfEquivCompactToT2, rfl⟩
+
+/--
+**Path B leaf (#232), topological uniformization payoff, packaged form.** The
+same homeomorphism conclusion for a `GenusZeroPointRiemannRochElement` together
+with its analytic data. Delegates to the bare form above.
+-/
+theorem genusZero_homeomorph_onePoint_of_GenusZeroPointRiemannRochElement
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : GenusZeroPointRiemannRochElement X P h)
+    (han : f.meromorphicMap.AnalyticData) :
+    ∃ e : X ≃ₜ OnePoint ℂ, ⇑e = f.meromorphicMap.toMap :=
+  genusZero_homeomorph_onePoint_of_nonconstant_mem_L_point
+    X P f.meromorphicMap han f.nonconstant f.mem_L_point
+
 end JacobianChallenge.HolomorphicForms
