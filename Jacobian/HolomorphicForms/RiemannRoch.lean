@@ -372,6 +372,39 @@ noncomputable abbrev genusZero_pointRiemannRochGermSpace_finrank_target
     (P : X) (_h : analyticGenus ℂ X = 0) : Prop :=
   Module.finrank ℂ (RiemannRochGermSpace X (Divisor.point P)) = 2
 
+/--
+The named hard input needed to turn the Path B Riemann-Roch arithmetic
+placeholder into a statement about the sound germ-space carrier.
+
+The `point_finrank_eq_two` field is the real `L([P])` dimension target.  The
+residual field keeps the current `K - [P]` placeholder shape until the
+corresponding residual germ-space carrier is introduced.
+-/
+structure GenusZeroPointRiemannRochGermSpaceDimensionInput
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) : Prop where
+  point_finrank_eq_two :
+    Module.finrank ℂ (RiemannRochGermSpace X (Divisor.point P)) = 2
+  residual_dim_zero : ∃ ℓKP : ℕ, ℓKP = 0
+
+theorem genusZero_riemannRoch_difference_eq_two_of_germSpaceDimensionInput
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (input : GenusZeroPointRiemannRochGermSpaceDimensionInput X P h) :
+    ∃ ℓP ℓKP : ℕ, (ℓP : ℤ) - (ℓKP : ℤ) = 2 := by
+  obtain ⟨ℓKP, hℓKP⟩ := input.residual_dim_zero
+  refine ⟨Module.finrank ℂ (RiemannRochGermSpace X (Divisor.point P)), ℓKP, ?_⟩
+  rw [input.point_finrank_eq_two, hℓKP]
+  norm_num
+
 /-- A nonconstant element of the Riemann-Roch space `L([P])`. -/
 structure GenusZeroPointRiemannRochElement
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -443,9 +476,16 @@ theorem MeromorphicMapToSphere.toFiniteFun_of_no_poles
     · rfl
 
 /--
-**Structural axiom (S2a).** The difference in `ℓ(D)` between
-two divisors `[P]` and `K - [P]` is `2` on a genus-zero surface.
-This is the arithmetic heart of Riemann-Roch.
+**Structural placeholder (S2a).** The difference in `ℓ(D)` between two divisors
+`[P]` and `K - [P]` is `2` on a genus-zero surface.
+
+The real open frontier is the germ-space dimension input
+`GenusZeroPointRiemannRochGermSpaceDimensionInput`: it states
+`Module.finrank ℂ (RiemannRochGermSpace X (Divisor.point P)) = 2` plus the
+residual `K - [P]` vanishing shape.  The theorem
+`genusZero_riemannRoch_difference_eq_two_of_germSpaceDimensionInput` records how
+that future input implies this old arithmetic interface.  This public
+placeholder remains directly inhabited until that hard input is proved.
 -/
 theorem genusZero_riemannRoch_difference_eq_two
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -460,9 +500,15 @@ theorem genusZero_riemannRoch_difference_eq_two
   exact ⟨2, 0, by norm_num⟩
 
 /--
-**Structural axiom (S2b).** A negative-degree line bundle on a
-compact Riemann surface has no global sections. On genus zero,
+**Structural placeholder (S2b).** A negative-degree line bundle on a compact
+Riemann surface has no global sections. On genus zero,
 `deg(K - [P]) = (2g - 2) - 1 = -2`, so `ℓ(K - [P]) = 0`.
+
+This remains in the old existential shape because the residual `K - [P]`
+germ-space carrier has not yet been introduced.  Its value is also recorded as
+the residual field in `GenusZeroPointRiemannRochGermSpaceDimensionInput`, so the
+point-space finrank theorem and residual vanishing can later replace the raw
+arithmetic scaffold together.
 -/
 theorem genusZero_riemannRoch_K_minus_point_dim_zero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
