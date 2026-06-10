@@ -4244,13 +4244,64 @@ theorem MeromorphicMapToSphere.nonconstant_of_poleDivisor_point
     exact f.toMap_ne_infty_off_pole P hpole a haP ha
 
 /--
+If the zero divisor is effective and the pole divisor is exactly `[P]`, then
+the map lies in `L([P])`.
+-/
+theorem MeromorphicMapToSphere.mem_L_point_of_zeroDivisor_effective_poleDivisor_point
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hzero : Divisor.Effective f.zeroDivisor)
+    (hpole : f.poles = Divisor.point P) :
+    f.MemRiemannRochSpace (Divisor.point P) := by
+  classical
+  unfold MeromorphicMapToSphere.MemRiemannRochSpace
+  rw [MeromorphicMapToSphere.principal_eq_zeroDivisor_sub_poleDivisor]
+  change Divisor.Effective (f.zeroDivisor - f.poles + Divisor.point P)
+  rw [hpole]
+  have hcancel :
+      f.zeroDivisor - (Divisor.point P : Divisor X) + Divisor.point P =
+        f.zeroDivisor := by
+    abel
+  simpa [hcancel] using hzero
+
+/--
+Effective-divisor granular provider for the bare genus-zero Riemann-Roch
+section route.
+
+This is the direct RR-chain frontier: construct a `MeromorphicMapToSphere` with
+effective zero divisor, prescribed pole divisor, meromorphic canonical finite
+lift, and order-one extension at the pole. Riemann-Roch-space membership,
+nonconstancy, and the remaining `AnalyticData` fields are derived downstream.
+-/
+theorem genusZero_fixedPole_rr_effectiveGranular_provider
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    ∃ f : MeromorphicMapToSphere X,
+      Divisor.Effective f.zeroDivisor ∧
+      f.poles = Divisor.point P ∧
+      (∀ p : X,
+        JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+          (fun q => (f.toMap q).getD 0) p) ∧
+      JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 := by
+  -- Remaining RR frontier: construct the fixed-pole meromorphic map and its
+  -- granular analytic data honestly from `analyticGenus ℂ X = 0`.
+  sorry
+
+/--
 Granular fixed-pole analytic provider for the bare genus-zero Riemann-Roch
 section route.
 
-This is the direct RR-chain frontier: construct a `MeromorphicMapToSphere` in
-`L([P])` with prescribed pole divisor, meromorphic canonical finite lift, and
-order-one extension at the pole. Nonconstancy and the remaining `AnalyticData`
-fields are derived downstream from these granular facts.
+The remaining missing input is now narrowed to
+`genusZero_fixedPole_rr_effectiveGranular_provider`; membership in `L([P])` is
+derived locally from zero-divisor effectiveness and the exact simple-pole
+divisor.
 -/
 theorem genusZero_fixedPole_rr_granularAnalytic_provider
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -4266,9 +4317,11 @@ theorem genusZero_fixedPole_rr_granularAnalytic_provider
         JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
           (fun q => (f.toMap q).getD 0) p) ∧
       JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1 := by
-  -- Remaining RR frontier: construct the fixed-pole meromorphic map and its
-  -- granular analytic data honestly from `analyticGenus ℂ X = 0`.
-  sorry
+  obtain ⟨f, hzero, hpole, hmer, hord1⟩ :=
+    genusZero_fixedPole_rr_effectiveGranular_provider X P h
+  exact ⟨f,
+    f.mem_L_point_of_zeroDivisor_effective_poleDivisor_point P hzero hpole,
+    hpole, hmer, hord1⟩
 
 /--
 Granular fixed-pole map provider for the bare genus-zero Riemann-Roch section
