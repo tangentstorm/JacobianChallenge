@@ -33,7 +33,7 @@ yet. Updated by the manager when allocations change.
 | Item | Owner | State |
 |------|-------|-------|
 | #237 ports (M2, then B/C/D1, then D2–D5) | jc8 | M2 approved |
-| zero-stub stamps (#242 hygiene) | jc2 | GREEN (a034aee7) |
+| zero-stub stamps (#242 hygiene) | jc2 | GREEN (a034aee7) — LANE PARKED 2026-06-11 (3rd gate violation, aabaca3c unapproved push); do not assign |
 | #242 provider / Stage S | — | PARKED (substrate debt) |
 | #244 quotient proof | — | PARKED (priced too high) |
 | LoopToCycle (loop→H₁ bridge) | — | BANKED (jc9's design) |
