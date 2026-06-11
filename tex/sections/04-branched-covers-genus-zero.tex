@@ -2081,6 +2081,32 @@ extracts analyticity of the transition from its smoothness on the
 overlap.
 \end{proof}
 
+\begin{lemma}[Harnack inequality on discs]
+\label{lem:perron-harnack-disc}
+For \(h\) harmonic on a neighborhood of \(\overline{B}(c, R)\),
+nonnegative on the boundary circle, and \(w\) in the open ball with
+\(r = \lVert w - c\rVert\), the two-sided Harnack inequality holds:
+\[
+  \frac{R - r}{R + r}\, h(c) \;\le\; h(w) \;\le\; \frac{R + r}{R - r}\, h(c).
+\]
+Restated Poisson-kernel bounds on the integration circle are provided as
+reusable leaves.  This is the Perron-engine B2 toolbox item W4
+(inequality half); the increasing-limit corollary consumed by the Perron
+envelope builds on it.  Pure model-plane harmonic analysis; no stage
+dependencies.
+\lean{JacobianChallenge.HolomorphicForms.harnack, JacobianChallenge.HolomorphicForms.harnack_upper, JacobianChallenge.HolomorphicForms.harnack_lower, JacobianChallenge.HolomorphicForms.poissonKernel_le_of_mem_sphere, JacobianChallenge.HolomorphicForms.le_poissonKernel_of_mem_sphere}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Represent \(h(w)\) by the Poisson integral
+(\texttt{HarmonicOnNhd.circleAverage\_poissonKernel\_smul}), bound the
+kernel on the circle by \((R \pm r)/(R \mp r)\) via the Herglotz--Riesz
+estimates (\texttt{re\_herglotzRieszKernel\_le},
+\texttt{le\_re\_herglotzRieszKernel}), multiply by \(h \ge 0\) on the
+circle, and compare averages (\texttt{circleAverage\_mono}); the
+constant-scaled average collapses to \(h(c)\) by the mean-value property.
+\end{proof}
+
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
 \uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control}
