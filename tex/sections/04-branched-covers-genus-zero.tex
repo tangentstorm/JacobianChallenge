@@ -1548,6 +1548,27 @@ fields; not gated on the open spine (the chart-ball convergence is a hypothesis)
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Compact target-range package for the stage diagonal subsequence]
+\label{lem:montel-stage-compact-target-package}
+The un-gated assembly that produces the compact-target inputs of the stage common
+diagonal subsequence. The green diagonal-extraction consumer takes target inputs
+\(\code{target}\), \(\code{htarget}\) (compactness), and \(\code{hrange}\) (the
+bounded closed-ball readings land in \(\code{target}\)). From a single closed-ball
+value bound \(B:\iota\to\R\) on the finite stage family
+\(\code{data}:\iota\to\N\to\code{ChartBallPowerSeries}\), this package supplies all
+three: \(\code{target}\,i:=\code{closedBall}\,(0:\C)\,(B\,i)\), with compactness
+from \code{isCompact\_closedBall} and the range membership reducing --- via
+\code{boundedContinuousOnClosedBall\_apply} and \code{mem\_closedBall\_zero\_iff}
+--- to the value bound \(\|(\code{data}\,i\,n).\code{toFun}\,z\|\le B\,i\). The
+value bound is a \emph{hypothesis}: this package neither produces the bound (the
+engine spine does, once the holomorphic stage coordinate exists) nor performs the
+diagonal extraction; it is the un-gated step turning the bound into the consumer's
+\(\code{target}/\code{htarget}/\code{hrange}\) argument slots.
+\lean{JacobianChallenge.HolomorphicForms.stageChartReading_compactTarget_of_ballBound}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Per-patch realization over the chart-ball-limit patch]
 \label{lem:montel-realized-patch-ofChartBallLimit}
 \uses{lem:montel-raw-source-chart-package}

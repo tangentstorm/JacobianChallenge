@@ -704,4 +704,53 @@ theorem tendstoLocallyUniformlyOn_coord_of_chartBall
   intro x hx
   exact (rp.realization.coord_eq_chartBall x hx).symm
 
+/-!
+## D3 — compact target-range package for the stage diagonal subsequence
+
+The green diagonal-extraction consumer
+`exists_stage_common_diagonal_subsequence` (`PerronEngineE.lean`, jc5) takes the
+target inputs `target`, `htarget` (compact), and `hrange` (the bounded closed-ball
+readings land in `target`).  This package produces those three from a single
+**closed-ball value bound** on the finite stage family: setting
+`target i := Metric.closedBall (0 : ℂ) (B i)`, compactness is `isCompact_closedBall`
+and the range membership reduces — via `boundedContinuousOnClosedBall_apply` and
+`mem_closedBall_zero_iff` — to the value bound `‖(data i n).toFun z‖ ≤ B i`.
+
+The value bound is a *hypothesis*: this package neither produces the bound (the
+engine spine does, once the holomorphic stage coordinate exists) nor performs the
+diagonal extraction (jc5).  It is the un-gated assembly that turns the bound into
+exactly jc5's `target`/`htarget`/`hrange` argument slots. -/
+
+/--
+**Compact target-range package** (D3).
+
+From a closed-ball value bound `B : ι → ℝ` on a finite stage family
+`data : ι → ℕ → ChartBallPowerSeries`, produce the compact target sets and range
+membership consumed by `exists_stage_common_diagonal_subsequence`:
+`target i := Metric.closedBall (0 : ℂ) (B i)` is compact, and every bounded
+closed-ball reading lands in it. -/
+theorem stageChartReading_compactTarget_of_ballBound
+    {ι : Type*}
+    (data : ι → ℕ → ChartBallPowerSeries)
+    (c : ι → ℂ) (R : ι → ℝ) (B : ι → ℝ)
+    (hclosed :
+      ∀ i n (r : ℝ), r < R i →
+        Metric.closedBall (c i) r ⊆
+          Metric.ball (data i n).center ((data i n).radius : ℝ))
+    (hballbound :
+      ∀ i n (r : ℝ), r < R i →
+        ∀ z ∈ Metric.closedBall (c i) r, ‖(data i n).toFun z‖ ≤ B i) :
+    ∃ target : ι → Set ℂ,
+      (∀ i, IsCompact (target i)) ∧
+      (∀ i n (r : ℝ) (hr : r < R i) (z : Metric.closedBall (c i) r),
+        (data i n).boundedContinuousOnClosedBall (hclosed i n r hr) z ∈
+          target i) := by
+  refine ⟨fun i => Metric.closedBall (0 : ℂ) (B i), fun i => isCompact_closedBall _ _,
+    ?_⟩
+  intro i n r hr z
+  -- The reading value is `(data i n).toFun z`; membership reduces to the bound.
+  rw [ChartBallPowerSeries.boundedContinuousOnClosedBall_apply,
+    mem_closedBall_zero_iff]
+  exact hballbound i n r hr (z : ℂ) z.property
+
 end JacobianChallenge.HolomorphicForms
