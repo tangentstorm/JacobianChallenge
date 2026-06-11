@@ -38,9 +38,12 @@ theorem stageBoundaryChartData_of_compact_frontier
        chart := fun i => chartAt ℂ (center i)
        boundaryPiece := fun i => frontier stage ∩ (chartAt ℂ (center i)).source
        boundaryPiece_subset_source := ?_
+       boundaryPiece_subset_frontier := ?_
        frontier_subset_boundaryPieces := ?_ }⟩
   · intro i y hy
     exact hy.2
+  · intro i y hy
+    exact hy.1
   · intro y hy
     rcases mem_iUnion₂.mp (hcover hy) with ⟨x, hxt, hy_source⟩
     refine mem_iUnion.mpr ⟨t.equivFin ⟨x, hxt⟩, ?_⟩

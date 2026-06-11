@@ -55,8 +55,13 @@ The A4 boundary-control payload for one bordered exhaustion.
 
 For each stage, it records the real boundary potential to feed into the
 Perron/Dirichlet solver, normalization at the marked base point, the two
-logarithmic dipole singular profiles, compatibility with the finite boundary
-chart data, and compact-subdomain bounds for later estimates.
+logarithmic dipole singular profiles, continuity of the boundary datum on the
+stage frontier (S6 repair, `docs/perron-b2-dirichlet-phase0.md` §2.6: without
+it the A4 data admits everywhere-discontinuous junk and the B2 obligation is
+refutable), compatibility with the finite boundary chart data, and
+compact-subdomain bounds for later estimates.  With frontier continuity and
+the compact frontier, a global frontier bound is derivable, so the one-piece
+`boundaryChartControl` bound is left as is.
 -/
 structure StageDipoleBoundaryControl
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -78,6 +83,8 @@ structure StageDipoleBoundaryControl
     ∀ n, Set.EqOn (boundaryPotential n) profiles.u0 (marked.U0 \ {marked.P0})
   agrees_with_uinf_near_Pinf :
     ∀ n, Set.EqOn (boundaryPotential n) profiles.uinf (marked.Uinf \ {marked.Pinf})
+  continuousOn_boundaryPotential_frontier :
+    ∀ n, ContinuousOn (boundaryPotential n) (frontier (exhaustion.stage n))
   boundaryChartControl :
     ∀ n, StageBoundaryChartControl X (exhaustion.boundaryData n) (boundaryPotential n)
   compactBound :

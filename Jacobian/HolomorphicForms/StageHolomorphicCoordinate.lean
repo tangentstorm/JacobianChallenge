@@ -132,6 +132,7 @@ Cauchy estimates, and Montel extraction.
 -/
 theorem exists_stageHolomorphicCoordinatesFromHarmonicDipole
     (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (e : X ≃ₜ OnePoint ℂ)
     (marked : GenusZeroStageMarkedData X e)
     (selected : StageSelectedCompactFamily X)

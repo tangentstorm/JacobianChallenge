@@ -1938,7 +1938,10 @@ full-neighborhood agreements of the case-glue.
 There is an increasing sequence of bordered or chart-polygon stage domains
 \(\Omega_n\subset X\), adapted to the marked data, whose compact interiors
 eventually contain every selected Montel source compactum and whose boundary is
-controlled by finitely many source charts.  These domains are the non-circular
+controlled by finitely many source charts, each boundary piece lying inside
+the stage frontier (the S1 statement repair: pieces covering interior points
+would let boundary data overconstrain the harmonic solution on an open set,
+refuting the Dirichlet node).  These domains are the non-circular
 places where the analytic stage maps will be constructed before being extended
 by filler values outside \(\Omega_n\).
 \lean{JacobianChallenge.HolomorphicForms.StageBorderedExhaustion, JacobianChallenge.HolomorphicForms.exists_stageBorderedExhaustion}
@@ -1982,7 +1985,10 @@ transitivity of \(\subseteq\) and \texttt{Disjoint.mono\_left}.
 \label{lem:stage-dipole-boundary-control}
 \uses{lem:stage-marked-topological-control-data, lem:stage-bordered-exhaustion-domains, lem:stage-dipole-local-singular-profiles, lem:stage-dipole-glued-potential}
 The stage boundary data is built from logarithmic dipole models at the two
-marked ends, with boundary normalization and compact-subdomain bounds suitable
+marked ends, with boundary normalization, continuity of the boundary datum on
+each stage frontier (the S6 statement repair: discontinuous boundary data
+admits no harmonic comparison theory and made the Dirichlet node refutable),
+and compact-subdomain bounds suitable
 for Perron/Dirichlet solving.  Existing model-plane and chart-local dipole
 lemmas supply only the local singular profiles; the bordered-stage boundary
 problem remains new engine work.
@@ -1992,10 +1998,23 @@ problem remains new engine work.
 \begin{lemma}[Stage Dirichlet harmonic solution (open)]
 \label{lem:stage-dirichlet-harmonic-exists}
 \uses{lem:stage-bordered-exhaustion-domains, lem:stage-dipole-boundary-control}
-On each cut stage domain, solve the normalized Dirichlet/Perron problem for
+On each stage domain of the holomorphic atlas (the manifold hypothesis is the
+S5 statement repair: chartwise harmonicity transfers between preferred charts
+only along holomorphic transitions), solve the normalized Dirichlet/Perron
+problem for
 the real harmonic dipole potential with the prescribed boundary control and
-marked-end singular behavior, exporting neighborhood-uniform harmonic-conjugate
-witnesses away from the marked ends.  This is the load-bearing
+marked-end singular behavior.  The payload exports chartwise
+neighborhood-uniform harmonicity of the preferred-chart readings (Mathlib's
+\texttt{HarmonicOnNhd}; per-point conjugate witnesses are a derived bridge,
+the S2/R2 statement repair), and a maximum-principle bracket trapping the
+solution between the frontier infimum and supremum of the boundary datum up
+to a per-stage constant away from the marked neighborhoods (the boundary
+lever, replacing pointwise frontier agreement: exact boundary attainment
+would cost the Poisson boundary-limit theorem plus a barrier subtree, and
+downstream consumers need only the bracket together with the exact
+logarithmic germs).  Base normalization is retained: with the bracket's
+slack absorbing constant shifts, it no longer over-determines the problem.
+This is the load-bearing
 potential-theory frontier of the engine: Mathlib supplies harmonic predicates
 and Poisson formulas for already-harmonic functions, but not this
 bordered-stage existence theorem.
@@ -2009,7 +2028,8 @@ The harmonic solution on each cut stage admits a globally compatible harmonic
 conjugate on \(\Omega_n^{\mathrm{cut}}\).  Local harmonic-conjugate and
 dipole-conjugate lemmas supply chart-level models; this node carries the
 period-killing and compatibility work needed to make the conjugate
-single-valued on the chosen cut stage.
+single-valued on the chosen cut stage.  Stated over the holomorphic atlas
+(the S5 hypothesis inherited from the Dirichlet node).
 \lean{JacobianChallenge.HolomorphicForms.StageHarmonicConjugatesOnCuts, JacobianChallenge.HolomorphicForms.exists_stageHarmonicConjugatesOnCuts}
 \end{lemma}
 
@@ -2020,7 +2040,8 @@ Combining the harmonic potential with its conjugate, then exponentiating or
 integrating the resulting complex differential, gives a holomorphic
 coordinate-like stage map on the cut stage domain.  This is the analytic
 production output before target-chart normalization and before any Montel
-compactness extraction.
+compactness extraction.  Stated over the holomorphic atlas (the S5
+hypothesis inherited from the Dirichlet node).
 \lean{JacobianChallenge.HolomorphicForms.StageHolomorphicCoordinates, JacobianChallenge.HolomorphicForms.exists_stageHolomorphicCoordinatesFromHarmonicDipole}
 \end{lemma}
 

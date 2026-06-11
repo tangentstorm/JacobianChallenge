@@ -31,6 +31,12 @@ Finite chart control for the boundary of one bordered or chart-polygon stage.
 The `boundaryPiece` fields are deliberately topological: downstream analytic
 tasks may strengthen their regularity locally, but A2 only has to expose a
 finite chart cover of the frontier.
+
+The pieces are required to lie inside the stage frontier (S1 repair,
+`docs/perron-b2-dirichlet-phase0.md` §2.1): without this, a piece may cover
+the whole closed stage, which makes the downstream B2 Dirichlet obligation
+refutable by forcing the solution to agree with non-harmonic boundary data on
+an open subset of the stage.
 -/
 structure StageBoundaryChartData
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X] (stage : Set X) where
@@ -40,6 +46,8 @@ structure StageBoundaryChartData
   boundaryPiece : ChartIndex → Set X
   boundaryPiece_subset_source :
     ∀ i, boundaryPiece i ⊆ (chart i).source
+  boundaryPiece_subset_frontier :
+    ∀ i, boundaryPiece i ⊆ frontier stage
   frontier_subset_boundaryPieces :
     frontier stage ⊆ ⋃ i, boundaryPiece i
 
