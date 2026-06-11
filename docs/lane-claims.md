@@ -14,10 +14,10 @@ yet. Updated by the manager when allocations change.
 | W3a–c Poisson operator (incl. the def) | jc6 | GREEN (bdf63495 + c5863c83) |
 | W3d boundary limit (continuous data) | jc6 | REVIVED 2026-06-11 (W5b+W6 attainment gap), in flight |
 | W4a Harnack | jc11 | GREEN (1bde1270) |
-| W4b Harnack convergence | jc11 | in flight |
+| W4b Harnack convergence | jc11 | GREEN (4fde9e96 + 96ff2372) — W4 row COMPLETE |
 | W5 PerronSubOn class | jc4 | in flight |
 | W6 removable singularity | jc9 | in flight |
-| W7–W11 stage assembly | — | S-repairs LANDED; planned: W7 skeleton green-from-input → jc11 after W4 review |
+| W7–W11 stage assembly | jc11 (W7 skeleton) | W7 skeleton statement-design bound to jc11 (2026-06-11); W8–W11 unassigned |
 
 ## Spine (statements + repairs)
 | Item | Owner | State |
