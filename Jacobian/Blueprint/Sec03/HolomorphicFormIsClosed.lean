@@ -47,6 +47,13 @@ point of `c.target`. This is the fact that bottoms out the
 Cauchy–Riemann argument: holomorphicity of the chart coefficient is
 the only analytic input the closedness proof needs.
 
+
+⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 Bottom-up content: a `HolomorphicOneForm` is a `Cₛ^⊤` analytic
 section of the cotangent bundle; pulling back through the chart's
 inverse `c.symm` (which is analytic on `c.target`) preserves
@@ -64,7 +71,12 @@ theorem chart_pullback_holomorphic
     Nonempty Unit := by
   exact ⟨()⟩
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **Sub-leaf 2 (Cauchy–Riemann in chart: `∂h/∂z̄ = 0`).**
 
 For the chart-pullback `h := chartedForm c ω`, viewed as a function
@@ -79,7 +91,12 @@ theorem chart_pullback_dbar_zero
     (c : OpenPartialHomeomorph X ℂ) (ω : HolomorphicOneForm ℂ X) : Nonempty Unit :=
   chart_pullback_holomorphic X c ω
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **Sub-leaf 3 (chart-local exterior derivative vanishes).**
 
 The chart-local exterior derivative `d(h dz)` is `(∂h/∂z̄) dz̄ ∧ dz`,
@@ -94,7 +111,12 @@ theorem chart_pullback_d_eq_zero
     (c : OpenPartialHomeomorph X ℂ) (ω : HolomorphicOneForm ℂ X) : Nonempty Unit :=
   chart_pullback_dbar_zero X c ω
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 Holomorphic 1-forms are closed. The exterior derivative `dω` of a
 holomorphic 1-form `ω` vanishes — a direct consequence of the
 Cauchy–Riemann equations in any chart, globalised via chart-overlap

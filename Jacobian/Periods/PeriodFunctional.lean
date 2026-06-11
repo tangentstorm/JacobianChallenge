@@ -88,7 +88,12 @@ noncomputable def holomorphicFormBridgeComplex
     HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ X :=
   LinearMap.id
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 The period pairing
 `IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ)`.
 Mathematically: integrate the form over the cycle.
@@ -123,7 +128,12 @@ noncomputable def periodPairing
   (S.descHomology (S.iCycles ≫ Im)
     (periodPairing_descent_aux S Im hI_sc)).hom.toAddMonoidHom
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 Complex-model period pairing. This is the period API used by the
 Jacobian/trace route; it keeps all forms in the `ℂ` model.
 -/
@@ -148,7 +158,12 @@ noncomputable def periodPairingComplex
   (S.descHomology (S.iCycles ≫ Im)
     (periodPairing_descent_aux S Im hI_sc)).hom.toAddMonoidHom
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **`lem:period-homology-invariance` (typed form).**
 
 If `σ` and `τ` are integral 1-cycles representing the same class in

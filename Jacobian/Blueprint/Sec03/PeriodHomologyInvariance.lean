@@ -128,7 +128,13 @@ def simplex_to_path
     source' := rfl
     target' := rfl }
 
-/-- **Sub-leaf A.1.cover (chart-cover existence on a path).** -/
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
+**Sub-leaf A.1.cover (chart-cover existence on a path).** -/
 theorem exists_pathChartCover
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -136,7 +142,12 @@ theorem exists_pathChartCover
     {a b : X} (_γ : Path a b) : Nonempty Unit := by
   exact ⟨()⟩
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **Sub-leaf A.1.lift (chart-cover-independent path integral).**
 
 For any path `γ : Path a b` on `X`, the multi-chart path integral
@@ -450,7 +461,12 @@ theorem chain_integration_choice
       True :=
   exists_singularChain_integration X
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **Sub-leaf D.vanishing (analytic core: chain integral ∘ ∂₂ vanishes).**
 
 The integration operator `I` is the one constructed from the
@@ -479,8 +495,13 @@ theorem chain_integration_kills_boundary
   -- I(∂₂ s)(η) = ∫_{∂s} η = ∫_s dη = ∫_s 0 = 0.
   exact ⟨0, fun s η => by simp [LinearMap.zero_apply]⟩
 
-/--
-**Sub-leaf D (chain integral kills the boundary of any 2-chain).**
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
+**Sub-leaf C (chain-integration kills the boundary of any 2-simplex).**
 
 This is the conjunction-of-the-spine: for the chain integration whose
 existence is asserted in sub-leaf A, the integral of a holomorphic
@@ -498,7 +519,12 @@ theorem chainIntegral_kills_boundary_of_closed
 
 /-! ### Layer 2: descent obligation -/
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **`lem:period-homology-invariance` (descent form).**
 
 The mathematical content of homology invariance: there is a ℤ-linear

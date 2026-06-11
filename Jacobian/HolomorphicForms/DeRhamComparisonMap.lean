@@ -40,6 +40,11 @@ open JacobianChallenge.Periods
 open scoped Manifold
 
 
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.) -/
 noncomputable def deRhamComparisonMap1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

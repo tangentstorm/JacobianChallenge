@@ -55,7 +55,13 @@ abbrev SmoothDiffForm
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : Type _ :=
   SmoothDiffFormWithPeriods n X
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
+
 Current-model exterior derivative `d : Ω^n(X) → Ω^{n+1}(X)`.
 
   The current `SmoothDiffForm` substrate is only a vector-space surrogate,

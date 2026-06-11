@@ -44,7 +44,12 @@ def IsExteriorDerivativeAux {M : Type*} (_ω : OneFormAux M)
 
 
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **Sub-leaf #1 of `thm:stokes-on-rs-with-boundary` (plan class: SHORT).**
 
 Mathematical content: a 2-dimensional smooth manifold with corners is a
@@ -63,7 +68,12 @@ def manifoldWithCorners2D
 -/
 theorem manifold_with_corners_2d : Nonempty Unit := ⟨()⟩
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **Sub-leaf #2 of `thm:stokes-on-rs-with-boundary` (plan class: SHORT).**
 
 Mathematical content: for a 2D manifold with corners `M`, the boundary
@@ -377,7 +387,12 @@ theorem stokes_local_euclidean
 
 /-! ## Sub-leaf #6 (MEDIUM) — Stokes in a single chart. -/
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **Chart-pullback compatibility (sub-leaf for #6).**
 
 When `ω` has support inside the source of a chart `c : M → ℝ²`, the
@@ -421,7 +436,12 @@ theorem stokes_chart
 
 /-! ## Sub-leaf #7 (HARD) — globalisation via partition of unity. -/
 
-/--
+/-- ⚠ ZERO-STUB (period circle): this declaration carries NO integration
+content — see docs/derham-zero-period-primitive-phase0.md §2b. It may be
+consumed as a HYPOTHESIS/interface only; never cite it as proved analytic
+substrate, and never discharge a sorry through it. (#242 is parked until
+Stage S replaces this layer.)
+
 **Partition-of-unity decomposition lemma (sub-leaf for #7).**
 
 When `ω` is decomposed as a finite sum `ω = Σ ω_i` with each `ω_i`
