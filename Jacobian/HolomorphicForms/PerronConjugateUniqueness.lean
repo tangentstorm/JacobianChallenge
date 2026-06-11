@@ -273,4 +273,84 @@ theorem isHarmonicConjugateAtReal_sub_eq_const_on_X
   simp only [hw] at this ⊢
   linarith
 
+/-- Reverse companion of `IsHarmonicConjugateAtReal.transfer_chart`: if the
+x-chart pullbacks `(u ∘ (chartAt ℂ x).symm, v ∘ (chartAt ℂ x).symm)` form a
+ℂ-level conjugate pair at `(chartAt ℂ x) y` and `y ∈ (chartAt ℂ x).source`,
+then `(u, v)` is a conjugate pair at `y` in `X` (read, per the definition,
+in `y`'s own chart).
+
+Proof symmetric to `transfer_chart`: the transition
+`chartAt ℂ x ∘ (chartAt ℂ y).symm` is analytic at `(chartAt ℂ y) y`
+(`chart_transition_contDiffOn` with the roles swapped), the chain rule
+composes the witnesses, and `left_inv` germ identities collapse the double
+pullback.
+
+Used by the W2 bridge (`PerronStageConjugateBridge.lean`) to convert
+ball-level conjugates produced in one fixed chart into the `X`-level
+predicate at every point of the ball preimage. -/
+theorem IsHarmonicConjugateAtReal.of_transfer_chart
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    {u v : X → ℝ} {x y : X}
+    (h : IsHarmonicConjugateAtReal ℂ
+      (u ∘ (chartAt ℂ x).symm) (v ∘ (chartAt ℂ x).symm) ((chartAt ℂ x) y))
+    (hyx : y ∈ (chartAt ℂ x).source) :
+    IsHarmonicConjugateAtReal X u v y := by
+  obtain ⟨g', hg⟩ := h
+  set ζ₀ : ℂ := (chartAt ℂ y) y with hζ₀
+  have hζinv : (chartAt ℂ y).symm ζ₀ = y :=
+    (chartAt ℂ y).left_inv (mem_chart_source ℂ y)
+  -- The transition τ := chartAt ℂ x ∘ (chartAt ℂ y).symm is analytic at ζ₀.
+  have hW_open : IsOpen ((chartAt ℂ y).target ∩
+      (chartAt ℂ y).symm ⁻¹' (chartAt ℂ x).source) :=
+    (chartAt ℂ y).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ y).open_target (chartAt ℂ x).open_source
+  have hζ₀_W : ζ₀ ∈ (chartAt ℂ y).target ∩
+      (chartAt ℂ y).symm ⁻¹' (chartAt ℂ x).source := by
+    refine Set.mem_inter ((chartAt ℂ y).map_source (mem_chart_source ℂ y)) ?_
+    rw [Set.mem_preimage, hζinv]
+    exact hyx
+  have hτ_an : AnalyticAt ℂ (chartAt ℂ x ∘ (chartAt ℂ y).symm) ζ₀ :=
+    AnalyticOn.analyticAt (hW_open.mem_nhds hζ₀_W)
+      (chart_transition_contDiffOn y x).analyticOn
+  have hτ := hτ_an.differentiableAt.hasFDerivAt
+  -- Move the ℂ-level witness to the transition value τ ζ₀ = (chartAt ℂ x) y.
+  have hτζ₀ : (chartAt ℂ x ∘ (chartAt ℂ y).symm) ζ₀ = (chartAt ℂ x) y := by
+    show chartAt ℂ x ((chartAt ℂ y).symm ζ₀) = (chartAt ℂ x) y
+    rw [hζinv]
+  -- Self-chart collapse on ℂ inside the hypothesis witness.
+  have hchart_id : ∀ w : ℂ, (chartAt ℂ ((chartAt ℂ x) y)).symm w = w :=
+    fun _ => rfl
+  have hchart_pt :
+      (chartAt ℂ ((chartAt ℂ x) y)) ((chartAt ℂ x) y) = (chartAt ℂ x) y := rfl
+  have hg' : HasFDerivAt (fun w : ℂ =>
+      ((u ∘ (chartAt ℂ x).symm) w : ℂ)
+        + Complex.I * ((v ∘ (chartAt ℂ x).symm) w : ℂ))
+      g' ((chartAt ℂ x ∘ (chartAt ℂ y).symm) ζ₀) := by
+    rw [hτζ₀]
+    simpa [hchart_id, hchart_pt] using hg
+  have hcomp := hg'.comp ζ₀ hτ
+  -- Identify the composition with the y-chart pullback near ζ₀.
+  have hnear : (fun w : ℂ =>
+        ((u ∘ (chartAt ℂ x).symm) ((chartAt ℂ x ∘ (chartAt ℂ y).symm) w) : ℂ)
+          + Complex.I
+            * ((v ∘ (chartAt ℂ x).symm)
+                ((chartAt ℂ x ∘ (chartAt ℂ y).symm) w) : ℂ))
+      =ᶠ[nhds ζ₀]
+      (fun w : ℂ =>
+        (u ((chartAt ℂ y).symm w) : ℂ)
+          + Complex.I * (v ((chartAt ℂ y).symm w) : ℂ)) := by
+    filter_upwards [hW_open.mem_nhds hζ₀_W] with w hw
+    have hwsrc : (chartAt ℂ y).symm w ∈ (chartAt ℂ x).source := hw.2
+    have hwinv : (chartAt ℂ x).symm (chartAt ℂ x ((chartAt ℂ y).symm w))
+        = (chartAt ℂ y).symm w := (chartAt ℂ x).left_inv hwsrc
+    show (u ((chartAt ℂ x).symm (chartAt ℂ x ((chartAt ℂ y).symm w))) : ℂ)
+          + Complex.I
+            * (v ((chartAt ℂ x).symm (chartAt ℂ x ((chartAt ℂ y).symm w))) : ℂ)
+        = (u ((chartAt ℂ y).symm w) : ℂ)
+          + Complex.I * (v ((chartAt ℂ y).symm w) : ℂ)
+    rw [hwinv]
+  exact ⟨g'.comp (fderiv ℂ (chartAt ℂ x ∘ (chartAt ℂ y).symm) ζ₀),
+    hcomp.congr_of_eventuallyEq hnear.symm⟩
+
 end JacobianChallenge.HolomorphicForms
