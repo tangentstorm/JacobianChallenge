@@ -292,4 +292,105 @@ theorem poissonOperator_harmonicOnNhd {φ : ℂ → ℝ} {c : ℂ} {R : ℝ}
     exact (poissonOperator_eq_re_herglotzTransform hR hφ hw').symm
   exact (harmonicAt_congr_nhds heq).mp hre
 
+/-! ### W3b: normalization -/
+
+/--
+**W3b.**  The Poisson operator reproduces constants: instantiation of
+Mathlib's Poisson representation formula at a constant function.
+-/
+theorem poissonOperator_const {c : ℂ} {R : ℝ} (a : ℝ) {w : ℂ}
+    (hw : w ∈ ball c R) :
+    poissonOperator (fun _ => a) c R w = a := by
+  have h := HarmonicContOnCl.circleAverage_poissonKernel_smul
+    (f := fun _ : ℂ => a) harmonicContOnCl_const hw
+  calc poissonOperator (fun _ => a) c R w
+      = Real.circleAverage (poissonKernel c w • fun _ : ℂ => a) c R := rfl
+    _ = a := h
+
+/--
+**W3b (pricing-row name).**  Kernel normalization: the Poisson operator
+sends the constant `1` to `1` on the open disc.
+-/
+theorem poissonOperator_const_one {c : ℂ} {R : ℝ} {w : ℂ}
+    (hw : w ∈ ball c R) :
+    poissonOperator (fun _ => 1) c R w = 1 :=
+  poissonOperator_const 1 hw
+
+/-! ### W3c: positivity and monotonicity -/
+
+/--
+For a pole in the open ball, the Poisson kernel is continuous in the
+circle variable on the circle — the real part of the Herglotz–Riesz
+kernel, whose denominator does not vanish there.
+-/
+theorem continuousOn_poissonKernel_sphere {c w : ℂ} {R : ℝ}
+    (hw : w ∈ ball c R) :
+    ContinuousOn (poissonKernel c w) (sphere c R) := by
+  rw [poissonKernel_eq_re_herglotzRieszKernel]
+  exact Complex.continuous_re.comp_continuousOn
+    (continuousOn_herglotzRieszKernel_sphere hw)
+
+/--
+**W3c, kernel positivity.**  On the integration circle the Poisson
+kernel of a pole in the open ball is nonnegative — from jc11's lower
+kernel estimate (`le_poissonKernel_of_mem_sphere`, W4a).
+-/
+theorem poissonKernel_nonneg_of_mem_sphere {c w z : ℂ} {R : ℝ}
+    (hz : z ∈ sphere c R) (hw : w ∈ ball c R) :
+    0 ≤ poissonKernel c w z := by
+  have hlow := le_poissonKernel_of_mem_sphere hz hw
+  have hwR : ‖w - c‖ < R := mem_ball_iff_norm.mp hw
+  have hfrac : 0 ≤ (R - ‖w - c‖) / (R + ‖w - c‖) := by
+    have h0R : 0 < R := lt_of_le_of_lt (norm_nonneg _) hwR
+    have hnum : 0 ≤ R - ‖w - c‖ := by linarith
+    have hden : 0 < R + ‖w - c‖ := by positivity
+    exact div_nonneg hnum hden.le
+  linarith
+
+/--
+**W3c, monotonicity.**  The Poisson operator is monotone in the boundary
+datum: pointwise comparison on the circle propagates to the open disc.
+-/
+theorem poissonOperator_mono {φ ψ : ℂ → ℝ} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hφ : ContinuousOn φ (sphere c R)) (hψ : ContinuousOn ψ (sphere c R))
+    (hle : ∀ z ∈ sphere c R, φ z ≤ ψ z) {w : ℂ} (hw : w ∈ ball c R) :
+    poissonOperator φ c R w ≤ poissonOperator ψ c R w := by
+  have hker : ContinuousOn (poissonKernel c w) (sphere c R) :=
+    continuousOn_poissonKernel_sphere hw
+  have h₁ : CircleIntegrable (fun z => poissonKernel c w z • φ z) c R :=
+    ContinuousOn.circleIntegrable hR.le (hker.smul hφ)
+  have h₂ : CircleIntegrable (fun z => poissonKernel c w z • ψ z) c R :=
+    ContinuousOn.circleIntegrable hR.le (hker.smul hψ)
+  apply Real.circleAverage_mono h₁ h₂
+  intro z hz
+  rw [abs_of_pos hR] at hz
+  simp only [smul_eq_mul]
+  exact mul_le_mul_of_nonneg_left (hle z hz)
+    (poissonKernel_nonneg_of_mem_sphere hz hw)
+
+/--
+**W3c, upper bracket.**  A circle-wide upper bound on the boundary datum
+bounds the Poisson operator on the open disc: monotonicity against the
+constant plus normalization.
+-/
+theorem poissonOperator_le_of_le {φ : ℂ → ℝ} {c : ℂ} {R M : ℝ}
+    (hR : 0 < R) (hφ : ContinuousOn φ (sphere c R))
+    (hM : ∀ z ∈ sphere c R, φ z ≤ M) {w : ℂ} (hw : w ∈ ball c R) :
+    poissonOperator φ c R w ≤ M := by
+  have h := poissonOperator_mono hR hφ continuousOn_const hM hw
+  rwa [poissonOperator_const M hw] at h
+
+/--
+**W3c, lower bracket.**  Mirror of `poissonOperator_le_of_le`: a
+circle-wide lower bound on the boundary datum bounds the Poisson
+operator from below on the open disc.  Positivity of the operator for
+nonnegative data is the `m := 0` instance.
+-/
+theorem le_poissonOperator_of_le {φ : ℂ → ℝ} {c : ℂ} {R m : ℝ}
+    (hR : 0 < R) (hφ : ContinuousOn φ (sphere c R))
+    (hm : ∀ z ∈ sphere c R, m ≤ φ z) {w : ℂ} (hw : w ∈ ball c R) :
+    m ≤ poissonOperator φ c R w := by
+  have h := poissonOperator_mono hR continuousOn_const hφ hm hw
+  rwa [poissonOperator_const m hw] at h
+
 end JacobianChallenge.HolomorphicForms
