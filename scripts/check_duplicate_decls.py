@@ -142,7 +142,14 @@ def main():
         for fqn, filepath, line in decls:
             all_decls[fqn].append((filepath, line))
             
-    duplicates = {fqn: locs for fqn, locs in all_decls.items() if len(locs) > 1}
+    duplicates = {}
+    for fqn, locs in all_decls.items():
+        if len(locs) > 1:
+            paths = {str(Path(loc[0])) for loc in locs}
+            # Allowlist BY-DESIGN mirror pairs
+            if paths == {'Jacobian/Solution.lean', 'Jacobian/Challenge.lean'}:
+                continue
+            duplicates[fqn] = locs
     
     if not duplicates:
         print("No duplicates found.")
