@@ -28,10 +28,13 @@ that does not need them, all sorry-free:
   `logCup` comparison family, and the limit corollary
   `tendsto_of_harmonic_extension`.
 
-The main extension theorem
-(`harmonicOnNhd_extend_of_bounded_punctured`, consuming both inputs as
-hypotheses) lands with its conditional proof in the next W6 commits; its
-exact statement is fixed in `.sci/task.md` and the pricing doc.
+The W6 statement set is **complete** (commits 1–3): the main theorem
+`harmonicOnNhd_extend_of_bounded_punctured` and the limit corollary
+`exists_tendsto_of_bounded_punctured` are proved conditionally on the two
+inputs.  Discharge path: a thin adapter for `WeakMaxPrincipleInput` when
+the W1 lane lands (the obligation is frozen — two consumers, see the
+claims board), and one for `DiscDirichletInput` when W3d completes the
+Poisson boundary limit (`PerronPoissonBoundary.lean`, in flight).
 -/
 
 namespace JacobianChallenge.HolomorphicForms
@@ -411,5 +414,95 @@ theorem eq_dirichletSolution_of_bounded_punctured
     nonpos_of_forall_pos_mul_le hK fun ε hε => by
       simpa [logCup] using (hside ε hε z hz).2
   linarith
+
+/-!
+## The glued extension (W6 commit 3 — final)
+
+The main theorem and the limit corollary, in the exact shapes fixed at
+the commit-1 gate.  Both consume the two obligation inputs as
+hypotheses and nothing else.
+-/
+
+open Classical in
+/--
+**Bounded-harmonic removable singularity (W6 main theorem).**
+A harmonic function on the punctured ball, bounded there, extends
+harmonically across the puncture — conditionally on the W1
+maximum-principle input and the W3 disc-Dirichlet input.
+
+Construction: solve the Dirichlet problem on the half-radius disc with
+boundary data `u`, glue piecewise (`h` inside, `u` outside); the annuli
+comparison makes the two agree off the puncture, and harmonicity at each
+point transfers from `h` or `u` through `harmonicAt_congr_nhds`.
+-/
+theorem harmonicOnNhd_extend_of_bounded_punctured
+    (hMP : WeakMaxPrincipleInput) (hDir : DiscDirichletInput)
+    {u : ℂ → ℝ} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hu : HarmonicOnNhd u (ball c R \ {c}))
+    {M : ℝ} (hbd : ∀ z ∈ ball c R \ {c}, |u z| ≤ M) :
+    ∃ v : ℂ → ℝ, HarmonicOnNhd v (ball c R) ∧
+      Set.EqOn v u (ball c R \ {c}) := by
+  set r : ℝ := R / 2 with hrdef
+  have hr : 0 < r := by positivity
+  have hrR : r < R := by
+    rw [hrdef]
+    linarith
+  have hsph_sub : sphere c r ⊆ ball c R \ {c} := by
+    intro x hx
+    have hxd : dist x c = r := mem_sphere.mp hx
+    refine ⟨mem_ball.mpr (by rw [hxd]; exact hrR), fun hxc => ?_⟩
+    rw [Set.mem_singleton_iff] at hxc
+    subst hxc
+    rw [dist_self] at hxd
+    exact hr.ne hxd
+  have hucont : ContinuousOn u (sphere c r) :=
+    (continuousOn_of_harmonicOnNhd hu).mono hsph_sub
+  obtain ⟨h, hh, hhc, hagree⟩ := hDir c r hr u hucont
+  have heq : Set.EqOn u h (ball c r \ {c}) :=
+    eq_dirichletSolution_of_bounded_punctured hMP hr hrR hu hbd hh hhc hagree
+  refine ⟨fun z => if z ∈ ball c r then h z else u z, ?_, ?_⟩
+  · -- harmonicity on the full ball
+    intro x hx
+    by_cases hxr : x ∈ ball c r
+    · -- inside the inner ball (covers the puncture): the glue is `h`
+      have hev : (fun z => if z ∈ ball c r then h z else u z) =ᶠ[𝓝 x] h := by
+        filter_upwards [isOpen_ball.mem_nhds hxr] with z hz
+        simp [hz]
+      exact (harmonicAt_congr_nhds hev).mpr (hh x hxr)
+    · -- away from the inner ball: the glue is `u` near `x`
+      have hxc : x ≠ c := by
+        intro hcontra
+        subst hcontra
+        exact hxr (mem_ball_self hr)
+      have hmem : x ∈ ball c R \ {c} := ⟨hx, hxc⟩
+      have hopen : IsOpen (ball c R \ {c}) :=
+        isOpen_ball.sdiff isClosed_singleton
+      have hev : (fun z => if z ∈ ball c r then h z else u z) =ᶠ[𝓝 x] u := by
+        filter_upwards [hopen.mem_nhds hmem] with z hz
+        by_cases hzr : z ∈ ball c r
+        · simp only [if_pos hzr]
+          exact (heq ⟨hzr, hz.2⟩).symm
+        · simp [hzr]
+      exact (harmonicAt_congr_nhds hev).mpr (hu x hmem)
+  · -- agreement with `u` off the puncture
+    intro z hz
+    by_cases hzr : z ∈ ball c r
+    · simp only [if_pos hzr]
+      exact (heq ⟨hzr, hz.2⟩).symm
+    · simp [hzr]
+
+/--
+**Limit corollary (W6).**  A bounded harmonic function on the punctured
+ball has a limit at the puncture — the value of its harmonic extension.
+-/
+theorem exists_tendsto_of_bounded_punctured
+    (hMP : WeakMaxPrincipleInput) (hDir : DiscDirichletInput)
+    {u : ℂ → ℝ} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hu : HarmonicOnNhd u (ball c R \ {c}))
+    {M : ℝ} (hbd : ∀ z ∈ ball c R \ {c}, |u z| ≤ M) :
+    ∃ L : ℝ, Tendsto u (𝓝[ball c R \ {c}] c) (𝓝 L) := by
+  obtain ⟨v, hv, hveq⟩ :=
+    harmonicOnNhd_extend_of_bounded_punctured hMP hDir hR hu hbd
+  exact ⟨v c, tendsto_of_harmonic_extension hR hv hveq⟩
 
 end JacobianChallenge.HolomorphicForms
