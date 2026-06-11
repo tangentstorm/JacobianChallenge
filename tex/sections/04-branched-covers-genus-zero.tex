@@ -2374,6 +2374,49 @@ subtraction — no maximum principle.
 \leanok
 \end{lemma}
 
+\begin{lemma}[M4: disc Dirichlet packaging (green leaf)]
+\label{lem:m4-poisson-solution}
+The disc Dirichlet solution \(\texttt{poissonSolution}\,\varphi\,c\,R\) of
+jc6's W3d M4: the Poisson extension of \(\varphi\) inside \(B(c,R)\), the
+datum \(\varphi\) outside.  For \(\varphi\) continuous on the circle it is
+harmonic on the open disc and continuous on the closed disc, and equals
+\(\varphi\) on the circle.  Cited here as an already-green project leaf so
+the Poisson-modification chain terminates in a proven node.
+\lean{JacobianChallenge.HolomorphicForms.poissonSolution, JacobianChallenge.HolomorphicForms.poissonSolution_harmonicOnNhd, JacobianChallenge.HolomorphicForms.continuousOn_poissonSolution, JacobianChallenge.HolomorphicForms.poissonSolution_apply_of_mem_sphere}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Perron subclass closed under Poisson modification]
+\label{lem:perron-sub-on-poisson-modify}
+\uses{def:perron-sub-on, lem:m4-poisson-solution, lem:perron-sub-on-harmonic-member}
+For a \(\texttt{PerronSubOn}(V)\) member \(v\) and a comparison disc
+\(\overline{B}(c,R) \subseteq V\), the M4 Dirichlet solution
+\(\texttt{poissonSolution}\,v\,c\,R\) — the Poisson modification of \(v\)
+on that disc — is again a \(\texttt{PerronSubOn}(V)\) member.  Two facts
+close the leaf.  First, \(v \le \texttt{poissonSolution}\,v\,c\,R\) on the
+disc: the M4 extension is a legal harmonic-up-to-closure majorant whose
+circle values are \(v\)'s own, so \(v\)'s comparison clause closes it with
+no maximum-principle obligation.  Second, membership: on a test disc
+\(\overline{B}(c',R') \subseteq V\) with majorant \(h'\), a point inside
+\(B(c',R')\) either lies outside \(B(c,R)\) — where the modification is
+\(v\) and \(v \le h'\) follows from \(v\)'s own clause via
+\(v \le \texttt{poissonSolution}\,v\,c\,R \le h'\) on the circle — or lies
+in the overlap \(U = B(c',R') \cap B(c,R)\), where the modification is the
+harmonic Poisson operator; there \(w = \texttt{poissonSolution} - h'\) is
+harmonic on \(U\), continuous on \(\overline{U}\), and \(\le 0\) on
+\(\operatorname{frontier} U\) (each frontier point lies on
+\(\partial B(c',R')\), where \(h'\) dominates by hypothesis, or on
+\(\partial B(c,R)\), where the modification is \(v \le h'\)).  This overlap
+clause is the **only** consumer of the weak maximum principle
+\(\texttt{WeakMaxPrincipleInput}\) (W1, owner lane jc3); the comparison
+half and continuity are obligation-free.  This is the W5b-iii membership
+fact the §3.5 Perron envelope consumes (the envelope sup is built by
+Poisson-modifying members on chart discs).  Sorry-free now; the W1
+hypothesis discharges once W1 lands.
+\lean{JacobianChallenge.HolomorphicForms.PerronSubOn.le_poissonSolution_of_mem_ball, JacobianChallenge.HolomorphicForms.PerronSubOn.poissonSolution_continuousOn, JacobianChallenge.HolomorphicForms.PerronSubOn.poissonModify, JacobianChallenge.HolomorphicForms.harmonicContOnCl_poissonSolution}
+\leanok
+\end{lemma}
+
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
 \uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control, lem:stage-eventual-containment-bounds}
