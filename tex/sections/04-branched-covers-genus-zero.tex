@@ -1932,6 +1932,39 @@ germ equality.  The glued-potential corollaries transfer along the
 full-neighborhood agreements of the case-glue.
 \end{proof}
 
+\begin{lemma}[Stage log-profile chartwise harmonic readings]
+\label{lem:stage-log-profile-chartwise-harmonic-readings}
+\uses{lem:stage-log-profile-off-point-conjugates, lem:stage-harmonic-analytic-compose}
+The canonical chart-pullback log profiles, and the glued stage dipole
+potential over them, have \emph{Mathlib-harmonic chart readings}: around
+every point of the punctured chart sources (resp.\ the punctured marked
+neighborhoods \(U_0 \setminus \{P_0\}\), \(U_\infty \setminus
+\{P_\infty\}\)) there is a preferred-chart ball, contained in the chart
+target and reading into the chart source (resp.\ into \(U_0\),
+\(U_\infty\)), on which the chart reading of the potential is harmonic in
+the sense of \code{InnerProductSpace.HarmonicOnNhd}.  This is the
+B1-layer feedstock in the repaired Dirichlet payload's export shape
+(\code{StageHarmonicOnNhd}): the stage-assembly and conjugate lanes
+consume chartwise harmonicity directly instead of re-deriving it from
+the per-point conjugate witnesses.
+\lean{JacobianChallenge.HolomorphicForms.harmonicAt_log_pullback_reading, JacobianChallenge.HolomorphicForms.exists_chartBall_harmonicOnNhd_log_pullback, JacobianChallenge.HolomorphicForms.exists_chartBall_harmonicOnNhd_neg_log_pullback, JacobianChallenge.HolomorphicForms.canonical_u0_harmonicOnNhd_chartBall, JacobianChallenge.HolomorphicForms.canonical_uinf_harmonicOnNhd_chartBall, JacobianChallenge.HolomorphicForms.stageDipoleGluedPotential_canonical_harmonicOnNhd_on_U0, JacobianChallenge.HolomorphicForms.stageDipoleGluedPotential_canonical_harmonicOnNhd_on_Uinf}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+The chart reading of the pullback log is definitionally
+\(\log\lVert(\varphi_P \circ \varphi_x^{-1})(\cdot) -
+\varphi_P(P)\rVert\); the transition is analytic on the overlap and the
+subtracted value is nonzero off the marked point by chart injectivity,
+so \(\log\lVert f\rVert\)-harmonicity for nonvanishing analytic \(f\)
+applies pointwise.  The ball is extracted from the open set carved by
+the chart target, the source preimage, and the \emph{transition-value}
+puncture \((\varphi_P \circ \varphi_x^{-1})(\cdot) \ne \varphi_P(P)\)
+(no Hausdorff hypothesis needed); the \(-1\) profile negates pointwise,
+and the glued-potential versions shrink the ball into the marked
+neighborhood and transfer along the case-glue agreement by eventual
+equality.
+\end{proof}
+
 \begin{lemma}[Stage bordered exhaustion domains (open)]
 \label{lem:stage-bordered-exhaustion-domains}
 \uses{lem:stage-marked-topological-control-data}

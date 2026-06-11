@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.PerronStageDipolePotential
+import Mathlib.Analysis.InnerProductSpace.Harmonic.Constructions
 
 /-!
 # Off-point conjugate control for single-log stage profiles (Perron engine B1b)
@@ -267,5 +268,283 @@ theorem stageDipoleGluedPotential_canonical_has_conjugate_on_Uinf
   exact hv.congr_of_eventuallyEq hglue_eq (Filter.EventuallyEq.refl _ _)
 
 end Canonical
+
+/-! ### Chartwise `HarmonicOnNhd` readings (R2 shape)
+
+The landed B2 payload exports harmonicity as chartwise Mathlib
+`InnerProductSpace.HarmonicOnNhd` on preferred-chart balls inside the stage
+(`StageHarmonicOnNhd`, S2 repair).  The lemmas below hand the W9/W10
+assembly and the B4 lane the B1-layer facts in that same shape: the
+canonical single-log profiles, and the glued dipole potential, have
+Mathlib-harmonic chart readings on small chart balls around every point of
+the punctured marked neighborhoods.
+
+The key simplification is definitional: the chart reading
+`u0 ∘ (chartAt ℂ x).symm` IS `Real.log ‖(chartAt ℂ P ∘ (chartAt ℂ x).symm) ·
+- (chartAt ℂ P) P‖` for the analytic chart transition, so
+`AnalyticAt.harmonicAt_log_norm` applies with no congruence bookkeeping.
+The chart balls are produced from open sets whose puncture is expressed
+through the transition VALUE (`transition w ≠ chart P`), not through the
+point `P` itself, so no `T2Space` hypothesis is needed.
+-/
+
+section ChartwiseReadings
+
+open InnerProductSpace Metric
+
+variable [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+
+/-- ℂ-side point fact: at any point of the chart-transition overlap whose
+`symm`-image is off the marked point (expressed through the transition
+value), the pullback-log chart reading is Mathlib-harmonic. -/
+theorem harmonicAt_log_pullback_reading
+    (P x : X) {w : ℂ}
+    (hw : w ∈ (chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ P).source)
+    (hne : chartAt ℂ P ((chartAt ℂ x).symm w) ≠ (chartAt ℂ P) P) :
+    HarmonicAt
+      ((fun y : X => Real.log ‖chartAt ℂ P y - (chartAt ℂ P) P‖)
+        ∘ (chartAt ℂ x).symm) w := by
+  have hopen : IsOpen ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ P).source) :=
+    (chartAt ℂ x).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ x).open_target (chartAt ℂ P).open_source
+  have htrans_an : AnalyticAt ℂ (chartAt ℂ P ∘ (chartAt ℂ x).symm) w :=
+    AnalyticOn.analyticAt (hopen.mem_nhds hw)
+      (chart_transition_contDiffOn x P).analyticOn
+  have hf_an : AnalyticAt ℂ
+      (fun z => chartAt ℂ P ((chartAt ℂ x).symm z) - (chartAt ℂ P) P) w :=
+    htrans_an.sub analyticAt_const
+  have hf_ne : chartAt ℂ P ((chartAt ℂ x).symm w) - (chartAt ℂ P) P ≠ 0 :=
+    sub_ne_zero.mpr hne
+  simpa only [Function.comp_def] using hf_an.harmonicAt_log_norm hf_ne
+
+/-- Ball packaging in the landed `StageHarmonicOnNhd` clause shape: around
+any point of the punctured chart source, some preferred-chart ball inside
+the chart target reads into the source and carries a Mathlib-harmonic
+reading of the `+1` pullback log. -/
+theorem exists_chartBall_harmonicOnNhd_log_pullback
+    {P x : X} (hxP : x ≠ P) (hxP_src : x ∈ (chartAt ℂ P).source) :
+    ∃ r > 0, ball ((chartAt ℂ x) x) r ⊆ (chartAt ℂ x).target ∧
+      (chartAt ℂ x).symm '' ball ((chartAt ℂ x) x) r ⊆ (chartAt ℂ P).source ∧
+      HarmonicOnNhd
+        ((fun y : X => Real.log ‖chartAt ℂ P y - (chartAt ℂ P) P‖)
+          ∘ (chartAt ℂ x).symm) (ball ((chartAt ℂ x) x) r) := by
+  have hopen_ov : IsOpen ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ P).source) :=
+    (chartAt ℂ x).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ x).open_target (chartAt ℂ P).open_source
+  have hopenV : IsOpen (((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ P).source) ∩
+      (chartAt ℂ P ∘ (chartAt ℂ x).symm) ⁻¹' {(chartAt ℂ P) P}ᶜ) :=
+    (chart_transition_contDiffOn x P).continuousOn.isOpen_inter_preimage
+      hopen_ov isOpen_compl_singleton
+  have hxinv : (chartAt ℂ x).symm ((chartAt ℂ x) x) = x :=
+    (chartAt ℂ x).left_inv (mem_chart_source ℂ x)
+  have hx_mem : (chartAt ℂ x) x ∈ ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ P).source) ∩
+      (chartAt ℂ P ∘ (chartAt ℂ x).symm) ⁻¹' {(chartAt ℂ P) P}ᶜ := by
+    refine ⟨⟨(chartAt ℂ x).map_source (mem_chart_source ℂ x), ?_⟩, ?_⟩
+    · rw [Set.mem_preimage, hxinv]
+      exact hxP_src
+    · simp only [Set.mem_preimage, Function.comp_apply, hxinv,
+        Set.mem_compl_iff, Set.mem_singleton_iff]
+      exact fun h =>
+        hxP ((chartAt ℂ P).injOn hxP_src (mem_chart_source ℂ P) h)
+  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp hopenV _ hx_mem
+  refine ⟨r, hr, fun z hz => (hball hz).1.1, ?_, fun w hw => ?_⟩
+  · rintro y ⟨z, hz, rfl⟩
+    exact (hball hz).1.2
+  · refine harmonicAt_log_pullback_reading P x (hball hw).1 ?_
+    have h2 := (hball hw).2
+    simpa only [Set.mem_preimage, Function.comp_apply, Set.mem_compl_iff,
+      Set.mem_singleton_iff] using h2
+
+/-- `-1` variant of `exists_chartBall_harmonicOnNhd_log_pullback`. -/
+theorem exists_chartBall_harmonicOnNhd_neg_log_pullback
+    {P x : X} (hxP : x ≠ P) (hxP_src : x ∈ (chartAt ℂ P).source) :
+    ∃ r > 0, ball ((chartAt ℂ x) x) r ⊆ (chartAt ℂ x).target ∧
+      (chartAt ℂ x).symm '' ball ((chartAt ℂ x) x) r ⊆ (chartAt ℂ P).source ∧
+      HarmonicOnNhd
+        ((fun y : X => -Real.log ‖chartAt ℂ P y - (chartAt ℂ P) P‖)
+          ∘ (chartAt ℂ x).symm) (ball ((chartAt ℂ x) x) r) := by
+  obtain ⟨r, hr, hsub, himg, hharm⟩ :=
+    exists_chartBall_harmonicOnNhd_log_pullback hxP hxP_src
+  refine ⟨r, hr, hsub, himg, fun w hw => ?_⟩
+  simpa only [Function.comp_def, Pi.neg_def] using (hharm w hw).neg
+
+variable (d : GenusZeroStageMarkedData X e)
+
+/-- The canonical `+1` profile has a Mathlib-harmonic chart reading on a
+preferred-chart ball around every point of its punctured chart source
+(R2-shape mirror of `canonical_u0_has_conjugate_at`). -/
+theorem canonical_u0_harmonicOnNhd_chartBall
+    {x : X} (hx : x ∈ (chartAt ℂ d.P0).source \ {d.P0}) :
+    ∃ r > 0, ball ((chartAt ℂ x) x) r ⊆ (chartAt ℂ x).target ∧
+      (chartAt ℂ x).symm '' ball ((chartAt ℂ x) x) r ⊆
+        (chartAt ℂ d.P0).source ∧
+      HarmonicOnNhd
+        ((canonicalGenusZeroStageDipoleProfiles d).u0 ∘ (chartAt ℂ x).symm)
+        (ball ((chartAt ℂ x) x) r) :=
+  exists_chartBall_harmonicOnNhd_log_pullback hx.2 hx.1
+
+/-- The canonical `-1` profile has a Mathlib-harmonic chart reading on a
+preferred-chart ball around every point of its punctured chart source
+(R2-shape mirror of `canonical_uinf_has_conjugate_at`). -/
+theorem canonical_uinf_harmonicOnNhd_chartBall
+    {x : X} (hx : x ∈ (chartAt ℂ d.Pinf).source \ {d.Pinf}) :
+    ∃ r > 0, ball ((chartAt ℂ x) x) r ⊆ (chartAt ℂ x).target ∧
+      (chartAt ℂ x).symm '' ball ((chartAt ℂ x) x) r ⊆
+        (chartAt ℂ d.Pinf).source ∧
+      HarmonicOnNhd
+        ((canonicalGenusZeroStageDipoleProfiles d).uinf ∘ (chartAt ℂ x).symm)
+        (ball ((chartAt ℂ x) x) r) :=
+  exists_chartBall_harmonicOnNhd_neg_log_pullback hx.2 hx.1
+
+/-- The glued stage dipole potential over the canonical profiles has a
+Mathlib-harmonic chart reading on a preferred-chart ball, with the ball
+reading into `U0`, around every point of the punctured `U0` — the
+`StageHarmonicOnNhd`-clause-shaped fact on the zero-marked neighborhood
+(R2-shape mirror of `stageDipoleGluedPotential_canonical_has_conjugate_on_U0`). -/
+theorem stageDipoleGluedPotential_canonical_harmonicOnNhd_on_U0
+    {x : X} (hxU : x ∈ d.U0) (hxP : x ≠ d.P0) :
+    ∃ r > 0, ball ((chartAt ℂ x) x) r ⊆ (chartAt ℂ x).target ∧
+      (chartAt ℂ x).symm '' ball ((chartAt ℂ x) x) r ⊆ d.U0 ∧
+      HarmonicOnNhd
+        ((stageDipoleGluedPotential d (canonicalGenusZeroStageDipoleProfiles d))
+          ∘ (chartAt ℂ x).symm)
+        (ball ((chartAt ℂ x) x) r) := by
+  have hx_src : x ∈ (chartAt ℂ d.P0).source := d.U0_subset_chart hxU
+  have hopen_ov : IsOpen ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ d.P0).source) :=
+    (chartAt ℂ x).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ x).open_target (chartAt ℂ d.P0).open_source
+  have hopenV : IsOpen (((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ d.P0).source) ∩
+      (chartAt ℂ d.P0 ∘ (chartAt ℂ x).symm) ⁻¹' {(chartAt ℂ d.P0) d.P0}ᶜ) :=
+    (chart_transition_contDiffOn x d.P0).continuousOn.isOpen_inter_preimage
+      hopen_ov isOpen_compl_singleton
+  have hopenU : IsOpen ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' d.U0) :=
+    (chartAt ℂ x).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ x).open_target d.isOpen_U0
+  have hxinv : (chartAt ℂ x).symm ((chartAt ℂ x) x) = x :=
+    (chartAt ℂ x).left_inv (mem_chart_source ℂ x)
+  have hx_t : (chartAt ℂ x) x ∈ (chartAt ℂ x).target :=
+    (chartAt ℂ x).map_source (mem_chart_source ℂ x)
+  have hx_mem : (chartAt ℂ x) x ∈ (((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ d.P0).source) ∩
+      (chartAt ℂ d.P0 ∘ (chartAt ℂ x).symm) ⁻¹' {(chartAt ℂ d.P0) d.P0}ᶜ) ∩
+      ((chartAt ℂ x).target ∩ (chartAt ℂ x).symm ⁻¹' d.U0) := by
+    refine ⟨⟨⟨hx_t, ?_⟩, ?_⟩, hx_t, ?_⟩
+    · rw [Set.mem_preimage, hxinv]
+      exact hx_src
+    · simp only [Set.mem_preimage, Function.comp_apply, hxinv,
+        Set.mem_compl_iff, Set.mem_singleton_iff]
+      exact fun h =>
+        hxP ((chartAt ℂ d.P0).injOn hx_src (mem_chart_source ℂ d.P0) h)
+    · rw [Set.mem_preimage, hxinv]
+      exact hxU
+  obtain ⟨r, hr, hball⟩ :=
+    Metric.isOpen_iff.mp (hopenV.inter hopenU) _ hx_mem
+  refine ⟨r, hr, fun z hz => (hball hz).1.1.1, ?_, fun w hw => ?_⟩
+  · rintro y ⟨z, hz, rfl⟩
+    exact (hball hz).2.2
+  · have hwV := (hball hw).1
+    have h_u0 : HarmonicAt
+        ((fun y : X => Real.log ‖chartAt ℂ d.P0 y - (chartAt ℂ d.P0) d.P0‖)
+          ∘ (chartAt ℂ x).symm) w := by
+      refine harmonicAt_log_pullback_reading d.P0 x hwV.1 ?_
+      simpa only [Set.mem_preimage, Function.comp_apply, Set.mem_compl_iff,
+        Set.mem_singleton_iff] using hwV.2
+    have heq :
+        ((stageDipoleGluedPotential d
+            (canonicalGenusZeroStageDipoleProfiles d)) ∘ (chartAt ℂ x).symm)
+        =ᶠ[nhds w]
+        ((fun y : X => Real.log ‖chartAt ℂ d.P0 y - (chartAt ℂ d.P0) d.P0‖)
+          ∘ (chartAt ℂ x).symm) := by
+      filter_upwards [hopenU.mem_nhds (hball hw).2] with z hz
+      exact stageDipoleGluedPotential.eqOn_u0 d
+        (canonicalGenusZeroStageDipoleProfiles d) hz.2
+    exact (harmonicAt_congr_nhds heq).mpr h_u0
+
+/-- The glued stage dipole potential over the canonical profiles has a
+Mathlib-harmonic chart reading on a preferred-chart ball, with the ball
+reading into `Uinf`, around every point of the punctured `Uinf` — the
+`StageHarmonicOnNhd`-clause-shaped fact on the infinity-marked neighborhood
+(R2-shape mirror of
+`stageDipoleGluedPotential_canonical_has_conjugate_on_Uinf`). -/
+theorem stageDipoleGluedPotential_canonical_harmonicOnNhd_on_Uinf
+    {x : X} (hxU : x ∈ d.Uinf) (hxP : x ≠ d.Pinf) :
+    ∃ r > 0, ball ((chartAt ℂ x) x) r ⊆ (chartAt ℂ x).target ∧
+      (chartAt ℂ x).symm '' ball ((chartAt ℂ x) x) r ⊆ d.Uinf ∧
+      HarmonicOnNhd
+        ((stageDipoleGluedPotential d (canonicalGenusZeroStageDipoleProfiles d))
+          ∘ (chartAt ℂ x).symm)
+        (ball ((chartAt ℂ x) x) r) := by
+  have hx_src : x ∈ (chartAt ℂ d.Pinf).source := d.Uinf_subset_chart hxU
+  have hopen_ov : IsOpen ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ d.Pinf).source) :=
+    (chartAt ℂ x).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ x).open_target (chartAt ℂ d.Pinf).open_source
+  have hopenV : IsOpen (((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ d.Pinf).source) ∩
+      (chartAt ℂ d.Pinf ∘ (chartAt ℂ x).symm) ⁻¹'
+        {(chartAt ℂ d.Pinf) d.Pinf}ᶜ) :=
+    (chart_transition_contDiffOn x d.Pinf).continuousOn.isOpen_inter_preimage
+      hopen_ov isOpen_compl_singleton
+  have hopenU : IsOpen ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' d.Uinf) :=
+    (chartAt ℂ x).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ x).open_target d.isOpen_Uinf
+  have hxinv : (chartAt ℂ x).symm ((chartAt ℂ x) x) = x :=
+    (chartAt ℂ x).left_inv (mem_chart_source ℂ x)
+  have hx_t : (chartAt ℂ x) x ∈ (chartAt ℂ x).target :=
+    (chartAt ℂ x).map_source (mem_chart_source ℂ x)
+  have hx_mem : (chartAt ℂ x) x ∈ (((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ d.Pinf).source) ∩
+      (chartAt ℂ d.Pinf ∘ (chartAt ℂ x).symm) ⁻¹'
+        {(chartAt ℂ d.Pinf) d.Pinf}ᶜ) ∩
+      ((chartAt ℂ x).target ∩ (chartAt ℂ x).symm ⁻¹' d.Uinf) := by
+    refine ⟨⟨⟨hx_t, ?_⟩, ?_⟩, hx_t, ?_⟩
+    · rw [Set.mem_preimage, hxinv]
+      exact hx_src
+    · simp only [Set.mem_preimage, Function.comp_apply, hxinv,
+        Set.mem_compl_iff, Set.mem_singleton_iff]
+      exact fun h =>
+        hxP ((chartAt ℂ d.Pinf).injOn hx_src (mem_chart_source ℂ d.Pinf) h)
+    · rw [Set.mem_preimage, hxinv]
+      exact hxU
+  obtain ⟨r, hr, hball⟩ :=
+    Metric.isOpen_iff.mp (hopenV.inter hopenU) _ hx_mem
+  refine ⟨r, hr, fun z hz => (hball hz).1.1.1, ?_, fun w hw => ?_⟩
+  · rintro y ⟨z, hz, rfl⟩
+    exact (hball hz).2.2
+  · have hwV := (hball hw).1
+    have h_uinf : HarmonicAt
+        ((fun y : X =>
+            -Real.log ‖chartAt ℂ d.Pinf y - (chartAt ℂ d.Pinf) d.Pinf‖)
+          ∘ (chartAt ℂ x).symm) w := by
+      have h_log : HarmonicAt
+          ((fun y : X =>
+              Real.log ‖chartAt ℂ d.Pinf y - (chartAt ℂ d.Pinf) d.Pinf‖)
+            ∘ (chartAt ℂ x).symm) w := by
+        refine harmonicAt_log_pullback_reading d.Pinf x hwV.1 ?_
+        simpa only [Set.mem_preimage, Function.comp_apply, Set.mem_compl_iff,
+          Set.mem_singleton_iff] using hwV.2
+      simpa only [Function.comp_def, Pi.neg_def] using h_log.neg
+    have heq :
+        ((stageDipoleGluedPotential d
+            (canonicalGenusZeroStageDipoleProfiles d)) ∘ (chartAt ℂ x).symm)
+        =ᶠ[nhds w]
+        ((fun y : X =>
+            -Real.log ‖chartAt ℂ d.Pinf y - (chartAt ℂ d.Pinf) d.Pinf‖)
+          ∘ (chartAt ℂ x).symm) := by
+      filter_upwards [hopenU.mem_nhds (hball hw).2] with z hz
+      exact stageDipoleGluedPotential.eqOn_uinf d
+        (canonicalGenusZeroStageDipoleProfiles d) hz.2
+    exact (harmonicAt_congr_nhds heq).mpr h_uinf
+
+end ChartwiseReadings
 
 end JacobianChallenge.HolomorphicForms
