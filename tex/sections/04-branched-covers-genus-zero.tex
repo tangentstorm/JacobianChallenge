@@ -2055,6 +2055,30 @@ radius; the conjugate-pair form is the special case
 \(\operatorname{re}(u + iv) = u\).
 \end{proof}
 
+\begin{lemma}[Stage harmonicity composes with analytic maps]
+\label{lem:stage-harmonic-analytic-compose}
+Precomposing a harmonic function with a complex-analytic map preserves
+harmonicity: if \(u\) is harmonic at \(f(z_0)\) and \(f\) is analytic at
+\(z_0\), then \(u \circ f\) is harmonic at \(z_0\); likewise on sets, and
+for the chart transitions
+\(\varphi_P \circ \varphi_x^{-1}\) of the stage construction on their
+overlap domains.  This is the chart-transfer workhorse for stage
+potentials: maximum-principle bounds, conjugate transfer, and the Perron
+subfunction API move potentials between source charts through exactly
+these compositions.
+\lean{JacobianChallenge.HolomorphicForms.HarmonicAt.comp_analyticAt, JacobianChallenge.HolomorphicForms.HarmonicOnNhd.comp_analyticOnNhd, JacobianChallenge.HolomorphicForms.HarmonicAt.comp_chart_transition}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Harmonicity at a point holds on an open set, so on a ball around
+\(f(z_0)\) the potential is the real part of an analytic \(F\); then
+\(F \circ f\) is analytic at \(z_0\), its real part is harmonic, and
+\(u \circ f\) agrees with it near \(z_0\) by continuity of \(f\) into the
+ball, so harmonicity transfers along the germ equality.  The chart form
+extracts analyticity of the transition from its smoothness on the
+overlap.
+\end{proof}
+
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
 \uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control}
