@@ -1882,6 +1882,35 @@ image of the marked point, so neighborhood agreement upgrades to eventual
 equality of the chart-pulled-back integrands).
 \end{proof}
 
+\begin{lemma}[Stage log-profile off-point conjugates]
+\label{lem:stage-log-profile-off-point-conjugates}
+\uses{lem:stage-dipole-local-singular-profiles, lem:stage-dipole-glued-potential}
+The canonical chart-pullback log profiles
+\(y \mapsto \pm\log\lVert\varphi_P(y) - \varphi_P(P)\rVert\) admit local
+harmonic conjugates at every point of their punctured chart sources, and
+hence the glued stage dipole potential over the canonical profiles admits
+local harmonic conjugates at every point of the punctured marked
+neighborhoods \(U_0 \setminus \{P_0\}\) and
+\(U_\infty \setminus \{P_\infty\}\) — the
+\code{StageHarmonicOn}-shaped facts the Dirichlet-stage interface
+demands on the marked neighborhoods.  Single-log mirror of the dipole
+conjugate path: one pole, one chart transition, a single-point slit
+rotation.
+\lean{JacobianChallenge.HolomorphicForms.chart_pullback_log_has_conjugate_at_off_P, JacobianChallenge.HolomorphicForms.chart_pullback_neg_log_has_conjugate_at_off_P, JacobianChallenge.HolomorphicForms.stageDipoleGluedPotential_canonical_has_conjugate_on_U0, JacobianChallenge.HolomorphicForms.stageDipoleGluedPotential_canonical_has_conjugate_on_Uinf}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Re-express the pullback log through the chart at the evaluation point
+(germ equality on the chart source); the transition
+\(\varphi_P \circ \varphi_x^{-1}\) is analytic on the overlap, nonzero
+after subtracting the marked value (chart injectivity), and rotates into
+the slit plane, so \(\log(c\,h_P(\cdot)) - \log\lVert c\rVert\) is an
+analytic witness whose imaginary part \(\arg(c\,h_P(\cdot))\) is the
+conjugate; lift through the chart at the basepoint and transfer along the
+germ equality.  The glued-potential corollaries transfer along the
+full-neighborhood agreements of the case-glue.
+\end{proof}
+
 \begin{lemma}[Stage bordered exhaustion domains (open)]
 \label{lem:stage-bordered-exhaustion-domains}
 \uses{lem:stage-marked-topological-control-data}
