@@ -9,7 +9,7 @@ yet. Updated by the manager when allocations change.
 ## B2 toolbox (docs/perron-b2-dirichlet-phase0.md §4)
 | Item | Owner | State |
 |------|-------|-------|
-| W1 max principle | jc10 | in flight |
+| W1 max principle | jc10 | in flight — discharge target: `WeakMaxPrincipleInput` (PerronRemovableSingularity.lean), name+statement FROZEN (2 consumers: W5b-i 527fe1f9, W6 15c4d181) |
 | W2 harmonic∘analytic | jc3 | GREEN (577fec05) |
 | W3a–c Poisson operator (incl. the def) | jc6 | GREEN (bdf63495 + c5863c83) |
 | W3d boundary limit (continuous data) | jc6 | REVIVED 2026-06-11 (W5b+W6 attainment gap), in flight |
