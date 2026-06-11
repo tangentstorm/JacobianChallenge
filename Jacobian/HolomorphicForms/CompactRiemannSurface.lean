@@ -172,22 +172,12 @@ The headline `holomorphicOneForm_fiberNorm_continuous` is now
 assembled from two named sub-leaves matching tex blueprint §14
 R8-sub-B.A:
 
-* `cotangent_fiber_eval_isometry` — chart-local fiber identification
-  `(T*_x X)_ℂ ≅ ℂ` via evaluation at the chart-local basis vector.
 * `cotangent_trivialisation_hcompat` — the trivialisation map of the
   cotangent bundle commutes with the canonical fiber isometry.
 
 Subsequent rounds refine the `hcompat` witness into a chart-by-chart
 construction calling `ContMDiffSection.continuous_fiberNorm`.
 -/
-
-
-theorem cotangent_fiber_eval_isometry
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_x : X) : True := by trivial
 
 
 theorem cotangent_trivialisation_hcompat
@@ -1226,7 +1216,6 @@ theorem holomorphicOneForm_supNorm_cauchySeq_tendsto
 `holomorphicOneForm_supNorm_cauchySeq_tendsto` is decomposed into
 four named sub-leaves matching tex blueprint §14 R8-sub-B.B:
 
-* `holomorphicOneForm_pointwise_limit` — Banach-fibre pointwise limit.
 * `holomorphicOneForm_tendstoUniformly_continuous` — uniform
   convergence ⇒ continuity (`TendstoUniformly.continuous`).
 * `chart_local_weierstrass` — uniform limit of holomorphic chart
@@ -1234,14 +1223,6 @@ four named sub-leaves matching tex blueprint §14 R8-sub-B.B:
 * `holomorphicOneForm_uniform_limit` — chart compatibility glues
   to a global holomorphic 1-form.
 -/
-
-
-theorem holomorphicOneForm_pointwise_limit
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_σ : ℕ → HolomorphicOneForm ℂ X) : True := by trivial
 
 
 theorem holomorphicOneForm_tendstoUniformly_continuous
