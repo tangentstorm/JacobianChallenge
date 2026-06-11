@@ -60,7 +60,7 @@ structure StageHolomorphicCoordinates
     (profiles : GenusZeroStageDipoleProfiles X e marked)
     (boundaryControl :
       StageDipoleBoundaryControl X e marked selected exhaustion profiles)
-    (cutSystem : StageCutSystem X selected exhaustion)
+    (cutSystem : StageMarkedCutSystem X marked selected exhaustion)
     (dirichlet :
       StageDirichletHarmonicSolution X e marked selected exhaustion profiles
         boundaryControl)
@@ -100,7 +100,7 @@ variable {exhaustion : StageBorderedExhaustion X selected}
 variable {profiles : GenusZeroStageDipoleProfiles X e marked}
 variable {boundaryControl :
   StageDipoleBoundaryControl X e marked selected exhaustion profiles}
-variable {cutSystem : StageCutSystem X selected exhaustion}
+variable {cutSystem : StageMarkedCutSystem X marked selected exhaustion}
 variable {dirichlet :
   StageDirichletHarmonicSolution X e marked selected exhaustion profiles
     boundaryControl}
@@ -139,7 +139,7 @@ theorem exists_stageHolomorphicCoordinatesFromHarmonicDipole
     (profiles : GenusZeroStageDipoleProfiles X e marked)
     (boundaryControl :
       StageDipoleBoundaryControl X e marked selected exhaustion profiles)
-    (cutSystem : StageCutSystem X selected exhaustion)
+    (cutSystem : StageMarkedCutSystem X marked selected exhaustion)
     (dirichlet :
       StageDirichletHarmonicSolution X e marked selected exhaustion profiles
         boundaryControl)

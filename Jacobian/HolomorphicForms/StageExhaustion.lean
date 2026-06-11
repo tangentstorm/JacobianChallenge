@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
+import Jacobian.HolomorphicForms.PerronStageMarkedData
 import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 
 /-!
@@ -97,6 +98,27 @@ structure StageCutSystem
     ∀ n, StageConjugateReady X (cutDomain n)
 
 /--
+A marked-aware cut system compatible with a bordered exhaustion.
+
+This wrapper is the R1/R4 amendment consumed by the B4 conjugate interface:
+it keeps the existing unmarked `StageCutSystem` available for generic
+eventual-containment algebra, and adds the genus-zero marked-end facts needed
+to avoid the classical logarithmic-period obstruction.
+-/
+structure StageMarkedCutSystem
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    {e : X ≃ₜ OnePoint ℂ} (marked : GenusZeroStageMarkedData X e)
+    (selected : StageSelectedCompactFamily X)
+    (exhaustion : StageBorderedExhaustion X selected)
+    extends StageCutSystem X selected exhaustion where
+  P0_notMem_cutDomain :
+    ∀ n, marked.P0 ∉ cutDomain n
+  Pinf_notMem_cutDomain :
+    ∀ n, marked.Pinf ∉ cutDomain n
+  eventually_base_mem :
+    ∀ᶠ n in atTop, marked.base ∈ cutDomain n
+
+/--
 A2 frontier obligation: build the adapted bordered exhaustion from the
 topological genus-zero input and selected compacta.
 -/
@@ -117,10 +139,11 @@ theorem exists_stageCutSystem
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_e : X ≃ₜ OnePoint ℂ)
+    (e : X ≃ₜ OnePoint ℂ)
+    (marked : GenusZeroStageMarkedData X e)
     (selected : StageSelectedCompactFamily X)
     (exhaustion : StageBorderedExhaustion X selected) :
-    Nonempty (StageCutSystem X selected exhaustion) := by
+    Nonempty (StageMarkedCutSystem X marked selected exhaustion) := by
   sorry
 
 end JacobianChallenge.HolomorphicForms

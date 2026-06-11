@@ -21,16 +21,19 @@ Consumer-facing harmonicity predicate for one real stage potential.
 
 The predicate is phrased in the project's existing local-conjugate language:
 on the active stage, away from the two marked singular points, the potential
-admits a local harmonic conjugate at every point.  This is the stage-local
-version of the contentful harmonic-off interface already used by the dipole
-library.
+admits a harmonic conjugate uniformly on a neighborhood contained in the
+stage.  The shared neighborhood witness rules out vacuous one-point affine
+conjugates and is the stage-local version of the contentful harmonic-off
+interface already used by the dipole library.
 -/
 def StageHarmonicOn
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     {e : X ≃ₜ OnePoint ℂ} (marked : GenusZeroStageMarkedData X e)
     (stage : Set X) (potential : X → ℝ) : Prop :=
   ∀ x, x ∈ stage → x ≠ marked.P0 → x ≠ marked.Pinf →
-    ∃ conjugate : X → ℝ, IsHarmonicConjugateAtReal X potential conjugate x
+    ∃ U : Set X, IsOpen U ∧ x ∈ U ∧ U ⊆ stage ∧
+      ∃ conjugate : X → ℝ,
+        ∀ y, y ∈ U → IsHarmonicConjugateAtReal X potential conjugate y
 
 /--
 Boundary agreement over every finite boundary-chart piece in the A2 bordered
@@ -45,10 +48,11 @@ def StageBoundaryAgreement
 /--
 The B2 Dirichlet/Perron solution payload for all bordered stages.
 
-It packages one real solution per stage, harmonicity on the stage away from
-the marked singular points, agreement with the A4 boundary datum on each
-finite boundary-chart piece, inherited base normalization and logarithmic
-singular behavior, and compact-subdomain bounds for later Cauchy estimates.
+It packages one real solution per stage, neighborhood-uniform harmonicity on
+the stage away from the marked singular points, agreement with the A4 boundary
+datum on each finite boundary-chart piece, inherited base normalization and
+logarithmic singular behavior, and compact-subdomain bounds for later Cauchy
+estimates.
 -/
 structure StageDirichletHarmonicSolution
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]

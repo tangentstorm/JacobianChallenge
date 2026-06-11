@@ -6,7 +6,7 @@ import Jacobian.HolomorphicForms.StageEventualContainment
 
 This module records the B4 statement-level payload for choosing
 single-valued harmonic conjugates on the cut stage domains.  It consumes the
-A3 cut-system interface and the B2 real harmonic stage solutions, but
+A3 marked cut-system interface and the B2 real harmonic stage solutions, but
 deliberately does not construct holomorphic stage coordinates or Montel
 limits.
 -/
@@ -43,9 +43,10 @@ def StageConjugateSelectedCompactReady
 The B4 harmonic-conjugate payload for all cut stages.
 
 It records one real conjugate per stage, compatibility with the A3
-`StageConjugateReady` witness, pointwise conjugacy to the B2 potential on the
-cut domain, additive phase normalization, and selected-compact compatibility
-interfaces needed before chart-ball packaging.
+`StageConjugateReady` witness, marked-end exclusion from the cut domain,
+pointwise conjugacy to the B2 potential on the cut domain, additive phase
+normalization, and selected-compact compatibility interfaces needed before
+chart-ball packaging.
 -/
 structure StageHarmonicConjugatesOnCuts
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -56,7 +57,7 @@ structure StageHarmonicConjugatesOnCuts
     (profiles : GenusZeroStageDipoleProfiles X e marked)
     (boundaryControl :
       StageDipoleBoundaryControl X e marked selected exhaustion profiles)
-    (cutSystem : StageCutSystem X selected exhaustion)
+    (cutSystem : StageMarkedCutSystem X marked selected exhaustion)
     (dirichlet :
       StageDirichletHarmonicSolution X e marked selected exhaustion profiles
         boundaryControl) where
@@ -94,7 +95,7 @@ variable {exhaustion : StageBorderedExhaustion X selected}
 variable {profiles : GenusZeroStageDipoleProfiles X e marked}
 variable {boundaryControl :
   StageDipoleBoundaryControl X e marked selected exhaustion profiles}
-variable {cutSystem : StageCutSystem X selected exhaustion}
+variable {cutSystem : StageMarkedCutSystem X marked selected exhaustion}
 variable {dirichlet :
   StageDirichletHarmonicSolution X e marked selected exhaustion profiles
     boundaryControl}
@@ -135,7 +136,7 @@ theorem exists_stageHarmonicConjugatesOnCuts
     (profiles : GenusZeroStageDipoleProfiles X e marked)
     (boundaryControl :
       StageDipoleBoundaryControl X e marked selected exhaustion profiles)
-    (cutSystem : StageCutSystem X selected exhaustion)
+    (cutSystem : StageMarkedCutSystem X marked selected exhaustion)
     (dirichlet :
       StageDirichletHarmonicSolution X e marked selected exhaustion profiles
         boundaryControl) :

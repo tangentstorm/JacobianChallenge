@@ -1951,8 +1951,9 @@ For each bordered stage domain one chooses cuts giving a cut stage
 \(\Omega_n^{\mathrm{cut}}\) on which the harmonic conjugates used by the
 Perron engine are single-valued.  The cuts are chosen compatibly with the
 exhaustion so every Montel chart-ball compactum is eventually disjoint from the
-cuts and contained in the holomorphic part of the stage.
-\lean{JacobianChallenge.HolomorphicForms.StageCutSystem, JacobianChallenge.HolomorphicForms.StageConjugateReady, JacobianChallenge.HolomorphicForms.exists_stageCutSystem}
+cuts and contained in the holomorphic part of the stage, with the marked ends
+excluded from every cut domain and the base point eventually retained there.
+\lean{JacobianChallenge.HolomorphicForms.StageCutSystem, JacobianChallenge.HolomorphicForms.StageMarkedCutSystem, JacobianChallenge.HolomorphicForms.StageConjugateReady, JacobianChallenge.HolomorphicForms.exists_stageCutSystem}
 \end{lemma}
 
 \begin{lemma}[Stage eventual-containment bounds]
@@ -1993,10 +1994,11 @@ problem remains new engine work.
 \uses{lem:stage-bordered-exhaustion-domains, lem:stage-dipole-boundary-control}
 On each cut stage domain, solve the normalized Dirichlet/Perron problem for
 the real harmonic dipole potential with the prescribed boundary control and
-marked-end singular behavior.  This is the load-bearing potential-theory
-frontier of the engine: Mathlib supplies harmonic predicates and Poisson
-formulas for already-harmonic functions, but not this bordered-stage existence
-theorem.
+marked-end singular behavior, exporting neighborhood-uniform harmonic-conjugate
+witnesses away from the marked ends.  This is the load-bearing
+potential-theory frontier of the engine: Mathlib supplies harmonic predicates
+and Poisson formulas for already-harmonic functions, but not this
+bordered-stage existence theorem.
 \lean{JacobianChallenge.HolomorphicForms.StageDirichletHarmonicSolution, JacobianChallenge.HolomorphicForms.exists_stageDirichletHarmonicSolution}
 \end{lemma}
 
