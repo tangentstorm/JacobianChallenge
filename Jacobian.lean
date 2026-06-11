@@ -1,6 +1,7 @@
 import Jacobian.Solution
 import Jacobian.ComplexTorus
 import Jacobian.HolomorphicForms
+import Jacobian.HolomorphicForms.PerronPoissonBoundary
 import Jacobian.Periods
 import Jacobian.AnalyticJacobian
 import Jacobian.AbelJacobi

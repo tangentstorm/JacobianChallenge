@@ -102,4 +102,130 @@ theorem tendstoUniformlyOn_poissonKernel_far {c ζ : ℂ} {R δ : ℝ}
   rw [Pi.zero_apply, dist_zero_left, Real.norm_eq_abs, abs_of_nonneg hknn]
   exact lt_of_le_of_lt hbound hlt
 
+/-! ### W3d M2: the oscillation split -/
+
+/--
+The Poisson operator drops constants: subtracting `a` from the boundary
+datum subtracts `a` from the operator — `circleAverage_sub` plus the
+W3b normalization `poissonOperator_const`.
+-/
+private lemma poissonOperator_sub_const {φ : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    (hR : 0 < R) (hφ : ContinuousOn φ (sphere c R)) (a : ℝ) {w : ℂ}
+    (hw : w ∈ ball c R) :
+    poissonOperator (fun z => φ z - a) c R w = poissonOperator φ c R w - a := by
+  have hker : ContinuousOn (poissonKernel c w) (sphere c R) :=
+    continuousOn_poissonKernel_sphere hw
+  have h₁ : CircleIntegrable (fun z => poissonKernel c w z • φ z) c R :=
+    ContinuousOn.circleIntegrable hR.le (hker.smul hφ)
+  have h₂ : CircleIntegrable (fun z => poissonKernel c w z • a) c R :=
+    ContinuousOn.circleIntegrable hR.le (hker.smul continuousOn_const)
+  have heq : (fun z => poissonKernel c w z • (φ z - a))
+      = fun z => poissonKernel c w z • φ z - poissonKernel c w z • a := by
+    funext z
+    rw [smul_sub]
+  calc poissonOperator (fun z => φ z - a) c R w
+      = Real.circleAverage
+          (fun z => poissonKernel c w z • φ z - poissonKernel c w z • a) c R := by
+        rw [poissonOperator, heq]
+    _ = Real.circleAverage (fun z => poissonKernel c w z • φ z) c R
+        - Real.circleAverage (fun z => poissonKernel c w z • a) c R :=
+        Real.circleAverage_fun_sub h₁ h₂
+    _ = poissonOperator φ c R w - poissonOperator (fun _ => a) c R w := rfl
+    _ = poissonOperator φ c R w - a := by rw [poissonOperator_const a hw]
+
+/--
+Jensen-style bound: the Poisson operator of `ψ` is dominated in absolute
+value by the Poisson operator of `|ψ|` — Mathlib's
+`abs_circleAverage_le_circleAverage_abs` plus kernel nonnegativity to
+pull the absolute value inside the kernel smul.
+-/
+private lemma abs_poissonOperator_le {ψ : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    (hR : 0 < R) {w : ℂ} (hw : w ∈ ball c R) :
+    |poissonOperator ψ c R w| ≤ poissonOperator (fun z => |ψ z|) c R w := by
+  have habs : |Real.circleAverage (fun z => poissonKernel c w z • ψ z) c R|
+      ≤ Real.circleAverage |fun z => poissonKernel c w z • ψ z| c R :=
+    Real.abs_circleAverage_le_circleAverage_abs
+  have hcongr : Real.circleAverage |fun z => poissonKernel c w z • ψ z| c R
+      = Real.circleAverage (fun z => poissonKernel c w z • |ψ z|) c R := by
+    apply Real.circleAverage_congr_sphere
+    intro z hz
+    rw [abs_of_pos hR] at hz
+    have hknn : 0 ≤ poissonKernel c w z :=
+      poissonKernel_nonneg_of_mem_sphere hz hw
+    simp only [Pi.abs_apply, smul_eq_mul, abs_mul, abs_of_nonneg hknn]
+  calc |poissonOperator ψ c R w|
+      ≤ Real.circleAverage |fun z => poissonKernel c w z • ψ z| c R := habs
+    _ = poissonOperator (fun z => |ψ z|) c R w := hcongr
+
+/--
+**W3d M2, oscillation split.**  Quantitative boundary estimate for the
+Poisson operator: if the boundary datum oscillates by at most `η` around
+`φ ζ` on the near arc (`dist z ζ < δ`), is bounded by `M` on the whole
+circle, and the kernel of the pole `w` is bounded by `κ` on the far arc
+(`δ ≤ dist z ζ`), then `|P[φ](w) - φ ζ| ≤ η + 2Mκ`.
+
+The split is pointwise on the integrand (no indicators): on the near
+arc the kernel weight multiplies the oscillation, on the far arc the
+kernel bound multiplies the sup bound; the kernel-weighted constant
+integrates to `η` by the W3b normalization.  M3 instantiates `η`, `δ`
+from continuity of `φ` at `ζ`, `M` from sphere compactness, and `κ`
+from the far-arc decay `tendstoUniformlyOn_poissonKernel_far` (M1).
+-/
+theorem abs_poissonOperator_sub_le {φ : ℂ → ℝ} {c ζ w : ℂ}
+    {R δ η M κ : ℝ} (hR : 0 < R) (hφ : ContinuousOn φ (sphere c R))
+    (hζ : ζ ∈ sphere c R) (hw : w ∈ ball c R)
+    (hM : ∀ z ∈ sphere c R, |φ z| ≤ M) (hη : 0 ≤ η) (hκ : 0 ≤ κ)
+    (hnear : ∀ z ∈ sphere c R, dist z ζ < δ → |φ z - φ ζ| ≤ η)
+    (hfar : ∀ z ∈ sphere c R, δ ≤ dist z ζ → poissonKernel c w z ≤ κ) :
+    |poissonOperator φ c R w - φ ζ| ≤ η + 2 * M * κ := by
+  have hker : ContinuousOn (poissonKernel c w) (sphere c R) :=
+    continuousOn_poissonKernel_sphere hw
+  have hM0 : 0 ≤ M := le_trans (abs_nonneg _) (hM ζ hζ)
+  have h2Mκ : 0 ≤ 2 * M * κ := by positivity
+  -- reduce to the Poisson operator of the absolute oscillation
+  rw [← poissonOperator_sub_const hR hφ (φ ζ) hw]
+  refine le_trans (abs_poissonOperator_le hR hw) ?_
+  -- integrability of both sides of the pointwise majorant
+  have hφζ : ContinuousOn (fun z => |φ z - φ ζ|) (sphere c R) :=
+    (hφ.sub continuousOn_const).abs
+  have h₁ : CircleIntegrable (fun z => poissonKernel c w z • |φ z - φ ζ|) c R :=
+    ContinuousOn.circleIntegrable hR.le (hker.smul hφζ)
+  have hηint : CircleIntegrable (fun z => poissonKernel c w z • η) c R :=
+    ContinuousOn.circleIntegrable hR.le (hker.smul continuousOn_const)
+  have h₂ : CircleIntegrable
+      (fun z => poissonKernel c w z • η + 2 * M * κ) c R :=
+    ContinuousOn.circleIntegrable hR.le
+      ((hker.smul continuousOn_const).add continuousOn_const)
+  -- the pointwise near/far majorant
+  have hpt : ∀ z ∈ sphere c |R|, poissonKernel c w z • |φ z - φ ζ|
+      ≤ poissonKernel c w z • η + 2 * M * κ := by
+    intro z hz
+    rw [abs_of_pos hR] at hz
+    have hknn : 0 ≤ poissonKernel c w z :=
+      poissonKernel_nonneg_of_mem_sphere hz hw
+    simp only [smul_eq_mul]
+    rcases lt_or_ge (dist z ζ) δ with hzd | hzd
+    · -- near arc: the oscillation bound rides the kernel weight
+      have hosc := hnear z hz hzd
+      linarith [mul_le_mul_of_nonneg_left hosc hknn]
+    · -- far arc: the kernel bound rides the sup bound
+      have hKκ := hfar z hz hzd
+      have hosc : |φ z - φ ζ| ≤ 2 * M := by
+        have h1 := abs_le.mp (hM z hz)
+        have h2 := abs_le.mp (hM ζ hζ)
+        exact abs_le.mpr ⟨by linarith [h1.1, h2.2], by linarith [h1.2, h2.1]⟩
+      linarith [mul_le_mul hKκ hosc (abs_nonneg _) hκ, mul_nonneg hknn hη]
+  -- average the majorant: η by W3b normalization, the constant by itself
+  have hηavg : Real.circleAverage (fun z => poissonKernel c w z • η) c R = η :=
+    poissonOperator_const η hw
+  calc poissonOperator (fun z => |φ z - φ ζ|) c R w
+      ≤ Real.circleAverage (fun z => poissonKernel c w z • η + 2 * M * κ) c R :=
+        Real.circleAverage_mono h₁ h₂ hpt
+    _ = Real.circleAverage (fun z => poissonKernel c w z • η) c R
+        + Real.circleAverage (fun _ => 2 * M * κ) c R :=
+        Real.circleAverage_fun_add hηint
+          (ContinuousOn.circleIntegrable hR.le continuousOn_const)
+    _ = η + 2 * M * κ := by
+        rw [hηavg, Real.circleAverage_const]
+
 end JacobianChallenge.HolomorphicForms
