@@ -405,6 +405,8 @@ existential repackaging; it consumes the spine's outputs as hypotheses and
 asserts nothing about the construction, so it is not gated on the open spine.
 -/
 
+universe u
+
 /--
 **Realized-patch finite-cover packaging adapter** (M-F).
 
@@ -422,7 +424,7 @@ the four conjuncts of that conclusion verbatim:
 Stated at full generality in `ι : Type*` (the engine instantiates it at its
 `Fintype`-indexed `PatchIndex`); this is the green callee the engine `exact`s to
 discharge the packaging half of its selection `sorry`. -/
-theorem exists_realizedPatchCover_of_components.{u}
+theorem exists_realizedPatchCover_of_components
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
