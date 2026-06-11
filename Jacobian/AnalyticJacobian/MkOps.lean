@@ -35,6 +35,6 @@ theorem mk_nsmul (n : ℕ) (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) :
 
 theorem mk_zsmul (n : ℤ) (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) :
     mk E X (n • φ) = n • mk E X φ :=
-  (QuotientAddGroup.mk' (periodSubgroup E X)).map_zsmul φ n
+  map_zsmul (QuotientAddGroup.mk' (periodSubgroup E X)) n φ
 
 end JacobianChallenge.AnalyticJacobian

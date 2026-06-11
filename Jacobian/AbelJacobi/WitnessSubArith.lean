@@ -1,5 +1,6 @@
 import Jacobian.AbelJacobi.Defs
 import Jacobian.AbelJacobi.Composition
+import Jacobian.AbelJacobi.Coset
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
@@ -22,16 +23,6 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/--
-`(witness A B) + (witness B A) = 0` (sym pairing). Direct corollary
-of the swap identity.
--/
-theorem witnessAbelJacobi_add_swap_eq_zero
-    (A B : X) (v : E) :
-    witnessAbelJacobi (E := E) (X := X) A B v +
-      witnessAbelJacobi B A v = 0 := by
-  rw [witnessAbelJacobi_swap A B v]
-  exact neg_add_cancel _
 
 /-- `witness A C - witness A B = witness B C`. Direct from chain. -/
 theorem witnessAbelJacobi_sub_chain
