@@ -22,8 +22,8 @@ yet. Updated by the manager when allocations change.
 ## Spine (statements + repairs)
 | Item | Owner | State |
 |------|-------|-------|
-| S1–S7 B2 statement repairs + lever + R2 shape | jc1 | bound (next gate) |
-| C-section statements | jc1 | bound (after S-repairs) |
+| S1–S7 B2 statement repairs + lever + R2 shape | jc3 | LANE GRANT, in flight |
+| C-section statements | jc1 | in flight (parallel, vs documented repair shapes) |
 | A2 assembly (slice 4) | jc0 | in flight |
 | A3 cut slices | jc0 | un-held, after A2 |
 | B4 W-ladder (W1a…) | jc7 | in flight |
