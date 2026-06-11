@@ -107,4 +107,44 @@ theorem PerronSubOn.max {v₁ v₂ : ℂ → ℝ} {V : Set ℂ}
     (le_max_right (v₁ w) (v₂ w)).trans (hbd w hw)
   exact max_le (h₁.2 hR hsub hh hbd₁ z hz) (h₂.2 hR hsub hh hbd₂ z hz)
 
+/--
+**Restriction to a smaller open (B2 toolbox W5a).** `PerronSubOn`
+membership descends to any subset `W ⊆ V`: every closed disc inside `W`
+is a closed disc inside `V`, so the comparison clause is inherited, and
+continuity restricts by `ContinuousOn.mono`.
+
+Consumed by the Green's-function families (members built on a component
+and restricted to the puncture) and by the envelope locality step
+(restrict a member to a chart disc before Poisson modification).
+-/
+theorem PerronSubOn.mono {v : ℂ → ℝ} {V W : Set ℂ}
+    (hv : PerronSubOn v V) (hWV : W ⊆ V) : PerronSubOn v W := by
+  refine ⟨hv.1.mono hWV, ?_⟩
+  intro c R hR hsub h hh hbd z hz
+  exact hv.2 hR (hsub.trans hWV) hh hbd z hz
+
+/--
+**Transfer along pointwise equality (B2 toolbox W5a).** `PerronSubOn`
+membership is invariant under changing the function on a set off `V`:
+if `g = v` on `V` then `PerronSubOn v V → PerronSubOn g V`.  Every point
+the comparison clause quantifies over lies in `V` (`ball c R` and
+`sphere c R` are inside `closedBall c R ⊆ V`), so the boundary hypothesis
+and the conclusion rewrite through the equality.
+
+Lets the family members of §3.3/§3.4 — defined by gluing and extension —
+be reasoned about up to their on-domain values.
+-/
+theorem PerronSubOn.congr {v g : ℂ → ℝ} {V : Set ℂ}
+    (hv : PerronSubOn v V) (hgv : Set.EqOn g v V) : PerronSubOn g V := by
+  refine ⟨hv.1.congr hgv, ?_⟩
+  intro c R hR hsub h hh hbd z hz
+  have hsphereV : Metric.sphere c R ⊆ V :=
+    Metric.sphere_subset_closedBall.trans hsub
+  have hballV : Metric.ball c R ⊆ V :=
+    Metric.ball_subset_closedBall.trans hsub
+  have hbd' : ∀ w ∈ Metric.sphere c R, v w ≤ h w := fun w hw => by
+    rw [← hgv (hsphereV hw)]; exact hbd w hw
+  have hle := hv.2 hR hsub hh hbd' z hz
+  rwa [hgv (hballV hz)]
+
 end JacobianChallenge.HolomorphicForms
