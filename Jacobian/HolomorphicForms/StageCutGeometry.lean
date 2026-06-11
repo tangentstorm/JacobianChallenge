@@ -104,6 +104,68 @@ theorem exists_selectedCompactReady_bound
   eventually_atTop.mp
     (eventually_selectedCompactReady Gs i hcontains havoids)
 
+variable {e : X ≃ₜ OnePoint ℂ}
+variable (marked : GenusZeroStageMarkedData X e)
+
+/--
+Marked compatibility for one packaged cut geometry: both marked ends are
+outside the cut domain, while the normalization base point lies inside it.
+-/
+def MarkedCompatible : Prop :=
+  marked.P0 ∉ G.cutDomain ∧
+    marked.Pinf ∉ G.cutDomain ∧
+      marked.base ∈ G.cutDomain
+
+/-- Build marked compatibility from the two endpoint exclusions and base membership. -/
+theorem markedCompatible_of_notMem_notMem_mem
+    (hP0 : marked.P0 ∉ G.cutDomain)
+    (hPinf : marked.Pinf ∉ G.cutDomain)
+    (hbase : marked.base ∈ G.cutDomain) :
+    G.MarkedCompatible marked :=
+  ⟨hP0, hPinf, hbase⟩
+
+/-- The zero-marked endpoint is outside the cut domain. -/
+theorem MarkedCompatible.P0_notMem_cutDomain
+    (hmarked : G.MarkedCompatible marked) :
+    marked.P0 ∉ G.cutDomain :=
+  hmarked.1
+
+/-- The infinity-marked endpoint is outside the cut domain. -/
+theorem MarkedCompatible.Pinf_notMem_cutDomain
+    (hmarked : G.MarkedCompatible marked) :
+    marked.Pinf ∉ G.cutDomain :=
+  hmarked.2.1
+
+/-- The normalization base point lies in the cut domain. -/
+theorem MarkedCompatible.base_mem_cutDomain
+    (hmarked : G.MarkedCompatible marked) :
+    marked.base ∈ G.cutDomain :=
+  hmarked.2.2
+
+/--
+Package pointwise marked-end exclusions and eventual base membership into
+eventual marked compatibility for the one-stage cut geometries.
+-/
+theorem eventually_markedCompatible
+    (hP0 : ∀ n : ℕ, marked.P0 ∉ (Gs n).cutDomain)
+    (hPinf : ∀ n : ℕ, marked.Pinf ∉ (Gs n).cutDomain)
+    (hbase : ∀ᶠ n in atTop, marked.base ∈ (Gs n).cutDomain) :
+    ∀ᶠ n in atTop, (Gs n).MarkedCompatible marked :=
+  hbase.mono fun n hn =>
+    markedCompatible_of_notMem_notMem_mem
+      (Gs n) marked (hP0 n) (hPinf n) hn
+
+/--
+Concrete marked-compatibility bound obtained from pointwise marked-end
+exclusions and eventual base membership.
+-/
+theorem exists_markedCompatible_bound
+    (hP0 : ∀ n : ℕ, marked.P0 ∉ (Gs n).cutDomain)
+    (hPinf : ∀ n : ℕ, marked.Pinf ∉ (Gs n).cutDomain)
+    (hbase : ∀ᶠ n in atTop, marked.base ∈ (Gs n).cutDomain) :
+    ∃ N : ℕ, ∀ n : ℕ, N ≤ n → (Gs n).MarkedCompatible marked :=
+  eventually_atTop.mp (eventually_markedCompatible Gs marked hP0 hPinf hbase)
+
 /--
 Turn openness and simple connectedness of the packaged cut domain into the
 existing conjugate-readiness predicate.
