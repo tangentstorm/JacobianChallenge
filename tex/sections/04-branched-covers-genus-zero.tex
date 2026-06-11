@@ -2016,7 +2016,7 @@ transitivity of \(\subseteq\) and \texttt{Disjoint.mono\_left}.
 
 \begin{lemma}[Stage dipole boundary control (open)]
 \label{lem:stage-dipole-boundary-control}
-\uses{lem:stage-marked-topological-control-data, lem:stage-bordered-exhaustion-domains, lem:stage-dipole-local-singular-profiles, lem:stage-dipole-glued-potential}
+\uses{lem:stage-marked-topological-control-data, lem:stage-bordered-exhaustion-domains, lem:stage-dipole-local-singular-profiles, lem:stage-dipole-glued-potential, lem:stage-log-profile-off-point-conjugates}
 The stage boundary data is built from logarithmic dipole models at the two
 marked ends, with boundary normalization, continuity of the boundary datum on
 each stage frontier (the S6 statement repair: discontinuous boundary data
@@ -2030,7 +2030,7 @@ problem remains new engine work.
 
 \begin{lemma}[Stage Dirichlet harmonic solution (open)]
 \label{lem:stage-dirichlet-harmonic-exists}
-\uses{lem:stage-bordered-exhaustion-domains, lem:stage-dipole-boundary-control}
+\uses{lem:stage-bordered-exhaustion-domains, lem:stage-dipole-boundary-control, lem:stage-harmonic-max-principle, def:perron-sub-on, lem:harmonic-disc-comparison, lem:perron-harnack-harmonic-limit, lem:perron-sub-on-harmonic-member}
 On each stage domain of the holomorphic atlas (the manifold hypothesis is the
 S5 statement repair: chartwise harmonicity transfers between preferred charts
 only along holomorphic transitions), solve the normalized Dirichlet/Perron
@@ -2282,7 +2282,7 @@ is taken as the explicit hypothesis \(\texttt{WeakMaxPrincipleInput}\)
 
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
-\uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control}
+\uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control, lem:stage-eventual-containment-bounds}
 The normalized stage maps have uniform bounds on the Cauchy circles of every
 eventually contained selected chart ball.  These bounds are the analytic
 bridge from Perron stage maps to the green local Montel estimates; they are
@@ -2292,7 +2292,7 @@ normalization.
 
 \begin{lemma}[Stage chart readings as ChartBallPowerSeries (open)]
 \label{lem:stage-chart-reading-chartBallPowerSeries}
-\uses{lem:stage-cut-domain-conjugate-control, lem:stage-holomorphic-coordinate-from-harmonic-dipole, lem:stage-chart-reading-uniform-cauchy-bound}
+\uses{lem:stage-cut-domain-conjugate-control, lem:stage-holomorphic-coordinate-from-harmonic-dipole, lem:stage-chart-reading-uniform-cauchy-bound, lem:montel-stage-compact-target-package}
 For each selected Montel patch and all sufficiently large stages, the target
 chart reading of the total stage map is packaged on the source chart ball as a
 \code{ChartBallPowerSeries}.  This is where the engine enters the existing
@@ -2333,7 +2333,7 @@ facts are available.
 
 \begin{lemma}[Stage engine common sequence payload (open)]
 \label{lem:stage-engine-common-sequence-payload}
-\uses{lem:stage-common-diagonal-subsequence, lem:stage-total-filler-locally-uniform-irrelevance, lem:stage-map-normalized-noncollapse}
+\uses{lem:stage-common-diagonal-subsequence, lem:stage-total-filler-locally-uniform-irrelevance, lem:stage-map-normalized-noncollapse, lem:stage-engine-f-clause-transfer}
 The Perron engine produces the exact common target sequence payload demanded
 by the realized-patch coordinate-representation provider: a total sequence
 \(F:\mathbb N\to X\to\code{OnePoint}\,\C\) whose target-chart readings
@@ -2447,7 +2447,7 @@ projection from a pre-existing selector structure.
 
 \begin{lemma}[Montel constructed coordinate representation (open)]
 \label{lem:montel-selector-coord-represents-uniformization}
-\uses{lem:montel-selector-finite-patch-family-assembly, lem:montel-selector-patch-family-extraction}
+\uses{lem:montel-selector-finite-patch-family-assembly, lem:montel-selector-patch-family-extraction, lem:montel-selector-source-patch-cover, lem:global-gluing-coord-mem-target, lem:montel-selector-chart-inverse-local-value, lem:montel-selector-normal-limit-agrees-with-uniformization, lem:montel-selector-overlap-compatible-normalized-values}
 For the constructed patch family, each selected local coordinate must represent
 the constructed global uniformization in its assigned target chart:
 \code{targetChart.symm (coord x) = uniformization x}. This property depends on
