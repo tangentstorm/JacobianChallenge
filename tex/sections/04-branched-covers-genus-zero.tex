@@ -2220,6 +2220,38 @@ right side is harmonic in the pole (W3a), and harmonicity transfers
 along the germ equality at \(w_0\).
 \end{proof}
 
+\begin{lemma}[Perron envelope: center-touch core]
+\label{lem:perron-envelope-center-touch}
+\uses{lem:perron-harnack-harmonic-limit, def:perron-sub-on}
+Define the Perron envelope of a family \(F\) of real functions as the
+pointwise supremum.  For \(F\) nonempty, closed under pointwise
+\(\max\), pointwise bounded above on \(V\), and admitting Poisson
+modification on a disc \(\overline{B}(c, R) \subseteq V\) (every member
+is dominated by a member harmonic on \(B(c, R)\) — the W5b/W3d-gated
+capability, consumed here through the frozen obligation
+\(\texttt{PoissonModificationInput}\)): through every point \(x_0\) of
+the open disc there is a function harmonic on \(B(c, R)\), lying below
+the envelope, and equal to the envelope at \(x_0\).  This is the
+constructive half of Perron's lemma (W7); the second-comparison step
+upgrading the touch to equality throughout the disc is the next node.
+An open-ball version of the W4 Harnack convergence corollary is
+provided alongside (the modification oracle produces functions harmonic
+on the open ball only).
+\lean{JacobianChallenge.HolomorphicForms.perronEnvelope, JacobianChallenge.HolomorphicForms.PoissonModificationInput, JacobianChallenge.HolomorphicForms.harnack_increasing_limit_harmonic_ball, JacobianChallenge.HolomorphicForms.perronEnvelope_exists_harmonic_eq_at}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Choose members \(v_n\) with
+\(u(x_0) - \tfrac{1}{n+1} < v_n(x_0)\) (supremum approximation),
+interleave \(\max\)-monotonization with Poisson modification to get an
+increasing sequence of members harmonic on the disc, squeezed at
+\(x_0\) and bounded at the center by the envelope.  The W4 Harnack
+convergence corollary (open-ball version, by shrinking and gluing the
+radius-independent pointwise-sup limits) yields a harmonic limit \(H\);
+\(H \le u\) since every term is a member, and \(H(x_0) = u(x_0)\) by
+the squeeze.
+\end{proof}
+
 \begin{definition}[Perron comparison subclass]
 \label{def:perron-sub-on}
 \uses{lem:stage-harmonic-analytic-compose}
