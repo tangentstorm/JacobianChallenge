@@ -200,19 +200,14 @@ theorem cotangent_trivialisation_hcompat
 
 
 
-theorem cotangent_apply_one_isometry : True := by trivial
 
 
-theorem cotangent_eval_one_continuous : True := by trivial
 
 
-theorem cotangent_norm_eval_one_eq : True := by trivial
 
 
-theorem cotangent_chart_triv_clm : True := by trivial
 
 
-theorem cotangent_chart_triv_isometry : True := by trivial
 
 /-!
 ### Prerequisite 1: Fiberwise norm of a holomorphic 1-form is continuous
@@ -1257,16 +1252,12 @@ theorem holomorphicOneForm_tendstoUniformly_continuous
     True := by trivial
 
 
-theorem chart_local_weierstrass : True := by trivial
 
 
-theorem weierstrass_coefficient_formula : True := by trivial
 
 
-theorem weierstrass_coefficient_continuous : True := by trivial
 
 
-theorem weierstrass_limit_has_power_series : True := by trivial
 
 
 theorem holomorphicOneForm_uniform_limit
@@ -2144,795 +2135,401 @@ chartwise estimates and transport lemmas in subsequent passes.
 -/
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_024 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_025 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_026 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_027 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_028 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_029 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_030 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_031 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_032 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_033 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_034 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_035 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_036 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_037 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_038 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_039 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_040 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_041 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_042 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_043 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_044 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_045 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_046 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_047 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_048 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_049 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_050 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_051 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_052 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_053 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_054 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_055 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_056 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_057 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_058 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_059 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_060 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_061 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_062 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_063 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_064 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_065 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_066 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_067 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_068 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_069 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_070 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_071 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_072 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_073 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_074 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_075 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_076 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_077 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_078 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_079 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_080 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_081 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_082 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_083 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_084 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_085 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_086 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_087 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_088 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_089 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_090 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_091 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_092 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_093 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_094 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_095 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_096 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_097 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_098 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_099 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_100 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_101 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_102 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_103 : True := by
-  trivial
 
 
 /-! ### Arzelà–Ascoli refinement backlog (passes 104–220) -/
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_104 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_105 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_106 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_107 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_108 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_109 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_110 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_111 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_112 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_113 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_114 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_115 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_116 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_117 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_118 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_119 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_120 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_121 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_122 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_123 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_124 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_125 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_126 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_127 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_128 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_129 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_130 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_131 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_132 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_133 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_134 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_135 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_136 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_137 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_138 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_139 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_140 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_141 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_142 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_143 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_144 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_145 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_146 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_147 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_148 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_149 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_150 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_151 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_152 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_153 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_154 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_155 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_156 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_157 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_158 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_159 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_160 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_161 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_162 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_163 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_164 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_165 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_166 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_167 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_168 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_169 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_170 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_171 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_172 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_173 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_174 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_175 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_176 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_177 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_178 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_179 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_180 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_181 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_182 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_183 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_184 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_185 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_186 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_187 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_188 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_189 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_190 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_191 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_192 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_193 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_194 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_195 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_196 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_197 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_198 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_199 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_200 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_201 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_202 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_203 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_204 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_205 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_206 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_207 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_208 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_209 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_210 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_211 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_212 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_213 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_214 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_215 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_216 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_217 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_218 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_219 : True := by
-  trivial
 
 
-theorem holomorphicOneForm_arzela_refinement_pass_220 : True := by
-  trivial
 
 theorem holomorphicOneForm_closedBall_totallyBounded
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -2962,10 +2559,8 @@ five named sub-leaves matching tex blueprint §14 R8-sub-B.C:
 -/
 
 
-theorem chart_local_pointwise_bound : True := by trivial
 
 
-theorem chart_local_cauchy_derivative_estimate : True := by trivial
 
 theorem holomorphicOneForm_montel_subseq_isCauchy
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
