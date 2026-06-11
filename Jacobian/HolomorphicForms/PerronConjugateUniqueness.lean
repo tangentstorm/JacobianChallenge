@@ -1,13 +1,16 @@
 import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.Convex.PathConnected
+import Mathlib.Topology.Germ
 import Jacobian.HolomorphicForms.HarmonicConjugate
 
 /-!
-# Uniqueness of harmonic conjugates on preconnected opens of ℂ
+# Uniqueness of harmonic conjugates on preconnected opens
 
-B4 work item W1a (`docs/perron-b4-conjugate-phase0.md`): two harmonic
-conjugates of the same `u` on a preconnected open `U ⊆ ℂ` differ by a real
-constant.  This is the discreteness input for the conjugate-germ covering
-space planned in W3/W4.
+B4 work item W1 (`docs/perron-b4-conjugate-phase0.md`): two harmonic
+conjugates of the same `u` on a preconnected open differ by a real
+constant — first on `U ⊆ ℂ` (W1a), then on `U ⊆ X` for a charted `X` via
+the chart-transfer lemma (W1b).  This is the discreteness input for the
+conjugate-germ covering space planned in W3/W4.
 -/
 
 namespace JacobianChallenge.HolomorphicForms
@@ -114,6 +117,160 @@ theorem isHarmonicConjugateAtReal_sub_eq_const_on {u v₁ v₂ : ℂ → ℝ}
   have him := congrArg Complex.im (ha x hx)
   -- `(I * ((v₂ x : ℂ) - (v₁ x : ℂ))).im = v₂ x - v₁ x`
   simp [hg, Complex.mul_im] at him
+  linarith
+
+/-- Chart independence of `IsHarmonicConjugateAtReal`: a conjugate pair at
+`y` (read, per the definition, in `y`'s own chart) transfers to the chart at
+any other point `x` whose source contains `y`: the pullbacks
+`u ∘ (chartAt ℂ x).symm`, `v ∘ (chartAt ℂ x).symm` form a ℂ-level conjugate
+pair at `(chartAt ℂ x) y`.
+
+Proof pattern follows `dipole_compose_chart_has_conjugate`: the chart
+transition `chartAt ℂ y ∘ (chartAt ℂ x).symm` is analytic at
+`(chartAt ℂ x) y` (`chart_transition_contDiffOn` under `IsManifold`), the
+chain rule composes the `HasFDerivAt` witnesses, and a `left_inv` germ
+identity lands the stated pullback.
+
+Direct dependency of the W3/W4 conjugate-germ covering space
+(`docs/perron-b4-conjugate-phase0.md`). -/
+theorem IsHarmonicConjugateAtReal.transfer_chart
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    {u v : X → ℝ} {x y : X}
+    (hy : IsHarmonicConjugateAtReal X u v y)
+    (hyx : y ∈ (chartAt ℂ x).source) :
+    IsHarmonicConjugateAtReal ℂ
+      (u ∘ (chartAt ℂ x).symm) (v ∘ (chartAt ℂ x).symm)
+      ((chartAt ℂ x) y) := by
+  obtain ⟨f', hf⟩ := hy
+  set z₀ : ℂ := (chartAt ℂ x) y with hz₀
+  have hinv : (chartAt ℂ x).symm z₀ = y := (chartAt ℂ x).left_inv hyx
+  have hz₀_t : z₀ ∈ (chartAt ℂ x).target := (chartAt ℂ x).map_source hyx
+  -- The transition τ := chartAt ℂ y ∘ (chartAt ℂ x).symm is analytic at z₀.
+  have hW_open : IsOpen ((chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ y).source) :=
+    (chartAt ℂ x).continuousOn_symm.isOpen_inter_preimage
+      (chartAt ℂ x).open_target (chartAt ℂ y).open_source
+  have hz₀_W : z₀ ∈ (chartAt ℂ x).target ∩
+      (chartAt ℂ x).symm ⁻¹' (chartAt ℂ y).source := by
+    refine Set.mem_inter hz₀_t ?_
+    rw [Set.mem_preimage, hinv]
+    exact mem_chart_source ℂ y
+  have hτ_an : AnalyticAt ℂ (chartAt ℂ y ∘ (chartAt ℂ x).symm) z₀ :=
+    AnalyticOn.analyticAt (hW_open.mem_nhds hz₀_W)
+      (chart_transition_contDiffOn x y).analyticOn
+  have hτ := hτ_an.differentiableAt.hasFDerivAt
+  -- Move the y-chart witness to the transition value τ z₀ = (chartAt ℂ y) y.
+  have hτz₀ : (chartAt ℂ y ∘ (chartAt ℂ x).symm) z₀ = (chartAt ℂ y) y := by
+    show chartAt ℂ y ((chartAt ℂ x).symm z₀) = (chartAt ℂ y) y
+    rw [hinv]
+  rw [← hτz₀] at hf
+  have hcomp := hf.comp z₀ hτ
+  -- Identify the composition with the x-chart pullback near z₀.
+  have hnear : (fun z : ℂ =>
+        (u ((chartAt ℂ y).symm ((chartAt ℂ y ∘ (chartAt ℂ x).symm) z)) : ℂ)
+          + Complex.I
+            * (v ((chartAt ℂ y).symm ((chartAt ℂ y ∘ (chartAt ℂ x).symm) z)) : ℂ))
+      =ᶠ[nhds z₀]
+      (fun z : ℂ =>
+        ((u ∘ (chartAt ℂ x).symm) z : ℂ)
+          + Complex.I * ((v ∘ (chartAt ℂ x).symm) z : ℂ)) := by
+    filter_upwards [hW_open.mem_nhds hz₀_W] with z hz
+    have hzsrc : (chartAt ℂ x).symm z ∈ (chartAt ℂ y).source := hz.2
+    have hzinv : (chartAt ℂ y).symm (chartAt ℂ y ((chartAt ℂ x).symm z))
+        = (chartAt ℂ x).symm z := (chartAt ℂ y).left_inv hzsrc
+    show (u ((chartAt ℂ y).symm (chartAt ℂ y ((chartAt ℂ x).symm z))) : ℂ)
+          + Complex.I
+            * (v ((chartAt ℂ y).symm (chartAt ℂ y ((chartAt ℂ x).symm z))) : ℂ)
+        = (u ((chartAt ℂ x).symm z) : ℂ)
+          + Complex.I * (v ((chartAt ℂ x).symm z) : ℂ)
+    rw [hzinv]
+  refine ⟨f'.comp (fderiv ℂ (chartAt ℂ y ∘ (chartAt ℂ x).symm) z₀), ?_⟩
+  -- Self-chart collapse on ℂ at z₀, then transport along `hnear`.
+  have hchart_id : ∀ z : ℂ, (chartAt ℂ z₀).symm z = z := fun _ => rfl
+  have hchart_pt : (chartAt ℂ z₀) z₀ = z₀ := rfl
+  simp only [hchart_id, hchart_pt]
+  exact hcomp.congr_of_eventuallyEq hnear.symm
+
+/-- W1b main theorem: two harmonic conjugates of the same `u` on a
+preconnected open `U ⊆ X` differ by a real constant, for `X` charted over ℂ
+with the smooth-manifold instance.
+
+Around each point of `U` a chart ball is chosen inside
+`U ∩ (chartAt ℂ ·).source`; `IsHarmonicConjugateAtReal.transfer_chart` turns
+the `X`-level hypotheses into ℂ-level conjugacy of the chart pullbacks on
+that ball, the ℂ-level theorem `isHarmonicConjugateAtReal_sub_eq_const_on`
+makes `v₂ - v₁` constant near the point, and Mathlib's
+`eq_of_germ_isConstant_on` globalizes over the preconnected `U`.
+
+Together with W1a this is P0 work item W1 (`docs/perron-b4-conjugate-phase0.md`):
+the germ-fiber discreteness input for the W3/W4 conjugate-germ covering. -/
+theorem isHarmonicConjugateAtReal_sub_eq_const_on_X
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    {u v₁ v₂ : X → ℝ} {U : Set X}
+    (hU : IsOpen U) (hUc : IsPreconnected U)
+    (h₁ : ∀ x ∈ U, IsHarmonicConjugateAtReal X u v₁ x)
+    (h₂ : ∀ x ∈ U, IsHarmonicConjugateAtReal X u v₂ x) :
+    ∃ c : ℝ, ∀ x ∈ U, v₂ x = v₁ x + c := by
+  rcases U.eq_empty_or_nonempty with rfl | ⟨x₀, hx₀⟩
+  · exact ⟨0, by simp⟩
+  set w : X → ℝ := fun q => v₂ q - v₁ q with hw
+  -- The germ of `w` at every point of `U` is constant.
+  have hgerm : ∀ p ∈ U, (↑w : Filter.Germ (nhds p) ℝ).IsConstant := by
+    intro p hp
+    set e := chartAt ℂ p with he
+    set z₀ : ℂ := e p with hz₀
+    -- An open chart-target set over `U ∩ e.source`, and a ball inside it.
+    have hV_open : IsOpen (e.target ∩ e.symm ⁻¹' (U ∩ e.source)) :=
+      e.continuousOn_symm.isOpen_inter_preimage e.open_target
+        (hU.inter e.open_source)
+    have hz₀_V : z₀ ∈ e.target ∩ e.symm ⁻¹' (U ∩ e.source) := by
+      refine Set.mem_inter (e.map_source (mem_chart_source ℂ p)) ?_
+      rw [Set.mem_preimage, e.left_inv (mem_chart_source ℂ p)]
+      exact ⟨hp, mem_chart_source ℂ p⟩
+    obtain ⟨r, hr0, hball⟩ :=
+      Metric.isOpen_iff.mp hV_open z₀ hz₀_V
+    -- ℂ-level conjugacy of both pullbacks at every point of the ball.
+    have hball₁ : ∀ z ∈ Metric.ball z₀ r,
+        IsHarmonicConjugateAtReal ℂ (u ∘ e.symm) (v₁ ∘ e.symm) z := by
+      intro z hz
+      have hzt : z ∈ e.target := (hball hz).1
+      have hzU : e.symm z ∈ U := (hball hz).2.1
+      have hzsrc : e.symm z ∈ e.source := (hball hz).2.2
+      have := (h₁ (e.symm z) hzU).transfer_chart (x := p) hzsrc
+      rwa [he, e.right_inv hzt] at this
+    have hball₂ : ∀ z ∈ Metric.ball z₀ r,
+        IsHarmonicConjugateAtReal ℂ (u ∘ e.symm) (v₂ ∘ e.symm) z := by
+      intro z hz
+      have hzt : z ∈ e.target := (hball hz).1
+      have hzU : e.symm z ∈ U := (hball hz).2.1
+      have hzsrc : e.symm z ∈ e.source := (hball hz).2.2
+      have := (h₂ (e.symm z) hzU).transfer_chart (x := p) hzsrc
+      rwa [he, e.right_inv hzt] at this
+    obtain ⟨c, hc⟩ := isHarmonicConjugateAtReal_sub_eq_const_on
+      Metric.isOpen_ball (convex_ball z₀ r).isPreconnected hball₁ hball₂
+    -- Pull the constancy back to the open neighborhood `e.source ∩ e ⁻¹' ball`.
+    have hN_open : IsOpen (e.source ∩ e ⁻¹' Metric.ball z₀ r) :=
+      e.continuousOn.isOpen_inter_preimage e.open_source Metric.isOpen_ball
+    have hpN : p ∈ e.source ∩ e ⁻¹' Metric.ball z₀ r :=
+      ⟨mem_chart_source ℂ p, by
+        rw [Set.mem_preimage, ← hz₀]
+        exact Metric.mem_ball_self hr0⟩
+    refine ⟨c, ?_⟩
+    filter_upwards [hN_open.mem_nhds hpN] with q hq
+    have hq_inv : e.symm (e q) = q := e.left_inv hq.1
+    have := hc (e q) hq.2
+    show w q = c
+    rw [hw]
+    have hv₂ : (v₂ ∘ e.symm) (e q) = v₂ q := by rw [Function.comp_apply, hq_inv]
+    have hv₁ : (v₁ ∘ e.symm) (e q) = v₁ q := by rw [Function.comp_apply, hq_inv]
+    rw [hv₂, hv₁] at this
+    linarith
+  -- Globalize over the preconnected `U` and read off the constant.
+  refine ⟨w x₀, fun q hq => ?_⟩
+  have := eq_of_germ_isConstant_on hgerm hUc hq hx₀
+  simp only [hw] at this ⊢
   linarith
 
 end JacobianChallenge.HolomorphicForms
