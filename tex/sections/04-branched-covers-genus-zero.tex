@@ -2156,6 +2156,36 @@ uniformly on \(\overline{B}(c, \rho)\), and the right side tends to
 \(0\).
 \end{proof}
 
+\begin{lemma}[Harnack convergence: the limit is harmonic]
+\label{lem:perron-harnack-harmonic-limit}
+\uses{lem:perron-harnack-uniform-limit}
+A sequence of functions harmonic on a neighborhood of
+\(\overline{B}(c, R)\) converging uniformly on every closed disc
+\(\overline{B}(c, \rho)\), \(\rho < R\), has a harmonic limit on the
+open ball — no monotonicity required.  Combined with the uniform-limit
+half this completes the W4 increasing-limit corollary in the exact form
+the Perron envelope (W7) consumes: increasing, harmonic, bounded at the
+center \(\Rightarrow\) pointwise and locally uniform convergence to a
+harmonic limit.  The route avoids the mean-value converse (absent from
+Mathlib): the limit is exhibited in Poisson-operator form and
+harmonicity in the pole is the W3a theorem
+(\texttt{poissonOperator\_harmonicOnNhd}).
+\lean{JacobianChallenge.HolomorphicForms.harmonicOnNhd_ball_of_tendstoUniformlyOn, JacobianChallenge.HolomorphicForms.harnack_increasing_limit_harmonic}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+At \(w_0\) in the open ball pick
+\(\rho = (\lVert w_0 - c\rVert + R)/2\).  On \(\overline{B}(c, \rho)\)
+each \(h_n\) equals its Poisson integral
+(\texttt{HarmonicOnNhd.circleAverage\_poissonKernel\_smul}); the
+operator is Lipschitz in the boundary datum
+(\(|P[\varphi] - P[\psi]| \le \sup_{\partial}|\varphi - \psi|\), from
+linearity and the W3c brackets), so uniform convergence on the circle
+passes the identity to the limit: \(H = P[H]\) on \(B(c, \rho)\).  The
+right side is harmonic in the pole (W3a), and harmonicity transfers
+along the germ equality at \(w_0\).
+\end{proof}
+
 \begin{definition}[Perron comparison subclass]
 \label{def:perron-sub-on}
 \uses{lem:stage-harmonic-analytic-compose}
