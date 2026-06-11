@@ -11,8 +11,8 @@ yet. Updated by the manager when allocations change.
 |------|-------|-------|
 | W1 max principle | jc10 | in flight |
 | W2 harmonic∘analytic | jc3 | GREEN (577fec05) |
-| W3a–c Poisson operator (incl. the def) | jc6 | in flight |
-| W3d boundary limit | — | DROPPED (boundary lever) |
+| W3a–c Poisson operator (incl. the def) | jc6 | GREEN (bdf63495 + c5863c83) |
+| W3d boundary limit (continuous data) | jc6 | REVIVED 2026-06-11 (W5b+W6 attainment gap), in flight |
 | W4a Harnack | jc11 | GREEN (1bde1270) |
 | W4b Harnack convergence | jc11 | in flight |
 | W5 PerronSubOn class | jc4 | in flight |
