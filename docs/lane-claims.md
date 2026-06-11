@@ -9,7 +9,7 @@ yet. Updated by the manager when allocations change.
 ## B2 toolbox (docs/perron-b2-dirichlet-phase0.md §4)
 | Item | Owner | State |
 |------|-------|-------|
-| W1 max principle | jc10 | in flight — discharge target: `WeakMaxPrincipleInput` (PerronRemovableSingularity.lean), name+statement FROZEN (2 consumers: W5b-i 527fe1f9, W6 15c4d181) |
+| W1 max principle | jc3 | REROUTED 2026-06-11 (jc10 seat never launched), in flight — discharge target: `WeakMaxPrincipleInput` (PerronRemovableSingularity.lean), name+statement FROZEN (3 consumers: W5b-i 527fe1f9, W5b-ii 744a3797, W6 15c4d181) |
 | W2 harmonic∘analytic | jc3 | GREEN (577fec05) |
 | W3a–c Poisson operator (incl. the def) | jc6 | GREEN (bdf63495 + c5863c83) |
 | W3d boundary limit (continuous data) | jc6 | REVIVED 2026-06-11 (W5b+W6 attainment gap), in flight |
@@ -17,7 +17,7 @@ yet. Updated by the manager when allocations change.
 | W4b Harnack convergence | jc11 | in flight |
 | W5 PerronSubOn class | jc4 | in flight |
 | W6 removable singularity | jc9 | in flight |
-| W7–W11 stage assembly | — | GATED (S-repairs + toolbox) |
+| W7–W11 stage assembly | — | S-repairs LANDED; planned: W7 skeleton green-from-input → jc11 after W4 review |
 
 ## Spine (statements + repairs)
 | Item | Owner | State |
