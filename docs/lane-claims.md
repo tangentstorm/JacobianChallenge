@@ -12,7 +12,7 @@ yet. Updated by the manager when allocations change.
 | W1 max principle | jc3 | REROUTED 2026-06-11 (jc10 seat never launched), in flight — discharge target: `WeakMaxPrincipleInput` (PerronRemovableSingularity.lean), name+statement FROZEN (3 consumers: W5b-i 527fe1f9, W5b-ii 744a3797, W6 15c4d181) |
 | W2 harmonic∘analytic | jc3 | GREEN (577fec05) |
 | W3a–c Poisson operator (incl. the def) | jc6 | GREEN (bdf63495 + c5863c83) |
-| W3d boundary limit (continuous data) | jc6 | REVIVED 2026-06-11 (W5b+W6 attainment gap), in flight |
+| W3d boundary limit (continuous data) | jc6 | COMPLETE (cddd61be, 99674a57, 64311525, 8c67fcef) — poissonSolution surface frozen |
 | W4a Harnack | jc11 | GREEN (1bde1270) |
 | W4b Harnack convergence | jc11 | GREEN (4fde9e96 + 96ff2372) — W4 row COMPLETE |
 | W5 PerronSubOn class | jc4 | in flight |
