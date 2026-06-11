@@ -2011,6 +2011,29 @@ exact normalization is the invariant that prevents collapse to a constant in
 the later normal-family limit.
 \end{lemma}
 
+\begin{lemma}[Stage harmonic maximum principle]
+\label{lem:stage-harmonic-max-principle}
+On a bounded planar domain, the real part of a holomorphic function
+continuous up to the closure is bounded on the closure by any bound valid
+on the frontier: \(\lVert e^{f}\rVert = e^{\operatorname{re} f}\) reduces
+the claim to the maximum modulus principle, and monotonicity of the real
+exponential transfers it back.  Two-sided, closed-disc/boundary-circle,
+and conjugate-pair (\(u + iv\) holomorphic \(\Rightarrow\) frontier bound
+controls \(u\)) forms are provided — the shapes in which the stage
+Dirichlet solutions and the uniform Cauchy-circle estimates consume
+boundedness.  Pure model-plane complex analysis; no stage dependencies.
+\lean{JacobianChallenge.HolomorphicForms.re_le_of_forall_mem_frontier_re_le, JacobianChallenge.HolomorphicForms.re_le_on_closedBall_of_sphere_re_le, JacobianChallenge.HolomorphicForms.re_bound_of_conjugate_pair}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Apply \texttt{Complex.norm\_le\_of\_forall\_mem\_frontier\_norm\_le} to
+\(\exp \circ f\) (entire composed with \texttt{DiffContOnCl}); its norm is
+\(\exp(\operatorname{re} f)\), and \(\exp\) is monotone.  The disc form
+uses \(\partial B = S\) and \(\overline{B} = \bar{B}\) for positive
+radius; the conjugate-pair form is the special case
+\(\operatorname{re}(u + iv) = u\).
+\end{proof}
+
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
 \uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control}
