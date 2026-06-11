@@ -2107,6 +2107,27 @@ circle, and compare averages (\texttt{circleAverage\_mono}); the
 constant-scaled average collapses to \(h(c)\) by the mean-value property.
 \end{proof}
 
+\begin{definition}[Perron comparison subclass]
+\label{def:perron-sub-on}
+\uses{lem:stage-harmonic-analytic-compose}
+For \(v : \mathbb{C} \to \mathbb{R}\) continuous on an open
+\(V \subseteq \mathbb{C}\), say \(v\) is \(\texttt{PerronSubOn}(V)\) iff on every
+closed disc \(\overline{B}(c, R) \subseteq V\) with \(R > 0\) and every
+\(h\) harmonic on \(B(c, R)\) and continuous on \(\overline{B}(c, R)\)
+with \(v \le h\) on the circle \(\partial B(c, R)\), one has \(v \le h\)
+throughout \(B(c, R)\).  This is the continuous comparison subclass that
+replaces upper-semicontinuous subharmonicity in Perron's method (B2
+toolbox item W5): no Riesz representation, polar sets, or fine topology
+are needed, because nothing in the genus-zero engine consumes the full
+subharmonic theory.  The class is closed under \(\max\); harmonic
+functions are members and the class is closed under Poisson modification
+(those two facts consume the harmonic maximum principle and the Poisson
+operator, deferred to the gated W5b leaf).  The comparison majorant is
+packaged with Mathlib's \texttt{HarmonicContOnCl}.
+\lean{JacobianChallenge.HolomorphicForms.PerronSubOn, JacobianChallenge.HolomorphicForms.PerronSubOn.max, JacobianChallenge.HolomorphicForms.PerronSubOn.continuousOn, JacobianChallenge.HolomorphicForms.PerronSubOn.le_on_ball}
+\leanok
+\end{definition}
+
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
 \uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control}
