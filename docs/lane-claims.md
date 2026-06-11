@@ -23,9 +23,9 @@ yet. Updated by the manager when allocations change.
 | Item | Owner | State |
 |------|-------|-------|
 | S1–S7 B2 statement repairs + lever + R2 shape | jc3 | LANDED (b65c870f, reviewed); S4 retention + S5 instances ratified |
-| C-section statements | jc1 | in flight (parallel, vs documented repair shapes) |
-| A2 assembly | jc0 | GREEN (f7779110, conditional provider; public sorry stays — degenerate-discharge hazard flagged) |
-| A3 cut slices | jc0 | in flight (slice 5) |
+| C-section statements | jc1 | C1/C2 payload LANDED (a859908e, reviewed; inverted-end repair); C3 next |
+| A2 assembly | jc0 | GREEN (f7779110); RULING 2026-06-11: public statement stays unconditioned — C demands are proof obligations (jc1 result.md); degenerate stage≡X discharge rejected on sight |
+| A3 cut slices | jc0 | slices 5–6 landed; slice 7 (marked-end/base, R1) bound |
 | B4 W-ladder (W1a…) | jc7 | in flight |
 | stage-data → sphere-bound bridge | jc4 | reserved (gated on spine) |
 
