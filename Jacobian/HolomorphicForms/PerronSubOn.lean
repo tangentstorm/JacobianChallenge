@@ -232,4 +232,35 @@ theorem harmonicContOnCl_le_of_le_on_sphere
     Metric.isOpen_ball Metric.isBounded_ball hwHarm hwCont hfront z hz
   exact sub_nonpos.mp hw
 
+/--
+**Closed under adding a harmonic function (B2 toolbox W5b).** If `v` is a
+`PerronSubOn V` member and `h` is harmonic on the open set `V`, then
+`v + h` is a `PerronSubOn V` member.
+
+On a disc `closedBall c R ⊆ V` with majorant `h'`
+(`HarmonicContOnCl h' (ball c R)`, `v + h ≤ h'` on `sphere c R`), one has
+`v ≤ h' - h` on the sphere, and `h' - h` is itself `HarmonicContOnCl` on
+`ball c R` (`h` restricts to the disc via `HarmonicContOnCl.mk_ball`), so
+`v`'s comparison clause gives `v ≤ h' - h` on the ball, i.e.
+`v + h ≤ h'`.  Continuity is `ContinuousOn.add`.
+
+Subsumes the constant-shift case (a constant is harmonic).  Consumed by
+the §3.3 Green's families (members shifted by the harmonic log profile)
+and the §3.5 envelope assembly. -/
+theorem PerronSubOn.add_harmonicOnNhd {v h : ℂ → ℝ} {V : Set ℂ}
+    (hv : PerronSubOn v V) (hh : HarmonicOnNhd h V) :
+    PerronSubOn (fun z => v z + h z) V := by
+  refine ⟨hv.1.add (continuousOn_of_harmonicOnNhd hh), ?_⟩
+  intro c R hR hsub h' hh' hbd z hz
+  have hhDisc : HarmonicContOnCl h (Metric.ball c R) :=
+    HarmonicContOnCl.mk_ball
+      (hh.mono (Metric.ball_subset_closedBall.trans hsub))
+      ((hh.mono hsub).continuousOn)
+  have hmaj : HarmonicContOnCl (fun x => h' x - h x) (Metric.ball c R) :=
+    hh'.sub hhDisc
+  have hbd' : ∀ w ∈ Metric.sphere c R, v w ≤ (fun x => h' x - h x) w := by
+    intro w hw; have := hbd w hw; linarith
+  have hle := hv.2 hR hsub hmaj hbd' z hz
+  linarith
+
 end JacobianChallenge.HolomorphicForms

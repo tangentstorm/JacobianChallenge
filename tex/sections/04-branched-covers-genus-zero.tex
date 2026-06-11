@@ -2281,6 +2281,24 @@ is taken as the explicit hypothesis \(\texttt{WeakMaxPrincipleInput}\)
 \leanok
 \end{lemma}
 
+\begin{lemma}[Perron subclass closed under adding a harmonic]
+\label{lem:perron-sub-on-add-harmonic}
+\uses{def:perron-sub-on}
+If \(v\) is a \(\texttt{PerronSubOn}(V)\) member and \(h\) is harmonic on
+the open set \(V\), then \(v + h\) is a \(\texttt{PerronSubOn}(V)\) member.
+On a comparison disc \(\overline{B}(c,R) \subseteq V\) with majorant
+\(h'\), the bound \(v + h \le h'\) on \(\partial B(c,R)\) rearranges to
+\(v \le h' - h\), and \(h' - h\) is again harmonic-up-to-closure (\(h\)
+restricts to the disc), so \(v\)'s comparison clause gives \(v \le h' - h\)
+inside, i.e.\ \(v + h \le h'\).  This is the structural step the §3.3
+Green's families (member plus the harmonic log profile) and the §3.5
+envelope assembly consume; it subsumes the constant-shift case.  Purely
+from the definition and closure of harmonicity-up-to-closure under
+subtraction — no maximum principle.
+\lean{JacobianChallenge.HolomorphicForms.PerronSubOn.add_harmonicOnNhd}
+\leanok
+\end{lemma}
+
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
 \uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control, lem:stage-eventual-containment-bounds}
