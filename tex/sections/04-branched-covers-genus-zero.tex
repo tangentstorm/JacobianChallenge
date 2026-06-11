@@ -2100,7 +2100,14 @@ and conjugate-pair (\(u + iv\) holomorphic \(\Rightarrow\) frontier bound
 controls \(u\)) forms are provided — the shapes in which the stage
 Dirichlet solutions and the uniform Cauchy-circle estimates consume
 boundedness.  Pure model-plane complex analysis; no stage dependencies.
-\lean{JacobianChallenge.HolomorphicForms.re_le_of_forall_mem_frontier_re_le, JacobianChallenge.HolomorphicForms.re_le_on_closedBall_of_sphere_re_le, JacobianChallenge.HolomorphicForms.re_bound_of_conjugate_pair}
+A genuinely harmonic form is also provided (W1): the weak maximum
+principle for \texttt{HarmonicOnNhd} on a bounded open set — frontier
+nonpositivity propagates inside via the mean-value property, local
+maximum propagation, and a clopen argument over the connected component
+(boundedness is load-bearing: the component cannot be clopen in
+\(\mathbb{C}\)) — discharging the frozen
+\texttt{WeakMaxPrincipleInput} obligation of the B2 toolbox.
+\lean{JacobianChallenge.HolomorphicForms.re_le_of_forall_mem_frontier_re_le, JacobianChallenge.HolomorphicForms.re_le_on_closedBall_of_sphere_re_le, JacobianChallenge.HolomorphicForms.re_bound_of_conjugate_pair, JacobianChallenge.HolomorphicForms.eq_const_closedBall_of_harmonicOnNhd_of_le, JacobianChallenge.HolomorphicForms.le_zero_of_harmonicOnNhd_of_frontier_le_zero, JacobianChallenge.HolomorphicForms.weakMaxPrincipleInput_holds}
 \leanok
 \end{lemma}
 \begin{proof}\leanok
