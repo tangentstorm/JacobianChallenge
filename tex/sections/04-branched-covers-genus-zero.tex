@@ -1496,6 +1496,32 @@ with.
 \end{lemma}
 \begin{proof}\end{proof}
 
+\begin{lemma}[Two-chart cover packaging]
+\label{lem:montel-realized-patch-cover-twochart}
+\uses{lem:montel-realized-patch-cover-packaging}
+The \code{Bool}-indexed specialization of the cover-packaging adapter to the
+genus-zero two-chart structure. The genus-zero finite cover is always exactly two
+charts --- one realizing the identity target chart, one the inversion chart --- and
+the selection conclusion carries the exhaustive alternative
+\(\forall i,\ i=\code{identityIndex}\lor i=\code{inversionIndex}\). The general
+packaging adapter is stated over an arbitrary \code{Fintype}, so a two-patch
+caller must still build a \code{Fintype} family and discharge the exhaustive
+alternative by hand. \code{exists\_realizedPatchCover\_of\_twoCharts} takes the
+identity and inversion realized patches explicitly together with their
+two-patch-shaped bookkeeping (the source/target cover as binary disjunctions, the
+per-patch \code{targetChart} agreements, the two standardness facts, and the two
+\code{NormalizedChartBallLimit} nonemptiness facts) and packages the
+selection-target existential with \(\code{PatchIndex}:=\code{Bool}\) (identity at
+\code{false}, inversion at \code{true}). The \code{Fintype}/\code{Nonempty}
+instances and the exhaustive alternative are synthesized for free by
+\code{Bool} case analysis, and the source/target cover follows from the binary
+disjunctions. Non-opaque (the patches are explicit) and not gated on the open
+analytic spine; pure assembly.
+\lean{JacobianChallenge.HolomorphicForms.exists_realizedPatchCover_of_twoCharts}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Per-patch realization over the chart-ball-limit patch]
 \label{lem:montel-realized-patch-ofChartBallLimit}
 \uses{lem:montel-raw-source-chart-package}
