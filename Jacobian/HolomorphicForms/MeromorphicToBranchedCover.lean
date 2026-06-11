@@ -4419,10 +4419,10 @@ sorry-free by the canonical granular assembly primitive
 (commit `38662ec3`).
 
 The convenience wrapper
-`genusZero_pointRRSection_outside_constants_exists_with_analyticData`
+`genusZero_pointRRSection_nonempty_with_analyticData`
 below takes a full `AnalyticData` record instead and delegates here.
 -/
-theorem genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
+theorem genusZero_pointRRSection_nonempty_with_meromorphic_getD
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -4443,13 +4443,13 @@ theorem genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
 /--
 **Explicit-input convenience wrapper of L2779
 (delegates to the canonical granular form
-`genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD`).**
+`genusZero_pointRRSection_nonempty_with_meromorphic_getD`).**
 
 Convenience form taking a full `AnalyticData` record `han` instead of
 the granular projections. The body is a one-line delegation: project
 `han.meromorphic_getD` and `han.simple_pole_order_one P hpole` and
 forward to the canonical granular form
-`genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD`
+`genusZero_pointRRSection_nonempty_with_meromorphic_getD`
 (commit `4a675e96`).
 
 Pattern-aligned with the established `*_with_meromorphicData` /
@@ -4458,7 +4458,7 @@ Pattern-aligned with the established `*_with_meromorphicData` /
 `nonconstant_single_pole_implies_genus_zero_with_meromorphicData`
 in `AnalyticOfCurveBasis.lean`).
 -/
-theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
+theorem genusZero_pointRRSection_nonempty_with_analyticData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -4469,7 +4469,7 @@ theorem genusZero_pointRRSection_outside_constants_exists_with_analyticData
     (hpole : f.poles = Divisor.point P)
     (hmod : f.PoleModulusData) :
     Nonempty (PointRiemannRochSection X P) :=
-  genusZero_pointRRSection_outside_constants_exists_with_meromorphic_getD
+  genusZero_pointRRSection_nonempty_with_meromorphic_getD
     X P h f han.meromorphic_getD hpole (han.simple_pole_order_one P hpole) hmod
 
 /--
