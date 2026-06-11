@@ -2,6 +2,7 @@ import Jacobian.Periods.PathIntegralViaCoverWithRefine
 import Jacobian.Periods.ChartedFormPullbackChartChange
 import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
 import Jacobian.Periods.ChartedFormPullbackContinuous
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Mathlib.Geometry.Manifold.MFDeriv.FDeriv
 import Mathlib.Analysis.Calculus.FDeriv.RestrictScalars
 
