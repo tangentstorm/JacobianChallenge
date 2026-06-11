@@ -37,3 +37,4 @@ yet. Updated by the manager when allocations change.
 | #242 provider / Stage S | — | PARKED (substrate debt) |
 | #244 quotient proof | — | PARKED (priced too high) |
 | LoopToCycle (loop→H₁ bridge) | — | BANKED (jc9's design) |
+| WitnessSubArith rot (D2) | — | FIXED (dcc7da65, reviewed — module compiles again); jc5 lane PARKED 2026-06-11 (2nd violation) |
