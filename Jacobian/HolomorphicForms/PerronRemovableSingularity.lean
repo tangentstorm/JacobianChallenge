@@ -185,4 +185,231 @@ theorem tendsto_of_harmonic_extension {u v : ℂ → ℝ} {c : ℂ} {R : ℝ}
     eventually_mem_nhdsWithin.mono fun z hz => heq hz
   exact hcont.tendsto.congr' hev
 
+/-!
+## The annuli comparison (W6 commit 2)
+
+Core of the removable-singularity argument: a bounded harmonic function
+on the punctured disc equals any disc-Dirichlet solution of its
+inner-circle restriction, conditionally on the W1 maximum-principle
+input.  The Dirichlet solution enters as a *hypothesis* here; the final
+W6 commit instantiates it from `DiscDirichletInput` and glues the
+extension.
+-/
+
+/-- The log cup is continuous away from the puncture. -/
+theorem logCup_continuousOn (c : ℂ) (r ε : ℝ) :
+    ContinuousOn (logCup c r ε) {c}ᶜ := by
+  intro z hz
+  have hz' : z ≠ c := hz
+  have hne : ‖z - c‖ ≠ 0 := norm_ne_zero_iff.mpr (sub_ne_zero.mpr hz')
+  have hnorm : ContinuousAt (fun w : ℂ => ‖w - c‖) z :=
+    ((continuous_id.sub continuous_const).norm).continuousAt
+  have hlog : ContinuousAt (fun w : ℂ => Real.log ‖w - c‖) z :=
+    hnorm.log hne
+  exact ((continuousAt_const.sub hlog).const_mul ε).continuousWithinAt
+
+/--
+ε → 0 extraction: if `a ≤ ε * K` for every positive `ε`, with `K ≥ 0`
+fixed, then `a ≤ 0`.  (Searched: the ℝ-flavor of
+`le_of_forall_pos_le_add` is absent from the pin — ENNReal-only.)
+-/
+private theorem nonpos_of_forall_pos_mul_le {a K : ℝ} (hK : 0 ≤ K)
+    (h : ∀ ε : ℝ, 0 < ε → a ≤ ε * K) : a ≤ 0 := by
+  rcases eq_or_lt_of_le hK with hK0 | hKpos
+  · have h1 := h 1 one_pos
+    rw [← hK0, mul_zero] at h1
+    exact h1
+  · rcases lt_or_ge 0 a with hpos | hle
+    swap
+    · exact hle
+    · exfalso
+      have hKne : K ≠ 0 := ne_of_gt hKpos
+      have h2 := h (a / (2 * K)) (by positivity)
+      have heq : a / (2 * K) * K = a / 2 := by
+        field_simp
+      rw [heq] at h2
+      linarith
+
+/--
+One-sided comparison on shrinking annuli: a harmonic function on the
+punctured ball, continuous up to the punctured closed ball, bounded
+above, and `≤ 0` on the outer circle, lies below every positive-weight
+log cup.  This is the `hMP`-consuming step of the W6 argument.
+-/
+private theorem le_logCup_of_sphere_nonpos
+    (hMP : WeakMaxPrincipleInput) {w : ℂ → ℝ} {c : ℂ} {r B ε : ℝ}
+    (hr : 0 < r) (hε : 0 < ε)
+    (hw : HarmonicOnNhd w (ball c r \ {c}))
+    (hwc : ContinuousOn w (closedBall c r \ {c}))
+    (hB : ∀ z ∈ closedBall c r \ {c}, w z ≤ B)
+    (hsph : ∀ z ∈ sphere c r, w z ≤ 0) :
+    ∀ z ∈ ball c r \ {c}, w z ≤ logCup c r ε z := by
+  -- Extract a punctured δ₀-ball on which the cup dominates `B`.
+  have hev : {x : ℂ | B ≤ logCup c r ε x} ∈ 𝓝[≠] c :=
+    eventually_le_logCup hε B
+  rw [Metric.mem_nhdsWithin_iff] at hev
+  obtain ⟨δ₀, hδ₀pos, hδ₀⟩ := hev
+  intro z hz
+  have hzball : z ∈ ball c r := hz.1
+  have hznec : z ≠ c := hz.2
+  have hzc_pos : 0 < ‖z - c‖ := by
+    simpa [norm_pos_iff] using sub_ne_zero.mpr hznec
+  have hmin : 0 < min ‖z - c‖ δ₀ := lt_min hzc_pos hδ₀pos
+  set δ : ℝ := min ‖z - c‖ δ₀ / 2 with hδdef
+  have hδpos : 0 < δ := by positivity
+  have hδltz : δ < ‖z - c‖ :=
+    (half_lt_self hmin).trans_le (min_le_left _ _)
+  have hδltδ₀ : δ < δ₀ :=
+    (half_lt_self hmin).trans_le (min_le_right _ _)
+  have hδr : δ < r := by
+    have hzr : ‖z - c‖ < r := by
+      rw [← dist_eq_norm]
+      exact mem_ball.mp hzball
+    exact hδltz.trans hzr
+  set V : Set ℂ := ball c r \ closedBall c δ with hVdef
+  have hzV : z ∈ V := by
+    refine ⟨hzball, ?_⟩
+    simp only [mem_closedBall, not_le]
+    rw [dist_eq_norm]
+    exact hδltz
+  have hVsub : V ⊆ ball c r \ {c} := by
+    intro x hx
+    refine ⟨hx.1, fun hxc => ?_⟩
+    rw [Set.mem_singleton_iff] at hxc
+    subst hxc
+    exact hx.2 (mem_closedBall_self hδpos.le)
+  -- closure control: `closure V ⊆ closedBall c r \ ball c δ`.
+  have hclos : closure V ⊆ closedBall c r \ ball c δ := by
+    intro x hx
+    have h1 : closure V ⊆ closure (ball c r) ∩ closure ((closedBall c δ)ᶜ) := by
+      rw [hVdef, Set.diff_eq]
+      exact closure_inter_subset_inter_closure _ _
+    have h2 := h1 hx
+    rw [closure_ball c hr.ne', closure_compl,
+      interior_closedBall c hδpos.ne'] at h2
+    exact ⟨h2.1, h2.2⟩
+  have hclos' : closure V ⊆ closedBall c r \ {c} := by
+    intro x hx
+    refine ⟨(hclos hx).1, fun hxc => ?_⟩
+    rw [Set.mem_singleton_iff] at hxc
+    subst hxc
+    exact (hclos hx).2 (mem_ball_self hδpos)
+  -- frontier control: both circles are good.
+  have hfront : ∀ ζ ∈ frontier V, w ζ - logCup c r ε ζ ≤ 0 := by
+    intro ζ hζ
+    have hfr : ζ ∈ sphere c r ∪ sphere c δ := by
+      have hsplit := frontier_inter_subset (ball c r) ((closedBall c δ)ᶜ)
+      rw [hVdef, Set.diff_eq] at hζ
+      rcases hsplit hζ with ⟨hx1, _⟩ | ⟨_, hx2⟩
+      · left
+        rwa [frontier_ball c hr.ne'] at hx1
+      · right
+        rwa [frontier_compl, frontier_closedBall c hδpos.ne'] at hx2
+    rcases hfr with hsphr | hsphδ
+    · have h1 := hsph ζ hsphr
+      have h2 := logCup_eq_zero_of_mem_sphere ε hsphr
+      linarith
+    · have hζdist : dist ζ c = δ := mem_sphere.mp hsphδ
+      have hζne : ζ ≠ c := by
+        intro hcontra
+        rw [hcontra, dist_self] at hζdist
+        exact hδpos.ne hζdist
+      have hζmem : ζ ∈ closedBall c r \ {c} := by
+        refine ⟨mem_closedBall.mpr ?_, hζne⟩
+        rw [hζdist]
+        exact hδr.le
+      have hBζ := hB ζ hζmem
+      have hcupζ : B ≤ logCup c r ε ζ := by
+        refine hδ₀ ⟨mem_ball.mpr ?_, hζne⟩
+        rw [hζdist]
+        exact hδltδ₀
+      linarith
+  -- the max-principle input on `V`.
+  have happly := hMP V (fun x => w x - logCup c r ε x)
+    (isOpen_ball.sdiff isClosed_closedBall)
+    (isBounded_ball.subset Set.diff_subset)
+    (fun x hx => (hw x (hVsub hx)).sub
+      (logCup_harmonicOnNhd c r ε x (hVsub hx).2))
+    (((hwc.mono hclos').sub
+      ((logCup_continuousOn c r ε).mono fun x hx => (hclos' hx).2)))
+    hfront
+  exact sub_nonpos.mp (happly z hzV)
+
+/--
+**The annuli comparison (W6 core).**  A harmonic function on the
+punctured ball `ball c R \ {c}`, bounded there, agrees on the punctured
+inner ball `ball c r \ {c}` (any `r < R`) with every function that is
+harmonic on `ball c r`, continuous up to the closed ball, and matches it
+on `sphere c r` — conditionally on the W1 maximum-principle input.
+Two applications of the one-sided log-cup comparison and `ε → 0`.
+-/
+theorem eq_dirichletSolution_of_bounded_punctured
+    (hMP : WeakMaxPrincipleInput)
+    {u h : ℂ → ℝ} {c : ℂ} {r R M : ℝ}
+    (hr : 0 < r) (hrR : r < R)
+    (hu : HarmonicOnNhd u (ball c R \ {c}))
+    (hbd : ∀ z ∈ ball c R \ {c}, |u z| ≤ M)
+    (hh : HarmonicOnNhd h (ball c r))
+    (hhc : ContinuousOn h (closedBall c r))
+    (hagree : Set.EqOn h u (sphere c r)) :
+    Set.EqOn u h (ball c r \ {c}) := by
+  -- bound `h` on the compact closed ball
+  obtain ⟨Mh, hMh⟩ : ∃ Mh, ∀ x ∈ closedBall c r, |h x| ≤ Mh := by
+    obtain ⟨Mh, hMh⟩ :=
+      (isCompact_closedBall c r).exists_bound_of_continuousOn hhc
+    exact ⟨Mh, fun x hx => by simpa [Real.norm_eq_abs] using hMh x hx⟩
+  -- set inclusions
+  have hsubc : closedBall c r \ {c} ⊆ ball c R \ {c} := fun x hx =>
+    ⟨closedBall_subset_ball hrR hx.1, hx.2⟩
+  have hsubb : ball c r \ {c} ⊆ ball c R \ {c} := fun x hx =>
+    ⟨ball_subset_ball hrR.le hx.1, hx.2⟩
+  -- shared ingredients for both signs
+  have hwu : ContinuousOn u (closedBall c r \ {c}) :=
+    (continuousOn_of_harmonicOnNhd hu).mono hsubc
+  have hwh : ContinuousOn h (closedBall c r \ {c}) :=
+    hhc.mono Set.diff_subset
+  -- one-sided comparisons, for every positive ε
+  have hside : ∀ ε : ℝ, 0 < ε → ∀ z ∈ ball c r \ {c},
+      u z - h z ≤ logCup c r ε z ∧ h z - u z ≤ logCup c r ε z := by
+    intro ε hε
+    have h₁ := le_logCup_of_sphere_nonpos hMP hr hε
+      (w := fun x => u x - h x) (B := M + Mh)
+      (fun x hx => (hu x (hsubb hx)).sub (hh x hx.1))
+      (hwu.sub hwh)
+      (fun x hx => by
+        have h1 := abs_le.mp (hbd x (hsubc hx))
+        have h2 := abs_le.mp (hMh x hx.1)
+        linarith [h1.2, h2.1])
+      (fun x hx => by
+        rw [hagree hx]
+        simp)
+    have h₂ := le_logCup_of_sphere_nonpos hMP hr hε
+      (w := fun x => h x - u x) (B := M + Mh)
+      (fun x hx => (hh x hx.1).sub (hu x (hsubb hx)))
+      (hwh.sub hwu)
+      (fun x hx => by
+        have h1 := abs_le.mp (hbd x (hsubc hx))
+        have h2 := abs_le.mp (hMh x hx.1)
+        linarith [h1.1, h2.2])
+      (fun x hx => by
+        rw [hagree hx]
+        simp)
+    exact fun z hz => ⟨h₁ z hz, h₂ z hz⟩
+  -- ε → 0
+  intro z hz
+  have hzc_pos : 0 < ‖z - c‖ := by
+    simpa [norm_pos_iff] using sub_ne_zero.mpr hz.2
+  have hzr : ‖z - c‖ ≤ r := by
+    rw [← dist_eq_norm]
+    exact (mem_ball.mp hz.1).le
+  have hK : 0 ≤ Real.log r - Real.log ‖z - c‖ :=
+    sub_nonneg.mpr (Real.log_le_log hzc_pos hzr)
+  have hle : u z - h z ≤ 0 :=
+    nonpos_of_forall_pos_mul_le hK fun ε hε => by
+      simpa [logCup] using (hside ε hε z hz).1
+  have hge : h z - u z ≤ 0 :=
+    nonpos_of_forall_pos_mul_le hK fun ε hε => by
+      simpa [logCup] using (hside ε hε z hz).2
+  linarith
+
 end JacobianChallenge.HolomorphicForms
