@@ -2162,6 +2162,42 @@ circle, and compare averages (\texttt{circleAverage\_mono}); the
 constant-scaled average collapses to \(h(c)\) by the mean-value property.
 \end{proof}
 
+\begin{lemma}[Disc Dirichlet solution: boundary attainment and packaging (W3d)]
+\label{lem:perron-poisson-boundary-limit}
+\uses{lem:perron-harnack-disc}
+For boundary data \(\varphi\) continuous on the circle
+\(\partial B(c, R)\), \(R > 0\), the Poisson extension attains
+\(\varphi\) at every boundary point: \(P[\varphi](w) \to \varphi(\zeta)\)
+as \(w \to \zeta\) within the open ball
+(\texttt{poissonOperator\_tendsto\_of\_continuousOn}, the Schwarz
+boundary-limit theorem, continuous data only), and the glued function —
+Poisson extension inside the open ball, boundary datum outside — is
+continuous on the closed ball and harmonic on the open ball: the
+solution of the disc Dirichlet problem.  This is the B2 toolbox row
+W3d, revived at the W5b/W6 boundary-attainment gap; the
+consumption-shaped corollaries live in the consuming lanes.
+\lean{JacobianChallenge.HolomorphicForms.poissonSolution, JacobianChallenge.HolomorphicForms.poissonSolution_apply_of_mem_ball, JacobianChallenge.HolomorphicForms.poissonSolution_apply_of_mem_sphere, JacobianChallenge.HolomorphicForms.poissonSolution_harmonicOnNhd, JacobianChallenge.HolomorphicForms.continuousOn_poissonSolution}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Approximate identity on the circle.  Far from \(\zeta\) the kernel mass
+dies uniformly as the pole approaches \(\zeta\)
+(\texttt{tendstoUniformlyOn\_poissonKernel\_far}: the numerator
+\(R^2 - \lVert w - c\rVert^2\) vanishes against a denominator kept
+\(\ge (\delta/2)^2\) by the triangle inequality through \(\zeta\));
+near \(\zeta\) the oscillation of \(\varphi\) rides the normalized
+kernel weight.  The two combine in the pointwise integrand majorant
+\(|P[\varphi](w) - \varphi(\zeta)| \le \eta + 2M\kappa\)
+(\texttt{abs\_poissonOperator\_sub\_le}, no domain splitting, evaluated
+exactly by the W3b normalization), and \(\varepsilon\)-bookkeeping
+gives the boundary limit.  Continuity of the glued solution at a
+boundary point splits the closed-ball neighborhood filter along
+\(B \cup \partial B = \overline{B}\): the interior approach is the
+boundary limit, the along-the-circle approach is continuity of
+\(\varphi\).  Interior continuity and harmonicity transfer from the
+W3a operator along germ equality on the open ball.
+\end{proof}
+
 \begin{lemma}[Harnack convergence, uniform-limit half]
 \label{lem:perron-harnack-uniform-limit}
 \uses{lem:perron-harnack-disc}
