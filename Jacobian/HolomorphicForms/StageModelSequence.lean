@@ -11,7 +11,7 @@ homeomorphism to an arbitrary genus-zero surface.
 
 namespace JacobianChallenge.HolomorphicForms
 
-open Set
+open Filter Set
 open scoped Topology
 
 noncomputable section
@@ -146,6 +146,36 @@ theorem exists_bound_for_compact_subset_pulledBackModelStage
       ⟨hsrc.2,
         Metric.ball_subset_ball hradius.2
           (hr_inv (mem_image_of_mem (fun x => inversionChart (e x)) hx))⟩⟩
+
+/--
+The pulled-back model stages assemble into a bordered-exhaustion payload for
+selected compacta whose model images avoid both marked model ends.
+-/
+theorem exists_stageBorderedExhaustion_of_selected_pulledBackModelStage
+    {X : Type*} [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (e : X ≃ₜ OnePoint ℂ) (selected : StageSelectedCompactFamily X)
+    (hsource :
+      ∀ i x, x ∈ selected.compact i →
+        e x ∈ identityChart.source ∩ inversionChart.source) :
+    Nonempty (StageBorderedExhaustion X selected) := by
+  refine
+    ⟨{ stage := pulledBackModelStage e
+       isOpen_stage := isOpen_pulledBackModelStage e
+       monotone_stage := ?_
+       eventually_contains_selected := ?_
+       boundaryData := ?_ }⟩
+  · intro m n hmn
+    exact monotone_pulledBackModelStage e hmn
+  · intro i
+    obtain ⟨N, hN⟩ :=
+      exists_bound_for_compact_subset_pulledBackModelStage e
+        (selected.isCompact_compact i) (fun x hx => hsource i x hx)
+    exact eventually_atTop.mpr ⟨N, hN⟩
+  · intro n
+    exact
+      (stageBoundaryChartData_of_compact_frontier
+        (X := X) (stage := pulledBackModelStage e n)
+        (isClosed_frontier.isCompact)).some
 
 end
 
