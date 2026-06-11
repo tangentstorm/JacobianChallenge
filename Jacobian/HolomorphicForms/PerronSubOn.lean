@@ -1,5 +1,6 @@
 import Mathlib.Analysis.InnerProductSpace.Harmonic.HarmonicContOnCl
 import Mathlib.Topology.Order.Lattice
+import Jacobian.HolomorphicForms.PerronRemovableSingularity
 
 /-!
 # The Perron comparison subclass `PerronSubOn` (B2 toolbox W5a)
@@ -146,5 +147,51 @@ theorem PerronSubOn.congr {v g : ℂ → ℝ} {V : Set ℂ}
     rw [← hgv (hsphereV hw)]; exact hbd w hw
   have hle := hv.2 hR hsub hh hbd' z hz
   rwa [hgv (hballV hz)]
+
+/--
+**Harmonic-membership (B2 toolbox W5b).** A function harmonic on the open
+set `V ⊆ ℂ` is a `PerronSubOn V` member — modulo the harmonic weak
+maximum principle, supplied as the `WeakMaxPrincipleInput` obligation
+(`PerronRemovableSingularity.lean`; owner lane jc10's W1).  This is the
+first membership fact every Perron envelope (Green's functions §3.3,
+`H[g]` §3.4) consumes: the envelopes are sups of members, and harmonic
+functions are the basic members.
+
+On a disc `closedBall c R ⊆ V` with majorant `h'`
+(`HarmonicContOnCl h' (ball c R)`, `h ≤ h'` on `sphere c R`), the
+difference `w := h - h'` is harmonic on `ball c R`, continuous on its
+closure `closedBall c R`, and `≤ 0` on
+`frontier (ball c R) = sphere c R`; the maximum principle forces `w ≤ 0`
+inside, i.e. `h ≤ h'` on `ball c R`.
+
+When jc10 lands `WeakMaxPrincipleInput` as a proved fact, every call site
+discharges `hmax` trivially. -/
+theorem PerronSubOn.of_harmonicOnNhd
+    (hmax : WeakMaxPrincipleInput) {h : ℂ → ℝ} {V : Set ℂ}
+    (hh : HarmonicOnNhd h V) : PerronSubOn h V := by
+  refine ⟨continuousOn_of_harmonicOnNhd hh, ?_⟩
+  intro c R hR hsub h' hh' hbd z hz
+  have hRne : R ≠ 0 := ne_of_gt hR
+  have hballV : Metric.ball c R ⊆ V :=
+    Metric.ball_subset_closedBall.trans hsub
+  -- `w := h - h'` is harmonic on the open ball.
+  have hwHarm : HarmonicOnNhd (fun x => h x - h' x) (Metric.ball c R) :=
+    (hh.mono hballV).sub hh'.harmonicOnNhd
+  -- `w` is continuous up to the closed ball = closure of the open ball.
+  have hhCont : ContinuousOn h (Metric.closedBall c R) :=
+    (hh.mono hsub).continuousOn
+  have hwCont : ContinuousOn (fun x => h x - h' x)
+      (closure (Metric.ball c R)) := by
+    rw [closure_ball c hRne]
+    exact hhCont.sub hh'.continuousOn_ball
+  -- `w ≤ 0` on the frontier circle.
+  have hfront : ∀ ζ ∈ frontier (Metric.ball c R), (fun x => h x - h' x) ζ ≤ 0 := by
+    intro ζ hζ
+    rw [frontier_ball c hRne] at hζ
+    exact sub_nonpos.mpr (hbd ζ hζ)
+  -- The maximum principle forces `w ≤ 0` inside.
+  have hw := hmax (Metric.ball c R) (fun x => h x - h' x)
+    Metric.isOpen_ball Metric.isBounded_ball hwHarm hwCont hfront z hz
+  exact sub_nonpos.mp hw
 
 end JacobianChallenge.HolomorphicForms

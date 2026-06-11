@@ -2177,6 +2177,27 @@ packaged with Mathlib's \texttt{HarmonicContOnCl}.
 \leanok
 \end{definition}
 
+\begin{lemma}[Harmonic functions are Perron-comparison members]
+\label{lem:perron-sub-on-harmonic-member}
+\uses{def:perron-sub-on}
+A function harmonic on an open \(V \subseteq \mathbb{C}\) is a
+\(\texttt{PerronSubOn}(V)\) member, given the harmonic weak maximum
+principle as an input.  On a disc \(\overline{B}(c,R) \subseteq V\) with a
+harmonic-up-to-closure majorant \(h'\) dominating \(h\) on
+\(\partial B(c,R)\), the difference \(w = h - h'\) is harmonic on
+\(B(c,R)\), continuous on \(\overline{B}(c,R)\), and \(\le 0\) on
+\(\partial B(c,R) = \operatorname{frontier} B(c,R)\); the weak maximum
+principle forces \(w \le 0\) inside, i.e.\ \(h \le h'\).  This is the
+basic membership fact the Green's-function and \(H[g]\) envelopes consume
+(every envelope is a sup of members; harmonic functions are the basic
+members).  The weak maximum principle is taken as the explicit hypothesis
+\(\texttt{WeakMaxPrincipleInput}\) (the W1 obligation, owner lane jc10);
+the lemma is sorry-free now and the hypothesis discharges trivially once
+W1 is proved.
+\lean{JacobianChallenge.HolomorphicForms.PerronSubOn.of_harmonicOnNhd}
+\leanok
+\end{lemma}
+
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
 \uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control}
