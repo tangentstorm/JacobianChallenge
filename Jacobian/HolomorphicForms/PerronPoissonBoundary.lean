@@ -26,7 +26,7 @@ the closed-ball Dirichlet packaging (M4) are the follow-up commits.
 
 namespace JacobianChallenge.HolomorphicForms
 
-open Complex Metric Real Filter
+open Complex InnerProductSpace Metric Real Filter
 open scoped Real Topology
 
 /--
@@ -286,5 +286,85 @@ theorem poissonOperator_tendsto_of_continuousOn {φ : ℂ → ℝ} {c ζ : ℂ}
   rw [Real.dist_eq]
   calc |poissonOperator φ c R w - φ ζ| ≤ ε / 2 + 2 * M * κ := hest
     _ < ε := by linarith
+
+/-! ### W3d M4: closed-ball Dirichlet packaging -/
+
+open scoped Classical in
+/--
+The solution of the disc Dirichlet problem with boundary datum `φ`: the
+Poisson extension inside the open disc, the boundary datum itself
+outside.  For `φ` continuous on the circle this is continuous on the
+closed disc (`continuousOn_poissonSolution`) and harmonic on the open
+disc (`poissonSolution_harmonicOnNhd`) — the shape the W7 Perron
+envelope and the brokered W5b/W6 corollaries consume.
+-/
+noncomputable def poissonSolution (φ : ℂ → ℝ) (c : ℂ) (R : ℝ) : ℂ → ℝ :=
+  fun z => if z ∈ ball c R then poissonOperator φ c R z else φ z
+
+/--
+Inside the open disc, `poissonSolution` is the Poisson operator.
+-/
+theorem poissonSolution_apply_of_mem_ball {φ : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    {z : ℂ} (hz : z ∈ ball c R) :
+    poissonSolution φ c R z = poissonOperator φ c R z := by
+  simp only [poissonSolution]
+  exact if_pos hz
+
+/--
+On the boundary circle, `poissonSolution` is the boundary datum.
+-/
+theorem poissonSolution_apply_of_mem_sphere {φ : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    {z : ℂ} (hz : z ∈ sphere c R) :
+    poissonSolution φ c R z = φ z := by
+  simp only [poissonSolution]
+  exact if_neg (Set.disjoint_left.mp sphere_disjoint_ball hz)
+
+/--
+**W3d M4, interior half.**  The Dirichlet solution is harmonic on the
+open disc: it agrees with the Poisson operator on a neighborhood of
+every interior point, so the landed W3a harmonicity transports over.
+-/
+theorem poissonSolution_harmonicOnNhd {φ : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    (hR : 0 < R) (hφ : ContinuousOn φ (sphere c R)) :
+    HarmonicOnNhd (poissonSolution φ c R) (ball c R) := by
+  intro w hw
+  have heq : poissonOperator φ c R =ᶠ[𝓝 w] poissonSolution φ c R := by
+    filter_upwards [isOpen_ball.mem_nhds hw] with w' hw'
+    exact (poissonSolution_apply_of_mem_ball hw').symm
+  exact (harmonicAt_congr_nhds heq).mp (poissonOperator_harmonicOnNhd hR hφ w hw)
+
+/--
+**W3d M4, boundary half (the gluing).**  The Dirichlet solution is
+continuous on the closed disc.  At interior points continuity is the
+`ContDiffAt` component of harmonicity; at a boundary point the
+closed-ball neighborhood filter splits along
+`ball ∪ sphere = closedBall` into the interior approach — handled by
+the Schwarz boundary limit (M3) — and the along-the-circle approach —
+handled by continuity of the boundary datum.
+-/
+theorem continuousOn_poissonSolution {φ : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    (hR : 0 < R) (hφ : ContinuousOn φ (sphere c R)) :
+    ContinuousOn (poissonSolution φ c R) (closedBall c R) := by
+  intro z hz
+  rcases (mem_closedBall.mp hz).lt_or_eq with hlt | heq
+  · -- interior point: continuity from harmonicity
+    have hzb : z ∈ ball c R := mem_ball.mpr hlt
+    exact ((poissonSolution_harmonicOnNhd hR hφ z hzb).1.continuousAt
+      ).continuousWithinAt
+  · -- boundary point: glue M3 with continuity of φ along the circle
+    have hzs : z ∈ sphere c R := mem_sphere.mpr heq
+    show Tendsto (poissonSolution φ c R) (𝓝[closedBall c R] z)
+      (𝓝 (poissonSolution φ c R z))
+    rw [poissonSolution_apply_of_mem_sphere hzs, ← ball_union_sphere,
+      nhdsWithin_union]
+    refine Tendsto.sup ?_ ?_
+    · -- interior approach: the Schwarz boundary limit
+      refine Tendsto.congr' ?_ (poissonOperator_tendsto_of_continuousOn hR hφ hzs)
+      filter_upwards [eventually_mem_nhdsWithin] with w hw
+      exact (poissonSolution_apply_of_mem_ball hw).symm
+    · -- along-the-circle approach: continuity of the boundary datum
+      refine Tendsto.congr' ?_ (hφ z hzs)
+      filter_upwards [eventually_mem_nhdsWithin] with w hw
+      exact (poissonSolution_apply_of_mem_sphere hw).symm
 
 end JacobianChallenge.HolomorphicForms
