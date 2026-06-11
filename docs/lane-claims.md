@@ -22,7 +22,7 @@ yet. Updated by the manager when allocations change.
 ## Spine (statements + repairs)
 | Item | Owner | State |
 |------|-------|-------|
-| S1–S7 B2 statement repairs + lever + R2 shape | jc3 | LANE GRANT, in flight |
+| S1–S7 B2 statement repairs + lever + R2 shape | jc3 | LANDED (b65c870f, reviewed); S4 retention + S5 instances ratified |
 | C-section statements | jc1 | in flight (parallel, vs documented repair shapes) |
 | A2 assembly | jc0 | GREEN (f7779110, conditional provider; public sorry stays — degenerate-discharge hazard flagged) |
 | A3 cut slices | jc0 | in flight (slice 5) |
