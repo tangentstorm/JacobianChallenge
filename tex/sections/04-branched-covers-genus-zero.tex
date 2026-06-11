@@ -1831,6 +1831,32 @@ from chart continuity, chart injectivity on the source, and continuity of
 \(\log\) away from \(0\).
 \end{proof}
 
+\begin{lemma}[Stage dipole glued potential]
+\label{lem:stage-dipole-glued-potential}
+\uses{lem:stage-marked-topological-control-data, lem:stage-dipole-local-singular-profiles}
+One potential carries the boundary-control core simultaneously: gluing the
+\(+1\) profile on \(U_0\), the \(-1\) profile on \(U_\infty\), and \(0\)
+elsewhere (well-defined since the marked neighborhoods are pairwise
+disjoint) yields \(u : X \to \mathbb{R}\) vanishing at the base point,
+with logarithmic singularities \(+1\) at \(P_0\) and \(-1\) at
+\(P_\infty\), agreeing with the local profiles on the punctured marked
+neighborhoods.  The singularities transfer because the logarithmic
+singularity condition is a germ predicate at the marked point.  This is
+the stage-independent core of the boundary-control obligation
+(Lemma~\ref{lem:stage-dipole-boundary-control}); only the per-stage
+boundary-chart and compact-subdomain bounds remain there.
+\lean{JacobianChallenge.HolomorphicForms.StageDipolePotentialData, JacobianChallenge.HolomorphicForms.stageDipolePotentialData_nonempty, JacobianChallenge.HolomorphicForms.HasLogarithmicSingularityAtReal.congr_on_nhds}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Case-glue over the pairwise disjoint neighborhoods; base normalization by
+disjointness with \(U_{\mathrm{base}}\); agreement is definitional on each
+neighborhood; singularities via the germ-congruence helper applied to the
+neighborhood agreements (the chart inverse is continuous at the chart
+image of the marked point, so neighborhood agreement upgrades to eventual
+equality of the chart-pulled-back integrands).
+\end{proof}
+
 \begin{lemma}[Stage bordered exhaustion domains (open)]
 \label{lem:stage-bordered-exhaustion-domains}
 \uses{lem:stage-marked-topological-control-data}
@@ -1878,7 +1904,7 @@ transitivity of \(\subseteq\) and \texttt{Disjoint.mono\_left}.
 
 \begin{lemma}[Stage dipole boundary control (open)]
 \label{lem:stage-dipole-boundary-control}
-\uses{lem:stage-marked-topological-control-data, lem:stage-bordered-exhaustion-domains, lem:stage-dipole-local-singular-profiles}
+\uses{lem:stage-marked-topological-control-data, lem:stage-bordered-exhaustion-domains, lem:stage-dipole-local-singular-profiles, lem:stage-dipole-glued-potential}
 The stage boundary data is built from logarithmic dipole models at the two
 marked ends, with boundary normalization and compact-subdomain bounds suitable
 for Perron/Dirichlet solving.  Existing model-plane and chart-local dipole
