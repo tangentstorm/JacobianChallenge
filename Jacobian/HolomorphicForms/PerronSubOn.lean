@@ -194,4 +194,42 @@ theorem PerronSubOn.of_harmonicOnNhd
     Metric.isOpen_ball Metric.isBounded_ball hwHarm hwCont hfront z hz
   exact sub_nonpos.mp hw
 
+/--
+**Two-harmonic disc comparison (B2 toolbox W5b).** If `h₁`, `h₂` are
+harmonic on the open disc `ball c R`, continuous up to its closure, and
+`h₁ ≤ h₂` on the bounding circle `sphere c R`, then `h₁ ≤ h₂` throughout
+`ball c R` — modulo the harmonic weak maximum principle
+(`WeakMaxPrincipleInput`, jc10's W1 obligation).
+
+This is the applied disc form of the maximum principle the Perron
+envelope and Green's-function upper bounds (§3.3) consume: the difference
+`w := h₁ - h₂` is harmonic on `ball c R`, continuous on its closure
+`closedBall c R`, and `≤ 0` on `frontier (ball c R) = sphere c R`, so the
+weak maximum principle forces `w ≤ 0` inside.
+
+The symmetric two-`HarmonicContOnCl` companion to
+`PerronSubOn.of_harmonicOnNhd` (there the lower function is only a
+`PerronSubOn` member; here both are continuous up to the closure). -/
+theorem harmonicContOnCl_le_of_le_on_sphere
+    (hmax : WeakMaxPrincipleInput) {h₁ h₂ : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    (hR : 0 < R) (hh₁ : HarmonicContOnCl h₁ (Metric.ball c R))
+    (hh₂ : HarmonicContOnCl h₂ (Metric.ball c R))
+    (hbd : ∀ z ∈ Metric.sphere c R, h₁ z ≤ h₂ z) :
+    ∀ z ∈ Metric.ball c R, h₁ z ≤ h₂ z := by
+  intro z hz
+  have hRne : R ≠ 0 := ne_of_gt hR
+  have hwHarm : HarmonicOnNhd (fun x => h₁ x - h₂ x) (Metric.ball c R) :=
+    hh₁.harmonicOnNhd.sub hh₂.harmonicOnNhd
+  have hwCont : ContinuousOn (fun x => h₁ x - h₂ x)
+      (closure (Metric.ball c R)) := by
+    rw [closure_ball c hRne]
+    exact hh₁.continuousOn_ball.sub hh₂.continuousOn_ball
+  have hfront : ∀ ζ ∈ frontier (Metric.ball c R), (fun x => h₁ x - h₂ x) ζ ≤ 0 := by
+    intro ζ hζ
+    rw [frontier_ball c hRne] at hζ
+    exact sub_nonpos.mpr (hbd ζ hζ)
+  have hw := hmax (Metric.ball c R) (fun x => h₁ x - h₂ x)
+    Metric.isOpen_ball Metric.isBounded_ball hwHarm hwCont hfront z hz
+  exact sub_nonpos.mp hw
+
 end JacobianChallenge.HolomorphicForms

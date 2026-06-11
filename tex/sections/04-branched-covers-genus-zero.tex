@@ -2228,6 +2228,25 @@ W1 is proved.
 \leanok
 \end{lemma}
 
+\begin{lemma}[Two-harmonic disc comparison]
+\label{lem:harmonic-disc-comparison}
+\uses{def:perron-sub-on}
+If \(h_1, h_2\) are harmonic on the open disc \(B(c,R)\), continuous up to
+its closure, and \(h_1 \le h_2\) on the circle \(\partial B(c,R)\), then
+\(h_1 \le h_2\) throughout \(B(c,R)\) — given the harmonic weak maximum
+principle as an input.  The difference \(w = h_1 - h_2\) is harmonic on
+\(B(c,R)\), continuous on \(\overline{B}(c,R)\), and \(\le 0\) on
+\(\partial B(c,R) = \operatorname{frontier} B(c,R)\); the weak maximum
+principle forces \(w \le 0\) inside.  This is the applied disc form of the
+maximum principle that the Green's-function upper bounds (§3.3) and the
+Perron envelope locality step consume — the symmetric two-sided companion
+to \ref{lem:perron-sub-on-harmonic-member}.  The weak maximum principle
+is taken as the explicit hypothesis \(\texttt{WeakMaxPrincipleInput}\)
+(W1, owner lane jc10); sorry-free now, discharging once W1 is proved.
+\lean{JacobianChallenge.HolomorphicForms.harmonicContOnCl_le_of_le_on_sphere}
+\leanok
+\end{lemma}
+
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
 \uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control}
