@@ -2107,6 +2107,34 @@ circle, and compare averages (\texttt{circleAverage\_mono}); the
 constant-scaled average collapses to \(h(c)\) by the mean-value property.
 \end{proof}
 
+\begin{lemma}[Harnack convergence, uniform-limit half]
+\label{lem:perron-harnack-uniform-limit}
+\uses{lem:perron-harnack-disc}
+An increasing sequence of harmonic functions on a neighborhood of
+\(\overline{B}(c, R)\), bounded at the center, converges pointwise on
+the open ball and uniformly on every closed disc
+\(\overline{B}(c, \rho)\) with \(\rho < R\).  The constant in the
+Harnack upper bound is taken uniformly over the inner disc
+(\(\le (R+\rho)/(R-\rho)\)), so the differences \(h_n - h_m \ge 0\)
+have oscillation controlled by their value at the center, which is
+Cauchy by monotone boundedness.  This is the convergence half of the
+W4 increasing-limit corollary the Perron envelope consumes;
+harmonicity of the limit (via the Poisson operator, W3a) is the
+separate second half.
+\lean{JacobianChallenge.HolomorphicForms.harnack_upper_on_closedBall, JacobianChallenge.HolomorphicForms.harnack_increasing_tendstoUniformlyOn}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Monotonize the Harnack constant over \(w \in \overline{B}(c, \rho)\)
+(cross-multiplied monotonicity of \((R+r)/(R-r)\) in \(r\), with
+\(h(c) \ge 0\) from the mean-value property).  Pointwise limits exist
+on the open ball by monotone convergence against the Harnack bound on
+\(h_n - h_0\); passing the per-pair difference bound to the limit in
+\(k\) gives \(H(w) - h_n(w) \le \frac{R+\rho}{R-\rho}\,(H(c) - h_n(c))\)
+uniformly on \(\overline{B}(c, \rho)\), and the right side tends to
+\(0\).
+\end{proof}
+
 \begin{definition}[Perron comparison subclass]
 \label{def:perron-sub-on}
 \uses{lem:stage-harmonic-analytic-compose}
