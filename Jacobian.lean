@@ -11,3 +11,4 @@ import Jacobian.TraceDegree
 
 Top-level exports for the Jacobian challenge formalization.
 -/
+import Jacobian.HolomorphicForms.PerronEngineE
