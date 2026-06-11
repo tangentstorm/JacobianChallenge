@@ -163,13 +163,70 @@ theorem rawWord_tietzeEq_standardWord_orientable
   exact step1.trans (hue ▸ hvu)
 
 
+instance wordQuotient_compactSpace {g : ℕ} {w : EdgeWord g} : CompactSpace (EdgeWord.wordQuotient g w) :=
+  inferInstanceAs (CompactSpace (Quotient _))
+
+instance wordQuotient_t2Space {g : ℕ} {w : EdgeWord g} : T2Space (EdgeWord.wordQuotient g w) :=
+  sorry
+
+private lemma inverseCancel_geometric_maps_surj
+    {g : ℕ} {xs ys : List (Letter g)} {l l_inv : Letter g} (hinv : l.inv = l_inv ∨ l_inv.inv = l) :
+    ∃ (φ ψ : DiskC → DiskC),
+      Continuous φ ∧ Continuous ψ ∧
+      (∀ x y, EdgeWord.sidePairingRel g (xs ++ [l, l_inv] ++ ys) x y →
+        EdgeWord.sidePairingRel g (xs ++ ys) (φ x) (φ y)) ∧
+      (∀ x y, EdgeWord.sidePairingRel g (xs ++ ys) x y →
+        EdgeWord.sidePairingRel g (xs ++ [l, l_inv] ++ ys) (ψ x) (ψ y)) ∧
+      (∀ x, EdgeWord.sidePairingRel g (xs ++ ys) (φ (ψ x)) x) ∧
+      (∀ x, EdgeWord.sidePairingRel g (xs ++ [l, l_inv] ++ ys) (ψ (φ x)) x) := by
+  sorry
+
 theorem wordQuotient_homeomorph_of_inverseCancel_step
     {g : ℕ} {w v : EdgeWord g} (h : EdgeWord.InverseCancel w v) :
     Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
-  -- Topology of inverse cancellation: quotient invariance directly.
-  -- This replaces the false disk-lift `inverseCancel_geometric_maps`.
-  sorry
-
+  let build_homeo {xs ys : List (Letter g)} {l l_inv : Letter g} (hinv : l.inv = l_inv ∨ l_inv.inv = l)
+      (hw : w = xs ++ [l, l_inv] ++ ys) (hv : v = xs ++ ys) :
+      Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
+    subst hw hv
+    obtain ⟨φ, ψ, hφ_cont, hψ_cont, hφ_rel, hψ_rel, hφψ, hψφ⟩ := inverseCancel_geometric_maps_surj (g:=g) (xs:=xs) (ys:=ys) (l:=l) (l_inv:=l_inv) hinv
+    let f : EdgeWord.wordQuotient g (xs ++ [l, l_inv] ++ ys) → EdgeWord.wordQuotient g (xs ++ ys) :=
+      Quotient.lift (fun x => Quotient.mk _ (φ x)) (by
+        intro a b hab
+        apply Quotient.sound
+        exact hφ_rel a b hab)
+    let f_inv : EdgeWord.wordQuotient g (xs ++ ys) → EdgeWord.wordQuotient g (xs ++ [l, l_inv] ++ ys) :=
+      Quotient.lift (fun x => Quotient.mk _ (ψ x)) (by
+        intro a b hab
+        apply Quotient.sound
+        exact hψ_rel a b hab)
+    have hf_cont : Continuous f := (continuous_quot_mk.comp hφ_cont).quotient_lift _
+    have hf_inv_cont : Continuous f_inv := (continuous_quot_mk.comp hψ_cont).quotient_lift _
+    have h_left : ∀ x, f_inv (f x) = x := by
+      intro x
+      refine Quotient.inductionOn x ?_
+      intro z
+      change Quotient.mk _ (ψ (φ z)) = Quotient.mk _ z
+      apply Quotient.sound
+      exact hψφ z
+    have h_right : ∀ x, f (f_inv x) = x := by
+      intro x
+      refine Quotient.inductionOn x ?_
+      intro z
+      change Quotient.mk _ (φ (ψ z)) = Quotient.mk _ z
+      apply Quotient.sound
+      exact hφψ z
+    let e : EdgeWord.wordQuotient g (xs ++ [l, l_inv] ++ ys) ≃ EdgeWord.wordQuotient g (xs ++ ys) :=
+      { toFun := f
+        invFun := f_inv
+        left_inv := h_left
+        right_inv := h_right }
+    have he_cont : Continuous e := hf_cont
+    exact ⟨he_cont.homeoOfEquivCompactToT2⟩
+  cases h with
+  | ax_aInv i xs ys => exact build_homeo (l:=Letter.a i) (l_inv:=Letter.aInv i) (Or.inl rfl) rfl rfl
+  | aInv_a i xs ys => exact build_homeo (l:=Letter.aInv i) (l_inv:=Letter.a i) (Or.inr rfl) rfl rfl
+  | bx_bInv i xs ys => exact build_homeo (l:=Letter.b i) (l_inv:=Letter.bInv i) (Or.inl rfl) rfl rfl
+  | bInv_b i xs ys => exact build_homeo (l:=Letter.bInv i) (l_inv:=Letter.b i) (Or.inr rfl) rfl rfl
 
 
 /--
