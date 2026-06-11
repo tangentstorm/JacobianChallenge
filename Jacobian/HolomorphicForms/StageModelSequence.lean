@@ -92,6 +92,61 @@ theorem monotone_pulledBackModelStage
     pulledBackModelStage e m ⊆ pulledBackModelStage e n := by
   exact preimage_mono (monotone_onePointModelStage hmn)
 
+private theorem exists_nat_for_modelStageRadius_ge (r₁ r₂ : ℝ) :
+    ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
+      r₁ ≤ onePointModelStageRadius n ∧ r₂ ≤ onePointModelStageRadius n := by
+  obtain ⟨N, hN⟩ := exists_nat_ge (max r₁ r₂)
+  refine ⟨N, ?_⟩
+  intro n hn
+  have hNn : (N : ℝ) ≤ n := Nat.cast_le.mpr hn
+  have hmaxn : max r₁ r₂ ≤ (n : ℝ) := hN.trans hNn
+  have hnrad : (n : ℝ) ≤ onePointModelStageRadius n := by
+    unfold onePointModelStageRadius
+    exact le_add_of_nonneg_right (by norm_num : (0 : ℝ) ≤ 2)
+  exact
+    ⟨((le_max_left r₁ r₂).trans hmaxn).trans hnrad,
+      ((le_max_right r₁ r₂).trans hmaxn).trans hnrad⟩
+
+/--
+Compact subsets whose model image avoids both marked model ends are eventually
+contained in the pulled-back model stages.
+-/
+theorem exists_bound_for_compact_subset_pulledBackModelStage
+    {X : Type*} [TopologicalSpace X] (e : X ≃ₜ OnePoint ℂ)
+    {K : Set X} (hK : IsCompact K)
+    (hsource :
+      ∀ x, x ∈ K → e x ∈ identityChart.source ∩ inversionChart.source) :
+    ∃ N : ℕ, ∀ n : ℕ, N ≤ n → K ⊆ pulledBackModelStage e n := by
+  have hmaps_id : MapsTo (fun x => e x) K identityChart.source :=
+    fun x hx => (hsource x hx).1
+  have hcont_id : ContinuousOn (fun x => identityChart (e x)) K :=
+    identityChart.continuousOn.comp e.continuous.continuousOn hmaps_id
+  have hcompact_id :
+      IsCompact ((fun x => identityChart (e x)) '' K) :=
+    hK.image_of_continuousOn hcont_id
+  obtain ⟨r_id, hr_id⟩ := hcompact_id.isBounded.subset_ball (0 : ℂ)
+  have hmaps_inv : MapsTo (fun x => e x) K inversionChart.source :=
+    fun x hx => (hsource x hx).2
+  have hcont_inv : ContinuousOn (fun x => inversionChart (e x)) K :=
+    inversionChart.continuousOn.comp e.continuous.continuousOn hmaps_inv
+  have hcompact_inv :
+      IsCompact ((fun x => inversionChart (e x)) '' K) :=
+    hK.image_of_continuousOn hcont_inv
+  obtain ⟨r_inv, hr_inv⟩ := hcompact_inv.isBounded.subset_ball (0 : ℂ)
+  obtain ⟨N, hN⟩ := exists_nat_for_modelStageRadius_ge r_id r_inv
+  refine ⟨N, ?_⟩
+  intro n hn x hx
+  have hsrc := hsource x hx
+  have hradius := hN n hn
+  unfold pulledBackModelStage onePointModelStage
+  exact
+    ⟨⟨hsrc.1,
+        Metric.ball_subset_ball hradius.1
+          (hr_id (mem_image_of_mem (fun x => identityChart (e x)) hx))⟩,
+      ⟨hsrc.2,
+        Metric.ball_subset_ball hradius.2
+          (hr_inv (mem_image_of_mem (fun x => inversionChart (e x)) hx))⟩⟩
+
 end
 
 end JacobianChallenge.HolomorphicForms
