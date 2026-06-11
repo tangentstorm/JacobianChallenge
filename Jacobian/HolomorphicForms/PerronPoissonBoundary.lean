@@ -228,4 +228,63 @@ theorem abs_poissonOperator_sub_le {φ : ℂ → ℝ} {c ζ w : ℂ}
     _ = η + 2 * M * κ := by
         rw [hηavg, Real.circleAverage_const]
 
+/-! ### W3d M3: the boundary-limit theorem -/
+
+/--
+**W3d (main statement), Schwarz boundary limit.**  For boundary data
+`φ` continuous on the integration circle, the Poisson operator attains
+`φ` at every boundary point: `poissonOperator φ c R w → φ ζ` as
+`w → ζ` from inside the disc.
+
+Assembly of M1 + M2: `M` from sphere compactness, the near-arc
+oscillation `δ` from continuity of `φ` at `ζ` within the sphere,
+`κ := ε / (4M + 2)` from the far-arc kernel decay
+`tendstoUniformlyOn_poissonKernel_far`, all fed into the oscillation
+split `abs_poissonOperator_sub_le`.  Kept in the neutral `Tendsto` form
+per the W3d scope ruling; consumption-shaped corollaries for W5b/W6 are
+brokered separately.
+-/
+theorem poissonOperator_tendsto_of_continuousOn {φ : ℂ → ℝ} {c ζ : ℂ}
+    {R : ℝ} (hR : 0 < R) (hφ : ContinuousOn φ (sphere c R))
+    (hζ : ζ ∈ sphere c R) :
+    Tendsto (poissonOperator φ c R) (𝓝[ball c R] ζ) (𝓝 (φ ζ)) := by
+  rw [Metric.tendsto_nhds]
+  intro ε hε
+  -- circle-wide sup bound from compactness
+  obtain ⟨M, hM⟩ := (isCompact_sphere c R).exists_bound_of_continuousOn hφ
+  have hM' : ∀ z ∈ sphere c R, |φ z| ≤ M := by
+    intro z hz
+    simpa [Real.norm_eq_abs] using hM z hz
+  have hM0 : 0 ≤ M := le_trans (abs_nonneg _) (hM' ζ hζ)
+  -- near-arc oscillation from continuity at ζ within the sphere
+  obtain ⟨δ, hδ, hnear⟩ :=
+    Metric.continuousWithinAt_iff.mp (hφ ζ hζ) (ε / 2) (by positivity)
+  have hnear' : ∀ z ∈ sphere c R, dist z ζ < δ → |φ z - φ ζ| ≤ ε / 2 := by
+    intro z hz hzd
+    have h := hnear hz hzd
+    rw [Real.dist_eq] at h
+    exact h.le
+  -- far-arc kernel bound, eventually in the pole: M1 at κ
+  set κ : ℝ := ε / (4 * M + 2) with hκ_def
+  have h42 : (0 : ℝ) < 4 * M + 2 := by linarith
+  have hκ : 0 < κ := div_pos hε h42
+  have hfar_ev := Metric.tendstoUniformlyOn_iff.mp
+    (tendstoUniformlyOn_poissonKernel_far hζ hδ) κ hκ
+  filter_upwards [hfar_ev, eventually_mem_nhdsWithin] with w hfar_w hw_ball
+  have hfar' : ∀ z ∈ sphere c R, δ ≤ dist z ζ → poissonKernel c w z ≤ κ := by
+    intro z hz hzd
+    have h := hfar_w z ⟨hz, hzd⟩
+    rw [Pi.zero_apply, dist_zero_left, Real.norm_eq_abs] at h
+    exact (le_abs_self _).trans h.le
+  -- the oscillation split closes the estimate
+  have hest := abs_poissonOperator_sub_le hR hφ hζ hw_ball hM'
+    (by positivity : (0 : ℝ) ≤ ε / 2) hκ.le hnear' hfar'
+  have hgap : 2 * M * κ < ε / 2 := by
+    rw [hκ_def, ← mul_div_assoc,
+      div_lt_div_iff₀ h42 (by norm_num : (0 : ℝ) < 2)]
+    nlinarith
+  rw [Real.dist_eq]
+  calc |poissonOperator φ c R w - φ ζ| ≤ ε / 2 + 2 * M * κ := hest
+    _ < ε := by linarith
+
 end JacobianChallenge.HolomorphicForms
