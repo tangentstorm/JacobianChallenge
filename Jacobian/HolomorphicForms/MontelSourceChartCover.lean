@@ -637,4 +637,71 @@ theorem exists_realizedPatchCover_of_twoCharts
     | false => exact Or.inl rfl
     | true => exact Or.inr rfl
 
+/-!
+## M-I — chart-ball-domain → patch-source coordinate convergence transfer
+
+The green E→F seam.  The engine's diagonal extraction produces, per patch,
+locally-uniform convergence of the chart-ball readings on the chart-ball domain
+`Metric.ball center radius` (in `ℂ`).  The selection-target `F` clause instead
+needs locally-uniform convergence of the patch *coordinate* on `patch.source`
+(in `X`).  The bridge is a pullback of the `ℂ`-domain convergence along the
+realized patch's `sourceChart`, using only the realization fields the
+`MontelRealizedPatch` already carries:
+
+* `sourceChart` is continuous on `patch.source`
+  (`sourceChart_contMDiffOn.continuousOn`);
+* `sourceChart` maps `patch.source` into `ball center radius`
+  (`sourceChart_mem_chartBall`), giving the `MapsTo` for the precomposition;
+* `coord_eq_chartBall` rewrites the pulled-back limit
+  `chartBall.toFun ∘ sourceChart` to `patch.coord` on the source.
+
+`Mathlib.TendstoLocallyUniformlyOn.comp` does the precomposition; the limit is
+rewritten by `congr_right` on the source `EqOn`.  No analytic content; not gated
+on the open spine — the chart-ball convergence is a hypothesis. -/
+
+/--
+**Coordinate convergence transfer** (M-I).
+
+Pull back chart-ball-domain locally-uniform convergence to patch-source
+locally-uniform convergence of the patch coordinate.  Given a realized patch and
+a family `g : ℕ → ℂ → ℂ` converging locally uniformly to
+`localPatch.chartBall.toFun` on the chart-ball domain, the precomposition
+`fun n x => g n (rp.realization.sourceChart x)` converges locally uniformly to
+`rp.patch.coord` on `rp.patch.source`. -/
+theorem tendstoLocallyUniformlyOn_coord_of_chartBall
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    {localPatch : GenusZeroLocalMontelChartPatch}
+    (rp : MontelRealizedPatch X localPatch)
+    (g : ℕ → ℂ → ℂ)
+    (hg :
+      TendstoLocallyUniformlyOn (fun n z => g n z) localPatch.chartBall.toFun
+        Filter.atTop
+        (Metric.ball localPatch.chartBall.center
+          (localPatch.chartBall.radius : ℝ))) :
+    TendstoLocallyUniformlyOn
+      (fun n x => g n (rp.realization.sourceChart x)) rp.patch.coord
+      Filter.atTop rp.patch.source := by
+  -- Precompose the chart-ball convergence with `sourceChart : source → ball`.
+  have hmaps :
+      Set.MapsTo rp.realization.sourceChart rp.patch.source
+        (Metric.ball localPatch.chartBall.center
+          (localPatch.chartBall.radius : ℝ)) :=
+    fun x hx => rp.realization.sourceChart_mem_chartBall x hx
+  have hcont :
+      ContinuousOn rp.realization.sourceChart rp.patch.source :=
+    rp.realization.sourceChart_contMDiffOn.continuousOn
+  have hcomp :
+      TendstoLocallyUniformlyOn
+        (fun n => g n ∘ rp.realization.sourceChart)
+        (localPatch.chartBall.toFun ∘ rp.realization.sourceChart)
+        Filter.atTop rp.patch.source :=
+    hg.comp rp.realization.sourceChart hmaps hcont
+  -- Rewrite the limit `chartBall.toFun ∘ sourceChart = coord` on the source.
+  refine hcomp.congr_right ?_
+  intro x hx
+  exact (rp.realization.coord_eq_chartBall x hx).symm
+
 end JacobianChallenge.HolomorphicForms

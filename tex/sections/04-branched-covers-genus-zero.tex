@@ -1523,6 +1523,31 @@ analytic spine; pure assembly.
 \end{lemma}
 \begin{proof}\leanok\end{proof}
 
+\begin{lemma}[Coordinate convergence transfer]
+\label{lem:montel-realized-patch-coord-convergence-transfer}
+\uses{lem:montel-realized-patch-cover-packaging}
+The green E\(\to\)F seam: pull chart-ball-domain locally-uniform convergence back
+to patch-source locally-uniform convergence of the patch coordinate. The engine's
+diagonal extraction produces, per patch, locally-uniform convergence of the
+chart-ball readings on the chart-ball domain \(\code{ball center radius}\)
+(in \(\C\)); the selection-target \(F\) clause instead needs locally-uniform
+convergence of the patch \emph{coordinate} on \(\code{patch.source}\) (in \(X\)).
+Given a realized patch and a family \(g:\N\to\C\to\C\) converging locally
+uniformly to \(\code{localPatch.chartBall.toFun}\) on the chart-ball domain, the
+precomposition \(\code{fun}\ n\ x\mapsto g\,n\,(\code{sourceChart}\,x)\) converges
+locally uniformly to \(\code{patch.coord}\) on \(\code{patch.source}\). The proof
+pulls back along the realization's \code{sourceChart} via Mathlib's
+\code{TendstoLocallyUniformlyOn.comp} --- continuity from
+\code{sourceChart\_contMDiffOn.continuousOn}, the \code{MapsTo} from
+\code{sourceChart\_mem\_chartBall} --- then rewrites the limit
+\(\code{chartBall.toFun}\circ\code{sourceChart}=\code{coord}\) on the source via
+\code{coord\_eq\_chartBall}. Pure assembly over Mathlib and the realization
+fields; not gated on the open spine (the chart-ball convergence is a hypothesis).
+\lean{JacobianChallenge.HolomorphicForms.tendstoLocallyUniformlyOn_coord_of_chartBall}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
 \begin{lemma}[Per-patch realization over the chart-ball-limit patch]
 \label{lem:montel-realized-patch-ofChartBallLimit}
 \uses{lem:montel-raw-source-chart-package}
