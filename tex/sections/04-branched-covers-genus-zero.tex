@@ -1541,6 +1541,12 @@ cover-packaging adapter) so the caller controls the witnesses the
 \code{hsymm\_image} hypothesis is stated against; since \code{ofChartBallLimit}
 sets its fields definitionally, the M-D hypotheses transfer by \code{rfl} with no
 restatement. Pure assembly --- no analytic content, not gated on the open spine.
+Only the explicit-\code{localChart} form is provided; the optional
+convergence-input variant (threading the F2 leaf
+\code{exists\_localNormalizedChartHomeomorphData\_of\_tendstoLocallyUniformlyOn}
+via \code{.some}) was dropped because that \code{.some} makes the resulting
+\code{localOpen} opaque, so the M-D \code{hsymm\_image} hypothesis could not be
+stated cleanly against it --- the explicit form keeps the witnesses concrete.
 \lean{JacobianChallenge.HolomorphicForms.exists_montelRealizedPatch_ofChartBallLimit}
 \leanok
 \end{lemma}
