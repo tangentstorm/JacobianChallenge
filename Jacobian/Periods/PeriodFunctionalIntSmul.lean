@@ -23,12 +23,12 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 /-- The period pairing commutes with `ℕ`-scalar multiplication of cycles. -/
 theorem periodPairing_nsmul (n : ℕ) (σ : IntegralOneCycle X) :
     periodPairing E X (n • σ) = n • periodPairing E X σ :=
-  (periodPairing E X).map_nsmul σ n
+  (periodPairing E X).map_nsmul n σ
 
 /-- The period pairing commutes with `ℤ`-scalar multiplication of cycles. -/
 theorem periodPairing_zsmul (n : ℤ) (σ : IntegralOneCycle X) :
     periodPairing E X (n • σ) = n • periodPairing E X σ :=
-  (periodPairing E X).map_zsmul σ n
+  (periodPairing E X).map_zsmul n σ
 
 /-- `n • periodPairing _ σ ∈ periodSubgroup` for `n : ℕ`. -/
 theorem periodPairing_nsmul_mem_periodSubgroup
