@@ -2444,6 +2444,52 @@ family builds its explicit member.
 \leanok
 \end{lemma}
 
+\begin{lemma}[Bounded-harmonic removable singularity (W6)]
+\label{lem:perron-removable-singularity}
+\uses{lem:w1-weak-max-principle, lem:m4-poisson-solution, lem:w6-log-cup}
+A function \(u\) harmonic on the punctured ball
+\(B(c,R) \setminus \{c\}\) and bounded there extends harmonically across
+the puncture: there is \(v\) harmonic on all of \(B(c,R)\) agreeing with
+\(u\) off the puncture; consequently \(u\) has a limit at the puncture —
+the extension's value.  The engine is the annuli comparison: on an inner
+disc \(\overline{B}(c,r)\), \(r < R\), the function \(u\) agrees off the
+puncture with every disc-Dirichlet solution \(h\) of its inner-circle
+restriction, by comparing \(\pm(u - h)\) against the log cup
+\(\varepsilon(\log r - \log\lVert\cdot - c\rVert)\) on shrinking annuli
+via the weak maximum principle and letting \(\varepsilon \to 0\); the
+extension is then the piecewise glue (\(h\) inside, \(u\) outside),
+harmonic pointwise by germ equality with one of its two branches.  The
+weak maximum principle is jc3's
+\(\texttt{weakMaxPrincipleInput\_holds}\)
+(\ref{lem:w1-weak-max-principle}); the Dirichlet solution is jc6's M4
+packaging consumed through the adapter
+\(\texttt{discDirichletInput\_of\_poissonOperator}\)
+(\ref{lem:m4-poisson-solution}).  The primed theorems are the
+hypothesis-free forms; the parametric originals are retained for
+consumers that thread obligation terms.  This is the B2 toolbox row W6,
+consumed by the W9 Green's-function pole germ (§3.3).
+\lean{JacobianChallenge.HolomorphicForms.discDirichletInput_of_poissonOperator, JacobianChallenge.HolomorphicForms.eq_dirichletSolution_of_bounded_punctured, JacobianChallenge.HolomorphicForms.eq_dirichletSolution_of_bounded_punctured', JacobianChallenge.HolomorphicForms.harmonicOnNhd_extend_of_bounded_punctured, JacobianChallenge.HolomorphicForms.harmonicOnNhd_extend_of_bounded_punctured', JacobianChallenge.HolomorphicForms.exists_tendsto_of_bounded_punctured, JacobianChallenge.HolomorphicForms.exists_tendsto_of_bounded_punctured'}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+For the annuli comparison: \(w = \pm(u - h)\) is harmonic on the
+punctured inner ball, continuous up to its closure off the puncture,
+\(\le 0\) on the inner circle, and bounded; on the annulus
+\(\{\rho < \lVert z - c\rVert < r\}\) the cup
+\(\varepsilon(\log r - \log\lVert\cdot - c\rVert)\) dominates \(w\) on
+both frontier circles once \(\rho\) is small (the cup climbs past every
+constant near the puncture), so the weak maximum principle
+(\ref{lem:w1-weak-max-principle}) forces
+\(w \le \varepsilon\,\texttt{logCup}\) inside; \(\varepsilon \to 0\)
+gives \(w \le 0\), and the two signs give equality.  For the extension:
+glue \(h\) (from \ref{lem:m4-poisson-solution} through the adapter)
+inside the half-radius disc with \(u\) outside; the comparison makes the
+branches agree on the overlap off the puncture, and harmonicity at each
+point is germ equality with the harmonic branch.  The limit corollary
+evaluates the extension at the puncture and transports the limit along
+agreement off the puncture.
+\end{proof}
+
 \begin{definition}[Per-pole Perron family and Green's candidate]
 \label{def:perron-greens-family}
 \uses{def:perron-sub-on, lem:perron-envelope-center-touch, lem:w6-log-cup}
