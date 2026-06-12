@@ -13,10 +13,12 @@ comparison subfunctions with a logarithmic pole floor at `p`.  This file
 is the slice-1 statement layer, ℂ-side and disc/stage-local in the
 toolbox style: the family `greensFamily V p` with its closure and
 membership basics (sorry-free), the envelope `greensCandidate V p`
-through the frozen `perronEnvelope`, and the named frontier statements —
-the uniform upper cap, the Poisson-modification capability, the
-two-sided pole profile, the off-pole harmonicity, and the W6-germ
-corollary — as declared `sorry`s priced into slices G2–G4.
+through the frozen `perronEnvelope`, and the named frontier statements.
+Slice G2 added the comparison-subclass maximum principle
+(`PerronSubOn.le_zero_of_eventually_frontier_le`) and discharged the
+uniform upper cap and the two-sided pole profile; the
+Poisson-modification capability, the off-pole harmonicity, and the
+W6-germ corollary remain declared `sorry`s priced into slices G3–G4.
 
 ## Design
 
@@ -260,17 +262,289 @@ def PerronEnvelopeHarmonicInput : Prop :=
     HarmonicOnNhd (perronEnvelope F) (Metric.ball c R)
 
 /-!
-## The G2–G4 frontier (declared sorries, priced in the W9 lane plan)
+## The comparison-subclass maximum principle (W9 G2)
 
-Five statements, in dependency order.  The single genuinely hard one is
-the uniform upper cap (G2): the §3.3 punctured-disc comparison, where
-the member-dependent pole constant washes out (compare on
-`V \ closedBall p δ` against
-`ε + (C_v - log δ)·(log R₀ - log ‖·-p‖)/log (R₀/δ)` and let `δ → 0`);
-it needs an eventual-boundary variant of the weak maximum principle
-(members are not continuous up to `closure V`), built locally from the
-landed W1 on shrunk domains.  The rest are assemblies over landed
-surfaces.
+The cap proof needs a weak maximum principle for `PerronSubOn` members
+with *eventual* boundary control — the landed W1
+(`le_zero_of_harmonicOnNhd_of_frontier_le_zero`) does not apply, since
+members are not continuous up to `closure W` and the Green's family's
+boundary trap is eventual, not pointwise-on-frontier.  The proof
+mirrors the W1 M2 component skeleton, with the harmonic mean-value
+property replaced by the Poisson sub-mean inequality for members
+(`le_poissonSolution_of_mem_ball` at the center, where the Poisson
+kernel is constantly `1`).
+-/
+
+/-- The Poisson kernel at the center of the circle is `1`. -/
+private theorem poissonKernel_center {c z : ℂ} {R : ℝ} (hR : 0 < R)
+    (hz : z ∈ sphere c R) : poissonKernel c c z = 1 := by
+  have hnorm : ‖z - c‖ = R := by
+    simpa [dist_eq_norm] using mem_sphere.mp hz
+  have hR2 : R ^ 2 ≠ 0 := pow_ne_zero 2 hR.ne'
+  rw [poissonKernel_def, sub_self, norm_zero, sub_zero, hnorm]
+  rw [show (0 : ℝ) ^ 2 = 0 by norm_num, sub_zero, div_self hR2]
+
+/--
+The Poisson operator at the center of the disc is the plain circle
+average of the boundary datum (the kernel is `1` on the circle).
+-/
+theorem poissonOperator_center {φ : ℂ → ℝ} {c : ℂ} {R : ℝ} (hR : 0 < R) :
+    poissonOperator φ c R c = Real.circleAverage φ c R := by
+  have h : poissonOperator φ c R c
+      = Real.circleAverage (fun z => poissonKernel c c z • φ z) c R := rfl
+  rw [h]
+  apply Real.circleAverage_congr_sphere
+  intro z hz
+  rw [abs_of_pos hR] at hz
+  simp [poissonKernel_center hR hz]
+
+/--
+**Sub-mean inequality for comparison members** — the surrogate for the
+harmonic mean-value property: on any disc inside the domain, a member's
+center value is at most its circle average.  Via the W5b-iii comparison
+half `le_poissonSolution_of_mem_ball` evaluated at the center.
+-/
+theorem PerronSubOn.le_circleAverage {v : ℂ → ℝ} {W : Set ℂ}
+    (hv : PerronSubOn v W) {x : ℂ} {r : ℝ} (hr : 0 < r)
+    (hsub : Metric.closedBall x r ⊆ W) :
+    v x ≤ Real.circleAverage v x r := by
+  have h1 : v x ≤ poissonSolution v x r x :=
+    hv.le_poissonSolution_of_mem_ball hr hsub x (mem_ball_self hr)
+  rwa [poissonSolution_apply_of_mem_ball (mem_ball_self hr),
+    poissonOperator_center hr] at h1
+
+/--
+**Local maximum propagation for comparison members**: a member of
+`PerronSubOn W` attaining its global maximum over `W` at `x` is
+constant on every closed disc `closedBall x r ⊆ W`.  Per concentric
+circle: the sub-mean inequality squeezes the circle average up to the
+maximum value, and the W1 rigidity lemma
+`eq_const_sphere_of_circleAverage_eq_of_le` upgrades the squeeze to
+pointwise equality.
+-/
+theorem PerronSubOn.eq_const_closedBall_of_le {v : ℂ → ℝ} {W : Set ℂ}
+    (hv : PerronSubOn v W) {x : ℂ} {r : ℝ}
+    (hsub : Metric.closedBall x r ⊆ W)
+    (hle : ∀ z ∈ W, v z ≤ v x) :
+    ∀ z ∈ Metric.closedBall x r, v z = v x := by
+  intro z hz
+  rcases eq_or_ne z x with rfl | hzx
+  · rfl
+  have hρ : 0 < dist z x := dist_pos.mpr hzx
+  have hρr : dist z x ≤ r := mem_closedBall.mp hz
+  have hsub' : Metric.closedBall x (dist z x) ⊆ W :=
+    (closedBall_subset_closedBall hρr).trans hsub
+  have hsph : sphere x (dist z x) ⊆ W :=
+    sphere_subset_closedBall.trans hsub'
+  have hcont : ContinuousOn v (sphere x (dist z x)) :=
+    hv.continuousOn.mono hsph
+  have h1 : v x ≤ Real.circleAverage v x (dist z x) :=
+    hv.le_circleAverage hρ hsub'
+  have h2 : Real.circleAverage v x (dist z x) ≤ v x := by
+    refine Real.circleAverage_mono_on_of_le_circle
+      (ContinuousOn.circleIntegrable hρ.le hcont) fun ζ hζ => ?_
+    rw [abs_of_pos hρ] at hζ
+    exact hle ζ (hsph hζ)
+  exact eq_const_sphere_of_circleAverage_eq_of_le hρ hcont
+    (fun ζ hζ => hle ζ (hsph hζ)) (le_antisymm h2 h1) z (mem_sphere.mpr rfl)
+
+/--
+Removing an interior point adds it to the frontier:
+`frontier (V \ {p}) = frontier V ∪ {p}` for `V` open, `p ∈ V`.
+-/
+private theorem frontier_diff_singleton {V : Set ℂ} {p : ℂ}
+    (hV : IsOpen V) (hp : p ∈ V) :
+    frontier (V \ {p}) = frontier V ∪ {p} := by
+  have hopen : IsOpen (V \ {p}) := hV.sdiff isClosed_singleton
+  have hpcl : p ∈ closure (V \ {p}) := by
+    rw [mem_closure_iff_nhdsWithin_neBot]
+    have heq : 𝓝[V \ {p}] p = 𝓝[≠] p := by
+      rw [Set.diff_eq, Set.inter_comm]
+      exact (nhdsWithin_restrict' _ (hV.mem_nhds hp)).symm
+    rw [heq]
+    exact inferInstance
+  have hclos : closure (V \ {p}) = closure V := by
+    refine Set.Subset.antisymm (closure_mono Set.diff_subset) ?_
+    refine closure_minimal ?_ isClosed_closure
+    intro w hwV
+    rcases eq_or_ne w p with rfl | hwp
+    · exact hpcl
+    · exact subset_closure ⟨hwV, hwp⟩
+  rw [hopen.frontier_eq, hV.frontier_eq, hclos]
+  ext ζ
+  simp only [Set.mem_diff, Set.mem_union, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨h1, h2⟩
+    by_cases hζp : ζ = p
+    · exact Or.inr hζp
+    · exact Or.inl ⟨h1, fun hζV => h2 ⟨hζV, hζp⟩⟩
+  · rintro (⟨h1, h2⟩ | rfl)
+    · exact ⟨h1, fun hmem => h2 hmem.1⟩
+    · exact ⟨subset_closure hp, fun hmem => hmem.2 rfl⟩
+
+/--
+ε → 0 extraction: if `a ≤ ε * K` for every positive `ε`, with `K ≥ 0`
+fixed, then `a ≤ 0`.  (Local copy — the W6 original in
+`PerronRemovableSingularity.lean` is `private`; the ℝ-flavor of
+`le_of_forall_pos_le_add` is absent from the pin.)
+-/
+private theorem nonpos_of_forall_pos_mul_le {a K : ℝ} (hK : 0 ≤ K)
+    (h : ∀ ε : ℝ, 0 < ε → a ≤ ε * K) : a ≤ 0 := by
+  rcases eq_or_lt_of_le hK with hK0 | hKpos
+  · have h1 := h 1 one_pos
+    rw [← hK0, mul_zero] at h1
+    exact h1
+  · rcases lt_or_ge 0 a with hpos | hle
+    swap
+    · exact hle
+    · exfalso
+      have hKne : K ≠ 0 := ne_of_gt hKpos
+      have h2 := h (a / (2 * K)) (by positivity)
+      have heq : a / (2 * K) * K = a / 2 := by
+        field_simp
+      rw [heq] at h2
+      linarith
+
+/--
+**Weak maximum principle for the comparison subclass, eventual-boundary
+form (W9 G2 provider).**  A `PerronSubOn` member of a bounded open
+`W ⊆ ℂ` that is eventually `≤ ε` at every frontier point (for every
+`ε > 0`) is nonpositive throughout `W`.
+
+This is the form the Green's family consumes: members are continuous on
+`W` only (not up to the closure), and their boundary control is the
+eventual trap.  Proof: for fixed `ε`, the trap sets cover the frontier
+by an open `G` with `u ≤ ε` on `G ∩ W`; off `G` the maximum over the
+compact `closure W \ G ⊆ W` is attained and — if it exceeded `ε` —
+would be the global maximum over `W`, whose level set is open by the
+member local-max propagation and closed by continuity, hence contains a
+whole connected component; the bounded component's closure exits it at
+a frontier point of `W`, where the trap on the `NeBot` within-filter
+forces the maximum `≤ ε`.  Mirrors the W1 M2 component skeleton
+(`le_zero_of_harmonicOnNhd_of_frontier_le_zero`).
+-/
+theorem PerronSubOn.le_zero_of_eventually_frontier_le {W : Set ℂ}
+    {u : ℂ → ℝ} (hW : IsOpen W) (hWb : Bornology.IsBounded W)
+    (hu : PerronSubOn u W)
+    (hfr : ∀ ζ ∈ frontier W, ∀ ε : ℝ, 0 < ε → ∀ᶠ z in 𝓝[W] ζ, u z ≤ ε) :
+    ∀ z ∈ W, u z ≤ 0 := by
+  -- the quantitative claim: u ≤ ε on W for every positive ε
+  have hmain : ∀ ε : ℝ, 0 < ε → ∀ y ∈ W, u y ≤ ε := by
+    intro ε hε y hyW
+    by_contra hy
+    rw [not_le] at hy
+    -- the trap sets, packaged as one open set ⊇ frontier W
+    set T : Set ℂ := {w : ℂ | w ∈ W → u w ≤ ε} with hT
+    have hfrT : frontier W ⊆ interior T := by
+      intro ζ hζ
+      rw [mem_interior_iff_mem_nhds]
+      have h := hfr ζ hζ ε hε
+      rw [eventually_nhdsWithin_iff] at h
+      exact Filter.eventually_iff.mp h
+    -- the off-trap core K is compact and sits inside W
+    have hKclosed : IsClosed (closure W \ interior T) :=
+      isClosed_closure.sdiff isOpen_interior
+    have hKcpt : IsCompact (closure W \ interior T) :=
+      hWb.isCompact_closure.of_isClosed_subset hKclosed Set.diff_subset
+    have hKW : closure W \ interior T ⊆ W := by
+      intro w hw
+      by_cases hwW : w ∈ W
+      · exact hwW
+      · exact absurd (hfrT (by rw [hW.frontier_eq]; exact ⟨hw.1, hwW⟩)) hw.2
+    -- the maximum over K is the global maximum over W
+    have hyK : y ∈ closure W \ interior T := by
+      refine ⟨subset_closure hyW, fun hyT => ?_⟩
+      have : u y ≤ ε := (interior_subset hyT) hyW
+      linarith
+    obtain ⟨x₀, hx₀K, hmaxK⟩ :=
+      hKcpt.exists_isMaxOn ⟨y, hyK⟩ (hu.continuousOn.mono hKW)
+    have hεm : ε < u x₀ := lt_of_lt_of_le hy (hmaxK hyK)
+    have hWle : ∀ w ∈ W, u w ≤ u x₀ := by
+      intro w hwW
+      by_cases hwT : w ∈ interior T
+      · exact le_trans ((interior_subset hwT) hwW) hεm.le
+      · exact hmaxK ⟨subset_closure hwW, hwT⟩
+    -- the maximum propagates over the whole connected component
+    have hx₀W : x₀ ∈ W := hKW hx₀K
+    set U := connectedComponentIn W x₀ with hU
+    have hUW : U ⊆ W := connectedComponentIn_subset W x₀
+    have hUopen : IsOpen U := hW.connectedComponentIn
+    have hx₀U : x₀ ∈ U := mem_connectedComponentIn hx₀W
+    set A : Set ℂ := {ζ ∈ U | u ζ = u x₀} with hA
+    have hAopen : IsOpen A := by
+      rw [Metric.isOpen_iff]
+      rintro a ⟨haU, haM⟩
+      obtain ⟨ρ', hρ'pos, hball⟩ :=
+        nhds_basis_closedBall.mem_iff.mp (hW.mem_nhds (hUW haU))
+      have hconst : ∀ ζ ∈ Metric.closedBall a ρ', u ζ = u a := by
+        refine hu.eq_const_closedBall_of_le hball fun ζ hζ => ?_
+        rw [haM]
+        exact hWle ζ hζ
+      have hballW : ball a ρ' ⊆ W := fun w hw => hball (ball_subset_closedBall hw)
+      have hpc : IsPreconnected (ball a ρ') := (convex_ball a ρ').isPreconnected
+      have hballU : ball a ρ' ⊆ U := by
+        rw [hU, connectedComponentIn_eq haU]
+        exact hpc.subset_connectedComponentIn (mem_ball_self hρ'pos) hballW
+      exact ⟨ρ', hρ'pos, fun ζ hζ =>
+        ⟨hballU hζ, (hconst ζ (ball_subset_closedBall hζ)).trans haM⟩⟩
+    have hUA : U ⊆ A := by
+      refine isPreconnected_connectedComponentIn.subset_of_closure_inter_subset
+        hAopen ⟨x₀, hx₀U, hx₀U, rfl⟩ ?_
+      rintro ζ ⟨hζcl, hζU⟩
+      haveI : (𝓝[A] ζ).NeBot := mem_closure_iff_nhdsWithin_neBot.mp hζcl
+      have hAW : A ⊆ W := fun w hw => hUW hw.1
+      have h1 : Tendsto u (𝓝[A] ζ) (𝓝 (u ζ)) :=
+        ((hu.continuousOn ζ (hUW hζU)).mono hAW).tendsto
+      have h2 : Tendsto u (𝓝[A] ζ) (𝓝 (u x₀)) := by
+        refine Tendsto.congr' ?_ tendsto_const_nhds
+        filter_upwards [self_mem_nhdsWithin] with w hw
+        exact hw.2.symm
+      exact ⟨hζU, tendsto_nhds_unique h1 h2⟩
+    -- the bounded component is not clopen, so its closure leaves it ...
+    obtain ⟨ζ, hζcl, hζU⟩ : ∃ ζ, ζ ∈ closure U ∧ ζ ∉ U := by
+      by_contra h
+      push Not at h
+      rcases isClopen_iff.mp ⟨isClosed_of_closure_subset h, hUopen⟩ with h0 | huniv
+      · exact (h0 ▸ hx₀U : x₀ ∈ (∅ : Set ℂ)).elim
+      · exact NormedSpace.unbounded_univ ℝ ℂ (huniv ▸ hWb.subset hUW)
+    -- ... and the exit point is outside W, hence on the frontier
+    have hζW : ζ ∉ W := by
+      intro hζW
+      obtain ⟨w', hw'C, hw'U⟩ :=
+        mem_closure_iff.mp hζcl _ hW.connectedComponentIn
+          (mem_connectedComponentIn hζW)
+      apply hζU
+      have hUeq : connectedComponentIn W x₀ = connectedComponentIn W ζ :=
+        (connectedComponentIn_eq hw'U).trans (connectedComponentIn_eq hw'C).symm
+      rw [hU, hUeq]
+      exact mem_connectedComponentIn hζW
+    have hζfr : ζ ∈ frontier W := by
+      rw [hW.frontier_eq]
+      exact ⟨closure_mono hUW hζcl, hζW⟩
+    -- the trap meets the maximum value on a NeBot within-filter
+    haveI : (𝓝[U] ζ).NeBot := mem_closure_iff_nhdsWithin_neBot.mp hζcl
+    have h1 : ∀ᶠ w in 𝓝[U] ζ, u w ≤ ε :=
+      (hfr ζ hζfr ε hε).filter_mono (nhdsWithin_mono ζ hUW)
+    have h2 : ∀ᶠ w in 𝓝[U] ζ, u w = u x₀ := by
+      filter_upwards [self_mem_nhdsWithin] with w hw
+      exact (hUA hw).2
+    obtain ⟨w, hw1, hw2⟩ := (h1.and h2).exists
+    rw [hw2] at hw1
+    linarith
+  -- ε → 0
+  intro z hz
+  by_contra h
+  rw [not_le] at h
+  have := hmain (u z / 2) (by linarith) z hz
+  linarith
+
+/-!
+## The G3–G4 frontier (declared sorries, priced in the W9 lane plan)
+
+Three statements remain open after G2: the Poisson-modification
+capability and the off-pole harmonicity (G3, the latter conditional on
+the W7-ii obligation), and the W6-germ corollary (G4).  All are
+assemblies over landed surfaces.
 -/
 
 /--
@@ -278,24 +552,117 @@ surfaces.
 profile").**  Every member is bounded by the truncated log cap plus a
 single member-independent constant, on all of `V \ {p}` — the two-zone
 §3.3 bound (`v ≤ -ℓ_p + C` on the disc, `v ≤ C'` off it) in one
-formula.  With `V ⊆ ball p R₀`, the classical comparison gives
-`v ≤ log R₀ - log ‖· - p‖`, i.e. the cap with `C = log (R₀/ρ)`.
-Downstream: `greensFamily_bddAbove`, the profile upper half, and the
-W7 `hbdd` field.
+formula.  With `V ⊆ ball p R₀`, the comparison gives
+`v ≤ log R₀ - log ‖· - p‖`, i.e. the cap with `C = log R₀ - log ρ`.
+
+The member-dependent pole constant washes out by a `θ → 0` device (no
+annuli needed): for `θ > 0` the harmonic shift
+`v + logCup p R₀ (-(1+θ))` is again a member of the comparison
+subclass, and near the pole the extra `θ log ‖· - p‖ → -∞` swallows
+the member's cap, so the eventual-boundary maximum principle applies
+on all of `V \ {p}` at once; letting `θ → 0` leaves the
+member-independent bound.  Downstream: `greensFamily_bddAbove`, the
+profile upper half, and the W7 `hbdd` field.
 -/
 theorem greensFamily_le_truncatedLogCap_add {V : Set ℂ} {p : ℂ} {ρ : ℝ}
     (hV : IsOpen V) (hVb : Bornology.IsBounded V) (hρ : 0 < ρ)
     (hsub : Metric.closedBall p ρ ⊆ V) :
     ∃ C : ℝ, ∀ v ∈ greensFamily V p, ∀ z ∈ V \ {p},
       v z ≤ truncatedLogCap p ρ z + C := by
-  sorry
+  -- an outer radius R₀ > ρ with V ⊆ ball p R₀
+  obtain ⟨R₁, hR₁⟩ := hVb.subset_ball p
+  set R₀ : ℝ := max R₁ (ρ + 1) with hR₀def
+  have hVR₀ : V ⊆ ball p R₀ := hR₁.trans (ball_subset_ball (le_max_left _ _))
+  have hρR₀ : ρ < R₀ := lt_of_lt_of_le (lt_add_one ρ) (le_max_right _ _)
+  have hp_in : p ∈ V := hsub (mem_closedBall_self hρ.le)
+  have hWopen : IsOpen (V \ {p}) := hV.sdiff isClosed_singleton
+  have hWb : Bornology.IsBounded (V \ {p}) := hVb.subset Set.diff_subset
+  refine ⟨Real.log R₀ - Real.log ρ, ?_⟩
+  rintro v ⟨hvS, hvF, Cv, hvC⟩ z hzVp
+  -- the member-independent comparison, for every positive weight excess θ
+  have hθbound : ∀ θ : ℝ, 0 < θ → ∀ w ∈ V \ {p},
+      v w ≤ (1 + θ) * (Real.log R₀ - Real.log ‖w - p‖) := by
+    intro θ hθpos
+    set g : ℂ → ℝ := fun w => v w + logCup p R₀ (-(1 + θ)) w with hg
+    have hgS : PerronSubOn g (V \ {p}) :=
+      hvS.add_harmonicOnNhd
+        ((logCup_harmonicOnNhd p R₀ (-(1 + θ))).mono fun w hw => hw.2)
+    -- the eventual boundary trap for the shifted member
+    have hgfr : ∀ ζ ∈ frontier (V \ {p}), ∀ ε : ℝ, 0 < ε →
+        ∀ᶠ w in 𝓝[V \ {p}] ζ, g w ≤ ε := by
+      rw [frontier_diff_singleton hV hp_in]
+      rintro ζ (hζfr | hζp) ε hε
+      · -- old frontier points: v's own trap; the shift is nonpositive on V \ {p}
+        have hsh : ∀ w ∈ V \ {p}, logCup p R₀ (-(1 + θ)) w ≤ 0 := by
+          intro w hw
+          have hwpos : 0 < ‖w - p‖ := by
+            simpa [norm_pos_iff] using sub_ne_zero.mpr (hw.2 : w ≠ p)
+          have hwlt : ‖w - p‖ < R₀ := by
+            rw [← dist_eq_norm]
+            exact mem_ball.mp (hVR₀ hw.1)
+          have hlog : Real.log ‖w - p‖ ≤ Real.log R₀ :=
+            Real.log_le_log hwpos hwlt.le
+          have hcup : logCup p R₀ (-(1 + θ)) w
+              = -(1 + θ) * (Real.log R₀ - Real.log ‖w - p‖) := rfl
+          rw [hcup]
+          nlinarith
+        filter_upwards [hvF ζ hζfr ε hε, eventually_mem_nhdsWithin]
+          with w hw1 hw2
+        have := hsh w hw2
+        simp only [hg]
+        linarith
+      · -- the pole: the member cap plus θ·log ‖·-p‖ → -∞
+        rw [Set.mem_singleton_iff] at hζp
+        rw [hζp]
+        have hmono : 𝓝[V \ {p}] p ≤ 𝓝[≠] p :=
+          nhdsWithin_mono p fun w hw => hw.2
+        have hev := eventually_le_logCup (c := p) (r := R₀) hθpos
+          (θ * Real.log R₀ - (ε - Cv + (1 + θ) * Real.log R₀))
+        filter_upwards [hvC.filter_mono hmono, hev.filter_mono hmono]
+          with w hw1 hw2
+        have hw2' : θ * Real.log R₀
+            - (ε - Cv + (1 + θ) * Real.log R₀)
+            ≤ θ * (Real.log R₀ - Real.log ‖w - p‖) := by
+          simpa [logCup] using hw2
+        have hexp : g w = (v w + Real.log ‖w - p‖)
+            + θ * Real.log ‖w - p‖ - (1 + θ) * Real.log R₀ := by
+          simp only [hg, logCup]
+          ring
+        rw [hexp]
+        nlinarith
+    -- the eventual-boundary maximum principle on the punctured domain
+    have hg0 : ∀ w ∈ V \ {p}, g w ≤ 0 :=
+      hgS.le_zero_of_eventually_frontier_le hWopen hWb hgfr
+    intro w hw
+    have h0 := hg0 w hw
+    have hcup : logCup p R₀ (-(1 + θ)) w
+        = -((1 + θ) * (Real.log R₀ - Real.log ‖w - p‖)) := by
+      simp only [logCup]
+      ring
+    simp only [hg, hcup] at h0
+    linarith
+  -- θ → 0 at the fixed point z
+  have hzpos : 0 < ‖z - p‖ := by
+    simpa [norm_pos_iff] using sub_ne_zero.mpr (hzVp.2 : z ≠ p)
+  have hzlt : ‖z - p‖ < R₀ := by
+    rw [← dist_eq_norm]
+    exact mem_ball.mp (hVR₀ hzVp.1)
+  have hK : 0 ≤ Real.log R₀ - Real.log ‖z - p‖ :=
+    sub_nonneg.mpr (Real.log_le_log hzpos hzlt.le)
+  have hkey : v z - (Real.log R₀ - Real.log ‖z - p‖) ≤ 0 := by
+    refine nonpos_of_forall_pos_mul_le hK fun θ hθpos => ?_
+    have h := hθbound θ hθpos z hzVp
+    nlinarith
+  -- the cap dominates the comparison bound pointwise
+  have h1 : Real.log ρ - Real.log ‖z - p‖ ≤ truncatedLogCap p ρ z := by
+    rw [← logCup_one_apply p ρ z]
+    exact le_max_left _ _
+  linarith
 
 /--
 Pointwise boundedness of the family — the `hbdd` discharger for
 `greensCandidate_nonneg`, `log_le_greensCandidate_add_log`, and the
-W7 envelope hypotheses.  Direct-sorry-free assembly over the G2 cap
-(probes `sorryAx` through `greensFamily_le_truncatedLogCap_add` until
-G2 lands).
+W7 envelope hypotheses.  Assembly over the G2 cap.
 -/
 theorem greensFamily_bddAbove {V : Set ℂ} {p : ℂ} {ρ : ℝ}
     (hV : IsOpen V) (hVb : Bornology.IsBounded V) (hρ : 0 < ρ)
@@ -337,7 +704,36 @@ theorem greensCandidate_pole_profile {V : Set ℂ} {p : ℂ} {ρ : ℝ}
     (hsub : Metric.closedBall p ρ ⊆ V) :
     ∃ C : ℝ, ∀ᶠ z in 𝓝[≠] p,
       |greensCandidate V p z + Real.log ‖z - p‖| ≤ C := by
-  sorry
+  obtain ⟨C, hC⟩ := greensFamily_le_truncatedLogCap_add hV hVb hρ hsub
+  have hbdd := greensFamily_bddAbove hV hVb hρ hsub
+  refine ⟨max (Real.log ρ + C) (-Real.log ρ), ?_⟩
+  have hball : ∀ᶠ z in 𝓝 p, z ∈ ball p ρ :=
+    isOpen_ball.eventually_mem (mem_ball_self hρ)
+  filter_upwards [log_le_greensCandidate_add_log hV hρ hsub hbdd,
+    hball.filter_mono nhdsWithin_le_nhds, eventually_mem_nhdsWithin]
+    with z hlow hzball hzne
+  have hzp : z ≠ p := hzne
+  have hzV : z ∈ V \ {p} := ⟨hsub (ball_subset_closedBall hzball), hzp⟩
+  have hzρ : ‖z - p‖ ≤ ρ := by
+    rw [← dist_eq_norm]
+    exact (Metric.mem_ball.mp hzball).le
+  have hcup : 0 ≤ logCup p ρ 1 z := logCup_nonneg one_pos.le hzp hzρ
+  have hcap : truncatedLogCap p ρ z = Real.log ρ - Real.log ‖z - p‖ := by
+    show max (logCup p ρ 1 z) 0 = _
+    rw [max_eq_left hcup, logCup_one_apply]
+  -- the upper half: every member is below the cap, so the envelope is
+  have hup : greensCandidate V p z
+      ≤ Real.log ρ - Real.log ‖z - p‖ + C :=
+    perronEnvelope_le greensFamily_nonempty fun v hv =>
+      (hC v hv z hzV).trans_eq (by rw [hcap])
+  rw [abs_le]
+  constructor
+  · have h2 : -Real.log ρ ≤ max (Real.log ρ + C) (-Real.log ρ) :=
+      le_max_right _ _
+    linarith
+  · have h2 : Real.log ρ + C ≤ max (Real.log ρ + C) (-Real.log ρ) :=
+      le_max_left _ _
+    linarith
 
 /--
 **Off-pole harmonicity (G3, §3.3 "harmonic" via Perron's lemma).**  The

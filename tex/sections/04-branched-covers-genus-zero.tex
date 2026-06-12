@@ -2608,36 +2608,73 @@ the G2 cap).
 \leanok
 \end{lemma}
 
-\begin{lemma}[Green's candidate: cap, modification, profile, harmonicity, germ (open)]
-\label{lem:perron-greens-candidate-pole-profile}
-\uses{def:perron-greens-family, lem:perron-greens-family-basics, lem:perron-sub-on-poisson-modify, lem:m4-poisson-solution, lem:harmonic-disc-comparison, lem:perron-envelope-center-touch, lem:w1-weak-max-principle}
-The W9 frontier statements (slices G2–G4).  \emph{Uniform upper cap}
-(G2): every member satisfies
+\begin{lemma}[Comparison-subclass maximum principle, eventual-boundary form]
+\label{lem:perron-sub-on-max-principle}
+\uses{def:perron-sub-on, lem:perron-sub-on-poisson-modify, lem:m4-poisson-solution, lem:w1-weak-max-principle}
+A \(\texttt{PerronSubOn}\) member of a bounded open \(W \subseteq \mathbb{C}\)
+that is eventually \(\le \varepsilon\) at every frontier point (for
+every \(\varepsilon > 0\)) is nonpositive throughout \(W\) — the W9 G2
+provider.  The landed W1 form does not apply (members are continuous on
+\(W\) only, and the boundary control is eventual), but its M2 component
+skeleton transfers: the harmonic mean-value property is replaced by the
+\emph{Poisson sub-mean inequality} for members
+(\(v(x) \le \texttt{circleAverage}\,v\,x\,r\), from the W5b-iii
+comparison half evaluated at the center, where the Poisson kernel is
+constantly \(1\)), the W1 averaging rigidity upgrades the squeeze at an
+interior maximum to constancy on concentric circles, and the bounded
+connected component of the maximum exits at a frontier point whose trap
+bounds the maximum by \(\varepsilon\) on a \texttt{NeBot}
+within-filter.  Helpers: the center normalization
+\(\texttt{poissonOperator\_center}\), the member local-max propagation,
+and \(\operatorname{frontier}(V \setminus \{p\}) =
+\operatorname{frontier} V \cup \{p\}\).
+\lean{JacobianChallenge.HolomorphicForms.poissonOperator_center, JacobianChallenge.HolomorphicForms.PerronSubOn.le_circleAverage, JacobianChallenge.HolomorphicForms.PerronSubOn.eq_const_closedBall_of_le, JacobianChallenge.HolomorphicForms.PerronSubOn.le_zero_of_eventually_frontier_le}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Green's candidate: uniform cap and two-sided pole profile]
+\label{lem:perron-greens-candidate-cap-profile}
+\uses{def:perron-greens-family, lem:perron-greens-family-basics, lem:perron-sub-on-max-principle, lem:perron-sub-on-add-harmonic, lem:w6-log-cup}
+The W9 G2 payload.  \emph{Uniform upper cap}: every member satisfies
 \(v \le \texttt{truncatedLogCap}\,p\,\rho + C\) on \(V \setminus \{p\}\)
-with one member-independent constant — §3.3's two-zone bound in one
-formula; with \(V \subseteq B(p, R_0)\), the punctured-disc comparison
-against \(\varepsilon + (C_v - \log\delta)\,(\log R_0 - \log\lVert\cdot-p\rVert)/\log(R_0/\delta)\)
-washes out the member-dependent cap as \(\delta \to 0\), leaving
-\(C = \log(R_0/\rho)\); pointwise boundedness of the family follows
-(\texttt{greensFamily\_bddAbove}, already assembled).  \emph{Poisson
+with the member-independent constant \(C = \log R_0 - \log\rho\), where
+\(V \subseteq B(p, R_0)\).  The member-dependent pole constant washes
+out by a \(\theta \to 0\) device with no annuli: for \(\theta > 0\) the
+harmonic shift \(v + \texttt{logCup}\,p\,R_0\,(-(1+\theta))\) is again
+a member (W5b closure under harmonic shifts), near the pole the excess
+\(\theta\log\lVert\cdot - p\rVert \to -\infty\) swallows the member's
+cap, so the eventual-boundary maximum principle applies on all of
+\(V \setminus \{p\}\); letting \(\theta \to 0\) leaves
+\(v \le \log R_0 - \log\lVert\cdot - p\rVert\).  Pointwise boundedness
+of the family follows (\texttt{greensFamily\_bddAbove}).
+\emph{Two-sided pole profile}:
+\(|\texttt{greensCandidate}\,V\,p + \log\lVert\cdot - p\rVert| \le C'\)
+eventually at \(p\) — the lower half is the G1 basics (the explicit
+member), the upper half is the cap through
+\(\texttt{perronEnvelope\_le}\).
+\lean{JacobianChallenge.HolomorphicForms.greensFamily_le_truncatedLogCap_add, JacobianChallenge.HolomorphicForms.greensFamily_bddAbove, JacobianChallenge.HolomorphicForms.greensCandidate_pole_profile}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Green's candidate: modification, harmonicity, germ (open)]
+\label{lem:perron-greens-candidate-pole-profile}
+\uses{def:perron-greens-family, lem:perron-greens-family-basics, lem:perron-greens-candidate-cap-profile, lem:perron-sub-on-poisson-modify, lem:m4-poisson-solution, lem:harmonic-disc-comparison, lem:perron-envelope-center-touch, lem:w1-weak-max-principle}
+The remaining W9 frontier statements (slices G3–G4).  \emph{Poisson
 modification} (G3): on a disc \(\overline{B}(c, R) \subseteq V \setminus \{p\}\)
 the M4 modification of a member is a dominating member — the comparison
 clause is the landed W5b-iii membership, the boundary and pole clauses
 ride the seam (the modification equals the member off the compact
-modification disc).  \emph{Two-sided pole profile} (G2):
-\(|\texttt{greensCandidate}\,V\,p + \log\lVert\cdot - p\rVert| \le C\)
-eventually at \(p\) — lower half landed in the basics, upper half from
-the cap through \(\texttt{perronEnvelope\_le}\).  \emph{Off-pole
-harmonicity} (G3): conditional on the W7-ii obligation
-\(\texttt{PerronEnvelopeHarmonicInput}\) (W7-i's exact hypothesis list,
-conclusion upgraded to harmonic-throughout; jc11's lane discharges it
-by thin adapter), instantiated on comparison discs inside the punctured
-domain.  \emph{W6 germ} (G4): the shifted candidate is harmonic and
-bounded on a punctured disc, so the removable-singularity surface
+modification disc).  \emph{Off-pole harmonicity} (G3): conditional on
+the W7-ii obligation \(\texttt{PerronEnvelopeHarmonicInput}\) (W7-i's
+exact hypothesis list, conclusion upgraded to harmonic-throughout;
+jc11's lane discharges it by thin adapter), instantiated on comparison
+discs inside the punctured domain.  \emph{W6 germ} (G4): the shifted
+candidate is harmonic and bounded on a punctured disc, so the
+removable-singularity surface
 (\texttt{exists\_tendsto\_of\_bounded\_punctured}, with the discharged
 W1/W3 inputs) gives the limit at the pole — the germ datum the W10
 stage assembly consumes at \(P_0\)/\(P_\infty\).
-\lean{JacobianChallenge.HolomorphicForms.greensFamily_le_truncatedLogCap_add, JacobianChallenge.HolomorphicForms.greensFamily_bddAbove, JacobianChallenge.HolomorphicForms.greensFamily_poissonModificationInput, JacobianChallenge.HolomorphicForms.greensCandidate_pole_profile, JacobianChallenge.HolomorphicForms.PerronEnvelopeHarmonicInput, JacobianChallenge.HolomorphicForms.greensCandidate_harmonicOnNhd_off_pole, JacobianChallenge.HolomorphicForms.greensCandidate_add_log_tendsto}
+\lean{JacobianChallenge.HolomorphicForms.greensFamily_poissonModificationInput, JacobianChallenge.HolomorphicForms.PerronEnvelopeHarmonicInput, JacobianChallenge.HolomorphicForms.greensCandidate_harmonicOnNhd_off_pole, JacobianChallenge.HolomorphicForms.greensCandidate_add_log_tendsto}
 \end{lemma}
 
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
