@@ -248,4 +248,113 @@ theorem isLocalHomeomorph_germProj (u : X → ℝ) :
   obtain ⟨v, N, hvN, hpN, hpv⟩ := p.2.2
   exact ⟨germSectionOpenPartialHomeomorph hvN p, ⟨hpN, hpv⟩, rfl⟩
 
+/-- Adding a real constant preserves the conjugate predicate: from the
+existing `add_const_const` with `α := 0`, stripping `u + 0` by eventual
+equality. -/
+lemma IsHarmonicConjugateAtReal.add_const
+    {u v : X → ℝ} {x : X}
+    (h : IsHarmonicConjugateAtReal X u v x) (c : ℝ) :
+    IsHarmonicConjugateAtReal X u (fun z => v z + c) x := by
+  refine (h.add_const_const 0 c).congr_of_eventuallyEq
+    (Filter.Eventually.of_forall fun z => add_zero (u z))
+    (Filter.Eventually.of_forall fun _ => rfl)
+
+/-- Section data are stable under constant shifts of the conjugate. -/
+lemma IsLocalConjugateOn.add_const {u v : X → ℝ} {N : Set X}
+    (h : IsLocalConjugateOn u v N) (c : ℝ) :
+    IsLocalConjugateOn u (fun z => v z + c) N :=
+  ⟨h.1, fun y hy => (h.2 y hy).add_const c⟩
+
+/-- Restriction of a section datum to an open subset. -/
+lemma IsLocalConjugateOn.mono {u v : X → ℝ} {N P : Set X}
+    (h : IsLocalConjugateOn u v N) (hP : IsOpen P) (hPN : P ⊆ N) :
+    IsLocalConjugateOn u v P :=
+  ⟨hP, fun y hy => h.2 y (hPN hy)⟩
+
+/-- Fiber classification over a conjugate neighborhood (the shared W4
+lemma): every germ-space point over `N` carries the germ of `v` plus a
+real constant.  The point's own datum `(w, M)` and `v` are both
+conjugates on a preconnected open `P ∋ q.1` inside `N ∩ M` (local
+path-connectivity of charted spaces), where W1b's constant-difference
+theorem makes `w = v + c`. -/
+lemma germ_eq_section_add_const
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    {u v : X → ℝ} {N : Set X} (hN : IsLocalConjugateOn u v N)
+    {q : ConjugateGermSpace X u} (hq : q.1 ∈ N) :
+    ∃ c : ℝ, q.2.1
+      = ((fun z => v z + c : X → ℝ) : Filter.Germ (nhds q.1) ℝ) := by
+  obtain ⟨w, M, hwM, hqM, hgw⟩ := q.2.2
+  haveI : LocPathConnectedSpace X :=
+    ChartedSpace.locPathConnectedSpace (H := ℂ) (M := X)
+  obtain ⟨P, hPsub, hP_open, hqP, hP_conn⟩ :=
+    locallyConnectedSpace_iff_subsets_isOpen_isConnected.mp inferInstance
+      q.1 (N ∩ M) (((hN.1.inter hwM.1)).mem_nhds ⟨hq, hqM⟩)
+  obtain ⟨c, hc⟩ := isHarmonicConjugateAtReal_sub_eq_const_on_X
+    hP_open hP_conn.isPreconnected
+    (fun y hy => hN.2 y (hPsub hy).1)
+    (fun y hy => hwM.2 y (hPsub hy).2)
+  refine ⟨c, ?_⟩
+  rw [hgw]
+  refine Filter.Germ.coe_eq.mpr ?_
+  filter_upwards [hP_open.mem_nhds hqP] with y hy
+  exact hc y hy
+
+/-- Sheets carried by conjugates differing by a nonzero constant are
+disjoint: a common point's germ equality evaluates at its own base point
+(`Filter.Germ.value`) to `v y = v y + c`. -/
+lemma germSectionImage_disjoint_add_const {u v : X → ℝ} {N : Set X}
+    {c : ℝ} (hc : c ≠ 0) :
+    Disjoint (germSectionImage u v N)
+      (germSectionImage u (fun z => v z + c) N) := by
+  rw [Set.disjoint_left]
+  rintro q ⟨_, hqv⟩ ⟨_, hqvc⟩
+  have heq : ((v : X → ℝ) : Filter.Germ (nhds q.1) ℝ)
+      = ((fun z => v z + c : X → ℝ) : Filter.Germ (nhds q.1) ℝ) :=
+    hqv.symm.trans hqvc
+  have hval := congrArg Filter.Germ.value heq
+  rw [Filter.Germ.value_ofFun, Filter.Germ.value_ofFun] at hval
+  exact hc (by linarith)
+
+/-- W4a capstone: the étale projection of the conjugate-germ space is a
+separated map.  Two distinct points over the same base have distinct
+germs; classifying the second against the first's section datum on a
+preconnected open `P` exhibits it as `v₁ + c` with `c ≠ 0`, and the two
+sheets over `P` are disjoint open neighborhoods. -/
+theorem isSeparatedMap_germProj
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (u : X → ℝ) :
+    IsSeparatedMap (germProj u) := by
+  rintro ⟨x₁, g₁⟩ ⟨x₂, g₂⟩ heq hne
+  have hx : x₁ = x₂ := heq
+  subst hx
+  obtain ⟨v₁, N₁, hv₁, hxN₁, hgv₁⟩ := g₁.2
+  obtain ⟨v₂, N₂, hv₂, hxN₂, hgv₂⟩ := g₂.2
+  haveI : LocPathConnectedSpace X :=
+    ChartedSpace.locPathConnectedSpace (H := ℂ) (M := X)
+  obtain ⟨P, hPsub, hP_open, hxP, hP_conn⟩ :=
+    locallyConnectedSpace_iff_subsets_isOpen_isConnected.mp inferInstance
+      x₁ (N₁ ∩ N₂) ((hv₁.1.inter hv₂.1).mem_nhds ⟨hxN₁, hxN₂⟩)
+  have hv₁P : IsLocalConjugateOn u v₁ P :=
+    hv₁.mono hP_open (fun y hy => (hPsub hy).1)
+  -- Classify the second germ against `(v₁, P)`.
+  obtain ⟨c, hc⟩ := germ_eq_section_add_const hv₁P
+    (q := ⟨x₁, g₂⟩) hxP
+  -- `c ≠ 0`, else the two carrier points coincide.
+  have hc0 : c ≠ 0 := by
+    intro hc0
+    apply hne
+    have hfun : (fun z => v₁ z + c) = v₁ := by
+      funext z
+      rw [hc0, add_zero]
+    rw [hfun] at hc
+    -- both germs equal `↑v₁`
+    have : g₁ = g₂ := Subtype.ext (hgv₁.trans hc.symm)
+    rw [this]
+  refine ⟨germSectionImage u v₁ P,
+    germSectionImage u (fun z => v₁ z + c) P,
+    isOpen_germSectionImage hv₁P,
+    isOpen_germSectionImage (hv₁P.add_const c),
+    ⟨hxP, hgv₁⟩, ⟨hxP, hc⟩,
+    germSectionImage_disjoint_add_const hc0⟩
+
 end JacobianChallenge.HolomorphicForms
