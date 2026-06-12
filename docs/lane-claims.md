@@ -9,7 +9,7 @@ yet. Updated by the manager when allocations change.
 ## B2 toolbox (docs/perron-b2-dirichlet-phase0.md §4)
 | Item | Owner | State |
 |------|-------|-------|
-| W1 max principle | jc3 | REROUTED 2026-06-11 (jc10 seat never launched), in flight — discharge target: `WeakMaxPrincipleInput` (PerronRemovableSingularity.lean), name+statement FROZEN (3 consumers: W5b-i 527fe1f9, W5b-ii 744a3797, W6 15c4d181) |
+| W1 max principle | jc3 | COMPLETE (3a3f3cb7 + 3ac5dd91, reviewed) — `weakMaxPrincipleInput_holds` DISCHARGES the frozen obligation; adapter sweeps live in consuming lanes |
 | W2 harmonic∘analytic | jc3 | GREEN (577fec05) |
 | W3a–c Poisson operator (incl. the def) | jc6 | GREEN (bdf63495 + c5863c83) |
 | W3d boundary limit (continuous data) | jc6 | COMPLETE (cddd61be, 99674a57, 64311525, 8c67fcef) — poissonSolution surface frozen |
