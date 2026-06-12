@@ -179,4 +179,36 @@ theorem conjugateReady
 
 end StageOneCutGeometry
 
+/--
+Assemble a marked cut system from a sequence of already-packaged one-stage cut
+geometries and the remaining global compatibility hypotheses.
+-/
+def stageMarkedCutSystem_of_stageOneCutGeometry_sequence
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {e : X ≃ₜ OnePoint ℂ}
+    (marked : GenusZeroStageMarkedData X e)
+    {selected : StageSelectedCompactFamily X}
+    (exhaustion : StageBorderedExhaustion X selected)
+    (Gs : (n : ℕ) → StageOneCutGeometry X (exhaustion.stage n))
+    (hcontains :
+      ∀ i, ∀ᶠ n in atTop, selected.compact i ⊆ (Gs n).cutDomain)
+    (havoids :
+      ∀ i, ∀ᶠ n in atTop, Disjoint (selected.compact i) (Gs n).cutSet)
+    (hready : ∀ n, StageConjugateReady X (Gs n).cutDomain)
+    (hP0 : ∀ n, marked.P0 ∉ (Gs n).cutDomain)
+    (hPinf : ∀ n, marked.Pinf ∉ (Gs n).cutDomain)
+    (hbase : ∀ᶠ n in atTop, marked.base ∈ (Gs n).cutDomain) :
+    StageMarkedCutSystem X marked selected exhaustion :=
+  { cutDomain := fun n => (Gs n).cutDomain
+    cutSet := fun n => (Gs n).cutSet
+    cutDomain_subset_stage := fun n => (Gs n).cutDomain_subset_stage
+    cutSet_subset_stage := fun n => (Gs n).cutSet_subset_stage
+    cutDomain_disjoint_cutSet := fun n => (Gs n).cutDomain_disjoint_cutSet
+    eventually_contains_selected := hcontains
+    cuts_avoid_selected_eventually := havoids
+    conjugateReady := hready
+    P0_notMem_cutDomain := hP0
+    Pinf_notMem_cutDomain := hPinf
+    eventually_base_mem := hbase }
+
 end JacobianChallenge.HolomorphicForms
