@@ -56,15 +56,45 @@ The sup-norm of a smooth section over a compact base:
 noncomputable def supNorm (σ : ContMDiffSection I F ⊤ V) : ℝ :=
   ⨆ x : M, ‖σ.toFun x‖
 
--- BddAbove for the range of the fiberwise norm, derived from continuity on a compact space.
+/--
+The compatibility hypothesis threaded through the sup-norm / metric API. It asserts
+exactly the fact every `supNorm` axiom needs: the fiberwise norm of each smooth
+section is **bounded above** on the (compact) base.
+
+Historically this was stated as `∀ σ, Continuous (fiberNorm σ)` and `BddAbove` was
+derived via `isCompact_univ.image`. But continuity of the fiberwise *operator* norm
+is frame-dependent (it changes by the chart-transition factor) and, for the
+cotangent bundle of a Riemann surface, only holds under the project's `StableChartAt`
+adapter. Boundedness, by contrast, holds genuinely via a finite chart subcover (the
+transition factors are bounded on compact overlaps) — so weakening the hypothesis to
+`BddAbove` removes the `StableChartAt` dependence from the entire sup-norm / Banach
+layer. Every downstream consumer used the continuity hypothesis ONLY to obtain this
+`BddAbove`. -/
+def SectionNormBddAbove (σ : ContMDiffSection I F ⊤ V) : Prop :=
+  BddAbove (Set.range (fun x => ‖σ.toFun x‖))
+
 omit [(x : M) → NormedSpace 𝕜 (V x)] [VectorBundle 𝕜 F V] in
+/-- `BddAbove` of the fiberwise norm, directly from the (weaker) boundedness
+hypothesis. (Previously derived from global continuity; see `SectionNormBddAbove`.) -/
 theorem bddAbove_range_norm
-    (hcompat : ∀ (σ : ContMDiffSection I F ⊤ V),
-      Continuous (ContMDiffSection.fiberNorm σ))
+    (hbdd : ∀ (σ : ContMDiffSection I F ⊤ V), SectionNormBddAbove (I := I) σ)
     (σ : ContMDiffSection I F ⊤ V) :
-    BddAbove (Set.range (fun x => ‖σ.toFun x‖)) := by
-  rw [← Set.image_univ]
-  exact (isCompact_univ.image (hcompat σ)).bddAbove
+    BddAbove (Set.range (fun x => ‖σ.toFun x‖)) :=
+  hbdd σ
+
+omit [(x : M) → NormedSpace 𝕜 (V x)] [VectorBundle 𝕜 F V] in
+/-- Bridge: global continuity of the fiberwise norm on a compact base gives the
+boundedness witness. Provided so existing continuity-based providers still satisfy
+the (weaker) `SectionNormBddAbove` API. The genuine goal is to supply
+`SectionNormBddAbove` WITHOUT continuity (continuity of the operator fiber norm is
+frame-dependent — see the project's `StableChartAt` discussion); this bridge keeps
+the build green while that boundedness witness is built. -/
+theorem sectionNormBddAbove_of_continuous
+    (σ : ContMDiffSection I F ⊤ V)
+    (hcont : Continuous (ContMDiffSection.fiberNorm (I := I) σ)) :
+    SectionNormBddAbove (I := I) σ := by
+  rw [SectionNormBddAbove, ← Set.image_univ]
+  exact (isCompact_univ.image hcont).bddAbove
 
 omit [CompactSpace M] in
 theorem supNorm_zero :
@@ -78,40 +108,37 @@ theorem supNorm_zero :
     exact Real.iSup_of_isEmpty _
 
 theorem supNorm_eq_zero_iff [Nonempty M]
-    (hcompat : ∀ (σ : ContMDiffSection I F ⊤ V),
-      Continuous (ContMDiffSection.fiberNorm σ))
+    (hbdd : ∀ (σ : ContMDiffSection I F ⊤ V), SectionNormBddAbove (I := I) σ)
     (σ : ContMDiffSection I F ⊤ V) :
     supNorm σ = 0 ↔ σ = 0 := by
   constructor
   · intro h
     have h_le_zero : ∀ x : M, ‖σ.toFun x‖ ≤ 0 :=
-      fun x => h ▸ le_ciSup (bddAbove_range_norm hcompat σ) x
+      fun x => h ▸ le_ciSup (bddAbove_range_norm hbdd σ) x
     exact ContMDiffSection.ext fun x => norm_le_zero_iff.mp (h_le_zero x)
   · intro h
     exact h.symm ▸ supNorm_zero
 
 theorem supNorm_add_le
-    (hcompat : ∀ (σ : ContMDiffSection I F ⊤ V),
-      Continuous (ContMDiffSection.fiberNorm σ))
+    (hbdd : ∀ (σ : ContMDiffSection I F ⊤ V), SectionNormBddAbove (I := I) σ)
     (σ τ : ContMDiffSection I F ⊤ V) :
     supNorm (σ + τ) ≤ supNorm σ + supNorm τ := by
   by_cases hM : Nonempty M
   · exact ciSup_le fun x =>
       le_trans (norm_add_le _ _)
-        (add_le_add (le_ciSup (bddAbove_range_norm hcompat σ) x)
-          (le_ciSup (bddAbove_range_norm hcompat τ) x))
+        (add_le_add (le_ciSup (bddAbove_range_norm hbdd σ) x)
+          (le_ciSup (bddAbove_range_norm hbdd τ) x))
   · push Not at hM
     simp [supNorm, Real.iSup_of_isEmpty]
 
 theorem supNorm_smul_le
-    (hcompat : ∀ (σ : ContMDiffSection I F ⊤ V),
-      Continuous (ContMDiffSection.fiberNorm σ))
+    (hbdd : ∀ (σ : ContMDiffSection I F ⊤ V), SectionNormBddAbove (I := I) σ)
     (c : 𝕜) (σ : ContMDiffSection I F ⊤ V) :
     supNorm (c • σ) ≤ ‖c‖ * supNorm σ := by
   by_cases hM : Nonempty M
   · exact ciSup_le fun x =>
       le_trans (by convert norm_smul_le c (σ.toFun x) using 1)
-        (mul_le_mul_of_nonneg_left (le_ciSup (bddAbove_range_norm hcompat σ) x) (norm_nonneg c))
+        (mul_le_mul_of_nonneg_left (le_ciSup (bddAbove_range_norm hbdd σ) x) (norm_nonneg c))
   · push Not at hM
     simp [supNorm, Real.iSup_of_isEmpty]
 

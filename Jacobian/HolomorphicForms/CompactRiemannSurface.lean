@@ -285,6 +285,29 @@ theorem holomorphicOneForm_hcompat
   holomorphicOneForm_fiberNorm_continuous X
 
 /--
+The boundedness witness threaded through the sup-norm / metric API (the weaker
+`SectionNormBddAbove` form that those lemmas now require).
+
+CURRENT STATUS: derived from `holomorphicOneForm_hcompat` (global fiberNorm
+continuity) via `sectionNormBddAbove_of_continuous`, so this is the SOLE remaining
+`StableChartAt` dependence of the entire sup-norm / Banach layer — the generic
+`SectionSupNorm` / `SectionMetric` API itself is now `StableChartAt`-free. The honest
+next step is a `StableChartAt`-free proof of this boundedness via a finite chart
+subcover; that is genuinely blocked on the fiber-norm's frame-dependence (the
+transition factor is not known bounded without either `StableChartAt` or a Hermitian
+metric) — see `.sci/result.md`. -/
+theorem holomorphicOneForm_hbdd
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    ∀ (σ : HolomorphicOneForm ℂ X),
+      SectionSupNorm.SectionNormBddAbove
+        (I := modelWithCornersSelf ℂ ℂ) σ :=
+  fun σ => SectionSupNorm.sectionNormBddAbove_of_continuous σ
+    (holomorphicOneForm_hcompat X σ)
+
+/--
 The `MetricSpace` on `HolomorphicOneForm ℂ X` induced by the
 sup-norm distance `dist σ τ = ⨆ x, ‖(σ - τ) x‖`. Constructed from
 the individual axioms proved in `SectionMetric.lean`.
@@ -296,7 +319,7 @@ noncomputable def holomorphicOneForm_metricSpace
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     MetricSpace (HolomorphicOneForm ℂ X) :=
-  let hc := holomorphicOneForm_hcompat X
+  let hc := holomorphicOneForm_hbdd X
   { dist := SectionMetric.dist
     dist_self := SectionMetric.dist_self
     dist_comm := SectionMetric.dist_comm hc
@@ -355,7 +378,7 @@ theorem holomorphicOneForm_supNorm_cauchySeq_pointwise_cauchy
   have hσ : CauchySeq σ := hCauchy
   rcases (Metric.cauchySeq_iff.1 hσ ε hε) with ⟨N, hN⟩
   refine ⟨N, fun m hm n hn => lt_of_le_of_lt ?_ (hN m hm n hn)⟩
-  have hc := holomorphicOneForm_hcompat X
+  have hc := holomorphicOneForm_hbdd X
   calc
     dist ((σ m).toFun x) ((σ n).toFun x)
         = ‖(σ m).toFun x - (σ n).toFun x‖ := dist_eq_norm _ _
@@ -412,7 +435,7 @@ theorem holomorphicOneForm_supNorm_cauchySeq_evalOne_uniform_cauchy
   have hσ : CauchySeq σ := hCauchy
   rcases (Metric.cauchySeq_iff.1 hσ ε hε) with ⟨N, hN⟩
   refine ⟨N, fun m hm n hn x => lt_of_le_of_lt ?_ (hN m hm n hn)⟩
-  have hc := holomorphicOneForm_hcompat X
+  have hc := holomorphicOneForm_hbdd X
   calc
     dist ((σ m).toFun x (1 : ℂ)) ((σ n).toFun x (1 : ℂ))
         = ‖(σ m).toFun x (1 : ℂ) - (σ n).toFun x (1 : ℂ)‖ := dist_eq_norm _ _
@@ -544,7 +567,7 @@ theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_of_evalOneLimit
     (Metric.tendstoUniformlyOn_iff.mp hUniformOn (ε / 2) (half_pos hε))
   rcases Filter.eventually_atTop.1 hEventually with ⟨N, hN⟩
   refine ⟨N, fun n hn => ?_⟩
-  have hc := holomorphicOneForm_hcompat X
+  have hc := holomorphicOneForm_hbdd X
   calc
     Dist.dist (σ n) a
         = SectionSupNorm.supNorm (σ n - a) := rfl
@@ -1276,7 +1299,7 @@ noncomputable def holomorphicOneForm_supNormBanachData
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     HolomorphicOneFormBanachData X :=
-  let hc := holomorphicOneForm_hcompat X
+  let hc := holomorphicOneForm_hbdd X
   { toNorm := ⟨SectionSupNorm.supNorm⟩
     toMetricSpace := holomorphicOneForm_metricSpace X
     dist_eq := fun _ _ => rfl

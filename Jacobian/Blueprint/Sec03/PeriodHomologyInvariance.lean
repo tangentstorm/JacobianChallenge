@@ -100,7 +100,8 @@ noncomputable abbrev singularBoundary21
 
 The two remaining proof obligations at the call site are:
 1. **Continuity of the chart pullback** — handled by
-   `chartedFormPullback_continuousOn` in Packet F.
+   `ChartedFormPullbackContinuous.chartedFormPullback_chartAt_continuousOn`
+   (wall-free, no `StableChartAt`).
 2. **C¹ regularity of the chart-lifted subpath** — a standard fact
    for chart lifts of smooth paths on manifolds.
 -/

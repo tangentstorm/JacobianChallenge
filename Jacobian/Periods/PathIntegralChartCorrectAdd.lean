@@ -9,7 +9,8 @@ Mathlib's `curveIntegral_add` requires both 1-forms to be
 `CurveIntegrable`. We package this for our `chartedFormPullback`
 setup so future consumers can add path integrals as soon as both
 forms are integrable along the path. The unconditional version is
-gated on Packet F (`chartedFormPullback_curveIntegrable`).
+provided by `ChartedFormPullbackContinuous.chartedFormPullback_chartAt_curveIntegrable`
+(wall-free, no `StableChartAt`).
 -/
 
 namespace JacobianChallenge.Periods

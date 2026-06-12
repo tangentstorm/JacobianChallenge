@@ -8,15 +8,16 @@ import Mathlib.Topology.VectorBundle.Constructions
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 
 /-!
-# `chartedFormPullback_continuousOn` without `StableChartAt` (Path 1′ Step 1)
+# `chartedFormPullback` continuity without `StableChartAt` (Path 1′ Step 1)
 
 The genuine chart-pullback `chartedFormPullback c ω e = (ω.toFun (c.symm e)).comp
 (mfderiv c.symm e)` is a FRAME-INDEPENDENT object: it is the cotangent form `ω`
 read in chart `c`'s frame. Its continuity on `c.target` follows from the smooth
 cotangent section read through chart `c`'s cotangent trivialization
 (`Bundle.contMDiffAt_section` at a FIXED basepoint — no varying chart index),
-exactly the sorry-free `omit [StableChartAt]` pattern already used at the canonical
-basepoint in `HolomorphicOneFormToFunContinuous`.
+exactly the sorry-free `omit [StableChartAt]` pattern formerly used at the
+canonical basepoint in the historical `HolomorphicOneFormToFunContinuous`
+(deleted with the StableChartAt sub-tree in `bfd402b5`; this file supersedes it).
 
 This avoids the operator-norm chart-overlap-derivative "wall": that wall only
 appears when the frame-independent composition is split into the two
@@ -54,7 +55,8 @@ theorem mfderiv_chartSymm_eq_symmL (p₀ : X) {e : E}
 /-- The cotangent section read through the FIXED trivialization at `p₀` is
 operator-norm continuous at any `b` in that trivialization's baseSet
 (`= (chartAt E p₀).source`). Generalizes the basepoint-only
-`ω_comp_symmL_continuousAt` from `HolomorphicOneFormToFunContinuous`. NO
+`ω_comp_symmL_continuousAt` from the historical
+`HolomorphicOneFormToFunContinuous` (deleted in `bfd402b5`). NO
 `StableChartAt`. -/
 theorem cotangent_trivRead_continuousAt
     (ω : HolomorphicOneForm E X) (p₀ : X) {b : X}

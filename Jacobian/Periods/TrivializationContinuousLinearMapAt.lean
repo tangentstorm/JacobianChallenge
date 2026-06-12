@@ -121,7 +121,9 @@ theorem mfderiv_chartAt_continuousOn_of_stable
   exact mfderiv_chartAt_eq_id_of_stable (I := I) p₀ hb
 
 /-!
-## Project-local helper used by `mfderiv_chartSymm_continuousOn`
+## Project-local helper (historical: its consumer `mfderiv_chartSymm_continuousOn`
+was removed with the StableChartAt continuity sub-tree in `bfd402b5`; retained
+pending the vestigial-binder prune)
 
 The historical name `mfderiv_chartAt_continuousOn_of_finiteDim` is
 preserved as an alias (with the `StableChartAt` hypothesis replacing
