@@ -2429,6 +2429,94 @@ hypothesis discharges once W1 lands.
 \leanok
 \end{lemma}
 
+\begin{lemma}[W6 log cup (green leaf)]
+\label{lem:w6-log-cup}
+The logarithmic comparison cup
+\(\texttt{logCup}\,c\,r\,\varepsilon = \varepsilon(\log r - \log\lVert\cdot - c\rVert)\)
+of the W6 removable-singularity development: harmonic off the puncture
+(from Mathlib's \texttt{AnalyticAt.harmonicAt\_log\_norm}), vanishing on
+the outer circle, nonnegative on the punctured closed disc, continuous
+off the puncture, and climbing past every constant near the puncture.
+Cited as an already-green project leaf: at weight \(1\) the cup is the
+shifted log profile \(-\ell_p + \log\rho\) from which the W9 Green's
+family builds its explicit member.
+\lean{JacobianChallenge.HolomorphicForms.logCup, JacobianChallenge.HolomorphicForms.logCup_harmonicOnNhd, JacobianChallenge.HolomorphicForms.logCup_eq_zero_of_mem_sphere, JacobianChallenge.HolomorphicForms.logCup_nonneg, JacobianChallenge.HolomorphicForms.logCup_continuousOn, JacobianChallenge.HolomorphicForms.eventually_le_logCup}
+\leanok
+\end{lemma}
+
+\begin{definition}[Per-pole Perron family and Green's candidate]
+\label{def:perron-greens-family}
+\uses{def:perron-sub-on, lem:perron-envelope-center-touch, lem:w6-log-cup}
+For an open stage-local domain \(V \subseteq \mathbb{C}\) and pole
+\(p\), the Green's family \(\mathfrak{F}_p := \texttt{greensFamily}\,V\,p\)
+(pricing doc §3.3) consists of the \(\texttt{PerronSubOn}(V \setminus \{p\})\)
+members that are eventually \(\le \varepsilon\) at every frontier point
+of \(V\) (the boundary trap, in limsup-free eventual form, which closes
+under \(\max\) by filter intersection) and whose shift
+\(v + \log\lVert\cdot - p\rVert\) is bounded above near \(p\) (the
+member-dependent pole cap).  The explicit member
+\(\texttt{truncatedLogCap}\,p\,\rho = \max(\texttt{logCup}\,p\,\rho\,1, 0)\)
+is §3.3's truncated log cap — the \(\max\) is the seam gluing.  The
+Green's-function candidate is the frozen Perron envelope of the family:
+\(\texttt{greensCandidate}\,V\,p := \texttt{perronEnvelope}\,(\texttt{greensFamily}\,V\,p)\).
+\lean{JacobianChallenge.HolomorphicForms.greensFamily, JacobianChallenge.HolomorphicForms.truncatedLogCap, JacobianChallenge.HolomorphicForms.greensCandidate}
+\leanok
+\end{definition}
+
+\begin{lemma}[Green's family: closure, members, pole lower profile]
+\label{lem:perron-greens-family-basics}
+\uses{def:perron-greens-family, lem:perron-sub-on-harmonic-member, lem:w1-weak-max-principle, lem:w6-log-cup}
+The W9 G1 basics, sorry-free.  The family is closed under pointwise
+\(\max\) (the W7 \texttt{hmax} field verbatim) and nonempty: the zero
+function is a member with no geometric hypotheses (harmonic, hence a
+member by the W1-discharged harmonic-membership; trapped at the
+boundary; capped at the pole with \(C = 0\)).  For a comparison disc
+\(\overline{B}(p, \rho) \subseteq V\) the truncated log cap is a member
+— the \(\max\) of two harmonic members for the comparison clause, zero
+near the frontier for the trap, and with the \emph{exact} pole constant
+\(\log\rho\): inside the punctured disc
+\(\texttt{truncatedLogCap} + \log\lVert\cdot - p\rVert = \log\rho\).
+Consequently the envelope is nonnegative on \(V \setminus \{p\}\) and
+satisfies the pole \emph{lower} profile
+\(\log\rho \le \texttt{greensCandidate}\,V\,p + \log\lVert\cdot - p\rVert\)
+eventually at \(p\) (both modulo the pointwise boundedness supplied by
+the G2 cap).
+\lean{JacobianChallenge.HolomorphicForms.greensFamily_max_mem, JacobianChallenge.HolomorphicForms.zero_mem_greensFamily, JacobianChallenge.HolomorphicForms.greensFamily_nonempty, JacobianChallenge.HolomorphicForms.truncatedLogCap_mem_greensFamily, JacobianChallenge.HolomorphicForms.logCup_one_apply, JacobianChallenge.HolomorphicForms.greensCandidate_nonneg, JacobianChallenge.HolomorphicForms.log_le_greensCandidate_add_log}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Green's candidate: cap, modification, profile, harmonicity, germ (open)]
+\label{lem:perron-greens-candidate-pole-profile}
+\uses{def:perron-greens-family, lem:perron-greens-family-basics, lem:perron-sub-on-poisson-modify, lem:m4-poisson-solution, lem:harmonic-disc-comparison, lem:perron-envelope-center-touch, lem:w1-weak-max-principle}
+The W9 frontier statements (slices G2–G4).  \emph{Uniform upper cap}
+(G2): every member satisfies
+\(v \le \texttt{truncatedLogCap}\,p\,\rho + C\) on \(V \setminus \{p\}\)
+with one member-independent constant — §3.3's two-zone bound in one
+formula; with \(V \subseteq B(p, R_0)\), the punctured-disc comparison
+against \(\varepsilon + (C_v - \log\delta)\,(\log R_0 - \log\lVert\cdot-p\rVert)/\log(R_0/\delta)\)
+washes out the member-dependent cap as \(\delta \to 0\), leaving
+\(C = \log(R_0/\rho)\); pointwise boundedness of the family follows
+(\texttt{greensFamily\_bddAbove}, already assembled).  \emph{Poisson
+modification} (G3): on a disc \(\overline{B}(c, R) \subseteq V \setminus \{p\}\)
+the M4 modification of a member is a dominating member — the comparison
+clause is the landed W5b-iii membership, the boundary and pole clauses
+ride the seam (the modification equals the member off the compact
+modification disc).  \emph{Two-sided pole profile} (G2):
+\(|\texttt{greensCandidate}\,V\,p + \log\lVert\cdot - p\rVert| \le C\)
+eventually at \(p\) — lower half landed in the basics, upper half from
+the cap through \(\texttt{perronEnvelope\_le}\).  \emph{Off-pole
+harmonicity} (G3): conditional on the W7-ii obligation
+\(\texttt{PerronEnvelopeHarmonicInput}\) (W7-i's exact hypothesis list,
+conclusion upgraded to harmonic-throughout; jc11's lane discharges it
+by thin adapter), instantiated on comparison discs inside the punctured
+domain.  \emph{W6 germ} (G4): the shifted candidate is harmonic and
+bounded on a punctured disc, so the removable-singularity surface
+(\texttt{exists\_tendsto\_of\_bounded\_punctured}, with the discharged
+W1/W3 inputs) gives the limit at the pole — the germ datum the W10
+stage assembly consumes at \(P_0\)/\(P_\infty\).
+\lean{JacobianChallenge.HolomorphicForms.greensFamily_le_truncatedLogCap_add, JacobianChallenge.HolomorphicForms.greensFamily_bddAbove, JacobianChallenge.HolomorphicForms.greensFamily_poissonModificationInput, JacobianChallenge.HolomorphicForms.greensCandidate_pole_profile, JacobianChallenge.HolomorphicForms.PerronEnvelopeHarmonicInput, JacobianChallenge.HolomorphicForms.greensCandidate_harmonicOnNhd_off_pole, JacobianChallenge.HolomorphicForms.greensCandidate_add_log_tendsto}
+\end{lemma}
+
 \begin{lemma}[Stage chart-reading uniform Cauchy bounds (open)]
 \label{lem:stage-chart-reading-uniform-cauchy-bound}
 \uses{lem:stage-map-normalized-noncollapse, lem:stage-dipole-boundary-control, lem:stage-eventual-containment-bounds}
