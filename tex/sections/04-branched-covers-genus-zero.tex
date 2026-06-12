@@ -2295,6 +2295,29 @@ radius-independent pointwise-sup limits) yields a harmonic limit \(H\);
 the squeeze.
 \end{proof}
 
+\begin{lemma}[Poisson-modification oracle for PerronSubOn families]
+\label{lem:perron-envelope-poisson-modification-input}
+\uses{lem:perron-envelope-center-touch, lem:perron-sub-on-poisson-modify, lem:m4-poisson-solution}
+The frozen obligation \(\texttt{PoissonModificationInput}(F, V, c, R)\) holds
+for any family \(F\) whose members are all \(\texttt{PerronSubOn}(V)\) and
+which is closed under the disc Poisson modification
+(\(v \in F \Rightarrow \texttt{poissonSolution}\,v\,c\,R \in F\)), given a
+disc \(\overline{B}(c,R) \subseteq V\).  The witness for a member \(v\) is
+its own W5b-iii modification \(\texttt{poissonSolution}\,v\,c\,R\):
+membership is the closure hypothesis; domination
+\(v \le \texttt{poissonSolution}\,v\,c\,R\) on \(V\) is the W5b-iii
+comparison half inside \(B(c,R)\) and equality outside; disc-harmonicity is
+the M4 interior conclusion.  This discharges the oracle the §3.5 envelope
+assembly and the center-touch core consume, for exactly the family shape
+they build.  The modification-closure clause is load-bearing;
+\(\max\)-closure enters at the consumer, not here.  No maximum-principle
+obligation (the oracle asks only for domination and harmonicity, not
+membership of the witness in \(\texttt{PerronSubOn}\)).  \(\texttt{PerronEnvelope}\)
+is consumed by import only, never edited.
+\lean{JacobianChallenge.HolomorphicForms.poissonModificationInput_of_perronSubOn}
+\leanok
+\end{lemma}
+
 \begin{lemma}[Strong maximum principle on balls, from Harnack]
 \label{lem:harnack-strong-max-ball}
 \uses{lem:perron-harnack-disc}
