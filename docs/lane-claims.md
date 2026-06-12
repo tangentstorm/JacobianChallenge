@@ -17,7 +17,7 @@ yet. Updated by the manager when allocations change.
 | W4b Harnack convergence | jc11 | GREEN (4fde9e96 + 96ff2372) — W4 row COMPLETE |
 | W5 PerronSubOn class | jc4 | in flight |
 | W6 removable singularity | jc9 | GREEN UNCONDITIONAL (cd29f871 closes; discharges 3ac5dd91+529afbf2) — first fully-closed toolbox row |
-| W7–W11 stage assembly | jc11 (W7), jc6 (W9), jc3 (W10) | W7-i landed 172aec8d (W7-ii/iii at jc11, addendum-blocked); W9 G1 at jc6; W10 at jc3 (design approved, executing); W8 dropped; W11 assigned to jc4 (V1, 2026-06-12) |
+| W7–W11 stage assembly | jc11/jc6/jc3/jc4 | W7 COMPLETE (172aec8d+24fd2bb5+bc38655d, reviewed; obligation adapter token-queued at jc11); W9 G2 at jc6; W10 executing at jc3; W11 V1 at jc4; W8 dropped |
 
 ## Spine (statements + repairs)
 | Item | Owner | State |
