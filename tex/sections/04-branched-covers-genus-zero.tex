@@ -2295,6 +2295,32 @@ radius-independent pointwise-sup limits) yields a harmonic limit \(H\);
 the squeeze.
 \end{proof}
 
+\begin{lemma}[Strong maximum principle on balls, from Harnack]
+\label{lem:harnack-strong-max-ball}
+\uses{lem:perron-harnack-disc}
+A harmonic \(g \le 0\) on \(B(c, R)\) vanishing at one interior point
+vanishes identically; equivalently (the consumed form), two harmonic
+functions on a ball with \(h_1 \le h_2\) throughout and equality at
+one interior point are equal on the whole ball.  This is the
+interior-rigidity input for the Perron envelope's second-comparison
+step (W7-ii); the weak maximum principle (W1) cannot supply it, since
+boundary bounds do not see a touching point.  Pure W4a corollary —
+no W1 dependency.
+\lean{JacobianChallenge.HolomorphicForms.harnack_strong_max_ball, JacobianChallenge.HolomorphicForms.eq_on_ball_of_harmonic_le_of_eq_at}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Harnack propagation: at an interior zero \(z_0\), the upper Harnack
+bound for \(-g \ge 0\) on the sub-disc of radius
+\((R - \lVert z_0 - c\rVert)/2\) gives
+\((-g)(w) \le C(w) \cdot (-g)(z_0) = 0\), so the zero set contains a
+ball around each of its points; the strictly negative locus is open by
+continuity; the ball is preconnected
+(\texttt{Convex.isPreconnected}), so a nonempty open partition is
+impossible and the zero set is everything.  The two-function form
+applies this to \(h_1 - h_2\).
+\end{proof}
+
 \begin{definition}[Perron comparison subclass]
 \label{def:perron-sub-on}
 \uses{lem:stage-harmonic-analytic-compose}

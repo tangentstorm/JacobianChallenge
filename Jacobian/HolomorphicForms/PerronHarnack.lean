@@ -303,6 +303,124 @@ theorem harnack_increasing_tendstoUniformlyOn {h : ℕ → ℂ → ℝ} {c : ℂ
         mul_lt_mul_of_pos_left hn hCpos
     _ = ε := by rw [mul_comm]; exact div_mul_cancel₀ ε hCpos.ne'
 
+/-!
+## Strong maximum principle on balls (W7-iii)
+
+The classical Harnack ⇒ strong-max argument: for `g ≤ 0` harmonic on a
+ball with an interior zero, the Harnack upper bound applied to `-g ≥ 0`
+on sub-discs shows the zero set is open; it is relatively closed by
+continuity, and the ball is preconnected, so the zero set is
+everything.  This is the interior-rigidity input for the Perron
+envelope's second-comparison step (W7-ii); it is NOT the weak maximum
+principle (`WeakMaxPrincipleInput`, jc3's W1) — boundary bounds cannot
+see a touching point.
+-/
+
+/--
+Local propagation of an interior zero: if `g ≤ 0` is harmonic on
+`ball c R` and vanishes at `z₀`, it vanishes on the ball of radius
+`(R - ‖z₀ - c‖) / 2` about `z₀`.  Harnack's upper bound for `-g ≥ 0`
+on the sub-disc is `(-g) w ≤ C(w) · (-g) z₀ = 0`.
+-/
+private lemma zero_ball_of_zero_center {g : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    (hg : HarmonicOnNhd g (ball c R))
+    (hle : ∀ z ∈ ball c R, g z ≤ 0)
+    {z₀ : ℂ} (hz₀ : z₀ ∈ ball c R) (hzero : g z₀ = 0) :
+    ∀ w ∈ ball z₀ ((R - ‖z₀ - c‖) / 2), g w = 0 := by
+  intro w hw
+  set r := (R - ‖z₀ - c‖) / 2 with hrdef
+  have hz₀R : ‖z₀ - c‖ < R := mem_ball_iff_norm.mp hz₀
+  have hsub : closedBall z₀ r ⊆ ball c R := by
+    intro x hx
+    rw [mem_ball_iff_norm]
+    have hxz : ‖x - z₀‖ ≤ r := mem_closedBall_iff_norm.mp hx
+    calc ‖x - c‖ = ‖x - z₀ + (z₀ - c)‖ := by ring_nf
+      _ ≤ ‖x - z₀‖ + ‖z₀ - c‖ := norm_add_le _ _
+      _ < R := by rw [hrdef] at hxz; linarith
+  have hneg : HarmonicOnNhd (-g) (closedBall z₀ r) := (hg.mono hsub).neg
+  have hpos : ∀ z ∈ sphere z₀ r, 0 ≤ (-g) z := by
+    intro z hz
+    have hzball : z ∈ ball c R := hsub (sphere_subset_closedBall hz)
+    simp only [Pi.neg_apply]
+    linarith [hle z hzball]
+  have hub := harnack_upper hneg hw hpos
+  have h0 : (-g) z₀ = 0 := by simp [hzero]
+  rw [h0, mul_zero] at hub
+  have hge : 0 ≤ (-g) w := by
+    have hwball : w ∈ ball c R := hsub (ball_subset_closedBall hw)
+    simp only [Pi.neg_apply]
+    linarith [hle w hwball]
+  have : (-g) w = 0 := le_antisymm hub hge
+  simpa [neg_eq_zero] using this
+
+/--
+**Strong maximum principle on balls** (W7-iii).  A harmonic `g ≤ 0` on
+`ball c R` vanishing at one interior point vanishes identically: the
+zero set is open by Harnack propagation, the negative set is open by
+continuity, and the ball is preconnected.
+-/
+theorem harnack_strong_max_ball {g : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    (hg : HarmonicOnNhd g (ball c R))
+    (hle : ∀ z ∈ ball c R, g z ≤ 0)
+    {x₀ : ℂ} (hx₀ : x₀ ∈ ball c R) (hzero : g x₀ = 0) :
+    ∀ z ∈ ball c R, g z = 0 := by
+  -- the union of all propagation balls around interior zeros
+  set U : Set ℂ := ⋃ (z : ℂ) (_ : z ∈ ball c R ∧ g z = 0),
+    ball z ((R - ‖z - c‖) / 2) with hU
+  have hUopen : IsOpen U :=
+    isOpen_iUnion fun z => isOpen_iUnion fun _ => isOpen_ball
+  have hUzero : ∀ w ∈ U ∩ ball c R, g w = 0 := by
+    rintro w ⟨hwU, -⟩
+    simp only [hU, Set.mem_iUnion] at hwU
+    obtain ⟨z, ⟨hz, hz0⟩, hwz⟩ := hwU
+    exact zero_ball_of_zero_center hg hle hz hz0 w hwz
+  have hmem_self : ∀ z ∈ ball c R, g z = 0 → z ∈ U := by
+    intro z hz hz0
+    have hzR : ‖z - c‖ < R := mem_ball_iff_norm.mp hz
+    simp only [hU, Set.mem_iUnion]
+    exact ⟨z, ⟨hz, hz0⟩, mem_ball_self (by linarith)⟩
+  -- the strictly-negative locus
+  set W : Set ℂ := ball c R ∩ g ⁻¹' (Set.Iio 0) with hW
+  have hWopen : IsOpen W :=
+    hg.continuousOn.isOpen_inter_preimage isOpen_ball isOpen_Iio
+  -- the two open sets cover the ball and are disjoint inside it
+  have hcover : ball c R ⊆ U ∪ W := by
+    intro z hz
+    rcases lt_or_eq_of_le (hle z hz) with hlt | heq
+    · exact Or.inr ⟨hz, hlt⟩
+    · exact Or.inl (hmem_self z hz heq)
+  have hUne : (ball c R ∩ U).Nonempty :=
+    ⟨x₀, hx₀, hmem_self x₀ hx₀ hzero⟩
+  intro z hz
+  by_contra hne0
+  have hWne : (ball c R ∩ W).Nonempty :=
+    ⟨z, hz, hz, lt_of_le_of_ne (hle z hz) hne0⟩
+  obtain ⟨w, hwball, hwU, hwW⟩ :=
+    (convex_ball c R).isPreconnected U W hUopen hWopen hcover hUne hWne
+  have h0 := hUzero w ⟨hwU, hwball⟩
+  have hneg : g w < 0 := hwW.2
+  linarith
+
+/--
+**Interior-touch rigidity** (the shape W7-ii consumes): two harmonic
+functions on a ball with `h₁ ≤ h₂` throughout and equality at one
+interior point are equal on the whole ball.
+-/
+theorem eq_on_ball_of_harmonic_le_of_eq_at {h₁ h₂ : ℂ → ℝ} {c : ℂ}
+    {R : ℝ}
+    (hh₁ : HarmonicOnNhd h₁ (ball c R)) (hh₂ : HarmonicOnNhd h₂ (ball c R))
+    (hle : ∀ z ∈ ball c R, h₁ z ≤ h₂ z)
+    {x₀ : ℂ} (hx₀ : x₀ ∈ ball c R) (heq : h₁ x₀ = h₂ x₀) :
+    ∀ z ∈ ball c R, h₁ z = h₂ z := by
+  have key := harnack_strong_max_ball (hh₁.sub hh₂)
+    (fun z hz => by simp only [Pi.sub_apply]; linarith [hle z hz])
+    hx₀ (by simp only [Pi.sub_apply]; linarith)
+  intro z hz
+  have := key z hz
+  simp only [Pi.sub_apply] at this
+  linarith
+
 end JacobianChallenge.HolomorphicForms
+
 
 
