@@ -2316,43 +2316,55 @@ packaged with Mathlib's \texttt{HarmonicContOnCl}.
 \leanok
 \end{definition}
 
+\begin{lemma}[W1: harmonic weak maximum principle (green leaf)]
+\label{lem:w1-weak-max-principle}
+jc3's W1 M2 discharge: the harmonic weak maximum principle on a bounded
+open \(V \subseteq \mathbb{C}\) — nonpositive frontier values force
+nonpositivity inside — proved sorry-free, packaged as the discharge of the
+frozen obligation \(\texttt{WeakMaxPrincipleInput}\).  Cited as an
+already-green project leaf so the W5b adapters terminate in a proven node.
+\lean{JacobianChallenge.HolomorphicForms.weakMaxPrincipleInput_holds, JacobianChallenge.HolomorphicForms.le_zero_of_harmonicOnNhd_of_frontier_le_zero}
+\leanok
+\end{lemma}
+
 \begin{lemma}[Harmonic functions are Perron-comparison members]
 \label{lem:perron-sub-on-harmonic-member}
-\uses{def:perron-sub-on}
+\uses{def:perron-sub-on, lem:w1-weak-max-principle}
 A function harmonic on an open \(V \subseteq \mathbb{C}\) is a
-\(\texttt{PerronSubOn}(V)\) member, given the harmonic weak maximum
-principle as an input.  On a disc \(\overline{B}(c,R) \subseteq V\) with a
-harmonic-up-to-closure majorant \(h'\) dominating \(h\) on
+\(\texttt{PerronSubOn}(V)\) member.  On a disc \(\overline{B}(c,R) \subseteq V\)
+with a harmonic-up-to-closure majorant \(h'\) dominating \(h\) on
 \(\partial B(c,R)\), the difference \(w = h - h'\) is harmonic on
 \(B(c,R)\), continuous on \(\overline{B}(c,R)\), and \(\le 0\) on
 \(\partial B(c,R) = \operatorname{frontier} B(c,R)\); the weak maximum
 principle forces \(w \le 0\) inside, i.e.\ \(h \le h'\).  This is the
 basic membership fact the Green's-function and \(H[g]\) envelopes consume
 (every envelope is a sup of members; harmonic functions are the basic
-members).  The weak maximum principle is taken as the explicit hypothesis
-\(\texttt{WeakMaxPrincipleInput}\) (the W1 obligation, owner lane jc10);
-the lemma is sorry-free now and the hypothesis discharges trivially once
-W1 is proved.
-\lean{JacobianChallenge.HolomorphicForms.PerronSubOn.of_harmonicOnNhd}
+members).  The harmonic weak maximum principle is discharged by jc3's
+\(\texttt{weakMaxPrincipleInput\_holds}\) (\ref{lem:w1-weak-max-principle});
+the unconditional corollary \(\texttt{of\_harmonicOnNhd'}\) takes no
+hypothesis, and the parametric original is retained for consumers that
+thread a \(\texttt{WeakMaxPrincipleInput}\) term.
+\lean{JacobianChallenge.HolomorphicForms.PerronSubOn.of_harmonicOnNhd, JacobianChallenge.HolomorphicForms.PerronSubOn.of_harmonicOnNhd'}
 \leanok
 \end{lemma}
 
 \begin{lemma}[Two-harmonic disc comparison]
 \label{lem:harmonic-disc-comparison}
-\uses{def:perron-sub-on}
+\uses{def:perron-sub-on, lem:w1-weak-max-principle}
 If \(h_1, h_2\) are harmonic on the open disc \(B(c,R)\), continuous up to
 its closure, and \(h_1 \le h_2\) on the circle \(\partial B(c,R)\), then
-\(h_1 \le h_2\) throughout \(B(c,R)\) — given the harmonic weak maximum
-principle as an input.  The difference \(w = h_1 - h_2\) is harmonic on
-\(B(c,R)\), continuous on \(\overline{B}(c,R)\), and \(\le 0\) on
-\(\partial B(c,R) = \operatorname{frontier} B(c,R)\); the weak maximum
+\(h_1 \le h_2\) throughout \(B(c,R)\).  The difference \(w = h_1 - h_2\) is
+harmonic on \(B(c,R)\), continuous on \(\overline{B}(c,R)\), and \(\le 0\)
+on \(\partial B(c,R) = \operatorname{frontier} B(c,R)\); the weak maximum
 principle forces \(w \le 0\) inside.  This is the applied disc form of the
 maximum principle that the Green's-function upper bounds (§3.3) and the
 Perron envelope locality step consume — the symmetric two-sided companion
-to \ref{lem:perron-sub-on-harmonic-member}.  The weak maximum principle
-is taken as the explicit hypothesis \(\texttt{WeakMaxPrincipleInput}\)
-(W1, owner lane jc10); sorry-free now, discharging once W1 is proved.
-\lean{JacobianChallenge.HolomorphicForms.harmonicContOnCl_le_of_le_on_sphere}
+to \ref{lem:perron-sub-on-harmonic-member}.  The harmonic weak maximum
+principle is discharged by jc3's \(\texttt{weakMaxPrincipleInput\_holds}\)
+(\ref{lem:w1-weak-max-principle}); the unconditional corollary
+\(\texttt{harmonicContOnCl\_le\_of\_le\_on\_sphere'}\) takes no hypothesis,
+and the parametric original is retained.
+\lean{JacobianChallenge.HolomorphicForms.harmonicContOnCl_le_of_le_on_sphere, JacobianChallenge.HolomorphicForms.harmonicContOnCl_le_of_le_on_sphere'}
 \leanok
 \end{lemma}
 

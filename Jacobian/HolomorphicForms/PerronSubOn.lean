@@ -2,6 +2,7 @@ import Mathlib.Analysis.InnerProductSpace.Harmonic.HarmonicContOnCl
 import Mathlib.Topology.Order.Lattice
 import Jacobian.HolomorphicForms.PerronRemovableSingularity
 import Jacobian.HolomorphicForms.PerronPoissonBoundary
+import Jacobian.HolomorphicForms.PerronHarmonicMaxPrinciple
 
 /-!
 # The Perron comparison subclass `PerronSubOn` (B2 toolbox W5a)
@@ -196,6 +197,20 @@ theorem PerronSubOn.of_harmonicOnNhd
   exact sub_nonpos.mp hw
 
 /--
+**Harmonic-membership, unconditional (B2 toolbox W5b, W1 adapter).**  A
+function harmonic on the open set `V ⊆ ℂ` is a `PerronSubOn V` member —
+the hypothesis-free form, with the harmonic weak maximum principle
+supplied by jc3's landed discharge `weakMaxPrincipleInput_holds`
+(`PerronHarmonicMaxPrinciple.lean`) rather than a `WeakMaxPrincipleInput`
+hypothesis.
+
+The parametric `PerronSubOn.of_harmonicOnNhd` is retained: consumers that
+already thread a `WeakMaxPrincipleInput` term may still prefer it. -/
+theorem PerronSubOn.of_harmonicOnNhd' {h : ℂ → ℝ} {V : Set ℂ}
+    (hh : HarmonicOnNhd h V) : PerronSubOn h V :=
+  PerronSubOn.of_harmonicOnNhd weakMaxPrincipleInput_holds hh
+
+/--
 **Two-harmonic disc comparison (B2 toolbox W5b).** If `h₁`, `h₂` are
 harmonic on the open disc `ball c R`, continuous up to its closure, and
 `h₁ ≤ h₂` on the bounding circle `sphere c R`, then `h₁ ≤ h₂` throughout
@@ -232,6 +247,22 @@ theorem harmonicContOnCl_le_of_le_on_sphere
   have hw := hmax (Metric.ball c R) (fun x => h₁ x - h₂ x)
     Metric.isOpen_ball Metric.isBounded_ball hwHarm hwCont hfront z hz
   exact sub_nonpos.mp hw
+
+/--
+**Two-harmonic disc comparison, unconditional (B2 toolbox W5b, W1
+adapter).**  The hypothesis-free form of `harmonicContOnCl_le_of_le_on_sphere`,
+with the harmonic weak maximum principle supplied by jc3's landed discharge
+`weakMaxPrincipleInput_holds` (`PerronHarmonicMaxPrinciple.lean`) rather than
+a `WeakMaxPrincipleInput` hypothesis.
+
+The parametric original is retained for consumers that already thread a
+`WeakMaxPrincipleInput` term. -/
+theorem harmonicContOnCl_le_of_le_on_sphere' {h₁ h₂ : ℂ → ℝ} {c : ℂ} {R : ℝ}
+    (hR : 0 < R) (hh₁ : HarmonicContOnCl h₁ (Metric.ball c R))
+    (hh₂ : HarmonicContOnCl h₂ (Metric.ball c R))
+    (hbd : ∀ z ∈ Metric.sphere c R, h₁ z ≤ h₂ z) :
+    ∀ z ∈ Metric.ball c R, h₁ z ≤ h₂ z :=
+  harmonicContOnCl_le_of_le_on_sphere weakMaxPrincipleInput_holds hR hh₁ hh₂ hbd
 
 /--
 **Closed under adding a harmonic function (B2 toolbox W5b).** If `v` is a
