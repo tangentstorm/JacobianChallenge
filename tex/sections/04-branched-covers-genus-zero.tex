@@ -2321,6 +2321,34 @@ impossible and the zero set is everything.  The two-function form
 applies this to \(h_1 - h_2\).
 \end{proof}
 
+\begin{lemma}[Perron's lemma: the envelope is harmonic]
+\label{lem:perron-envelope-harmonic}
+\uses{lem:perron-envelope-center-touch, lem:harnack-strong-max-ball, lem:perron-harnack-harmonic-limit}
+For a nonempty family \(F\) closed under pointwise \(\max\), pointwise
+bounded above on \(V\), with the Poisson modification capability on a
+disc \(\overline{B}(c, R) \subseteq V\): the Perron envelope
+\(u = \sup F\) is harmonic on \(B(c, R)\).  This is the W7 planar
+envelope lemma — the engine that makes the Green's-function and
+\(H[g]\) suprema harmonic (§3.3–3.4) — in exactly the shape frozen as
+\(\texttt{PerronEnvelopeHarmonicInput}\) by the W9 consumer.  No
+\(\texttt{PerronSubOn}\) hypothesis is needed: boundedness and
+membership do all the bounding.
+\lean{JacobianChallenge.HolomorphicForms.perronEnvelope_harmonicOnNhd_ball}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Run the center-touch construction at the center \(c\): a modified
+increasing member sequence \(g_n\) with harmonic limit \(H \le u\),
+\(H(c) = u(c)\).  For arbitrary \(y \in B(c,R)\), run a second pass
+seeded by \(\max(b_n, g_n)\) with \(b_n\) approximants at \(y\): the
+harmonic limit \(K\) dominates \(H\), touches \(u\) at \(y\), and
+agrees with \(H\) at \(c\) (squeezed between \(H(c)\) and \(u(c)\)).
+Interior-touch rigidity (\(H \le K\), equal at \(c\)) forces
+\(H \equiv K\), so \(u(y) = K(y) = H(y)\); as \(y\) was arbitrary,
+\(u = H\) on the disc and harmonicity transfers along the germ
+equality.
+\end{proof}
+
 \begin{definition}[Perron comparison subclass]
 \label{def:perron-sub-on}
 \uses{lem:stage-harmonic-analytic-compose}

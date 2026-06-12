@@ -238,5 +238,167 @@ theorem perronEnvelope_exists_harmonic_eq_at {F : Set (ℂ → ℝ)}
       exact le_of_tendsto h2 (Eventually.of_forall h1)
     exact le_antisymm hle hge
 
+/-!
+## The second comparison: the envelope is harmonic (W7-ii)
+
+The center-touch core produces, at each point, a harmonic minorant
+touching the envelope there.  The second diagonal upgrades the touch
+to equality throughout the disc: a second modified sequence, seeded by
+the first one and by approximants at an arbitrary `y`, has a harmonic
+limit `K` dominating the first limit `H`, agreeing with it at the
+center, and touching the envelope at `y`; interior-touch rigidity
+(`eq_on_ball_of_harmonic_le_of_eq_at`, W7-iii) forces `H = K`, so the
+envelope agrees with the single harmonic `H` everywhere on the disc.
+-/
+
+/--
+The interleaved max/modify pass, factored over an arbitrary input
+sequence `a` of members: produce a sequence of members harmonic on the
+modification disc, increasing on `V`, and dominating `a` termwise.
+-/
+private lemma exists_modified_seq {F : Set (ℂ → ℝ)} {V : Set ℂ}
+    {c : ℂ} {R : ℝ}
+    (hmax : ∀ v₁ ∈ F, ∀ v₂ ∈ F, (fun z => max (v₁ z) (v₂ z)) ∈ F)
+    (hmod : PoissonModificationInput F V c R)
+    (a : ℕ → ℂ → ℝ) (haF : ∀ n, a n ∈ F) :
+    ∃ g : ℕ → ℂ → ℝ, (∀ n, g n ∈ F) ∧
+      (∀ n, HarmonicOnNhd (g n) (ball c R)) ∧
+      (∀ z ∈ V, Monotone fun n => g n z) ∧
+      (∀ n, ∀ z ∈ V, a n z ≤ g n z) := by
+  choose mod hmodF hmodLe hmodHarm using hmod
+  let g : ℕ → {w : ℂ → ℝ // w ∈ F} := fun n =>
+    Nat.rec (motive := fun _ => {w : ℂ → ℝ // w ∈ F})
+      ⟨mod (a 0) (haF 0), hmodF _ _⟩
+      (fun k ih => ⟨mod (fun z => max (a (k + 1) z) (ih.1 z))
+        (hmax _ (haF (k + 1)) _ ih.2), hmodF _ _⟩) n
+  refine ⟨fun n => (g n).1, fun n => (g n).2, ?_, ?_, ?_⟩
+  · intro n
+    cases n with
+    | zero => exact hmodHarm _ _
+    | succ k => exact hmodHarm _ _
+  · intro z hz
+    apply monotone_nat_of_le_succ
+    intro n
+    exact le_trans (le_max_right _ _)
+      (hmodLe _ (hmax _ (haF (n + 1)) _ (g n).2) z hz)
+  · intro n z hz
+    cases n with
+    | zero => exact hmodLe (a 0) (haF 0) z hz
+    | succ k =>
+        exact le_trans (le_max_left _ _)
+          (hmodLe _ (hmax _ (haF (k + 1)) _ (g k).2) z hz)
+
+/--
+**Perron's lemma** (W7-ii, the planar envelope lemma; pricing doc
+§3.3): for a nonempty family closed under pointwise `max`, pointwise
+bounded above on `V`, with the Poisson modification capability on a
+disc `closedBall c R ⊆ V`, the Perron envelope is harmonic on the open
+disc.  This is the exact shape frozen as
+`PerronEnvelopeHarmonicInput` by the W9 consumer
+(`PerronGreensFunction.lean`); no `PerronSubOn` hypothesis is needed.
+-/
+theorem perronEnvelope_harmonicOnNhd_ball {F : Set (ℂ → ℝ)}
+    {V : Set ℂ} {c : ℂ} {R : ℝ}
+    (hne : F.Nonempty)
+    (hmax : ∀ v₁ ∈ F, ∀ v₂ ∈ F, (fun z => max (v₁ z) (v₂ z)) ∈ F)
+    (hbdd : ∀ z ∈ V, BddAbove ((fun v => v z) '' F))
+    (hR : 0 < R) (hball : closedBall c R ⊆ V)
+    (hmod : PoissonModificationInput F V c R) :
+    HarmonicOnNhd (perronEnvelope F) (ball c R) := by
+  set u := perronEnvelope F with hu
+  have hcV : c ∈ V := hball (mem_closedBall_self hR.le)
+  have hballV : ∀ z ∈ ball c R, z ∈ V :=
+    fun z hz => hball (ball_subset_closedBall hz)
+  have hcball : c ∈ ball c R := mem_ball_self hR
+  -- first sequence: approximants at the center, modified
+  have happx : ∀ n : ℕ, ∃ v ∈ F, u c - 1 / (n + 1) < v c := by
+    intro n
+    apply exists_lt_of_lt_perronEnvelope hne
+    have : (0 : ℝ) < 1 / (n + 1) := by positivity
+    linarith
+  choose v hvF hvc using happx
+  obtain ⟨g, hgF, hgHarm, hgmono, hgdom⟩ := exists_modified_seq hmax hmod v hvF
+  have hgle : ∀ n, ∀ z ∈ V, g n z ≤ u z :=
+    fun n z hz => le_perronEnvelope (hgF n) (hbdd z hz)
+  obtain ⟨H, hHpt, hHharm⟩ := harnack_increasing_limit_harmonic_ball hR hgHarm
+    (fun z hz => hgmono z (hballV z hz))
+    ⟨u c, by rintro x ⟨n, rfl⟩; exact hgle n c hcV⟩
+  have hHle : ∀ z ∈ ball c R, H z ≤ u z := fun z hz =>
+    le_of_tendsto (hHpt z hz)
+      (Eventually.of_forall fun n => hgle n z (hballV z hz))
+  -- the first limit touches the envelope at the center
+  have hHc : H c = u c := by
+    refine le_antisymm (hHle c hcball) ?_
+    have h1 : ∀ n : ℕ, u c - 1 / (n + 1) ≤ H c := by
+      intro n
+      apply ge_of_tendsto (hHpt c hcball)
+      filter_upwards [eventually_ge_atTop n] with m hm
+      calc u c - 1 / (n + 1)
+          ≤ v n c := (hvc n).le
+        _ ≤ g n c := hgdom n c hcV
+        _ ≤ g m c := hgmono c hcV hm
+    have h2 : Tendsto (fun n : ℕ => u c - 1 / (n + 1)) atTop (𝓝 (u c)) := by
+      simpa using Filter.Tendsto.const_sub (u c)
+        tendsto_one_div_add_atTop_nhds_zero_nat
+    exact le_of_tendsto h2 (Eventually.of_forall h1)
+  -- second diagonal: the envelope agrees with `H` everywhere
+  have hkey : ∀ y ∈ ball c R, u y = H y := by
+    intro y hy
+    have hyV : y ∈ V := hballV y hy
+    have happy : ∀ n : ℕ, ∃ w ∈ F, u y - 1 / (n + 1) < w y := by
+      intro n
+      apply exists_lt_of_lt_perronEnvelope hne
+      have : (0 : ℝ) < 1 / (n + 1) := by positivity
+      linarith
+    choose b hbF hby using happy
+    obtain ⟨k, hkF, hkHarm, hkmono, hkdom⟩ := exists_modified_seq hmax hmod
+      (fun n z => max (b n z) (g n z))
+      (fun n => hmax _ (hbF n) _ (hgF n))
+    have hkle : ∀ n, ∀ z ∈ V, k n z ≤ u z :=
+      fun n z hz => le_perronEnvelope (hkF n) (hbdd z hz)
+    obtain ⟨K, hKpt, hKharm⟩ := harnack_increasing_limit_harmonic_ball hR
+      hkHarm (fun z hz => hkmono z (hballV z hz))
+      ⟨u c, by rintro x ⟨n, rfl⟩; exact hkle n c hcV⟩
+    have hKle : ∀ z ∈ ball c R, K z ≤ u z := fun z hz =>
+      le_of_tendsto (hKpt z hz)
+        (Eventually.of_forall fun n => hkle n z (hballV z hz))
+    -- the second sequence dominates the first
+    have hHK : ∀ z ∈ ball c R, H z ≤ K z := by
+      intro z hz
+      apply le_of_tendsto_of_tendsto (hHpt z hz) (hKpt z hz)
+      filter_upwards with n
+      exact le_trans (le_max_right _ _) (hkdom n z (hballV z hz))
+    -- equality at the center
+    have hKc : H c = K c :=
+      le_antisymm (hHK c hcball) (by rw [hHc]; exact hKle c hcball)
+    -- the second limit touches the envelope at `y`
+    have hKy : K y = u y := by
+      refine le_antisymm (hKle y hy) ?_
+      have h1 : ∀ n : ℕ, u y - 1 / (n + 1) ≤ K y := by
+        intro n
+        apply ge_of_tendsto (hKpt y hy)
+        filter_upwards [eventually_ge_atTop n] with m hm
+        calc u y - 1 / (n + 1)
+            ≤ b n y := (hby n).le
+          _ ≤ max (b n y) (g n y) := le_max_left _ _
+          _ ≤ k n y := hkdom n y hyV
+          _ ≤ k m y := hkmono y hyV hm
+      have h2 : Tendsto (fun n : ℕ => u y - 1 / (n + 1)) atTop (𝓝 (u y)) := by
+        simpa using Filter.Tendsto.const_sub (u y)
+          tendsto_one_div_add_atTop_nhds_zero_nat
+      exact le_of_tendsto h2 (Eventually.of_forall h1)
+    -- interior-touch rigidity collapses the diagonal
+    have heq := eq_on_ball_of_harmonic_le_of_eq_at hHharm hKharm hHK
+      hcball hKc
+    calc u y = K y := hKy.symm
+      _ = H y := (heq y hy).symm
+  -- transfer harmonicity along the germ equality
+  intro z hz
+  have heqv : H =ᶠ[𝓝 z] u := by
+    filter_upwards [isOpen_ball.mem_nhds hz] with w hw
+    exact (hkey w hw).symm
+  exact (harmonicAt_congr_nhds heqv).mp (hHharm z hz)
+
 end JacobianChallenge.HolomorphicForms
+
 
