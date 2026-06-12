@@ -276,10 +276,10 @@ private lemma coverage_refinement
 
 /-
 Integrability of the chart-pullback integrand on each segment,
-derived from the C¹ path hypothesis and StableChartAt.
+derived from the C¹ path hypothesis (wall-free, no `StableChartAt` —
+via `chartedFormPullback_chartAt_continuousOn`).
 -/
 private lemma segment_integrability
-    [StableChartAt E X]
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b)
     (hγ : ∀ (p : X), ContDiffOn ℝ 1 ((chartAt E p) ∘ γ.extend)
           (γ.extend ⁻¹' (chartAt E p).source ∩ Set.Icc 0 1))
@@ -422,7 +422,6 @@ private lemma segment_integrability
 
 
 theorem pathIntegralViaCoverWith_refinement_invariant'
-    [StableChartAt E X]
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b)
     (hγ : ∀ (p : X), ContDiffOn ℝ 1 ((chartAt E p) ∘ γ.extend)
           (γ.extend ⁻¹' (chartAt E p).source ∩ Set.Icc 0 1))

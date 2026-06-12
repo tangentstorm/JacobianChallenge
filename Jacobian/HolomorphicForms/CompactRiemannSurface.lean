@@ -218,7 +218,6 @@ Cross-ref: `tex/sections/02-holomorphic-forms-finite-dim.tex`,
 theorem ContMDiffSection.fiberNorm_eq_abs_eval_one
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : HolomorphicOneForm ℂ X) (x : X) :
     ContMDiffSection.fiberNorm σ x = ‖(σ.toFun x) (1 : ℂ)‖ := by
   -- Fiber norm is the operator norm on T*X x = ℂ →L[ℂ] ℂ.
@@ -295,7 +294,7 @@ continuity) via `sectionNormBddAbove_of_continuous`, so this is the SOLE remaini
 next step is a `StableChartAt`-free proof of this boundedness via a finite chart
 subcover; that is genuinely blocked on the fiber-norm's frame-dependence (the
 transition factor is not known bounded without either `StableChartAt` or a Hermitian
-metric) — see `.sci/result.md`. -/
+metric) — see issue #237 (conformal-metric route, milestones D2–D3). -/
 theorem holomorphicOneForm_hbdd
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
